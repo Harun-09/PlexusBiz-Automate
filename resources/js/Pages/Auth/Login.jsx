@@ -28,70 +28,93 @@ export default function Login({ status, canResetPassword }) {
 
     return (
         <GuestLayout>
-            <Head title="Log in" />
+            <Head title="Sign in" />
 
-            {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
-
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
-
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
-
-                    <InputError message={errors.email} className="mt-2" />
+            <div className="auth-form">
+                <div className="auth-card-brand">
+                    <span className="auth-card-brand__mark">
+                        <img src="/images/plexuscloud-logo.png" alt="Plexus Cloud" className="auth-card-brand__logo" />
+                    </span>
+                    <span className="auth-card-brand__copy">
+                        <strong>Plexus Cloud</strong>
+                        <span>Official workspace login</span>
+                    </span>
                 </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
+                <div className="auth-form__header">
+                    <span className="auth-eyebrow">Welcome back</span>
+                    <h2>Sign in to your workspace</h2>
+                    <p>
+                        Access your dashboard, automations, and team tools from a clean, focused login
+                        experience.
+                    </p>
                 </div>
 
-                <div className="block mt-4">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) => setData('remember', e.target.checked)}
+                {status && <div className="auth-alert auth-alert--success">{status}</div>}
+
+                <form onSubmit={submit} className="auth-form__body">
+                    <div className="auth-field">
+                        <InputLabel htmlFor="email" value="Email address" className="auth-label" />
+
+                        <TextInput
+                            id="email"
+                            type="email"
+                            name="email"
+                            value={data.email}
+                            className="auth-input"
+                            autoComplete="username"
+                            isFocused={true}
+                            placeholder="name@company.com"
+                            onChange={(e) => setData('email', e.target.value)}
                         />
-                        <span className="ms-2 text-sm text-gray-600">Remember me</span>
-                    </label>
-                </div>
 
-                <div className="flex items-center justify-end mt-4">
-                    {canResetPassword && (
-                        <Link
-                            href={route('password.request')}
-                            className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        >
-                            Forgot your password?
-                        </Link>
-                    )}
+                        <InputError message={errors.email} className="auth-error" />
+                    </div>
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
+                    <div className="auth-field">
+                        <InputLabel htmlFor="password" value="Password" className="auth-label" />
+
+                        <TextInput
+                            id="password"
+                            type="password"
+                            name="password"
+                            value={data.password}
+                            className="auth-input"
+                            autoComplete="current-password"
+                            placeholder="Enter your password"
+                            onChange={(e) => setData('password', e.target.value)}
+                        />
+
+                        <InputError message={errors.password} className="auth-error" />
+                    </div>
+
+                    <div className="auth-row">
+                        <label className="auth-remember">
+                            <Checkbox
+                                name="remember"
+                                checked={data.remember}
+                                className="auth-checkbox"
+                                onChange={(e) => setData('remember', e.target.checked)}
+                            />
+                            <span>Remember me</span>
+                        </label>
+
+                        {canResetPassword && (
+                            <Link href={route('password.request')} className="auth-link">
+                                Forgot your password?
+                            </Link>
+                        )}
+                    </div>
+
+                    <PrimaryButton className="auth-submit" disabled={processing}>
+                        {processing ? 'Signing in...' : 'Log in'}
                     </PrimaryButton>
-                </div>
-            </form>
+                </form>
+
+                <p className="auth-footer">
+                    Secure access for your team workspace with a faster, more polished login flow.
+                </p>
+            </div>
         </GuestLayout>
     );
 }
