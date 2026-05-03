@@ -5,12 +5,28 @@ import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link } from '@inertiajs/react';
 
+const NAV_ITEMS = [
+    { label: 'Dashboard', href: '/dashboard', roles: [] },
+    { label: 'Admin', href: '/admin', roles: ['admin'] },
+    { label: 'Users', href: '/admin/users', roles: ['admin'] },
+    { label: 'Marketplace', href: '/marketplace', roles: ['buyer', 'admin'] },
+    { label: 'Products', href: '/commerce/products', roles: ['supplier', 'admin'] },
+    { label: 'Orders', href: '/commerce/orders', roles: ['buyer', 'supplier', 'admin'] },
+    { label: 'Campaigns', href: '/marketing/campaigns', roles: ['marketing_manager', 'admin'] },
+    { label: 'Social', href: '/social/calendar', roles: ['marketing_manager', 'admin'] },
+    { label: 'Workflow', href: '/workflow/logs', roles: ['marketing_manager', 'admin'] },
+];
+
 export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+    const roles = user?.roles || [];
+    const currentPath = typeof window === 'undefined' ? '' : window.location.pathname;
+    const navItems = NAV_ITEMS.filter((item) => item.roles.length === 0 || item.roles.some((role) => roles.includes(role)));
+    const isActive = (href) => currentPath === href || currentPath.startsWith(`${href}/`);
 
     return (
         <div className="min-h-screen bg-gray-100">
-            <nav className="bg-white border-b border-gray-100">
+            <nav className="border-b border-gray-200 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex">
@@ -20,10 +36,12 @@ export default function Authenticated({ user, header, children }) {
                                 </Link>
                             </div>
 
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink href={route('dashboard')} active={route().current('dashboard')}>
-                                    Dashboard
-                                </NavLink>
+                            <div className="hidden gap-6 sm:-my-px sm:ms-10 sm:flex">
+                                {navItems.map((item) => (
+                                    <NavLink key={item.href} href={item.href} active={isActive(item.href)}>
+                                        {item.label}
+                                    </NavLink>
+                                ))}
                             </div>
                         </div>
 
@@ -92,15 +110,20 @@ export default function Authenticated({ user, header, children }) {
 
                 <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
                     <div className="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
-                            Dashboard
-                        </ResponsiveNavLink>
+                        {navItems.map((item) => (
+                            <ResponsiveNavLink key={item.href} href={item.href} active={isActive(item.href)}>
+                                {item.label}
+                            </ResponsiveNavLink>
+                        ))}
                     </div>
 
                     <div className="pt-4 pb-1 border-t border-gray-200">
                         <div className="px-4">
                             <div className="font-medium text-base text-gray-800">{user.name}</div>
                             <div className="font-medium text-sm text-gray-500">{user.email}</div>
+                            <div className="mt-1 text-xs font-medium uppercase tracking-wide text-gray-400">
+                                {roles.join(', ') || 'no role'}
+                            </div>
                         </div>
 
                         <div className="mt-3 space-y-1">
