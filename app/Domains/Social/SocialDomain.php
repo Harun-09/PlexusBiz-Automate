@@ -12,6 +12,7 @@ class SocialDomain extends BaseDomainModule
             key: 'social',
             name: 'Social Automation',
             routes: ['web,auth' => base_path('routes/domains/social.php')],
+            providers: [SocialServiceProvider::class],
         );
     }
 }
