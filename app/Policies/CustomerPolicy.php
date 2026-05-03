@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Policies;
+
+use App\Domains\CRM\Models\Customer;
+use App\Models\User;
+
+class CustomerPolicy
+{
+    public function viewAny(User $user): bool
+    {
+        return $user->hasRole('admin');
+    }
+
+    public function view(User $user, Customer $customer): bool
+    {
+        return $user->hasRole('admin') || $customer->user_id === $user->id;
+    }
+}
