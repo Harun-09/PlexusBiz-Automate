@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PlexusBiz Automate Workflow</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f6f7f9;
+            --panel: #ffffff;
+            --text: #172033;
+            --muted: #667085;
+            --border: #d9dee8;
+            --done: #057a55;
+            --todo: #8a5200;
+            --active: #175cd3;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.5;
+        }
+
+        main {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 32px 20px 56px;
+        }
+
+        h1, h2, h3 {
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: 32px;
+            letter-spacing: 0;
+        }
+
+        h2 {
+            font-size: 20px;
+            margin-bottom: 14px;
+        }
+
+        h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        p {
+            margin: 8px 0 0;
+            color: var(--muted);
+        }
+
+        section {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 18px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        th, td {
+            border-bottom: 1px solid var(--border);
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            color: #344054;
+            font-weight: 700;
+            background: #f9fafb;
+        }
+
+        ul {
+            margin: 10px 0 0;
+            padding-left: 20px;
+        }
+
+        li {
+            margin: 6px 0;
+        }
+
+        .meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .meta div {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+        }
+
+        .label {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: .04em;
+        }
+
+        .value {
+            display: block;
+            margin-top: 4px;
+            font-weight: 700;
+        }
+
+        .status {
+            display: inline-block;
+            min-width: 86px;
+            border-radius: 999px;
+            padding: 3px 9px;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .done {
+            color: var(--done);
+            background: #dcfae6;
+        }
+
+        .todo {
+            color: var(--todo);
+            background: #fef0c7;
+        }
+
+        .active {
+            color: var(--active);
+            background: #d1e9ff;
+        }
+
+        code {
+            background: #eef2f6;
+            border-radius: 5px;
+            padding: 2px 5px;
+            color: #101828;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <header>
+        <h1>PlexusBiz Automate Workflow</h1>
+        <p>Senior implementation tracker for the PLEXUS CLOUD B2B E-Commerce and Business Automation Platform.</p>
+    </header>
+
+    <div class="meta">
+        <div>
+            <span class="label">Project</span>
+            <span class="value">PlexusBiz-Automate</span>
+        </div>
+        <div>
+            <span class="label">Stack</span>
+            <span class="value">Laravel 10+, React, Tailwind CSS, MySQL</span>
+        </div>
+        <div>
+            <span class="label">Architecture</span>
+            <span class="value">Modular Monolith by domain</span>
+        </div>
+        <div>
+            <span class="label">Repository Rule</span>
+            <span class="value">Commit and push after each completed part</span>
+        </div>
+    </div>
+
+    <section>
+        <h2>Operating Rules</h2>
+        <ul>
+            <li>Read this workflow before starting any new implementation part.</li>
+            <li>After completing one part, update this file, commit with a short senior-style message, and push immediately.</li>
+            <li>Do not batch unrelated finished parts into one commit or one push.</li>
+            <li>Use production-grade code only; no placeholder examples for required platform logic.</li>
+            <li>Use React for interactive screens and Tailwind CSS for UI styling.</li>
+            <li>Keep credentials and provider secrets in <code>.env</code>; never commit real secrets.</li>
+            <li>Use a Modular Monolith structure: domain code must be grouped by business area such as ECommerce, CRM, Automation, Marketing, Social, Support, Admin, and Settings.</li>
+            <li>Every automation execution must write a <code>workflow_logs</code> row with the full JSON trigger payload snapshot, status, result, error, and executed timestamp.</li>
+            <li>External email, SMS, Facebook, and Instagram integrations must be adapter-based and mockable until real credentials are configured.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Implementation Progress</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Part</th>
+                <th>Status</th>
+                <th>Completion Rule</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Workflow file and repository setup</td>
+                <td><span class="status active">Active</span></td>
+                <td>Create this workflow file, initialize Git, create a public GitHub repository, commit, and push.</td>
+            </tr>
+            <tr>
+                <td>Laravel, React, Tailwind project foundation</td>
+                <td><span class="status todo">Todo</span></td>
+                <td>Install Laravel 10+, React, Vite, Tailwind CSS, auth foundation, routes, config, and base layout.</td>
+            </tr>
+            <tr>
+                <td>Modular Monolith domain structure</td>
+                <td><span class="status todo">Todo</span></td>
+                <td>Create domain folders and shared conventions for ECommerce, CRM, Marketing, Social, Workflow, Support, Admin, Settings, and Notifications.</td>
+            </tr>
+            <tr>
+                <td>Authentication and RBAC</td>
+                <td><span class="status todo">Todo</span></td>
+                <td>Implement users, roles, permissions, middleware, policies, seed roles, and role-specific dashboards.</td>
+            </tr>
+            <tr>
+                <td>E-Commerce marketplace</td>
+                <td><span class="status todo">Todo</span></td>
+                <td>Implement suppliers, products, categories, images, pricing tiers, inventory, cart, checkout, orders, order items, invoices, RFQs, and ownership rules.</td>
+            </tr>
+            <tr>
+                <td>CRM</td>
+                <td><span class="status todo">Todo</span></td>
+                <td>Implement customers, profiles, leads, segmentation, purchase history, interactions, and lifecycle tracking.</td>
+            </tr>
+            <tr>
+                <td>Marketing automation</td>
+                <td><span class="status todo">Todo</span></td>
+                <td>Implement campaigns, templates, recipients, email/SMS providers, triggers, dispatch jobs, and message logs.</td>
+            </tr>
+            <tr>
+                <td>Social automation</td>
+                <td><span class="status todo">Todo</span></td>
+                <td>Implement scheduled posts, calendar views, mock Facebook/Instagram providers, publish jobs, and engagement placeholders.</td>
+            </tr>
+            <tr>
+                <td>Workflow automation engine</td>
+                <td><span class="status todo">Todo</span></td>
+                <td>Implement automation rules, event listeners, queued execution, action handlers, retries, and full JSON payload snapshots in workflow logs.</td>
+            </tr>
+            <tr>
+                <td>Admin, supplier, buyer, marketing, and workflow UI</td>
+                <td><span class="status todo">Todo</span></td>
+                <td>Build dashboards, data tables, forms, filters, status badges, empty states, and role-aware navigation with React and Tailwind.</td>
+            </tr>
+            <tr>
+                <td>Support automation and chatbot API</td>
+                <td><span class="status todo">Todo</span></td>
+                <td>Implement tickets, messages, auto responses, supplier notifications, FAQ/template matching, and chatbot-ready REST endpoint.</td>
+            </tr>
+            <tr>
+                <td>REST API resources</td>
+                <td><span class="status todo">Todo</span></td>
+                <td>Implement consistent API routes, requests, resources, policies, pagination, filtering, and rate limits for all modules.</td>
+            </tr>
+            <tr>
+                <td>Testing, seed data, and documentation</td>
+                <td><span class="status todo">Todo</span></td>
+                <td>Add critical feature/unit tests, factories, seeders, README, .env.example, queue/scheduler docs, deployment checklist, and backup commands.</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Current Decisions</h2>
+        <ul>
+            <li>Laravel will own domain logic, persistence, APIs, events, queues, scheduler, policies, and notifications.</li>
+            <li>React will own dynamic application screens through Vite while Laravel provides backend routes and API boundaries.</li>
+            <li>Tailwind CSS will be the only UI utility framework.</li>
+            <li>Automation payload logging is mandatory and must preserve full trigger context as JSON, not just selected fields.</li>
+        </ul>
+    </section>
+</main>
+</body>
+</html>
