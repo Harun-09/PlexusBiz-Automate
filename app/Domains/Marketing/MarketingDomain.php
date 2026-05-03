@@ -12,6 +12,7 @@ class MarketingDomain extends BaseDomainModule
             key: 'marketing',
             name: 'Marketing Automation',
             routes: ['web,auth' => base_path('routes/domains/marketing.php')],
+            providers: [MarketingServiceProvider::class],
         );
     }
 }
