@@ -27,10 +27,17 @@ export default function Login({ status, canResetPassword }) {
     };
 
     return (
-        <GuestLayout>
+        <GuestLayout
+            variant="register"
+            registerHero={{
+                eyebrow: 'Secure access',
+                title: 'Welcome back to your workspace.',
+                lead: 'Log in to continue with your team console.',
+            }}
+        >
             <Head title="Sign in" />
 
-            <div className="auth-form">
+            <div className="auth-form auth-form--register">
                 <div className="auth-card-brand">
                     <span className="auth-card-brand__mark">
                         <img
@@ -45,18 +52,14 @@ export default function Login({ status, canResetPassword }) {
                     </span>
                 </div>
 
-                <div className="auth-form__header">
-                    <span className="auth-eyebrow">Welcome back</span>
-                    <h2>Sign in to your workspace</h2>
-                    <p>
-                        Access your dashboard, automations, and team tools from a clean, focused login
-                        experience.
-                    </p>
+                <div className="auth-form__header auth-form__header--register">
+                    <span className="auth-eyebrow">Sign in</span>
+                    <h2>Log in to your account.</h2>
                 </div>
 
                 {status && <div className="auth-alert auth-alert--success">{status}</div>}
 
-                <form onSubmit={submit} className="auth-form__body">
+                <form onSubmit={submit} className="auth-form__body auth-form__body--register">
                     <div className="auth-field">
                         <InputLabel htmlFor="email" value="Email address" className="auth-label" />
 
@@ -115,9 +118,12 @@ export default function Login({ status, canResetPassword }) {
                     </PrimaryButton>
                 </form>
 
-                <p className="auth-footer">
-                    Secure access for your team workspace with a faster, more polished login flow.
-                </p>
+                <div className="auth-alt-action">
+                    <span>Need an account?</span>
+                    <Link href={route('register')} className="auth-link">
+                        Create account
+                    </Link>
+                </div>
             </div>
         </GuestLayout>
     );

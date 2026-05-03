@@ -1,7 +1,12 @@
 import { Link } from '@inertiajs/react';
 
-export default function Guest({ children, variant = 'login' }) {
+export default function Guest({ children, variant = 'login', registerHero = {} }) {
     const isRegister = variant === 'register';
+    const registerHeroContent = {
+        eyebrow: registerHero.eyebrow ?? 'Create account',
+        title: registerHero.title ?? 'Start your free trial today.',
+        lead: registerHero.lead ?? 'No credit card required.',
+    };
 
     if (isRegister) {
         return (
@@ -28,9 +33,11 @@ export default function Guest({ children, variant = 'login' }) {
                             </span>
                         </Link>
 
-                        <div className="auth-register-hero__eyebrow">Create account</div>
-                        <h1>Start your free trial today.</h1>
-                        <p className="auth-register-hero__lede">No credit card required.</p>
+                        <div className="auth-register-hero__eyebrow">
+                            {registerHeroContent.eyebrow}
+                        </div>
+                        <h1>{registerHeroContent.title}</h1>
+                        <p className="auth-register-hero__lede">{registerHeroContent.lead}</p>
 
                         <div className="auth-register-visual" aria-hidden="true">
                             <div className="auth-register-visual__orb auth-register-visual__orb--large" />
