@@ -30,21 +30,7 @@ export default function Guest({ children, variant = 'login' }) {
 
                         <div className="auth-register-hero__eyebrow">Create account</div>
                         <h1>Start your free trial today.</h1>
-                        <p className="auth-register-hero__lede">
-                            No credit card required, no software to install.
-                        </p>
-
-                        <div className="auth-register-hero__section-title">With your trial, you get:</div>
-
-                        <ul className="auth-register-hero__list">
-                            <li>Guided onboarding, best practices, and a clear first-step path.</li>
-                            <li>Preconfigured dashboards, processes, and team-ready access.</li>
-                            <li>A polished setup experience that stays calm on mobile.</li>
-                        </ul>
-
-                        <p className="auth-register-hero__contact">
-                            Questions? Talk to our onboarding team for a quick walkthrough.
-                        </p>
+                        <p className="auth-register-hero__lede">No credit card required.</p>
 
                         <div className="auth-register-visual" aria-hidden="true">
                             <div className="auth-register-visual__orb auth-register-visual__orb--large" />

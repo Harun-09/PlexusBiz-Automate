@@ -76,17 +76,7 @@ export default function Register() {
 
                 <div className="auth-form__header auth-form__header--register">
                     <span className="auth-eyebrow">Create your account</span>
-                    <h2>Sign up now to start your free trial.</h2>
-                    <p>
-                        Complete the form to start your free trial. Our team will be in touch to help you
-                        make the most of your workspace.
-                    </p>
-                </div>
-
-                <div className="auth-register-badges" aria-label="Signup highlights">
-                    <span className="auth-badge">Fast onboarding</span>
-                    <span className="auth-badge">Team access</span>
-                    <span className="auth-badge">Secure account</span>
+                    <h2>Create your account.</h2>
                 </div>
 
                 <form onSubmit={submit} className="auth-form__body auth-form__body--register">
@@ -315,11 +305,6 @@ export default function Register() {
                             </span>
                         </label>
                     </div>
-
-                    <p className="auth-note auth-note--register">
-                        We use this information to create your workspace and keep onboarding fast for your
-                        team.
-                    </p>
 
                     <PrimaryButton className="auth-submit" disabled={processing}>
                         {processing ? 'Creating account...' : 'Start my free trial'}
