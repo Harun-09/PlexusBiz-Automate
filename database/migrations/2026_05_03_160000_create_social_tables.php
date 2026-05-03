@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('handle')->nullable();
             $table->string('status', 32)->default('active')->index();
-            $table->json('credentials_json')->nullable();
+            $table->text('credentials_json')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
