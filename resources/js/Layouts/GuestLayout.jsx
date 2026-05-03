@@ -17,14 +17,14 @@ export default function Guest({ children, variant = 'login' }) {
                         <Link href="/" className="auth-brand auth-brand--register" aria-label="Go to homepage">
                             <span className="auth-brand__mark auth-brand__mark--register">
                                 <img
-                                    src="/images/plexuscloud-logo.png"
-                                    alt="Plexus Cloud"
+                                    src="/images/project-logo.png"
+                                    alt="PlexusBiz Automate"
                                     className="auth-brand__logo"
                                 />
                             </span>
                             <span className="auth-brand__copy">
-                                <strong>Plexus Cloud</strong>
-                                <span>Cloud & automation workspace</span>
+                                <strong>PlexusBiz Automate</strong>
+                                <span>Business automation workspace</span>
                             </span>
                         </Link>
 
@@ -97,14 +97,14 @@ export default function Guest({ children, variant = 'login' }) {
                         <Link href="/" className="auth-brand" aria-label="Go to homepage">
                             <span className="auth-brand__mark">
                                 <img
-                                    src="/images/plexuscloud-logo.png"
-                                    alt="Plexus Cloud"
+                                    src="/images/project-logo.png"
+                                    alt="PlexusBiz Automate"
                                     className="auth-brand__logo"
                                 />
                             </span>
                             <span className="auth-brand__copy">
-                                <strong>Plexus Cloud</strong>
-                                <span>Cloud & automation workspace</span>
+                                <strong>PlexusBiz Automate</strong>
+                                <span>Business automation workspace</span>
                             </span>
                         </Link>
 

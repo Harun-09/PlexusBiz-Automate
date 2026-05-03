@@ -63,13 +63,13 @@ export default function Register() {
                 <div className="auth-card-brand auth-card-brand--visible">
                     <span className="auth-card-brand__mark">
                         <img
-                            src="/images/plexuscloud-logo.png"
-                            alt="Plexus Cloud"
+                            src="/images/project-logo.png"
+                            alt="PlexusBiz Automate"
                             className="auth-card-brand__logo"
                         />
                     </span>
                     <span className="auth-card-brand__copy">
-                        <strong>Plexus Cloud</strong>
+                        <strong>PlexusBiz Automate</strong>
                         <span>Enterprise signup</span>
                     </span>
                 </div>
@@ -156,7 +156,7 @@ export default function Register() {
                                 value={data.company}
                                 className="auth-input"
                                 autoComplete="organization"
-                                placeholder="Plexus Cloud"
+                                placeholder="PlexusBiz Automate"
                                 onChange={(e) => setData('company', e.target.value)}
                                 required
                             />

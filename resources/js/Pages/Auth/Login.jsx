@@ -33,10 +33,14 @@ export default function Login({ status, canResetPassword }) {
             <div className="auth-form">
                 <div className="auth-card-brand">
                     <span className="auth-card-brand__mark">
-                        <img src="/images/plexuscloud-logo.png" alt="Plexus Cloud" className="auth-card-brand__logo" />
+                        <img
+                            src="/images/project-logo.png"
+                            alt="PlexusBiz Automate"
+                            className="auth-card-brand__logo"
+                        />
                     </span>
                     <span className="auth-card-brand__copy">
-                        <strong>Plexus Cloud</strong>
+                        <strong>PlexusBiz Automate</strong>
                         <span>Official workspace login</span>
                     </span>
                 </div>
