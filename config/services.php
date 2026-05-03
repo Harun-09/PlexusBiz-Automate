@@ -31,4 +31,8 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'api' => [
+        'rate_limit_per_minute' => env('API_RATE_LIMIT_PER_MINUTE', 60),
+    ],
+
 ];

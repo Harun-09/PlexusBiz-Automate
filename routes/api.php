@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\SupportChatbotController;
+use App\Http\Controllers\Api\UserProfileController;
 use App\Http\Controllers\Api\V1\CampaignController;
 use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\OrderController;
@@ -8,7 +9,6 @@ use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\SocialPostController;
 use App\Http\Controllers\Api\V1\SupportTicketController;
 use App\Http\Controllers\Api\V1\WorkflowLogController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,9 +22,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::middleware('auth:sanctum')->get('/user', UserProfileController::class);
 
 Route::middleware('auth:sanctum')->prefix('support')->name('support.')->group(function (): void {
     Route::post('/chatbot/message', SupportChatbotController::class)->name('chatbot.message');

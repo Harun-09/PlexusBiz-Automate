@@ -1,66 +1,96 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# PlexusBiz Automate
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+PlexusBiz Automate is a Laravel 10, React, and Tailwind CSS modular monolith for B2B e-commerce, CRM, marketing automation, social scheduling, workflow automation, support automation, and REST APIs.
 
-## About Laravel
+## Architecture
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+The application keeps business logic grouped by domain under `app/Domains`:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- `ECommerce`: suppliers, catalog, pricing tiers, inventory, cart, checkout, orders, invoices, RFQs.
+- `CRM`: customer profiles, lifecycle tracking, leads, interactions, segmentation.
+- `Marketing`: campaigns, templates, recipients, mockable email/SMS providers, dispatch jobs.
+- `Social`: social accounts, scheduled posts, mock Facebook/Instagram publishing, engagement placeholders.
+- `Workflow`: automation rules, event listeners, queued/sync action execution, full payload snapshots in `workflow_logs`.
+- `Support`: support tickets, messages, FAQ matching, auto replies, supplier notifications, chatbot API.
+- `Admin`, `Settings`, `Notifications`: route and module boundaries for platform expansion.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Domain routes are registered through `App\Providers\DomainServiceProvider` and the module registry in `config/domains.php`.
 
-## Learning Laravel
+## Local Setup
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```bash
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+npm run build
+php artisan serve
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+For local development with hot reload:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+npm run dev
+php artisan serve
+```
 
-## Laravel Sponsors
+Seeded accounts:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+| Role | Email | Password |
+| --- | --- | --- |
+| Admin | `admin@plexus.test` | `password` |
+| Supplier | `supplier@plexus.test` | `password` |
+| Buyer | `buyer@plexus.test` | `password` |
+| Marketing Manager | `marketing@plexus.test` | `password` |
 
-### Premium Partners
+## Testing
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+```bash
+php artisan test
+npm run build
+npm audit --audit-level=low
+```
 
-## Contributing
+Current coverage includes RBAC, checkout and inventory, CRM purchase history, marketing dispatch, social publishing, workflow payload snapshots, support automation, workspace routes, and authenticated API resources.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## API
 
-## Code of Conduct
+All v1 API routes use Sanctum authentication and Laravel policies.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```text
+GET  /api/v1/products
+GET  /api/v1/orders
+GET  /api/v1/customers
+GET  /api/v1/campaigns
+GET  /api/v1/social-posts
+GET  /api/v1/workflow-logs
+GET  /api/v1/support-tickets
+POST /api/v1/support/chatbot/message
+```
 
-## Security Vulnerabilities
+Index endpoints support:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- `search`
+- `status`
+- `per_page` from 1 to 100
+- `sort`, with `-created_at` style descending fields
 
-## License
+The support chatbot endpoint also remains available at `POST /api/support/chatbot/message` for compatibility.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Automation Logging
+
+Automation execution must preserve trigger context. `WorkflowEngineService` writes every matched, skipped, queued, successful, or failed execution to `workflow_logs` with:
+
+- `trigger_event`
+- full JSON `payload`
+- `status`
+- JSON `result`
+- `error`
+- `executed_at`
+
+This applies to order placement and support ticket creation events.
+
+## Operations
+
+See [docs/operations.md](docs/operations.md) for queue workers, scheduler setup, deployment checklist, and backup/restore commands.
