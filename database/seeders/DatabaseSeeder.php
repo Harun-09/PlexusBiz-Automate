@@ -17,5 +17,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CRMSeeder::class);
         $this->call(MarketingSeeder::class);
         $this->call(SocialSeeder::class);
+        $this->call(WorkflowSeeder::class);
     }
 }
