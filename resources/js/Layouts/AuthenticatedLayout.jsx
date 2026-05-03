@@ -12,6 +12,7 @@ const NAV_ITEMS = [
     { label: 'Marketplace', href: '/marketplace', roles: ['buyer', 'admin'] },
     { label: 'Products', href: '/commerce/products', roles: ['supplier', 'admin'] },
     { label: 'Orders', href: '/commerce/orders', roles: ['buyer', 'supplier', 'admin'] },
+    { label: 'Support', href: '/support/tickets', roles: ['buyer', 'supplier', 'admin'] },
     { label: 'Campaigns', href: '/marketing/campaigns', roles: ['marketing_manager', 'admin'] },
     { label: 'Social', href: '/social/calendar', roles: ['marketing_manager', 'admin'] },
     { label: 'Workflow', href: '/workflow/logs', roles: ['marketing_manager', 'admin'] },

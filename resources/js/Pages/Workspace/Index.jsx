@@ -12,7 +12,7 @@ const statusTone = (value) => {
         return 'border-rose-200 bg-rose-50 text-rose-700';
     }
 
-    if (['pending', 'scheduled', 'running', 'draft'].includes(normalized)) {
+    if (['pending', 'scheduled', 'running', 'draft', 'waiting_supplier'].includes(normalized)) {
         return 'border-amber-200 bg-amber-50 text-amber-700';
     }
 

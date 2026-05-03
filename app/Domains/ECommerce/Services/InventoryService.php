@@ -48,7 +48,7 @@ class InventoryService
         ?Model $reference = null,
         array $metadata = [],
     ): InventoryMovement {
-        $before = $product->stock_quantity;
+        $before = (int) ($product->stock_quantity ?? 0);
         $after = match ($type) {
             InventoryMovementType::StockIn, InventoryMovementType::OrderRelease => $before + $quantity,
             InventoryMovementType::StockOut, InventoryMovementType::OrderReserve => $before - $quantity,

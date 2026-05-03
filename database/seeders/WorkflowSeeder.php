@@ -40,5 +40,32 @@ class WorkflowSeeder extends Seeder
                 'run_async' => false,
             ],
         );
+
+        AutomationRule::updateOrCreate(
+            ['name' => 'Ticket supplier notification automation'],
+            [
+                'trigger_event' => WorkflowTriggerEvent::TicketCreated->value,
+                'conditions_json' => [
+                    ['field' => 'ticket.status', 'operator' => 'not_equals', 'value' => 'closed'],
+                ],
+                'actions_json' => [
+                    [
+                        'type' => WorkflowActionType::NotifySupplier->value,
+                        'config' => [
+                            'message' => 'Support ticket supplier notification was prepared.',
+                        ],
+                    ],
+                    [
+                        'type' => WorkflowActionType::CreateTicketAutoReply->value,
+                        'config' => [
+                            'message' => 'Support auto response action recorded.',
+                        ],
+                    ],
+                ],
+                'status' => AutomationRuleStatus::Active,
+                'priority' => 20,
+                'run_async' => false,
+            ],
+        );
     }
 }

@@ -13,6 +13,8 @@ use App\Domains\Marketing\Enums\CampaignStatus;
 use App\Domains\Marketing\Models\Campaign;
 use App\Domains\Social\Enums\SocialPostStatus;
 use App\Domains\Social\Models\SocialPost;
+use App\Domains\Support\Enums\TicketStatus;
+use App\Domains\Support\Models\SupportTicket;
 use App\Domains\Workflow\Enums\WorkflowLogStatus;
 use App\Domains\Workflow\Models\WorkflowLog;
 use App\Enums\UserStatus;
@@ -207,6 +209,36 @@ class WorkspaceController extends Controller
         ]);
 
         return $this->page('Workflow Logs', 'Automation execution history with payload snapshots stored in the database.', [], ['Rule', 'Trigger', 'Status', 'Executed', 'Error'], $rows, filters: $filters);
+    }
+
+    public function supportTickets(Request $request): Response
+    {
+        $filters = $this->filters($request, $this->enumValues(TicketStatus::class));
+        $query = SupportTicket::query()->with(['requester', 'supplier']);
+
+        if ($request->user()->hasRole('buyer')) {
+            $query->where('requester_id', $request->user()->id);
+        }
+
+        if ($request->user()->hasRole('supplier')) {
+            $query->whereHas('supplier', fn (Builder $supplier) => $supplier->where('user_id', $request->user()->id));
+        }
+
+        $rows = $this->applyListFilters($query, $filters, ['ticket_number', 'subject', 'description'])
+            ->latest()
+            ->limit(50)
+            ->get()
+            ->map(fn (SupportTicket $ticket): array => [
+                'Ticket' => $ticket->ticket_number,
+                'Subject' => $ticket->subject,
+                'Requester' => $ticket->requester?->name,
+                'Supplier' => $ticket->supplier?->company_name,
+                'Priority' => $ticket->priority->value,
+                'Status' => $ticket->status->value,
+                'Updated' => $ticket->last_message_at?->format('Y-m-d H:i') ?? 'n/a',
+            ]);
+
+        return $this->page('Support Tickets', 'Buyer and supplier support tickets with automated replies and supplier notifications.', [], ['Ticket', 'Subject', 'Requester', 'Supplier', 'Priority', 'Status', 'Updated'], $rows, filters: $filters);
     }
 
     private function page(string $title, string $description, array $metrics, array $columns, iterable $rows, string $emptyState = 'No records found.', ?array $filters = null): Response

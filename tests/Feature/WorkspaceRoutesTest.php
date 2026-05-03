@@ -32,6 +32,7 @@ class WorkspaceRoutesTest extends TestCase
         $marketing = User::where('email', 'marketing@plexus.test')->firstOrFail();
 
         $this->actingAs($buyer)->get('/marketplace')->assertOk();
+        $this->actingAs($buyer)->get('/support/tickets')->assertOk();
         $this->actingAs($supplier)->get('/commerce/products')->assertOk();
         $this->actingAs($marketing)->get('/marketing/campaigns')->assertOk();
         $this->actingAs($marketing)->get('/workflow/logs')->assertOk();

@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Domains\ECommerce\Events\OrderPlaced;
+use App\Domains\Support\Events\SupportTicketCreated;
 use App\Domains\Workflow\Listeners\RunWorkflowForOrderPlaced;
+use App\Domains\Workflow\Listeners\RunWorkflowForTicketCreated;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -22,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         OrderPlaced::class => [
             RunWorkflowForOrderPlaced::class,
+        ],
+        SupportTicketCreated::class => [
+            RunWorkflowForTicketCreated::class,
         ],
     ];
 
