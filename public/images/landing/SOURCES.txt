@@ -1,0 +1,20 @@
+Landing page images are downloaded from Wikimedia Commons file pages:
+
+1) hero-desk.jpg
+   Source page: https://commons.wikimedia.org/wiki/File:Desk_Setup_(Unsplash).jpg
+   Direct image: https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Desk_Setup_%28Unsplash%29.jpg/1280px-Desk_Setup_%28Unsplash%29.jpg
+
+2) deal-two-monitor.jpg
+   Source page: https://commons.wikimedia.org/wiki/File:Designer%27s_two-screen_setup_(Unsplash).jpg
+   Direct image: https://upload.wikimedia.org/wikipedia/commons/9/9b/Designer%27s_two-screen_setup_%28Unsplash%29.jpg
+
+3) deal-imac.jpg
+   Source page: https://commons.wikimedia.org/wiki/File:Gabriel_Beaudry%27s_desk_setup_(Unsplash).jpg
+   Direct image: https://upload.wikimedia.org/wikipedia/commons/8/8a/Gabriel_Beaudry%27s_desk_setup_%28Unsplash%29.jpg
+
+4) deal-photographer-desk.jpg
+   Source page: https://commons.wikimedia.org/wiki/File:Photographer_desk_setup_(Unsplash).jpg
+   Direct image: https://upload.wikimedia.org/wikipedia/commons/b/b6/Photographer_desk_setup_%28Unsplash%29.jpg
+
+License note:
+Each source page above states the image is available under Creative Commons CC0 1.0.
