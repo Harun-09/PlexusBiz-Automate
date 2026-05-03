@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Domains\CRM\Models\Customer;
 use App\Domains\ECommerce\Models\Order;
 use App\Domains\ECommerce\Models\Supplier;
 use App\Enums\UserStatus;
@@ -63,6 +64,11 @@ class User extends Authenticatable
     public function supplier(): HasOne
     {
         return $this->hasOne(Supplier::class);
+    }
+
+    public function customer(): HasOne
+    {
+        return $this->hasOne(Customer::class);
     }
 
     public function orders(): HasMany

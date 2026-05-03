@@ -14,5 +14,6 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RbacSeeder::class);
         $this->call(ECommerceSeeder::class);
+        $this->call(CRMSeeder::class);
     }
 }

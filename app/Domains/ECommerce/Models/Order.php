@@ -2,6 +2,7 @@
 
 namespace App\Domains\ECommerce\Models;
 
+use App\Domains\CRM\Models\Customer;
 use App\Domains\ECommerce\Enums\OrderStatus;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -41,6 +42,11 @@ class Order extends Model
     public function buyer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'buyer_id');
+    }
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
     }
 
     public function items(): HasMany

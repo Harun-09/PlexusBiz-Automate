@@ -2,6 +2,9 @@
 
 namespace App\Domains\ECommerce\Services;
 
+use App\Domains\CRM\Enums\InteractionType;
+use App\Domains\CRM\Services\CustomerProfileService;
+use App\Domains\CRM\Services\InteractionLogger;
 use App\Domains\ECommerce\Enums\CartStatus;
 use App\Domains\ECommerce\Enums\InvoiceStatus;
 use App\Domains\ECommerce\Enums\OrderStatus;
@@ -20,6 +23,8 @@ class CheckoutService
         private readonly InventoryService $inventory,
         private readonly PricingService $pricing,
         private readonly NumberSequenceService $numbers,
+        private readonly CustomerProfileService $customers,
+        private readonly InteractionLogger $interactions,
     ) {
     }
 
@@ -28,6 +33,7 @@ class CheckoutService
         return DB::transaction(function () use ($buyer, $cart): Order {
             $cart = $this->lockCart($buyer, $cart);
             $cart->load('items.product');
+            $customer = $this->customers->ensureForUser($buyer);
 
             if ($cart->items->isEmpty()) {
                 throw ValidationException::withMessages(['cart' => 'Cart is empty.']);
@@ -58,6 +64,7 @@ class CheckoutService
 
             $order = Order::create([
                 'buyer_id' => $buyer->id,
+                'customer_id' => $customer->id,
                 'order_number' => $this->numbers->orderNumber(),
                 'status' => OrderStatus::Confirmed,
                 'subtotal' => number_format($subtotal, 2, '.', ''),
@@ -95,6 +102,17 @@ class CheckoutService
                 'issued_at' => now(),
                 'due_at' => now()->addDays(7),
             ]);
+
+            $this->customers->attachOrder($customer, $order);
+            $this->interactions->record(
+                customer: $customer,
+                type: InteractionType::Order,
+                summary: sprintf('Order %s placed for %s.', $order->order_number, $order->grand_total),
+                related: $order,
+                payload: ['order_number' => $order->order_number, 'grand_total' => $order->grand_total],
+                actor: $buyer,
+                direction: 'inbound',
+            );
 
             $cart->forceFill([
                 'status' => CartStatus::Converted,
