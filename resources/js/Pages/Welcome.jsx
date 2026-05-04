@@ -394,20 +394,11 @@ function FooterColumn({ section }) {
     );
 }
 
-const categoryMenuItems = [
-    { icon: 'M4 6h16M4 12h16M4 18h16', label: 'Components & Storage', href: '#components' },
-    { icon: 'M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z', label: 'Computer Systems', href: '#systems' },
-    { icon: 'M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z', label: 'Computer Peripherals', href: '#peripherals' },
-    { icon: 'M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01', label: 'Server & Components', href: '#servers' },
-    { icon: 'M13 10V3L4 14h7v7l9-11h-7z', label: 'Appliances', href: '#appliances' },
-    { icon: 'M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z', label: 'Electronics', href: '#electronics' },
-    { icon: 'M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z M21 12a9 9 0 11-18 0 9 9 0 0118 0z', label: 'Gaming & VR', href: '#gaming' },
-    { icon: 'M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0', label: 'Networking', href: '#networking' },
-    { icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', label: 'Smart Home & Security', href: '#smarthome' },
-    { icon: 'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z', label: 'Office Solutions', href: '#office' },
-    { icon: 'M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z', label: 'Software & Services', href: '#software' },
-    { icon: 'M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4', label: 'Automotive & Tools', href: '#automotive' },
-    { icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', label: 'Home & Outdoors', href: '#home' },
+const marketplaceShortcutItems = [
+    { abbr: 'PRO', title: 'Products', href: route('products.index') },
+    { abbr: 'ORD', title: 'Orders', href: route('commerce.orders.index') },
+    { abbr: 'INV', title: 'Invoices', href: route('invoices.index') },
+    { abbr: 'SUP', title: 'Support', href: route('support.tickets.index') },
 ];
 
 const comboBundlesPrimary = [
@@ -1253,22 +1244,33 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                     <section className="grid h-full gap-4 xl:grid-cols-[280px_minmax(0,1fr)]">
                         <aside className="h-full overflow-hidden rounded-[16px] bg-[#0b2e71] text-white shadow-[0_18px_40px_-22px_rgba(7,18,46,0.85)]">
                             <div className="flex h-full flex-col">
-                                <div className="flex-1 overflow-y-auto py-2">
-                                    {categoryMenuItems.map((item) => (
+                                <div className="mb-3 flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
+                                    <div>
+                                        <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/55">
+                                            Marketplace shortcuts
+                                        </p>
+                                        <h2 className="mt-1 text-base font-black tracking-[-0.03em]">
+                                            Core B2B actions
+                                        </h2>
+                                    </div>
+                                    <span className="rounded-full bg-white/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.16em] text-[#ffd59a]">
+                                        Live
+                                    </span>
+                                </div>
+                                <div className="flex-1 overflow-y-auto px-2">
+                                    {marketplaceShortcutItems.map((item) => (
                                         <Link
-                                            key={item.label}
+                                            key={item.title}
                                             href={item.href}
-                                            className="group flex items-center gap-3 px-3 py-2 text-left transition hover:bg-white/10"
+                                            className="flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-left transition hover:bg-white/10"
                                         >
-                                            <svg className="h-4 w-4 shrink-0 text-[#96b8ef]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                                                <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
-                                            </svg>
-                                            <span className="min-w-0 flex-1 text-[13px] font-medium leading-5 text-white/90">
-                                                {item.label}
+                                            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md border border-white/10 bg-white/10 text-[10px] font-black tracking-[0.08em] text-[#dce8ff]">
+                                                {item.abbr}
                                             </span>
-                                            <svg className="h-3 w-3 shrink-0 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                            </svg>
+                                            <span className="min-w-0 flex-1 text-sm font-semibold leading-5 text-white">
+                                                {item.title}
+                                            </span>
+                                            <span className="text-lg font-black text-white/35">&gt;</span>
                                         </Link>
                                     ))}
                                 </div>

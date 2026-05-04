@@ -515,6 +515,14 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                             </form>
 
                             <div className="flex items-center gap-2 justify-self-end xl:gap-3">
+                                <button
+                                    type="button"
+                                    className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20"
+                                >
+                                    <BellIcon className="h-5 w-5" />
+                                    <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-[#ff8a00] border-2 border-[#0b2e71]"></span>
+                                </button>
+
                                 {!isAuthed && canLogin && (
                                     <Link
                                         href={route('login')}
@@ -557,6 +565,7 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                                         <span className="block text-[13px] font-black tracking-[-0.02em]">Dashboard</span>
                                     </Link>
                                 )}
+
                                 <Link
                                     href={route('cart.index')}
                                     className="relative inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white sm:hidden"
@@ -568,14 +577,6 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                                         </span>
                                     )}
                                 </Link>
-
-                                <button
-                                    type="button"
-                                    className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20"
-                                >
-                                    <BellIcon className="h-5 w-5" />
-                                    <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-[#ff8a00] border-2 border-[#0b2e71]"></span>
-                                </button>
 
                                 <Link href={route('cart.index')} className="relative hidden sm:inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20">
                                     <CartIcon className="h-6 w-6" />
