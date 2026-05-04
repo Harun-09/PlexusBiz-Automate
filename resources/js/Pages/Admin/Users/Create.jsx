@@ -1,14 +1,17 @@
-import AdminLayout from '@/Layouts/AdminLayout';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import UserForm from './Form';
 
 export default function CreateUser({ auth, roles, statuses }) {
     return (
-        <AdminLayout
-            header={{
-                title: 'Create User',
-                subtitle: 'Add a new user to the platform with role assignment.'
-            }}
+        <AuthenticatedLayout
+            user={auth.user}
+            header={
+                <div>
+                    <h2 className="text-xl font-bold text-gray-950">Create User</h2>
+                    <p className="mt-1 text-sm text-gray-500">Add a new user to the platform with role assignment.</p>
+                </div>
+            }
         >
             <Head title="Create User" />
 
@@ -24,6 +27,6 @@ export default function CreateUser({ auth, roles, statuses }) {
                     </div>
                 </div>
             </div>
-        </AdminLayout>
+        </AuthenticatedLayout>
     );
 }

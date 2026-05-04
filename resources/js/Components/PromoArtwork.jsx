@@ -278,7 +278,19 @@ function renderCategoryTileScene(scene = '') {
     );
 }
 
-function PromoArtwork({ variant = 'hero', label, title, copy, sceneLabel, className = '', framed = false }) {
+function PromoArtwork({
+    variant = 'hero',
+    label,
+    title,
+    copy,
+    sceneLabel,
+    imageUrl,
+    imageAlt = '',
+    imageFit = 'contain',
+    imageClassName = '',
+    className = '',
+    framed = false,
+}) {
     const style = variantStyles[variant] ?? variantStyles.hero;
 
     return (
@@ -323,7 +335,16 @@ function PromoArtwork({ variant = 'hero', label, title, copy, sceneLabel, classN
 
             {variant === 'gamingBanner' ? (
                 <div className="absolute inset-0">
-                    {renderGamingBannerScene()}
+                    {imageUrl ? (
+                        <img
+                            src={imageUrl}
+                            alt={imageAlt}
+                            loading="lazy"
+                            className={`absolute inset-0 h-full w-full ${imageFit === 'contain' ? 'object-contain' : 'object-cover'} ${imageClassName}`}
+                        />
+                    ) : (
+                        renderGamingBannerScene()
+                    )}
                 </div>
             ) : null}
 
@@ -357,7 +378,19 @@ function PromoArtwork({ variant = 'hero', label, title, copy, sceneLabel, classN
                     <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0))]" />
                     <div className="absolute inset-0 rounded-[24px] p-3">
                         <div className="relative h-full overflow-hidden rounded-[18px] bg-white shadow-[0_16px_36px_-24px_rgba(15,23,42,0.38)]">
-                            {renderCategoryTileScene(sceneLabel)}
+                            {imageUrl ? (
+                                <>
+                                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,255,255,0.72),transparent_24%),radial-gradient(circle_at_82%_18%,rgba(31,104,217,0.08),transparent_22%),linear-gradient(180deg,#fbfdff_0%,#eef4ff_62%,#dbe6f7_100%)]" />
+                                    <img
+                                        src={imageUrl}
+                                        alt={imageAlt}
+                                        loading="lazy"
+                                        className={`relative z-10 h-full w-full ${imageFit === 'contain' ? 'object-contain p-3' : 'object-cover'} ${imageClassName}`}
+                                    />
+                                </>
+                            ) : (
+                                renderCategoryTileScene(sceneLabel)
+                            )}
                         </div>
                     </div>
                 </div>

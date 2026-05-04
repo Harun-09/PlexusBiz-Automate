@@ -1,14 +1,17 @@
-import AdminLayout from '@/Layouts/AdminLayout';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import SupplierForm from './Form';
 
-export default function CreateSupplier({ users, statuses }) {
+export default function CreateSupplier({ auth, users, statuses }) {
     return (
-        <AdminLayout
-            header={{
-                title: 'Create Supplier',
-                subtitle: 'Onboard a new supplier by linking a user account and entering company details.'
-            }}
+        <AuthenticatedLayout
+            user={auth.user}
+            header={
+                <div>
+                    <h2 className="text-xl font-bold text-gray-950">Create Supplier</h2>
+                    <p className="mt-1 text-sm text-gray-500">Onboard a new supplier by linking a user account and entering company details.</p>
+                </div>
+            }
         >
             <Head title="Create Supplier" />
 
@@ -24,6 +27,6 @@ export default function CreateSupplier({ users, statuses }) {
                     </div>
                 </div>
             </div>
-        </AdminLayout>
+        </AuthenticatedLayout>
     );
 }

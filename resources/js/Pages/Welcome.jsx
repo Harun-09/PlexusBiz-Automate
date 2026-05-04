@@ -4,6 +4,11 @@ import LandingPromoStrip from '@/Components/LandingPromoStrip';
 import PromoArtwork from '@/Components/PromoArtwork';
 import PromoCarousel from '@/Components/PromoCarousel';
 
+const storeAsset = (path) => `/images/store/${path}`;
+const productImage = (name) => storeAsset(`products/${name}.png`);
+const bannerImage = (name) => storeAsset(`banners/${name}.jpg`);
+const brandImage = (name) => storeAsset(`brands/${name}.png`);
+
 const heroStats = [
     {
         value: 'Live',
@@ -68,7 +73,7 @@ const dealItems = [
         badge: 'AI Ready',
         rating: '4.6',
         reviews: '209',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/83-360-936-17.jpg',
+        image: productImage('pc-cyclone-aqua'),
         short: 'Windows 11 Home, Intel Core i5-14400F, RTX 5060, 32GB DDR4, 1TB NVMe SSD.',
     },
     {
@@ -80,7 +85,7 @@ const dealItems = [
         badge: 'Top rated',
         rating: '4.7',
         reviews: '3',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/24-027-380-01.jpg',
+        image: productImage('monitor-s3-120hz'),
         short: 'Full HD, 120Hz refresh, eye saver mode, and dual HDMI for work or gaming.',
     },
     {
@@ -92,7 +97,7 @@ const dealItems = [
         badge: 'Fast typing',
         rating: '4.5',
         reviews: '33',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/23-126-748-01.jpg',
+        image: productImage('keyboard-g915'),
         short: 'Wireless full-size mechanical board with GL linear switches and RGB lighting.',
     },
     {
@@ -104,7 +109,7 @@ const dealItems = [
         badge: 'Comfort fit',
         rating: '4.3',
         reviews: '21',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/26-743-003-08.jpg',
+        image: productImage('headset-scape'),
         short: 'Immersive audio, Bluetooth 5.3, charging stand, and a long battery life.',
     },
     {
@@ -116,7 +121,7 @@ const dealItems = [
         badge: 'Storage',
         rating: '4.9',
         reviews: '7',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-995-001-01.jpg',
+        image: productImage('nas-dxp2800'),
         short: 'Intel N100 quad-core, 8GB DDR5, two SATA bays, two M.2 slots, and 2.5GbE.',
     },
     {
@@ -128,7 +133,7 @@ const dealItems = [
         badge: 'PlexusBiz Select',
         rating: '3.9',
         reviews: '1711',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-234-588-01.jpg',
+        image: productImage('hdd-red-plus'),
         short: '7200 RPM class, CMR, 512MB cache, and a 3-year limited warranty.',
     },
 ];
@@ -218,7 +223,7 @@ const footerSections = [
     },
 ];
 
-const heroBackground = 'https://promotions.newegg.com/nepro/26-0375/Animation/bg_1920x1080.jpg';
+const heroBackground = bannerImage('hero-main');
 
 function layeredBackground(imageUrl, fallbackGradient) {
     return {
@@ -493,15 +498,15 @@ const comboBundlesPrimary = [
         items: [
             {
                 title: 'Intel Core i5-12600KF - Core i5 12th Gen Alder Lake 10-Core (6P+4E) 3.7 GHz LGA 1700 125W Desktop Processor - BX8071512600KF',
-                image: 'https://c1.neweggimages.com/nobgproductcompressall300/19-118-349-05.jpg',
+                image: productImage('cpu-intel-i5'),
             },
             {
                 title: 'ASUS B760M-AYW WIFI D4 II Intel B760 (LGA 1700) microATX mATX motherboard, PCIe 5.0 x16 Support, two M.2 slots, DDR4, Realtek 2.5Gb Ethernet, Wi-Fi 6, HDMI, SATA 6 Gbps, front USB 5Gbps, Aura Sync',
-                image: 'https://c1.neweggimages.com/nobgproductcompressall300/13-119-744-01.png',
+                image: productImage('board-asus-b760'),
             },
             {
                 title: 'CORSAIR Vengeance LPX 16GB (2 x 8GB) 288-Pin PC RAM DDR4 3200 (PC4 25600) Desktop Memory Model CMK16GX4M2E3200C16',
-                image: 'https://c1.neweggimages.com/nobgproductcompressall300/20-236-540-S01.jpg',
+                image: productImage('ram-vengeance-lpx'),
             },
         ],
     },
@@ -515,15 +520,15 @@ const comboBundlesPrimary = [
         items: [
             {
                 title: 'ABS Cyclone Aqua Gaming PC - Windows 11 - Intel Core i5-14400F - Nvidia GeForce RTX 5060 8GB - DLSS 4 - 32GB DDR4 3200 - 1TB M.2 NVMe SSD - CA14400F50605',
-                image: 'https://c1.neweggimages.com/nobgproductcompressall300/83-360-936-17.jpg',
+                image: productImage('pc-cyclone-bundle'),
             },
             {
                 title: 'Samsung 24" S3 (S32GF) Full HD 120Hz IPS Flicker Free, Eye Saver Mode 2x HDMI ports LCD Computer Monitor for both Work and Gaming LS24F320GANXZA',
-                image: 'https://c1.neweggimages.com/nobgproductcompressall300/24-027-380-01.jpg',
+                image: productImage('monitor-s3-120hz'),
             },
             {
                 title: 'Logitech G915 X LIGHTSPEED Full-size Wireless Mechanical Gaming Keyboard - GL Red Linear Switches, RGB Backlighting - Black',
-                image: 'https://c1.neweggimages.com/nobgproductcompressall300/23-126-748-01.jpg',
+                image: productImage('keyboard-g915'),
             },
         ],
     },
@@ -539,7 +544,7 @@ const comboBundlesPrimary = [
         items: [
             {
                 title: 'ABS Cyclone Aqua Gaming PC - Windows 11 - Intel Core i7-14700F - Nvidia GeForce RTX 5060 - DLSS 4 - 32GB DDR5 6000 - 1TB M.2 SSD',
-                image: 'https://c1.neweggimages.com/nobgproductcompressall300/83-360-936-17.jpg',
+                image: productImage('pc-shell-shocker'),
             },
         ],
     },
@@ -556,15 +561,15 @@ const comboBundlesSecondary = [
         items: [
             {
                 title: 'AMD Ryzen 5 5500 - Ryzen 5 5000 Series Cezanne (Zen 3) 6-Core 3.6 GHz Socket AM4 65W No Integrated Graphics Desktop CPU Processor - 100-100000457BOX',
-                image: 'https://c1.neweggimages.com/nobgproductcompressall300/19-113-737-V03.jpg',
+                image: productImage('cpu-ryzen-5500'),
             },
             {
                 title: 'Asus ROG Strix B550-F Gaming WiFi II AMD AM4 (3rd Gen Ryzen) ATX Gaming Motherboard (PCIe 4.0,WiFi 6E, 2.5Gb LAN, BIOS Flashback, HDMI 2.1, Addressable Gen 2 RGB Header and Aura Sync)',
-                image: 'https://c1.neweggimages.com/nobgproductcompressall300/13-119-500-01.jpg',
+                image: productImage('board-rog-b550'),
             },
             {
                 title: 'CORSAIR Vengeance LPX 16GB (2 x 8GB) 288-Pin PC RAM DDR4 3200 (PC4 25600) Desktop Memory Model CMK16GX4M2E3200C16',
-                image: 'https://c1.neweggimages.com/nobgproductcompressall300/20-236-540-S01.jpg',
+                image: productImage('ram-ddr4-blue'),
             },
         ],
     },
@@ -578,15 +583,15 @@ const comboBundlesSecondary = [
         items: [
             {
                 title: 'UGREEN NASync DXP2800, 2-Bay NAS with Intel N100 Quad-Core CPU (Up to 3.4GHz) 8GB DDR5, 2x M.2 PCIe Slots, 2.5GbE Port (Diskless)',
-                image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-995-001-01.jpg',
+                image: productImage('nas-dxp-storage'),
             },
             {
                 title: 'WD Red Plus 10TB NAS Hard Disk Drive - 7200 RPM Class SATA 6Gb/s, CMR, 512MB Cache, 3.5 Inch - WD100EFGX',
-                image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-234-588-01.jpg',
+                image: productImage('hdd-red-plus-single'),
             },
             {
                 title: 'WD Red Plus 10TB NAS Hard Disk Drive - 7200 RPM Class SATA 6Gb/s, CMR, 512MB Cache, 3.5 Inch - WD100EFGX',
-                image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-234-588-01.jpg',
+                image: productImage('hdd-red-plus-duo'),
             },
         ],
     },
@@ -600,6 +605,7 @@ const promoShowcaseSlides = [
         cta: 'Shop now',
         href: '#deals',
         artVariant: 'memory',
+        imageUrl: bannerImage('memory-finder'),
     },
     {
         eyebrow: 'Massive Mega Sale',
@@ -608,6 +614,7 @@ const promoShowcaseSlides = [
         cta: 'Shop now',
         href: '#deals',
         artVariant: 'banner',
+        imageUrl: bannerImage('laptop-sale'),
     },
     {
         eyebrow: 'Best Sellers',
@@ -616,6 +623,7 @@ const promoShowcaseSlides = [
         cta: 'See all',
         href: '#deals',
         artVariant: 'hero',
+        imageUrl: bannerImage('top-products'),
     },
 ];
 
@@ -629,7 +637,7 @@ const bestDealItems = [
         badge: 'PlexusBiz Select',
         rating: '4.5',
         reviews: '22',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/83-360-936-17.jpg',
+        image: productImage('pc-arc-a580'),
         short: 'A clean desktop tower bundle with game-ready graphics and fast storage.',
     },
     {
@@ -641,7 +649,7 @@ const bestDealItems = [
         badge: 'PlexusBiz Select',
         rating: '4.7',
         reviews: '135',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/20-236-941-08.jpg',
+        image: productImage('ram-rgb-pro'),
         short: 'RGB desktop memory with a proven 3200 MHz profile and 32GB capacity.',
     },
     {
@@ -653,7 +661,7 @@ const bestDealItems = [
         badge: 'Top rated',
         rating: '4.5',
         reviews: '365',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/14-932-751-07.jpg',
+        image: productImage('gpu-sapphire-nitro'),
         short: 'High-end Radeon card with strong cooling and a premium factory design.',
     },
     {
@@ -665,7 +673,7 @@ const bestDealItems = [
         badge: 'AI Ready',
         rating: '4.8',
         reviews: '92',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/34-236-520-11.jpg',
+        image: productImage('laptop-msi-vector'),
         short: 'A desktop-replacement gaming laptop with a fast QHD+ panel and RTX 5080.',
     },
     {
@@ -677,7 +685,7 @@ const bestDealItems = [
         badge: '',
         rating: '4.6',
         reviews: '308',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/11-129-309-01.jpg',
+        image: productImage('case-lancool'),
         short: 'A roomy ATX mid tower with airflow-focused front design and RGB fans.',
     },
 ];
@@ -692,7 +700,7 @@ const officeDealItems = [
         badge: 'PlexusBiz Select',
         rating: '4.6',
         reviews: '3',
-        image: 'https://c1.neweggimages.com/productimage/nb300/34-156-876-13.jpg',
+        image: productImage('laptop-lenovo-v15'),
         short: 'A value-focused productivity laptop with a Ryzen 7 CPU and 1TB SSD.',
     },
     {
@@ -704,7 +712,7 @@ const officeDealItems = [
         badge: 'AI Ready',
         rating: '4.7',
         reviews: '6',
-        image: 'https://c1.neweggimages.com/productimage/nb300/34-156-876-13.jpg',
+        image: productImage('laptop-msi-venture'),
         short: 'A touchscreen AI-ready notebook with plenty of memory for multitasking.',
     },
     {
@@ -716,19 +724,42 @@ const officeDealItems = [
         badge: 'AI Ready',
         rating: '4.4',
         reviews: '92',
-        image: 'https://c1.neweggimages.com/productimage/nb300/34-156-876-13.jpg',
+        image: productImage('laptop-acer-aspire'),
         short: 'A lightweight all-day laptop with a sharp FHD panel and a big SSD.',
     },
 ];
+
+const landingPhotos = {
+    heroDesk: bannerImage('gaming-setup'),
+    dealImac: productImage('kitchen-appliance'),
+    dealTwoMonitor: productImage('mesh-router'),
+    dealPhotographerDesk: bannerImage('workspace-gift'),
+};
 
 const categoryPanels = [
     {
         title: 'Components & Storage',
         tiles: [
-            { label: 'CPU', artVariant: 'categoryTile', sceneLabel: 'CPU' },
-            { label: 'Graphics Card', artVariant: 'categoryTile', sceneLabel: 'Graphics Card' },
-            { label: 'SSD', artVariant: 'categoryTile', sceneLabel: 'SSD' },
-            { label: 'Hard Drive', artVariant: 'categoryTile', sceneLabel: 'Hard Drive' },
+            {
+                label: 'CPU',
+                imageUrl: productImage('cpu-category'),
+                imageFit: 'contain',
+            },
+            {
+                label: 'Graphics Card',
+                imageUrl: productImage('gpu-category'),
+                imageFit: 'contain',
+            },
+            {
+                label: 'SSD',
+                imageUrl: productImage('ssd-category'),
+                imageFit: 'contain',
+            },
+            {
+                label: 'Hard Drive',
+                imageUrl: productImage('hdd-category'),
+                imageFit: 'contain',
+            },
         ],
         tileGridClass: 'mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2',
         tileAspectClass: 'aspect-[4/3]',
@@ -736,6 +767,8 @@ const categoryPanels = [
     {
         title: 'Gamer Paradise',
         bannerArtVariant: 'gamingBanner',
+        bannerImageUrl: landingPhotos.heroDesk,
+        bannerImageFit: 'cover',
         bannerLabel: 'Shop Deals',
         bannerCopy: 'Power. Precision. Performance.',
         bannerClassName: 'min-h-[240px] sm:min-h-[280px]',
@@ -743,8 +776,16 @@ const categoryPanels = [
     {
         title: 'Entertainment & More',
         tiles: [
-            { label: 'TV & Video', artVariant: 'categoryTile', sceneLabel: 'TV & Video' },
-            { label: 'Gift Cards', artVariant: 'categoryTile', sceneLabel: 'Gift Cards' },
+            {
+                label: 'TV & Video',
+                imageUrl: productImage('tv-video'),
+                imageFit: 'contain',
+            },
+            {
+                label: 'Gift Cards',
+                imageUrl: landingPhotos.dealPhotographerDesk,
+                imageFit: 'cover',
+            },
         ],
         tileGridClass: 'mt-4 grid grid-cols-1 gap-3',
         tileAspectClass: 'aspect-[16/9]',
@@ -752,10 +793,26 @@ const categoryPanels = [
     {
         title: 'Home Tech Essentials',
         tiles: [
-            { label: 'Home Audio', artVariant: 'categoryTile', sceneLabel: 'Home Audio' },
-            { label: 'Kitchen Appliances', artVariant: 'categoryTile', sceneLabel: 'Kitchen Appliances' },
-            { label: 'Security Cameras', artVariant: 'categoryTile', sceneLabel: 'Security Cameras' },
-            { label: 'Wireless Networking', artVariant: 'categoryTile', sceneLabel: 'Wireless Networking' },
+            {
+                label: 'Home Audio',
+                imageUrl: productImage('home-audio'),
+                imageFit: 'contain',
+            },
+            {
+                label: 'Kitchen Appliances',
+                imageUrl: landingPhotos.dealImac,
+                imageFit: 'cover',
+            },
+            {
+                label: 'Security Cameras',
+                imageUrl: landingPhotos.dealPhotographerDesk,
+                imageFit: 'cover',
+            },
+            {
+                label: 'Wireless Networking',
+                imageUrl: landingPhotos.dealTwoMonitor,
+                imageFit: 'cover',
+            },
         ],
         tileGridClass: 'mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2',
         tileAspectClass: 'aspect-[4/3]',
@@ -772,7 +829,7 @@ const desktopPcItems = [
         badge: 'PlexusBiz Select',
         rating: '4.5',
         reviews: '19',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/83-360-936-17.jpg',
+        image: productImage('desktop-acer'),
         short: 'A compact office-ready tower with Intel Core i5 and integrated graphics.',
     },
     {
@@ -784,7 +841,7 @@ const desktopPcItems = [
         badge: '',
         rating: '4.4',
         reviews: '17',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/17-182-469-34.jpg',
+        image: productImage('desktop-dell-slim'),
         short: 'Slim business tower for desks that need a lot of performance in little space.',
     },
     {
@@ -796,7 +853,7 @@ const desktopPcItems = [
         badge: '',
         rating: '4.2',
         reviews: '10',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/26-153-335-06.jpg',
+        image: productImage('mini-pc-stick'),
         short: 'A tiny stick PC for basic office tasks and 4K media playback.',
     },
     {
@@ -808,7 +865,7 @@ const desktopPcItems = [
         badge: '',
         rating: '4.7',
         reviews: '1',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/83-360-977-15.jpg',
+        image: productImage('desktop-hp-omni'),
         short: 'A modern all-in-one style tower with Ryzen 7 and integrated Radeon 780M graphics.',
     },
     {
@@ -820,43 +877,59 @@ const desktopPcItems = [
         badge: '',
         rating: '4.3',
         reviews: '1',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/24-027-380-01.jpg',
+        image: productImage('desktop-bundle-monitor'),
         short: 'A complete desktop bundle for office or student use.',
     },
 ];
 
 const memoryItems = [
     {
-        title: 'Team Group 16GB (2 x 8GB) 288-Pin PC RAM DDR5 6000 (PC5 48000) Memory Model FF3D516G6000HC38ADC01',
+        title: 'AquaFlow 240mm ARGB Liquid CPU Cooler with dual PWM fans',
         price: '$249.99',
         compare: '',
         save: '',
         badge: '',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/20-236-941-08.jpg',
+        image: productImage('shelf-cooling-01'),
     },
     {
-        title: 'CORSAIR Vengeance RGB 32GB (2 x 16GB) 288-Pin PC RAM DDR5 6000 (PC5 48000) Desktop Memory Model CMH32GX5M2E6000C36',
+        title: 'FrostCore 360mm AIO Liquid Cooler with braided tubing',
         price: '$439.99',
         compare: '$483.99',
         save: 'Save 9%',
         badge: '',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/20-236-941-08.jpg',
+        image: productImage('shelf-cooling-02'),
     },
     {
-        title: 'G.SKILL Ripjaws V Series 16GB (2 x 8GB) 288-Pin PC RAM DDR4 3200 (PC4 25600) Desktop Memory Model F4-3200C16D-16GVKB',
+        title: 'High-pressure 120mm ARGB cooling fan triple pack',
         price: '$133.08',
         compare: '',
         save: '',
         badge: '',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/20-236-941-08.jpg',
+        image: productImage('shelf-cooling-03'),
     },
     {
-        title: 'G.SKILL Flare X5 Series AMD EXPO 32GB (2 x 16GB) 288-Pin PC RAM DDR5 6000 Desktop Memory Model F5-6000J3636F16GX2-FX5',
+        title: 'Slim 280mm radiator kit for compact gaming builds',
         price: '$449.99',
         compare: '$494.99',
         save: 'Save 9%',
         badge: '',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/20-236-941-08.jpg',
+        image: productImage('shelf-cooling-04'),
+    },
+    {
+        title: 'HydroPulse LCD pump block with addressable RGB lighting',
+        price: '$99.99',
+        compare: '$129.99',
+        save: 'Save 23%',
+        badge: '',
+        image: productImage('shelf-cooling-05'),
+    },
+    {
+        title: 'Copper cold plate liquid cooling maintenance kit',
+        price: '$13.99',
+        compare: '$19.99',
+        save: 'Save 30%',
+        badge: '',
+        image: productImage('shelf-cooling-06'),
     },
 ];
 
@@ -866,59 +939,73 @@ const electronicsItems = [
         price: '$99.99',
         compare: '',
         save: '',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/26-743-003-08.jpg',
+        image: productImage('headset-scape'),
     },
     {
         title: 'Team 32GB microSDHC UHS-I/U1 Class 10 Memory Card with Adapter, Speed Up to 100MB/s (TUSDH32GCL10U03)',
         price: '$13.99',
         compare: '$14.99',
         save: 'Save 6%',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/26-153-335-06.jpg',
+        image: productImage('sd-card'),
     },
     {
         title: 'Rosewill 70W Retractable USB-C Wall Charger with Built-in Cable, 3-Port GaN 3 Fast Charging, Foldable Design & Real-Time TFT Display',
         price: '$19.99',
         compare: '$49.99',
         save: 'Save 60%',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/14-126-807-10.png',
+        image: productImage('charger-usbc'),
     },
     {
         title: 'NVIDIA SHIELD Android TV Pro - 4K HDR Streaming Media Player - High Performance, Dolby Vision, 3GB RAM, 2 x USB, Google Assistant Built-In, Works with Alexa',
         price: '$199.00',
         compare: '',
         save: '',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/34-236-520-11.jpg',
+        image: productImage('shield-tv'),
     },
 ];
 
 const moreToConsiderItems = [
     {
-        title: 'UGREEN NASync DXP4800 Plus 4 Bay NAS Intel Pentium Gold 8GB DDR5',
+        title: 'CoreXY enclosed 3D printer with high-speed auto leveling',
         price: '$619.99',
         compare: '$699.99',
         save: 'Save 11%',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-995-001-01.jpg',
+        image: productImage('printer-3d-corexy'),
     },
     {
-        title: 'Synology DS225+ Diskless System Network - Storage',
+        title: 'Desktop laser engraver with air assist and camera preview',
         price: '$339.99',
         compare: '',
         save: '',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-995-001-01.jpg',
+        image: productImage('printer-engraver'),
     },
     {
-        title: 'LSI 9305-24i x8 lane, PCIe 3.0 Full Height SAS SAS 9305 12 Gb/s SAS Host Bus Adapter',
+        title: 'Resin 3D printer starter kit with wash and cure station',
         price: '$146.80',
         compare: '$249.00',
         save: 'Save 41%',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/17-182-469-34.jpg',
+        image: productImage('printer-resin'),
     },
     {
-        title: 'Email Deals',
+        title: 'Matte PLA filament bundle for prototyping and engraving jigs',
         price: 'Shop Now',
         compare: '',
         save: '',
-        artVariant: 'banner',
+        image: productImage('filament-spool'),
+    },
+    {
+        title: 'Compact maker control board with silent stepper drivers',
+        price: '$89.99',
+        compare: '$119.99',
+        save: 'Save 25%',
+        image: productImage('sas-adapter'),
+    },
+    {
+        title: '850W maker workstation power supply for printers and CNC tools',
+        price: '$129.99',
+        compare: '$159.99',
+        save: 'Save 18%',
+        image: productImage('psu-850w'),
     },
 ];
 
@@ -930,16 +1017,16 @@ const communityInsights = [
 ];
 
 const shoppingTools = [
-    { title: 'PC Builder', copy: 'Compare parts and save builds.', artVariant: 'hero' },
-    { title: 'NAS Builder', copy: 'Plan disks and storage tiers.', artVariant: 'banner' },
-    { title: 'PC Upgrader', copy: 'BETA upgrade recommendations.', artVariant: 'tile' },
-    { title: 'Gaming PC Finder', copy: 'Find a prebuilt that fits.', artVariant: 'hero' },
-    { title: 'Server Configurator', copy: 'Build around server needs.', artVariant: 'banner' },
-    { title: 'PSU Wattage Calculator', copy: 'Estimate wattage fast.', artVariant: 'tile' },
-    { title: 'ASUS NUC Configurator', copy: 'Compact, powerful, AI ready*', artVariant: 'banner' },
-    { title: 'Laptop Finder', copy: 'Match size and performance.', artVariant: 'hero' },
-    { title: 'Memory Finder', copy: 'Sort RAM by speed and size.', artVariant: 'tile' },
-    { title: 'Network Builder', copy: 'Switches, routers, and Wi-Fi.', artVariant: 'banner' },
+    { title: 'PC Builder', copy: 'Compare parts and save builds.', imageUrl: bannerImage('tool-pc-builder') },
+    { title: 'NAS Builder', copy: 'Plan disks and storage tiers.', imageUrl: bannerImage('tool-nas-builder') },
+    { title: 'PC Upgrader', copy: 'BETA upgrade recommendations.', imageUrl: bannerImage('tool-pc-upgrader') },
+    { title: 'Gaming PC Finder', copy: 'Find a prebuilt that fits.', imageUrl: bannerImage('tool-gaming-finder') },
+    { title: 'Server Configurator', copy: 'Build around server needs.', imageUrl: bannerImage('tool-server-config') },
+    { title: 'PSU Wattage Calculator', copy: 'Estimate wattage fast.', imageUrl: bannerImage('tool-psu-calculator') },
+    { title: 'ASUS NUC Configurator', copy: 'Compact, powerful, AI ready*', imageUrl: bannerImage('tool-nuc-config') },
+    { title: 'Laptop Finder', copy: 'Match size and performance.', imageUrl: bannerImage('tool-laptop-finder') },
+    { title: 'Memory Finder', copy: 'Sort RAM by speed and size.', imageUrl: bannerImage('tool-memory-finder') },
+    { title: 'Network Builder', copy: 'Switches, routers, and Wi-Fi.', imageUrl: bannerImage('tool-network-builder') },
 ];
 
 const popularKeywords = [
@@ -989,43 +1076,55 @@ const popularKeywords = [
 ];
 
 const brandLogoItems = [
-    { name: 'ASUS', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/ASUS%20Logo.svg' },
-    { name: 'AMD', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/AMD%20Logo.svg' },
-    { name: 'ASRock', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/ASRock%20logo.svg' },
-    { name: 'GIGABYTE', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/Gigabyte%20Technology%20logo%2020080107.svg' },
-    { name: 'Intel', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/Intel%20logo%202023.svg' },
-    { name: 'MSI', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/Micro-Star%20International%20logo.svg' },
-    { name: 'Meta Quest', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/Meta%20Quest%20logo.svg' },
+    { name: 'ASUS', logo: brandImage('asus') },
+    { name: 'AMD', logo: brandImage('amd') },
+    { name: 'ASRock', logo: brandImage('asrock') },
+    { name: 'GIGABYTE', logo: brandImage('gigabyte') },
+    { name: 'Intel', logo: brandImage('intel') },
+    { name: 'MSI', logo: brandImage('msi') },
+    { name: 'Meta Quest', logo: brandImage('meta-quest') },
 ];
 
+const withShelfImages = (items, prefix) =>
+    items.map((item, index) => ({
+        ...item,
+        artVariant: undefined,
+        image: productImage(`${prefix}-${String(index + 1).padStart(2, '0')}`),
+    }));
+
 const smartComfortItems = officeDealItems;
-const gamingLaptopItems = [...bestDealItems, ...officeDealItems].slice(0, 6);
-const coolingDealItems = [...memoryItems, ...electronicsItems, ...desktopPcItems]
-    .slice(0, 6)
+const gamingLaptopItems = withShelfImages([...bestDealItems, ...officeDealItems].slice(0, 6), 'shelf-gaming-laptop');
+const coolingDealItems = withShelfImages([...memoryItems, ...electronicsItems, ...desktopPcItems].slice(0, 6), 'shelf-cooling')
     .map((item, index) => ({
         ...item,
         category: item.category || 'Cooling',
         rating: item.rating || '4.5',
         reviews: item.reviews || `${(index + 2) * 17}`,
     }));
-const printingDealItems = [...moreToConsiderItems, ...desktopPcItems, ...bestDealItems]
-    .slice(0, 6)
+const printingDealItems = withShelfImages([...moreToConsiderItems, ...desktopPcItems, ...bestDealItems].slice(0, 6), 'shelf-printing')
     .map((item, index) => ({
         ...item,
         category: item.category || '3D Printing',
         rating: item.rating || '4.3',
         reviews: item.reviews || `${(index + 1) * 14}`,
     }));
-const considerationItems = [...moreToConsiderItems, ...desktopPcItems, ...bestDealItems, ...officeDealItems]
-    .slice(0, 16)
-    .map((item, index) => ({
+const considerationItems = withShelfImages(
+    [...moreToConsiderItems, ...desktopPcItems, ...bestDealItems, ...officeDealItems].slice(0, 16),
+    'shelf-consider',
+).map((item, index) => ({
         ...item,
         category: item.category || (index % 2 === 0 ? 'Storage' : 'Components'),
         rating: item.rating || '4.4',
         reviews: item.reviews || `${(index + 2) * 11}`,
     }));
 
-const toolPromoScenes = ['hero', 'tile', 'banner', 'tile', 'banner'];
+const toolPromoScenes = [
+    bannerImage('tools-feature-01'),
+    bannerImage('tools-feature-02'),
+    bannerImage('tools-feature-03'),
+    bannerImage('tools-feature-04'),
+    bannerImage('tools-feature-05'),
+];
 
 function SectionHeading({ kicker, title, action, href = '#' }) {
     return (
@@ -1126,7 +1225,16 @@ function ToolStripCard({ tool, tone = 'from-[#587aa3] to-[#3367a5]' }) {
                     <p className="mt-1 text-sm font-semibold text-white/95 sm:text-base">Check it out &gt;</p>
                 </div>
                 <div className="overflow-hidden rounded-[8px] bg-white/10">
-                    <PromoArtwork variant={tool.artVariant || 'tile'} className="aspect-[4/3]" framed={false} />
+                    {tool.imageUrl ? (
+                        <img
+                            src={tool.imageUrl}
+                            alt=""
+                            className="aspect-[4/3] h-full w-full object-cover"
+                            loading="lazy"
+                        />
+                    ) : (
+                        <PromoArtwork variant={tool.artVariant || 'tile'} className="aspect-[4/3]" framed={false} />
+                    )}
                 </div>
             </div>
         </article>
@@ -1382,6 +1490,8 @@ function CategoryPanel({ panel }) {
                 <div className="mt-4 overflow-hidden rounded-[18px] border border-[#eef3fb] bg-slate-50">
                     <PromoArtwork
                         variant={panel.bannerArtVariant}
+                        imageUrl={panel.bannerImageUrl}
+                        imageFit={panel.bannerImageFit || 'cover'}
                         className={bannerClassName}
                         framed={false}
                     />
@@ -1399,6 +1509,9 @@ function CategoryPanel({ panel }) {
                                 <PromoArtwork
                                     variant={tile.artVariant || 'categoryTile'}
                                     sceneLabel={tile.sceneLabel || tile.label}
+                                    imageUrl={tile.imageUrl}
+                                    imageAlt={tile.imageAlt || tile.label}
+                                    imageFit={tile.imageFit || 'contain'}
                                     className={tileAspectClass}
                                     framed={false}
                                 />
@@ -1507,61 +1620,12 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                         </aside>
 
                         <div className="order-1 space-y-4 xl:order-2 xl:flex xl:h-[580px] xl:flex-col xl:gap-4 xl:space-y-0">
-                            <article className="relative min-h-[280px] overflow-hidden rounded-[16px] border border-[#d7e3f4] bg-[#0b2e71] shadow-[0_24px_70px_-34px_rgba(8,24,66,0.9)] sm:min-h-[300px] xl:h-[300px] xl:min-h-0 xl:flex-none">
-                                <div
-                                    className="absolute inset-0"
-                                    style={layeredBackground(
-                                        heroBackground,
-                                        'linear-gradient(180deg, rgba(6,12,35,0.1), rgba(6,12,35,0.6))',
-                                    )}
+                            <article className="relative min-h-[280px] overflow-hidden rounded-[16px] border border-[#d7e3f4] shadow-[0_24px_70px_-34px_rgba(8,24,66,0.9)] sm:min-h-[300px] xl:h-[300px] xl:min-h-0 xl:flex-none">
+                                <img 
+                                    src={heroBackground} 
+                                    alt="Gaming Week Extended" 
+                                    className="h-full w-full object-cover"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-r from-[#02071d]/85 via-[#07206a]/65 to-[#0f4bb0]/20" />
-                                <div className="relative grid min-h-full gap-4 p-5 sm:p-6 xl:grid-cols-[1.2fr_.8fr] xl:p-8">
-                                    <div className="flex flex-col justify-center">
-                                        <span className="inline-flex w-fit rounded-full border border-white/15 bg-white/10 px-4 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-[#ffd59a]">
-                                            PC Gaming Week Extended
-                                        </span>
-                                        <h1 className="mt-4 max-w-2xl text-2xl font-black tracking-[-0.06em] text-white sm:text-3xl xl:text-4xl">
-                                            Earn a $25 statement credit when you open a new PlexusBiz Store Credit Card.
-                                        </h1>
-                                        <p className="mt-3 max-w-xl text-sm leading-6 text-blue-100">
-                                            Make a purchase of $500 or more and keep building with the same dense, deal-first rhythm you see in the reference page.
-                                        </p>
-                                        <div className="mt-4 flex flex-wrap items-center gap-3">
-                                            <a
-                                                href="#deals"
-                                                className="inline-flex rounded-full bg-[#ff8a00] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-white shadow-sm transition hover:bg-[#ef7400]"
-                                            >
-                                                Shop now
-                                            </a>
-                                            <a
-                                                href="#build"
-                                                className="inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-white transition hover:bg-white/20"
-                                            >
-                                                Bulk orders
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div className="relative hidden xl:flex items-end justify-end">
-                                        <div className="w-full max-w-[280px] rounded-[20px] border border-white/15 bg-white/10 p-3 backdrop-blur">
-                                            <div className="overflow-hidden rounded-[16px] bg-white shadow-[0_18px_50px_-30px_rgba(15,23,42,0.75)]">
-                                                <PromoArtwork variant="hero" className="aspect-[16/10]" framed={false} />
-                                                <div className="space-y-2 p-3">
-                                                    <div className="flex items-center justify-between gap-3">
-                                                        <span className="rounded-full bg-[#0b2e71] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white">
-                                                            Shop now
-                                                        </span>
-                                                        <span className="text-xs font-bold text-[#ff8a00]">Offer valid 4/20/26 - 5/3/26</span>
-                                                    </div>
-                                                    <h2 className="text-base font-bold leading-5 tracking-[-0.03em] text-slate-900">
-                                                        Build around current promos, credit offers, and sharp bundle pricing.
-                                                    </h2>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </article>
 
                             <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3 xl:min-h-0 xl:flex-1">
@@ -1601,7 +1665,12 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                                     ))}
                                 </div>
                                 <article className="overflow-hidden rounded-[12px] bg-[#f7efe7]">
-                                    <PromoArtwork variant="smartHome" className="h-full min-h-[360px]" framed={false} />
+                                    <img
+                                        src={bannerImage('smart-home')}
+                                        alt=""
+                                        className="h-full min-h-[360px] w-full object-cover"
+                                        loading="lazy"
+                                    />
                                 </article>
                             </div>
                         </section>
@@ -1613,7 +1682,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                         </section>
 
                         <section className="overflow-hidden rounded-[12px] bg-white">
-                            <PromoArtwork variant="tile" className="h-[120px] w-full" framed={false} />
+                            <img src={bannerImage('brand-strip')} alt="" className="h-[120px] w-full object-cover" loading="lazy" />
                         </section>
 
                         <section className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
@@ -1695,22 +1764,22 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
 
                             <div className="mt-6 grid gap-4 xl:grid-cols-[1.15fr_1.15fr_1.05fr_.95fr]">
                                 <article className="overflow-hidden rounded-[12px] bg-white">
-                                    <PromoArtwork variant={toolPromoScenes[0]} className="h-[340px]" framed={false} />
+                                    <img src={toolPromoScenes[0]} alt="" className="h-[340px] w-full object-cover" loading="lazy" />
                                 </article>
                                 <div className="grid gap-4">
                                     <article className="overflow-hidden rounded-[12px] bg-white">
-                                        <PromoArtwork variant={toolPromoScenes[1]} className="h-[162px]" framed={false} />
+                                        <img src={toolPromoScenes[1]} alt="" className="h-[162px] w-full object-cover" loading="lazy" />
                                     </article>
                                     <article className="overflow-hidden rounded-[12px] bg-white">
-                                        <PromoArtwork variant={toolPromoScenes[2]} className="h-[162px]" framed={false} />
+                                        <img src={toolPromoScenes[2]} alt="" className="h-[162px] w-full object-cover" loading="lazy" />
                                     </article>
                                 </div>
                                 <article className="overflow-hidden rounded-[12px] bg-white">
-                                    <PromoArtwork variant={toolPromoScenes[3]} className="h-[340px]" framed={false} />
+                                    <img src={toolPromoScenes[3]} alt="" className="h-[340px] w-full object-cover" loading="lazy" />
                                 </article>
                                 <div className="grid gap-4">
                                     <article className="overflow-hidden rounded-[12px] bg-white">
-                                        <PromoArtwork variant={toolPromoScenes[4]} className="h-[162px]" framed={false} />
+                                        <img src={toolPromoScenes[4]} alt="" className="h-[162px] w-full object-cover" loading="lazy" />
                                     </article>
                                 </div>
                             </div>
@@ -1740,4 +1809,3 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
         </FrontendLayout>
     );
 }
-

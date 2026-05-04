@@ -26,7 +26,7 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-})->name('welcome');
+});
 
 Route::get('/p/{slug}', [App\Http\Controllers\PageController::class, 'show'])->name('page.show');
 

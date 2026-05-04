@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import PromoArtwork from '@/Components/PromoArtwork';
 
 function MiniQr() {
     const cells = Array.from({ length: 49 }, (_, index) => {
@@ -92,10 +91,11 @@ export default function LandingPromoStrip() {
                             </a>
                         </div>
 
-                        <PromoArtwork
-                            variant="strip"
-                            className="hidden lg:block lg:min-h-[230px]"
-                            framed={false}
+                        <img
+                            src="/images/store/banners/tools-feature-04.jpg"
+                            alt=""
+                            className="hidden min-h-[230px] w-full rounded-[24px] object-cover lg:block"
+                            loading="lazy"
                         />
                     </div>
                 </article>
@@ -136,10 +136,11 @@ export default function LandingPromoStrip() {
                             </div>
                         </div>
 
-                        <PromoArtwork
-                            variant="strip"
-                            className="hidden lg:block lg:min-h-[230px]"
-                            framed={false}
+                        <img
+                            src="/images/store/banners/tools-feature-05.jpg"
+                            alt=""
+                            className="hidden min-h-[230px] w-full rounded-[24px] object-cover lg:block"
+                            loading="lazy"
                         />
                     </div>
                 </article>

@@ -13,7 +13,7 @@ function CarouselButton({ direction, onClick, label }) {
                 isPrev ? 'left-4' : 'right-4'
             }`}
         >
-            {isPrev ? '‹' : '›'}
+            {isPrev ? '<' : '>'}
         </button>
     );
 }
@@ -50,11 +50,20 @@ export default function PromoCarousel({ slides = [], className = '' }) {
             <div className="relative">
                 <div className="grid min-h-[300px] gap-0 lg:grid-cols-[1.08fr_.92fr]">
                     <div className="relative min-h-[300px] overflow-hidden bg-[#06102b]">
-                        <PromoArtwork
-                            variant={currentSlide.artVariant || 'hero'}
-                            className="h-full min-h-[300px]"
-                            framed={false}
-                        />
+                        {currentSlide.imageUrl ? (
+                            <img
+                                src={currentSlide.imageUrl}
+                                alt=""
+                                className="h-full min-h-[300px] w-full object-cover"
+                                loading="lazy"
+                            />
+                        ) : (
+                            <PromoArtwork
+                                variant={currentSlide.artVariant || 'hero'}
+                                className="h-full min-h-[300px]"
+                                framed={false}
+                            />
+                        )}
                         <div className="absolute inset-0 bg-gradient-to-r from-[#040c1f]/82 via-[#040c1f]/18 to-transparent" />
 
                         {totalSlides > 1 ? (
@@ -79,7 +88,7 @@ export default function PromoCarousel({ slides = [], className = '' }) {
                                 aria-label={paused ? 'Resume slideshow' : 'Pause slideshow'}
                                 className="absolute bottom-4 right-4 z-20 inline-flex h-11 w-11 items-center justify-center rounded-full bg-black/55 text-sm font-black text-white shadow-[0_12px_28px_-20px_rgba(0,0,0,0.7)] backdrop-blur transition hover:bg-black/70"
                             >
-                                {paused ? '▶' : '‖'}
+                                {paused ? '>' : '||'}
                             </button>
                         ) : null}
                     </div>
