@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -27,6 +28,37 @@ Route::get('/', function () {
 });
 
 Route::redirect('/auth/login', '/login');
+
+Route::get('/checkout/success/{orderNumber}', [PaymentController::class, 'checkoutSuccess'])
+    ->name('checkout.success');
+
+Route::middleware('auth')->group(function () {
+    Route::post('/checkout/{orderNumber}/payment', [PaymentController::class, 'process'])
+        ->name('payment.process');
+});
+
+Route::prefix('payments')->name('payment.')->group(function (): void {
+    Route::get('/stripe/{orderNumber}/success', [PaymentController::class, 'stripeSuccess'])
+        ->name('stripe.success');
+
+    Route::get('/stripe/{orderNumber}/cancel', [PaymentController::class, 'stripeCancel'])
+        ->name('stripe.cancel');
+
+    Route::post('/stripe/webhook', [PaymentController::class, 'stripeWebhook'])
+        ->name('stripe.webhook');
+
+    Route::match(['get', 'post'], '/sslcommerz/{orderNumber}/success', [PaymentController::class, 'sslcommerzSuccess'])
+        ->name('sslcommerz.success');
+
+    Route::match(['get', 'post'], '/sslcommerz/{orderNumber}/fail', [PaymentController::class, 'sslcommerzFail'])
+        ->name('sslcommerz.fail');
+
+    Route::match(['get', 'post'], '/sslcommerz/{orderNumber}/cancel', [PaymentController::class, 'sslcommerzCancel'])
+        ->name('sslcommerz.cancel');
+
+    Route::post('/sslcommerz/ipn', [PaymentController::class, 'sslcommerzIPN'])
+        ->name('sslcommerz.ipn');
+});
 
 Route::get('/dashboard', DashboardController::class)->middleware(['auth', 'verified'])->name('dashboard');
 

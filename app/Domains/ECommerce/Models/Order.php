@@ -4,6 +4,7 @@ namespace App\Domains\ECommerce\Models;
 
 use App\Domains\CRM\Models\Customer;
 use App\Domains\ECommerce\Enums\OrderStatus;
+use App\Domains\ECommerce\Enums\PaymentStatus;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,6 +21,10 @@ class Order extends Model
         'customer_id',
         'order_number',
         'status',
+        'checkout_token',
+        'payment_method',
+        'payment_status',
+        'transaction_id',
         'subtotal',
         'tax_total',
         'shipping_total',
@@ -57,5 +62,20 @@ class Order extends Model
     public function invoice(): HasOne
     {
         return $this->hasOne(Invoice::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function latestPayment(): HasOne
+    {
+        return $this->hasOne(Payment::class)->latestOfMany();
+    }
+
+    public function isPaid(): bool
+    {
+        return $this->payment_status === PaymentStatus::Completed->value;
     }
 }

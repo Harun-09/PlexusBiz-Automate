@@ -2,9 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Domains\ECommerce\Enums\OrderStatus;
+use App\Domains\ECommerce\Enums\PaymentStatus;
+use App\Domains\ECommerce\Models\Order;
 use App\Models\User;
 use Database\Seeders\RbacSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -53,5 +57,43 @@ class WorkspaceRoutesTest extends TestCase
                 ->where('workspace.filters.status', 'active')
                 ->has('workspace.rows', 1)
                 ->where('workspace.rows.0.Email', 'buyer@plexus.test'));
+    }
+
+    public function test_orders_workspace_exposes_payment_action_for_unpaid_buyer_orders(): void
+    {
+        $this->seed(RbacSeeder::class);
+
+        $buyer = User::where('email', 'buyer@plexus.test')->firstOrFail();
+
+        Order::create([
+            'buyer_id' => $buyer->id,
+            'order_number' => 'ORD-'.Str::upper(Str::random(10)),
+            'status' => OrderStatus::Pending,
+            'subtotal' => '149.99',
+            'tax_total' => '0.00',
+            'shipping_total' => '0.00',
+            'discount_total' => '0.00',
+            'grand_total' => '149.99',
+            'currency' => 'BDT',
+            'placed_at' => now(),
+            'checkout_token' => null,
+            'payment_method' => null,
+            'payment_status' => PaymentStatus::Pending->value,
+            'transaction_id' => null,
+        ]);
+
+        $this->actingAs($buyer)
+            ->get('/commerce/orders')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page
+                ->component('Workspace/Index')
+                ->where('workspace.columns.3', 'Payment')
+                ->where('workspace.columns.6', 'Action')
+                ->has('workspace.rows', 1)
+                ->where('workspace.rows.0.Payment.kind', 'payment-summary')
+                ->where('workspace.rows.0.Payment.status', PaymentStatus::Pending->value)
+                ->where('workspace.rows.0.Payment.method', 'Stripe')
+                ->where('workspace.rows.0.Action.kind', 'payment-action')
+                ->where('workspace.rows.0.Action.label', 'Pay now'));
     }
 }

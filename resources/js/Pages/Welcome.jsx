@@ -1,335 +1,1752 @@
 import { Head, Link } from '@inertiajs/react';
 
-const topTools = ['Shell Shocker', 'PC Builder', 'Business', 'Help Center', 'Returns & Orders'];
+const utilityLinks = [
+    { label: "Today's Best Deals", href: '#deals' },
+    { label: 'Best Sellers', href: '#featured' },
+    { label: 'PC Builder', href: '#build' },
+    { label: 'Business', href: '#footer' },
+    { label: 'Help Center', href: '#footer' },
+];
 
-const categories = [
-    'Components & Storage',
-    'Computer Systems',
-    'Computer Peripherals',
+const categoryPills = [
+    'Components',
+    'Systems',
+    'Peripherals',
     'Networking',
-    'Gaming & VR',
-    'Smart Home & Security',
-    'Office Solutions',
-    'Automotive & Tools',
+    'Gaming',
+    'Smart Home',
+    'Office',
+    'Software',
+    'Automotive',
+    'Clearance',
 ];
 
-const spotlightCards = [
+const categoryMenu = [
     {
-        title: 'Dual-monitor workstation bundles',
-        copy: 'Save up to 28% on creator-ready desk builds.',
-        image: '/images/landing/deal-two-monitor.jpg',
-        tag: 'Hot combo',
+        title: 'Components & Storage',
+        detail: 'CPUs, motherboards, SSDs, cooling, and power',
     },
     {
-        title: 'Workspace essentials',
-        copy: 'Fast shipping on keyboards, docks, and displays.',
-        image: '/images/landing/deal-imac.jpg',
-        tag: 'Today only',
+        title: 'Computer Systems',
+        detail: 'Desktops, laptops, mini PCs, and all-in-ones',
+    },
+    {
+        title: 'Computer Peripherals',
+        detail: 'Keyboards, mice, displays, audio, and docks',
+    },
+    {
+        title: 'Networking',
+        detail: 'Wi-Fi, routers, switches, and access points',
+    },
+    {
+        title: 'Gaming & VR',
+        detail: 'PC gaming, headsets, accessories, and capture',
+    },
+    {
+        title: 'Smart Home & Security',
+        detail: 'Lighting, cameras, sensors, and home automation',
+    },
+    {
+        title: 'Office Solutions',
+        detail: 'Printers, productivity gear, and workspace tools',
+    },
+    {
+        title: 'Home & Outdoors',
+        detail: 'Storage, hobby tech, and everyday essentials',
     },
 ];
 
-const flashDeals = [
+const heroStats = [
     {
-        title: 'Designer two-screen setup kit',
-        category: 'Workstation',
+        value: 'Live',
+        label: 'rotating promos and deal modules',
+    },
+    {
+        value: 'Fast',
+        label: 'search-first shopping flow',
+    },
+    {
+        value: 'Clear',
+        label: 'price contrast and dense product cards',
+    },
+];
+
+const promoCards = [
+    {
+        eyebrow: 'Shell Shocker',
+        title: 'Flash pricing on desktop parts and build kits.',
+        copy: 'Limited quantities, strong contrast, and a visible call to action for rapid scanning.',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/83-360-936-17.jpg',
+        pill: 'Ends soon',
+        cta: 'See the drop',
+        href: '#deals',
+        tone: 'border-[#1d4b9d] bg-[#0b2e71] text-white',
+        copyClass: 'text-blue-100',
+        buttonClass: 'border-white/15 bg-white/10 text-white hover:bg-white/20',
+    },
+    {
+        eyebrow: 'AI Ready',
+        title: 'Monitors and peripherals that stay competitive.',
+        copy: 'Work, play, and quick comparison features in a clean, product-driven panel.',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/24-027-380-01.jpg',
+        pill: 'New arrivals',
+        cta: 'Compare picks',
+        href: '#deals',
+        tone: 'border-[#bfd0f0] bg-white text-slate-900',
+        copyClass: 'text-slate-600',
+        buttonClass: 'border-[#d7e3f4] bg-[#f4f8ff] text-[#1a56b5] hover:border-[#ffb16d] hover:bg-[#fff3e8] hover:text-[#d75d00]',
+    },
+    {
+        eyebrow: 'Build Tools',
+        title: 'Plan the rig before you buy the first part.',
+        copy: 'Keep the shopping rhythm focused on components, compatibility, and upgrades.',
+        pill: 'PC Builder',
+        cta: 'Open build tools',
+        href: '#build',
+        tone: 'border-[#ffd2a8] bg-gradient-to-br from-[#fff8f0] via-[#ffe8c8] to-[#ffd49f] text-slate-900',
+        copyClass: 'text-slate-600',
+        buttonClass: 'border-[#ffd2a8] bg-white/80 text-[#d75d00] hover:border-[#ffb16d] hover:bg-white',
+        points: ['CPU', 'GPU', 'Board', 'RAM', 'PSU', 'Storage'],
+    },
+];
+
+const dealItems = [
+    {
+        title: 'ABS Cyclone Aqua Gaming PC',
+        category: 'Desktop PC',
+        price: '$1,049.99',
+        compare: '$1,399.99',
+        save: 'Save 25%',
+        badge: 'AI Ready',
+        rating: '4.6',
+        reviews: '209',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/83-360-936-17.jpg',
+        short: 'Windows 11 Home, Intel Core i5-14400F, RTX 5060, 32GB DDR4, 1TB NVMe SSD.',
+    },
+    {
+        title: 'Samsung 24" S3 120Hz IPS Monitor',
+        category: 'Displays',
+        price: '$104.99',
+        compare: '$139.99',
+        save: 'Save 25%',
+        badge: 'Top rated',
+        rating: '4.7',
+        reviews: '3',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/24-027-380-01.jpg',
+        short: 'Full HD, 120Hz refresh, eye saver mode, and dual HDMI for work or gaming.',
+    },
+    {
+        title: 'Logitech G915 X LIGHTSPEED Keyboard',
+        category: 'Input Devices',
+        price: '$194.99',
+        compare: '$259.99',
+        save: 'Save 25%',
+        badge: 'Fast typing',
+        rating: '4.5',
+        reviews: '33',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/23-126-748-01.jpg',
+        short: 'Wireless full-size mechanical board with GL linear switches and RGB lighting.',
+    },
+    {
+        title: 'Fractal Design Scape Wireless Headset',
+        category: 'Audio PC',
+        price: '$199.99',
+        compare: '$219.99',
+        save: 'Free gift',
+        badge: 'Comfort fit',
+        rating: '4.3',
+        reviews: '21',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/26-743-003-08.jpg',
+        short: 'Immersive audio, Bluetooth 5.3, charging stand, and a long battery life.',
+    },
+    {
+        title: 'UGREEN NASync DXP2800 2-Bay NAS',
+        category: 'Storage',
+        price: '$369.99',
+        compare: '$399.99',
+        save: 'P-code offer',
+        badge: 'Storage',
+        rating: '4.9',
+        reviews: '7',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-995-001-01.jpg',
+        short: 'Intel N100 quad-core, 8GB DDR5, two SATA bays, two M.2 slots, and 2.5GbE.',
+    },
+    {
+        title: 'WD Red Plus 10TB NAS HDD',
+        category: 'Hard Drives',
+        price: '$299.99',
+        compare: '$349.99',
+        save: 'Save 14%',
+        badge: 'PlexusBiz Select',
+        rating: '3.9',
+        reviews: '1711',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-234-588-01.jpg',
+        short: '7200 RPM class, CMR, 512MB cache, and a 3-year limited warranty.',
+    },
+];
+
+const featuredBrands = [
+    'AMD',
+    'ASUS',
+    'Intel',
+    'MSI',
+    'NVIDIA',
+    'Samsung',
+    'Seagate',
+    'Logitech',
+    'Corsair',
+    'UGREEN',
+];
+
+const featureTiles = [
+    {
+        eyebrow: 'Components & Storage',
+        title: 'Build the core first.',
+        copy: 'CPU, boards, SSDs, memory, cooling, and power supplies in one clear flow.',
+        action: 'Browse parts',
+        href: '#deals',
+        tone: 'border-[#1d4b9d] bg-gradient-to-br from-[#0b3d91] via-[#1559b8] to-[#2d79da] text-white',
+        copyClass: 'text-blue-100',
+        actionClass: 'border-white/15 bg-white/10 text-white hover:bg-white/20',
+    },
+    {
+        eyebrow: 'Gaming Setup',
+        title: 'Frames, latency, and comfort.',
+        copy: 'Displays, mice, headsets, and controllers tuned around a better play loop.',
+        action: 'See gaming picks',
+        href: '#brands',
+        tone: 'border-[#bfd0f0] bg-white text-slate-900',
+        copyClass: 'text-slate-600',
+        actionClass: 'border-[#d7e3f4] bg-[#f4f8ff] text-[#1a56b5] hover:border-[#ffb16d] hover:bg-[#fff3e8] hover:text-[#d75d00]',
+    },
+    {
+        eyebrow: 'Workspace Essentials',
+        title: 'A cleaner desk, a sharper workflow.',
+        copy: 'Docks, printers, storage, and small accessories that remove daily friction.',
+        action: 'Explore workspace',
+        href: '#footer',
+        tone: 'border-[#ffd2a8] bg-gradient-to-br from-[#fff8f0] via-[#ffe9cf] to-[#ffd7a8] text-slate-900',
+        copyClass: 'text-slate-600',
+        actionClass: 'border-[#ffd2a8] bg-white/80 text-[#d75d00] hover:border-[#ffb16d] hover:bg-white',
+    },
+];
+
+const footerSections = [
+    {
+        title: 'Shop',
+        links: [
+            { label: "Today's deals", href: '#deals' },
+            { label: 'Featured brands', href: '#brands' },
+            { label: 'PC Builder', href: '#build' },
+            { label: 'Browse categories', href: '#hero' },
+        ],
+    },
+    {
+        title: 'Explore',
+        links: [
+            { label: 'Flash deals', href: '#deals' },
+            { label: 'Workspace picks', href: '#featured' },
+            { label: 'Price alerts', href: '#hero' },
+            { label: 'Product compare', href: '#build' },
+        ],
+    },
+    {
+        title: 'Support',
+        links: [
+            { label: 'Help center', href: '#footer' },
+            { label: 'Shipping info', href: '#deals' },
+            { label: 'Return policy', href: '#footer' },
+            { label: 'Privacy choices', href: '#footer' },
+        ],
+    },
+    {
+        title: 'About',
+        links: [
+            { label: 'PlexusBiz story', href: '#footer' },
+            { label: 'Partner with us', href: '#footer' },
+            { label: 'Careers', href: '#footer' },
+            { label: 'Contact', href: '#footer' },
+        ],
+    },
+];
+
+const heroBackground = 'https://promotions.newegg.com/nepro/26-0375/Animation/bg_1920x1080.jpg';
+const heroPreview = 'https://c1.neweggimages.com/productimage/nb300/34-236-520-11.jpg';
+
+function layeredBackground(imageUrl, fallbackGradient) {
+    return {
+        backgroundImage: `${fallbackGradient}, url(${imageUrl})`,
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+    };
+}
+
+function HeroStat({ value, label }) {
+    return (
+        <div className="rounded-[22px] border border-white/15 bg-white/10 p-4 backdrop-blur">
+            <strong className="block text-xl font-black tracking-[-0.04em] text-white">{value}</strong>
+            <span className="mt-1 block text-xs leading-5 text-blue-100">{label}</span>
+        </div>
+    );
+}
+
+function PromoCard({ card }) {
+    return (
+        <article className={`overflow-hidden rounded-[28px] border p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${card.tone}`}>
+            <div className="flex items-start justify-between gap-3">
+                <div>
+                    <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#ffb16d]">
+                        {card.eyebrow}
+                    </p>
+                    <h3 className={`mt-2 text-lg font-bold leading-6 tracking-[-0.03em] ${card.copyClass === 'text-blue-100' ? 'text-white' : 'text-slate-900'}`}>
+                        {card.title}
+                    </h3>
+                </div>
+                <span
+                    className={`rounded-full px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] ${
+                        card.copyClass === 'text-blue-100'
+                            ? 'bg-white/15 text-white'
+                            : 'bg-[#eef4ff] text-[#0b3d91]'
+                    }`}
+                >
+                    {card.pill}
+                </span>
+            </div>
+
+            <p className={`mt-3 text-sm leading-6 ${card.copyClass}`}>{card.copy}</p>
+
+            {card.image ? (
+                <div className="mt-4 overflow-hidden rounded-[22px] border border-white/25 bg-slate-100">
+                    <div
+                        className="aspect-[16/10]"
+                        style={layeredBackground(
+                            card.image,
+                            'linear-gradient(180deg, rgba(255,255,255,0.03), rgba(15,23,42,0.2))',
+                        )}
+                    />
+                </div>
+            ) : (
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                    {card.points.map((point) => (
+                        <div key={point} className="rounded-2xl bg-white/70 p-3 text-xs font-bold text-slate-700">
+                            {point}
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            <a
+                href={card.href}
+                className={`mt-4 inline-flex w-full items-center justify-center rounded-2xl border px-4 py-2 text-xs font-extrabold uppercase tracking-[0.16em] transition ${card.buttonClass}`}
+            >
+                {card.cta}
+            </a>
+        </article>
+    );
+}
+
+function DealCard({ item }) {
+    return (
+        <article className="group flex h-full flex-col overflow-hidden rounded-[28px] border border-[#d7e3f4] bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-[0_20px_50px_-24px_rgba(10,35,84,0.35)]">
+            <div className="relative p-4">
+                <div className="overflow-hidden rounded-[22px] border border-[#eef3fb] bg-slate-50">
+                    <div
+                        className="aspect-[4/3] transition duration-500 group-hover:scale-[1.03]"
+                        style={layeredBackground(
+                            item.image,
+                            'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.14))',
+                        )}
+                    />
+                </div>
+                <span className="absolute left-6 top-6 rounded-full bg-[#0b3d91] px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-white shadow-sm">
+                    {item.badge}
+                </span>
+                <span className="absolute right-6 top-6 rounded-full bg-white/95 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#ff7b22] shadow-sm">
+                    {item.save}
+                </span>
+            </div>
+
+            <div className="flex flex-1 flex-col px-4 pb-4">
+                <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">{item.category}</p>
+                <h3 className="mt-2 min-h-[3.25rem] text-sm font-bold leading-6 text-slate-900">
+                    {item.title}
+                </h3>
+                <p className="mt-2 text-xs leading-5 text-slate-600">{item.short}</p>
+
+                <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-slate-500">
+                    <span className="rounded-full bg-[#eef4ff] px-2.5 py-1 font-bold text-[#1a56b5]">
+                        {item.rating}
+                    </span>
+                    <span>{item.reviews} reviews</span>
+                </div>
+
+                <div className="mt-4 flex items-end gap-2">
+                    <span className="text-2xl font-extrabold tracking-tight text-[#0d3a91]">
+                        {item.price}
+                    </span>
+                    <span className="pb-0.5 text-xs font-semibold text-slate-400 line-through">
+                        {item.compare}
+                    </span>
+                </div>
+
+                <button
+                    type="button"
+                    className="mt-4 rounded-2xl border border-[#d7e3f4] bg-[#f4f8ff] px-4 py-2 text-xs font-extrabold uppercase tracking-[0.16em] text-[#1a56b5] transition hover:border-[#ffb16d] hover:bg-[#fff3e8] hover:text-[#d75d00]"
+                >
+                    Add to cart
+                </button>
+            </div>
+        </article>
+    );
+}
+
+function BrandPill({ brand }) {
+    return (
+        <div className="rounded-2xl border border-[#d4e0f3] bg-white px-4 py-3 text-center text-sm font-extrabold tracking-[0.12em] text-slate-700 shadow-sm">
+            {brand}
+        </div>
+    );
+}
+
+function FeatureTile({ tile }) {
+    return (
+        <article className={`overflow-hidden rounded-[28px] border p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${tile.tone}`}>
+            <p className={`text-[10px] font-extrabold uppercase tracking-[0.18em] ${tile.copyClass === 'text-blue-100' ? 'text-[#ffd6af]' : 'text-[#1a56b5]'}`}>
+                {tile.eyebrow}
+            </p>
+            <h3 className={`mt-2 text-2xl font-black tracking-[-0.04em] ${tile.copyClass === 'text-blue-100' ? 'text-white' : 'text-slate-900'}`}>
+                {tile.title}
+            </h3>
+            <p className={`mt-3 max-w-md text-sm leading-7 ${tile.copyClass}`}>{tile.copy}</p>
+            <a
+                href={tile.href}
+                className={`mt-5 inline-flex items-center justify-center rounded-full border px-5 py-2.5 text-xs font-extrabold uppercase tracking-[0.16em] transition ${tile.actionClass}`}
+            >
+                {tile.action}
+            </a>
+        </article>
+    );
+}
+
+function FooterColumn({ section }) {
+    return (
+        <div>
+            <h3 className="text-xs font-extrabold uppercase tracking-[0.2em] text-white">
+                {section.title}
+            </h3>
+            <ul className="mt-4 space-y-3">
+                {section.links.map((link) => (
+                    <li key={link.label}>
+                        <a href={link.href} className="text-sm text-slate-400 transition hover:text-white">
+                            {link.label}
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+}
+
+const topSearchSuggestions = [
+    'gaming monitor',
+    'am5 motherboard',
+    'arc a380',
+    'small form factor gaming pc',
+    'nvidia dgx spark',
+];
+
+const headerNavLinks = [
+    { label: 'Shell Shocker', href: '#shell' },
+    { label: 'PC Builder', href: '#build' },
+    { label: 'Shopping Tools', href: '#tools' },
+    { label: 'Clearance', href: '#deals' },
+    { label: 'Best Sellers', href: '#featured' },
+    { label: 'PlexusBiz Card', href: '#footer' },
+    { label: 'Free Gift w/ AMD', href: '#deals' },
+    { label: 'Games', href: '#games', active: true },
+    { label: 'Laptop Upgrade', href: '#deals' },
+    { label: 'Trade-In', href: '#footer' },
+    { label: 'Gamer Community', href: '#community' },
+];
+
+const categoryRailItems = [
+    { abbr: 'CPU', title: 'Components & Storage' },
+    { abbr: 'SYS', title: 'Computer Systems' },
+    { abbr: 'PER', title: 'Computer Peripherals' },
+    { abbr: 'SRV', title: 'Server & Components' },
+    { abbr: 'APP', title: 'Appliances' },
+    { abbr: 'ELE', title: 'Electronics' },
+    { abbr: 'VR', title: 'Gaming & VR' },
+    { abbr: 'NET', title: 'Networking' },
+    { abbr: 'SMH', title: 'Smart Home & Security' },
+    { abbr: 'OFF', title: 'Office Solutions' },
+    { abbr: 'SFW', title: 'Software & Services' },
+    { abbr: 'AUTO', title: 'Automotive & Tools' },
+    { abbr: 'HOM', title: 'Home & Outdoors' },
+    { abbr: 'HEA', title: 'Health & Sports' },
+    { abbr: 'DRN', title: 'Toys, Drones & Maker' },
+];
+
+const comboBundlesPrimary = [
+    {
+        brand: 'Intel',
+        savings: 'Combo up savings $40.00',
+        price: '$379.97',
+        compare: '$419.97',
+        cta: 'Build with it',
+        accent: 'from-[#e8f1ff] to-[#cfe0ff]',
+        items: [
+            {
+                title: 'Intel Core i5-12600KF - Core i5 12th Gen Alder Lake 10-Core (6P+4E) 3.7 GHz LGA 1700 125W Desktop Processor - BX8071512600KF',
+                image: 'https://c1.neweggimages.com/nobgproductcompressall300/19-118-349-05.jpg',
+            },
+            {
+                title: 'ASUS B760M-AYW WIFI D4 II Intel B760 (LGA 1700) microATX mATX motherboard, PCIe 5.0 x16 Support, two M.2 slots, DDR4, Realtek 2.5Gb Ethernet, Wi-Fi 6, HDMI, SATA 6 Gbps, front USB 5Gbps, Aura Sync',
+                image: 'https://c1.neweggimages.com/nobgproductcompressall300/13-119-744-01.png',
+            },
+            {
+                title: 'CORSAIR Vengeance LPX 16GB (2 x 8GB) 288-Pin PC RAM DDR4 3200 (PC4 25600) Desktop Memory Model CMK16GX4M2E3200C16',
+                image: 'https://c1.neweggimages.com/nobgproductcompressall300/20-236-540-S01.jpg',
+            },
+        ],
+    },
+    {
+        brand: 'Desktop Computers',
+        savings: 'Combo up savings $70.00',
+        price: '$1,279.97',
+        compare: '$1,349.97',
+        cta: 'Add to cart',
+        accent: 'from-[#dfe9ff] to-[#c8dbff]',
+        items: [
+            {
+                title: 'ABS Cyclone Aqua Gaming PC - Windows 11 - Intel Core i5-14400F - Nvidia GeForce RTX 5060 8GB - DLSS 4 - 32GB DDR4 3200 - 1TB M.2 NVMe SSD - CA14400F50605',
+                image: 'https://c1.neweggimages.com/nobgproductcompressall300/83-360-936-17.jpg',
+            },
+            {
+                title: 'Samsung 24" S3 (S32GF) Full HD 120Hz IPS Flicker Free, Eye Saver Mode 2x HDMI ports LCD Computer Monitor for both Work and Gaming LS24F320GANXZA',
+                image: 'https://c1.neweggimages.com/nobgproductcompressall300/24-027-380-01.jpg',
+            },
+            {
+                title: 'Logitech G915 X LIGHTSPEED Full-size Wireless Mechanical Gaming Keyboard - GL Red Linear Switches, RGB Backlighting - Black',
+                image: 'https://c1.neweggimages.com/nobgproductcompressall300/23-126-748-01.jpg',
+            },
+        ],
+    },
+    {
+        brand: 'Shell Shocker',
+        savings: 'Flash pricing and limited drops',
+        price: '$1,399.99',
+        compare: '$1,799.99',
+        cta: 'See all',
+        accent: 'from-[#0b2e71] to-[#114b9f]',
+        tone: 'dark',
+        note: '+ $20 off w/ promo code SSF6252, limited offer',
+        items: [
+            {
+                title: 'ABS Cyclone Aqua Gaming PC - Windows 11 - Intel Core i7-14700F - Nvidia GeForce RTX 5060 - DLSS 4 - 32GB DDR5 6000 - 1TB M.2 SSD',
+                image: 'https://c1.neweggimages.com/nobgproductcompressall300/83-360-936-17.jpg',
+            },
+        ],
+    },
+];
+
+const comboBundlesSecondary = [
+    {
+        brand: 'AMD',
+        savings: 'Combo up savings $78.00',
+        price: '$297.98',
+        compare: '$375.98',
+        cta: 'Build with it',
+        accent: 'from-[#eef3ff] to-[#dce7ff]',
+        items: [
+            {
+                title: 'AMD Ryzen 5 5500 - Ryzen 5 5000 Series Cezanne (Zen 3) 6-Core 3.6 GHz Socket AM4 65W No Integrated Graphics Desktop CPU Processor - 100-100000457BOX',
+                image: 'https://c1.neweggimages.com/nobgproductcompressall300/19-113-737-V03.jpg',
+            },
+            {
+                title: 'Asus ROG Strix B550-F Gaming WiFi II AMD AM4 (3rd Gen Ryzen) ATX Gaming Motherboard (PCIe 4.0,WiFi 6E, 2.5Gb LAN, BIOS Flashback, HDMI 2.1, Addressable Gen 2 RGB Header and Aura Sync)',
+                image: 'https://c1.neweggimages.com/nobgproductcompressall300/13-119-500-01.jpg',
+            },
+            {
+                title: 'CORSAIR Vengeance LPX 16GB (2 x 8GB) 288-Pin PC RAM DDR4 3200 (PC4 25600) Desktop Memory Model CMK16GX4M2E3200C16',
+                image: 'https://c1.neweggimages.com/nobgproductcompressall300/20-236-540-S01.jpg',
+            },
+        ],
+    },
+    {
+        brand: 'NAS',
+        savings: 'Combo up savings $45.00',
+        price: '$924.97',
+        compare: '$969.97',
+        cta: 'Add to cart',
+        accent: 'from-[#edf6ff] to-[#dbe9ff]',
+        items: [
+            {
+                title: 'UGREEN NASync DXP2800, 2-Bay NAS with Intel N100 Quad-Core CPU (Up to 3.4GHz) 8GB DDR5, 2x M.2 PCIe Slots, 2.5GbE Port (Diskless)',
+                image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-995-001-01.jpg',
+            },
+            {
+                title: 'WD Red Plus 10TB NAS Hard Disk Drive - 7200 RPM Class SATA 6Gb/s, CMR, 512MB Cache, 3.5 Inch - WD100EFGX',
+                image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-234-588-01.jpg',
+            },
+            {
+                title: 'WD Red Plus 10TB NAS Hard Disk Drive - 7200 RPM Class SATA 6Gb/s, CMR, 512MB Cache, 3.5 Inch - WD100EFGX',
+                image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-234-588-01.jpg',
+            },
+        ],
+    },
+];
+
+const saleBanners = [
+    {
+        title: 'Massive Mega Sale',
+        subtitle: 'Huge Savings on Notebooks & Gaming Laptops',
+        cta: 'Shop now',
+        image: 'https://promotions.newegg.com/nepro/25-0323/420x240.jpg',
+        accent: 'from-[#4058d4] via-[#304ebf] to-[#253f99]',
+    },
+    {
+        title: 'BEST SELLERS',
+        subtitle: 'Our most popular products, based on sales and updated frequently.',
+        cta: 'Shop now',
+        image: 'https://promotions.newegg.com/nepro/24-0282/Best_Sellers/420x240.jpg',
+        accent: 'from-[#102e5f] via-[#0e2d64] to-[#123c7c]',
+    },
+];
+
+const bestDealItems = [
+    {
+        title: 'ABS Cyclone Aqua Gaming PC - Windows 11 - Intel Core 5 120 - Arc A580 8GB - 16GB DDR4 3200 - 1TB M.2 SSD',
+        category: 'Desktop PC',
+        price: '$899.99',
+        compare: '$1,149.99',
+        save: '21% off',
+        badge: 'PlexusBiz Select',
+        rating: '4.5',
+        reviews: '22',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/83-360-936-17.jpg',
+        short: 'A clean desktop tower bundle with game-ready graphics and fast storage.',
+    },
+    {
+        title: 'CORSAIR Vengeance RGB Pro 32GB (2 x 16GB) 288-Pin PC RAM DDR4 3200 (PC4 25600) Desktop Memory Model CMW32GX4M2E3200C16',
+        category: 'Memory (RAM)',
+        price: '$289.99',
+        compare: '',
+        save: '',
+        badge: 'PlexusBiz Select',
+        rating: '4.7',
+        reviews: '135',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/20-236-941-08.jpg',
+        short: 'RGB desktop memory with a proven 3200 MHz profile and 32GB capacity.',
+    },
+    {
+        title: 'SAPPHIRE NITRO+ Radeon RX 9070 XT Graphics Card 11348-01-20G',
+        category: 'Graphics Cards',
         price: '$799.99',
-        oldPrice: '$999.99',
-        image: '/images/landing/deal-two-monitor.jpg',
+        compare: '$949.99',
+        save: '15% off',
+        badge: 'Top rated',
+        rating: '4.5',
+        reviews: '365',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/14-932-751-07.jpg',
+        short: 'High-end Radeon card with strong cooling and a premium factory design.',
     },
     {
-        title: 'Minimal laptop desk starter pack',
-        category: 'Office + Laptop',
-        price: '$429.00',
-        oldPrice: '$549.00',
-        image: '/images/landing/hero-desk.jpg',
+        title: 'MSI Vector - LCD 16" QHD+ GeForce RTX 5080 Laptop GPU - Intel Core Ultra 9 275HX - 16GB Memory - 1 TB SSD - Windows 11 Home Gaming Laptop - 240 Hz',
+        category: 'Laptops',
+        price: '$2,199.00',
+        compare: '$2,499.00',
+        save: '12% off',
+        badge: 'AI Ready',
+        rating: '4.8',
+        reviews: '92',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/34-236-520-11.jpg',
+        short: 'A desktop-replacement gaming laptop with a fast QHD+ panel and RTX 5080.',
     },
     {
-        title: 'Creator desk accessories set',
-        category: 'Creator tools',
-        price: '$189.99',
-        oldPrice: '$239.99',
-        image: '/images/landing/deal-photographer-desk.jpg',
-    },
-    {
-        title: 'Elegant iMac productivity bundle',
-        category: 'Desktop setup',
-        price: '$999.00',
-        oldPrice: '$1,149.00',
-        image: '/images/landing/deal-imac.jpg',
+        title: 'LIAN LI LANCOOL 216RX Black Steel / Tempered Glass ATX Mid Tower Computer Case ,2x 16 cm ARGB Fans Included ----LANCOOL 216RX',
+        category: 'Cases',
+        price: '$99.99',
+        compare: '',
+        save: 'Free Gift',
+        badge: '',
+        rating: '4.6',
+        reviews: '308',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/11-129-309-01.jpg',
+        short: 'A roomy ATX mid tower with airflow-focused front design and RGB fans.',
     },
 ];
 
-const quickSignals = [
+const officeDealItems = [
     {
-        title: 'Fast Dispatch',
-        copy: 'Same-day processing for selected products.',
+        title: 'Lenovo V15 Gen 4 15.6" Laptop AMD Ryzen 7 7730U 16GB RAM 1TB SSD Windows 11 Home (83CR003UUS)',
+        category: 'Laptops',
+        price: '$599.99',
+        compare: '$799.99',
+        save: 'Save 25%',
+        badge: 'PlexusBiz Select',
+        rating: '4.6',
+        reviews: '3',
+        image: 'https://c1.neweggimages.com/productimage/nb300/34-156-876-13.jpg',
+        short: 'A value-focused productivity laptop with a Ryzen 7 CPU and 1TB SSD.',
     },
     {
-        title: 'Verified Sellers',
-        copy: 'Curated vendors with performance tracking.',
+        title: 'MSI Venture 16 AI Touchscreen Laptop Intel Core Ultra 9 285H 32GB RAM 1TB SSD (A2HMTG-015US)',
+        category: 'AI PC',
+        price: '$1,099.00',
+        compare: '$1,199.99',
+        save: 'Save 8%',
+        badge: 'AI Ready',
+        rating: '4.7',
+        reviews: '6',
+        image: 'https://c1.neweggimages.com/productimage/nb300/34-156-876-13.jpg',
+        short: 'A touchscreen AI-ready notebook with plenty of memory for multitasking.',
     },
     {
-        title: 'Price Alerts',
-        copy: 'Track drops and receive instant deal updates.',
+        title: 'Acer Aspire Go 15, 15.6" Full HD IPS Display, AMD Ryzen 7 7730U Octa-Core Processor, AMD Radeon Graphics, 32GB DDR4 Memory, 1TB PCIe Gen4 SSD, Windows 11 Home AG15-42P-R3GM',
+        category: 'Laptops',
+        price: '$699.99',
+        compare: '$899.99',
+        save: 'Save 22%',
+        badge: 'AI Ready',
+        rating: '4.4',
+        reviews: '92',
+        image: 'https://c1.neweggimages.com/productimage/nb300/34-156-876-13.jpg',
+        short: 'A lightweight all-day laptop with a sharp FHD panel and a big SSD.',
     },
 ];
 
-export default function Welcome({ auth, canLogin, canRegister }) {
+const categoryPanels = [
+    {
+        title: 'Components & Storage',
+        tiles: [
+            { label: 'CPU', image: 'https://c1.neweggimages.com/nobgproductcompressall300/19-118-505-08.jpg' },
+            { label: 'Motherboard', image: 'https://c1.neweggimages.com/nobgproductcompressall300/13-119-728-01.png' },
+            { label: 'SSD', image: 'https://c1.neweggimages.com/nobgproductcompressall300/20-985-133-04.jpg' },
+            { label: 'Hard Drive', image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-234-588-01.jpg' },
+        ],
+    },
+    {
+        title: 'Laptops & Notebooks',
+        banner: 'https://promotions.newegg.com/nepro/25-0119/420x240.jpg',
+        bannerLabel: 'Shop Deals',
+        bannerCopy: 'Power up your everyday',
+    },
+    {
+        title: 'Electronics & Essentials',
+        tiles: [
+            { label: 'Cameras', image: 'https://c1.neweggimages.com/nobgproductcompressall300/26-743-003-08.jpg' },
+            { label: 'Personal Care', image: 'https://c1.neweggimages.com/nobgproductcompressall300/14-126-807-10.png' },
+            { label: 'Printers & Supplies', image: 'https://c1.neweggimages.com/nobgproductcompressall300/34-236-520-11.jpg' },
+            { label: 'Flash Storage', image: 'https://c1.neweggimages.com/nobgproductcompressall300/26-153-335-06.jpg' },
+        ],
+    },
+    {
+        title: 'Servers & Power',
+        tiles: [
+            { label: 'Servers & Workstations', image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-995-001-01.jpg' },
+            { label: 'Power Protection', image: 'https://c1.neweggimages.com/nobgproductcompressall300/17-182-469-34.jpg' },
+        ],
+    },
+];
+
+const desktopPcItems = [
+    {
+        title: 'Acer Aspire Desktop Computer Intel Core i5-14400, Intel UHD Graphics 730, 8GB DDR5, 512 GB PCIe SSD, Windows 11 Home 64-bit - TC-1775-UR11',
+        category: 'Desktop PC',
+        price: '$549.99',
+        compare: '$599.99',
+        save: 'Save 8%',
+        badge: 'PlexusBiz Select',
+        rating: '4.5',
+        reviews: '19',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/83-360-936-17.jpg',
+        short: 'A compact office-ready tower with Intel Core i5 and integrated graphics.',
+    },
+    {
+        title: 'Dell Pro QCS1250 Slim PC - Intel Core i5 14th Gen i5-14500 - 16 GB - 512 GB SSD - Windows 11 Pro - Intel DDR5 SDRAM - 180W M1XXF',
+        category: 'Desktop PC',
+        price: '$829.99',
+        compare: '$999.99',
+        save: 'Save 17%',
+        badge: '',
+        rating: '4.4',
+        reviews: '17',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/17-182-469-34.jpg',
+        short: 'Slim business tower for desks that need a lot of performance in little space.',
+    },
+    {
+        title: 'HIGOLEPC Mini PC Windows 11 Pro Intel Celeron N4100 4GB/64GB, Micro Computer Stick PC USB PD3.0 and HDMI 4K Gigabit Ethernet, WiFi 5.0, BT 4.2',
+        category: 'Mini PC',
+        price: '$199.00',
+        compare: '',
+        save: 'See price in cart',
+        badge: '',
+        rating: '4.2',
+        reviews: '10',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/26-153-335-06.jpg',
+        short: 'A tiny stick PC for basic office tasks and 4K media playback.',
+    },
+    {
+        title: 'HP Desktop PC OmniDesk M02-0127c AMD Ryzen 7 8700G 32GB RAM 1TB PCIe SSD AMD Radeon 780M Windows 11 Home',
+        category: 'Desktop PC',
+        price: '$639.99',
+        compare: '$749.99',
+        save: 'Save 14%',
+        badge: '',
+        rating: '4.7',
+        reviews: '1',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/83-360-977-15.jpg',
+        short: 'A modern all-in-one style tower with Ryzen 7 and integrated Radeon 780M graphics.',
+    },
+    {
+        title: 'Dell OptiPlex 5060 - Windows 11 Desktop Computer | Intel i5-8500 Six Core (4.3GHz Turbo) | 16GB DDR4 RAM | 1TB SSD | WiFi + Bluetooth | RGB Mouse + Keyboard | 24" 1080p Monitor',
+        category: 'Desktop PC',
+        price: '$402.00',
+        compare: '$405.00',
+        save: '',
+        badge: '',
+        rating: '4.3',
+        reviews: '1',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/24-027-380-01.jpg',
+        short: 'A complete desktop bundle for office or student use.',
+    },
+];
+
+const memoryItems = [
+    {
+        title: 'Team Group 16GB (2 x 8GB) 288-Pin PC RAM DDR5 6000 (PC5 48000) Memory Model FF3D516G6000HC38ADC01',
+        price: '$249.99',
+        compare: '',
+        save: '',
+        badge: '',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/20-236-941-08.jpg',
+    },
+    {
+        title: 'CORSAIR Vengeance RGB 32GB (2 x 16GB) 288-Pin PC RAM DDR5 6000 (PC5 48000) Desktop Memory Model CMH32GX5M2E6000C36',
+        price: '$439.99',
+        compare: '$483.99',
+        save: 'Save 9%',
+        badge: '',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/20-236-941-08.jpg',
+    },
+    {
+        title: 'G.SKILL Ripjaws V Series 16GB (2 x 8GB) 288-Pin PC RAM DDR4 3200 (PC4 25600) Desktop Memory Model F4-3200C16D-16GVKB',
+        price: '$133.08',
+        compare: '',
+        save: '',
+        badge: '',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/20-236-941-08.jpg',
+    },
+    {
+        title: 'G.SKILL Flare X5 Series AMD EXPO 32GB (2 x 16GB) 288-Pin PC RAM DDR5 6000 Desktop Memory Model F5-6000J3636F16GX2-FX5',
+        price: '$449.99',
+        compare: '$494.99',
+        save: 'Save 9%',
+        badge: '',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/20-236-941-08.jpg',
+    },
+];
+
+const electronicsItems = [
+    {
+        title: 'Soundcore by Anker, Space One, Active Noise Cancelling Headphones, 2X Stronger Voice Reduction, 40H ANC Playtime, App Control, LDAC Hi-Res Wireless Audio, Comfortable Fit, Clear Calls, Bluetooth 5.3',
+        price: '$99.99',
+        compare: '',
+        save: '',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/26-743-003-08.jpg',
+    },
+    {
+        title: 'Team 32GB microSDHC UHS-I/U1 Class 10 Memory Card with Adapter, Speed Up to 100MB/s (TUSDH32GCL10U03)',
+        price: '$13.99',
+        compare: '$14.99',
+        save: 'Save 6%',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/26-153-335-06.jpg',
+    },
+    {
+        title: 'Rosewill 70W Retractable USB-C Wall Charger with Built-in Cable, 3-Port GaN 3 Fast Charging, Foldable Design & Real-Time TFT Display',
+        price: '$19.99',
+        compare: '$49.99',
+        save: 'Save 60%',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/14-126-807-10.png',
+    },
+    {
+        title: 'NVIDIA SHIELD Android TV Pro - 4K HDR Streaming Media Player - High Performance, Dolby Vision, 3GB RAM, 2 x USB, Google Assistant Built-In, Works with Alexa',
+        price: '$199.00',
+        compare: '',
+        save: '',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/34-236-520-11.jpg',
+    },
+];
+
+const moreToConsiderItems = [
+    {
+        title: 'UGREEN NASync DXP4800 Plus 4 Bay NAS Intel Pentium Gold 8GB DDR5',
+        price: '$619.99',
+        compare: '$699.99',
+        save: 'Save 11%',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-995-001-01.jpg',
+    },
+    {
+        title: 'Synology DS225+ Diskless System Network - Storage',
+        price: '$339.99',
+        compare: '',
+        save: '',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-995-001-01.jpg',
+    },
+    {
+        title: 'LSI 9305-24i x8 lane, PCIe 3.0 Full Height SAS SAS 9305 12 Gb/s SAS Host Bus Adapter',
+        price: '$146.80',
+        compare: '$249.00',
+        save: 'Save 41%',
+        image: 'https://c1.neweggimages.com/nobgproductcompressall300/17-182-469-34.jpg',
+    },
+    {
+        title: 'Email Deals',
+        price: 'Shop Now',
+        compare: '',
+        save: '',
+        image: 'https://promotions.newegg.com/nepro/24-0162/420x500.jpg',
+    },
+];
+
+const communityInsights = [
+    'Join ASUS for the ROG 20th Anniversary @ PlexusBiz Gamer Zone (Diamond Bar, CA) May 9, 11AM-3PM',
+    'Steam Controller: A New Revision Ten Years in the Making',
+    'Upgrade Your Build: Cougar FV150 & Airface Pure Pro on Sale',
+    'PlexusBiz Golden Dragon Question: What would you name your Golden Dragon? Comment down below for 5 entries!',
+];
+
+const shoppingTools = [
+    { title: 'PC Builder', copy: 'Compare parts and save builds.', image: 'https://c1.neweggimages.com/nobgproductcompressall300/19-118-505-08.jpg' },
+    { title: 'NAS Builder', copy: 'Plan disks and storage tiers.', image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-995-001-01.jpg' },
+    { title: 'PC Upgrader', copy: 'BETA upgrade recommendations.', image: 'https://c1.neweggimages.com/nobgproductcompressall300/83-360-936-17.jpg' },
+    { title: 'Gaming PC Finder', copy: 'Find a prebuilt that fits.', image: 'https://c1.neweggimages.com/nobgproductcompressall300/83-360-936-17.jpg' },
+    { title: 'Server Configurator', copy: 'Build around server needs.', image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-995-001-01.jpg' },
+    { title: 'PSU Wattage Calculator', copy: 'Estimate wattage fast.', image: 'https://c1.neweggimages.com/nobgproductcompressall300/17-182-469-34.jpg' },
+    { title: 'ASUS NUC Configurator', copy: 'Compact, powerful, AI ready*', image: 'https://c1.neweggimages.com/nobgproductcompressall300/34-236-520-11.jpg' },
+    { title: 'Laptop Finder', copy: 'Match size and performance.', image: 'https://c1.neweggimages.com/nobgproductcompressall300/34-236-520-11.jpg' },
+    { title: 'Memory Finder', copy: 'Sort RAM by speed and size.', image: 'https://c1.neweggimages.com/nobgproductcompressall300/20-236-941-08.jpg' },
+    { title: 'Network Builder', copy: 'Switches, routers, and Wi-Fi.', image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-995-001-01.jpg' },
+];
+
+const popularKeywords = [
+    'rtx',
+    'AMD',
+    '9800X3D',
+    'PS5',
+    'Fractal Design',
+    '4090',
+    'ssd',
+    'RTX 5080',
+    'Intel',
+    'laptop',
+    '7800x3d',
+    'G.Skill',
+    'MSI',
+    't-force',
+    '7600X',
+    '7900xtx',
+    'gaming pc',
+    'power supply',
+    '4k 2K Monitor',
+    'wd black',
+    'graphics card',
+    'monitor',
+    'corsair case',
+    'ddr5',
+    'cpu',
+    'asus psu',
+    'motherboard',
+    'cpu cooler',
+    'gaming monitor',
+    'ram',
+    'keyboard',
+    'Windows 11 Home',
+    'oled monitor',
+    'gigabyte',
+    'Gaming PC',
+    'ai ready',
+    'Windows 11 Pro',
+    'Lian Li',
+    'flare x5',
+    'Aspire',
+    'Antec',
+    'copilot+ pc',
+    'touchscreen',
+];
+
+function SectionHeading({ kicker, title, action, href = '#' }) {
+    return (
+        <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+                <p className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">
+                    {kicker}
+                </p>
+                <h2 className="mt-2 text-2xl font-black tracking-[-0.04em] text-[#0b2e71]">
+                    {title}
+                </h2>
+            </div>
+            {action ? (
+                <a href={href} className="text-sm font-bold text-slate-600 transition hover:text-[#0b2e71]">
+                    {action} <span aria-hidden="true">›</span>
+                </a>
+            ) : null}
+        </div>
+    );
+}
+
+function PlexusBizMark() {
+    return (
+        <Link href="/" className="flex items-center gap-3">
+            <img
+                src="/images/project-logo.png"
+                alt="PlexusBiz Automate"
+                className="h-12 w-12 rounded-full bg-white object-cover shadow-[0_0_18px_rgba(255,255,255,0.18)]"
+            />
+            <span className="leading-tight">
+                <span className="block text-[20px] font-black tracking-[-0.04em] text-white">PlexusBiz</span>
+                <span className="block text-[11px] font-semibold uppercase tracking-[0.24em] text-white/70">
+                    commerce hub
+                </span>
+            </span>
+        </Link>
+    );
+}
+
+function HeaderIcon({ children, className = '' }) {
+    return (
+        <span
+            className={`grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-white/10 text-white ${className}`}
+        >
+            {children}
+        </span>
+    );
+}
+
+function BundleCard({ bundle }) {
+    const isDark = bundle.tone === 'dark';
+
+    return (
+        <article
+            className={`overflow-hidden rounded-[22px] border p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${isDark ? 'border-[#0f408f] bg-[#0b2e71] text-white' : `border-transparent bg-gradient-to-br ${bundle.accent} text-slate-900`}`}
+        >
+            <div className="flex items-start justify-between gap-3">
+                <div>
+                    <p className={`text-[11px] font-black uppercase tracking-[0.2em] ${isDark ? 'text-[#ffbf73]' : 'text-[#0b3d91]'}`}>
+                        {bundle.brand}
+                    </p>
+                    <h3 className="mt-1 text-base font-extrabold tracking-[-0.03em]">
+                        {bundle.savings}
+                    </h3>
+                </div>
+                <a
+                    href="#"
+                    className={`text-xs font-bold ${isDark ? 'text-white/80' : 'text-[#0b3d91]'}`}
+                >
+                    More options
+                </a>
+            </div>
+
+            <div className="mt-4 space-y-2">
+                {bundle.items.map((item) => (
+                    <div
+                        key={item.title}
+                        className={`flex items-center gap-3 rounded-[16px] p-2 ${isDark ? 'bg-white/10' : 'bg-white/80'}`}
+                    >
+                        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-slate-100">
+                            <div
+                                className="h-full w-full"
+                                style={layeredBackground(
+                                    item.image,
+                                    'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.12))',
+                                )}
+                            />
+                        </div>
+                        <p className={`text-[11px] font-semibold leading-5 ${isDark ? 'text-white/90' : 'text-slate-700'}`}>
+                            {item.title}
+                        </p>
+                    </div>
+                ))}
+            </div>
+
+            {bundle.note ? (
+                <p className={`mt-3 text-xs font-semibold ${isDark ? 'text-white/80' : 'text-[#d75d00]'}`}>
+                    {bundle.note}
+                </p>
+            ) : null}
+
+            <div className="mt-4 flex items-end justify-center gap-2">
+                <span className={`text-3xl font-black tracking-[-0.05em] ${isDark ? 'text-white' : 'text-[#0b2e71]'}`}>
+                    {bundle.price}
+                </span>
+                {bundle.compare ? (
+                    <span className={`pb-0.5 text-xs font-semibold line-through ${isDark ? 'text-white/60' : 'text-slate-500'}`}>
+                        {bundle.compare}
+                    </span>
+                ) : null}
+            </div>
+
+            <div className="mt-4 flex gap-3">
+                <button
+                    type="button"
+                    className={`flex-1 rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.16em] ${isDark ? 'border-white/15 bg-white/10 text-white' : 'border-[#d7e3f4] bg-white text-[#0b3d91]'}`}
+                >
+                    {bundle.cta}
+                </button>
+                <button
+                    type="button"
+                    className="flex-1 rounded-full bg-[#ff9a1f] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-white"
+                >
+                    Add to cart
+                </button>
+            </div>
+        </article>
+    );
+}
+
+function PromoBanner({ banner }) {
+    return (
+        <article className="overflow-hidden rounded-[28px] border border-[#d7e3f4] bg-white shadow-sm">
+            <div className={`grid min-h-[240px] gap-0 xl:grid-cols-2`}>
+                <div className="relative min-h-[240px] overflow-hidden">
+                    <div
+                        className="absolute inset-0"
+                        style={layeredBackground(
+                            banner.image,
+                            `linear-gradient(135deg, rgba(27,61,165,0.95) 0%, rgba(58,102,216,0.85) 100%)`,
+                        )}
+                    />
+                    <div className={`absolute inset-0 bg-gradient-to-r ${banner.accent} opacity-90`} />
+                </div>
+                <div className="flex flex-col justify-center gap-4 bg-[#0b2e71] px-6 py-6 text-white">
+                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#ffd59a]">
+                        {banner.title}
+                    </p>
+                    <h3 className="max-w-md text-3xl font-black tracking-[-0.05em]">
+                        {banner.subtitle}
+                    </h3>
+                    <a
+                        href="#deals"
+                        className="inline-flex w-fit items-center rounded-full bg-[#ffcf30] px-5 py-2 text-xs font-black uppercase tracking-[0.16em] text-[#0b2e71]"
+                    >
+                        {banner.cta}
+                    </a>
+                </div>
+            </div>
+        </article>
+    );
+}
+
+function CompactProductCard({ item, dark = false }) {
+    return (
+        <article
+            className={`overflow-hidden rounded-[24px] border shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${dark ? 'border-white/10 bg-[#0b2e71] text-white' : 'border-[#d7e3f4] bg-white text-slate-900'}`}
+        >
+            <div className="p-4">
+                <div className="overflow-hidden rounded-[18px] bg-slate-50">
+                    <div
+                        className="aspect-[4/3]"
+                        style={layeredBackground(
+                            item.image,
+                            'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.16))',
+                        )}
+                    />
+                </div>
+                {item.badge ? (
+                    <span className={`mt-3 inline-flex rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] ${dark ? 'bg-white/10 text-white' : 'bg-[#eef4ff] text-[#0b3d91]'}`}>
+                        {item.badge}
+                    </span>
+                ) : null}
+                <p className={`mt-3 text-xs font-black uppercase tracking-[0.18em] ${dark ? 'text-white/60' : 'text-slate-400'}`}>
+                    {item.category}
+                </p>
+                <h3 className={`mt-2 text-sm font-bold leading-6 ${dark ? 'text-white' : 'text-slate-900'}`}>
+                    {item.title}
+                </h3>
+                <p className={`mt-2 text-xs leading-5 ${dark ? 'text-white/75' : 'text-slate-600'}`}>
+                    {item.short}
+                </p>
+                <div className={`mt-3 flex items-end gap-2 ${dark ? 'text-white' : 'text-[#0b2e71]'}`}>
+                    <span className="text-2xl font-black tracking-[-0.04em]">{item.price}</span>
+                    {item.compare ? (
+                        <span className={`pb-0.5 text-xs font-semibold line-through ${dark ? 'text-white/60' : 'text-slate-400'}`}>
+                            {item.compare}
+                        </span>
+                    ) : null}
+                </div>
+                {item.save ? (
+                    <p className={`mt-2 text-xs font-semibold ${dark ? 'text-[#ffd59a]' : 'text-[#d75d00]'}`}>{item.save}</p>
+                ) : null}
+            </div>
+        </article>
+    );
+}
+
+function CategoryPanel({ panel }) {
+    return (
+        <article className="overflow-hidden rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm">
+            <h3 className="text-2xl font-black tracking-[-0.04em] text-[#0b2e71]">{panel.title}</h3>
+
+            {panel.banner ? (
+                <div className="mt-4 overflow-hidden rounded-[18px] border border-[#eef3fb] bg-slate-50">
+                    <div
+                        className="min-h-[250px]"
+                        style={layeredBackground(
+                            panel.banner,
+                            'linear-gradient(180deg, rgba(91, 33, 182, 0.75), rgba(17, 24, 39, 0.1))',
+                        )}
+                    />
+                </div>
+            ) : null}
+
+            {panel.bannerLabel ? <p className="mt-3 text-sm font-semibold text-slate-700">{panel.bannerLabel}</p> : null}
+            {panel.bannerCopy ? <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">{panel.bannerCopy}</p> : null}
+
+            {panel.tiles ? (
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                    {panel.tiles.map((tile) => (
+                        <div key={tile.label} className="rounded-[18px] bg-[#f4f8ff] p-3">
+                            <div className="overflow-hidden rounded-[14px] bg-white">
+                                <div
+                                    className="aspect-[4/3]"
+                                    style={layeredBackground(
+                                        tile.image,
+                                        'linear-gradient(180deg, rgba(255,255,255,0.05), rgba(15,23,42,0.12))',
+                                    )}
+                                />
+                            </div>
+                            <p className="mt-3 text-sm font-semibold text-slate-900">{tile.label}</p>
+                        </div>
+                    ))}
+                </div>
+            ) : null}
+        </article>
+    );
+}
+
+function ToolCard({ tool }) {
+    return (
+        <article className="overflow-hidden rounded-[24px] border border-[#d7e3f4] bg-white p-4 shadow-sm">
+            <div className="overflow-hidden rounded-[18px] bg-[#0b3d91]">
+                <div
+                    className="aspect-[16/10]"
+                    style={layeredBackground(
+                        tool.image,
+                        'linear-gradient(180deg, rgba(255,255,255,0.04), rgba(15,23,42,0.14))',
+                    )}
+                />
+            </div>
+            <h3 className="mt-3 text-lg font-black tracking-[-0.03em] text-[#0b2e71]">{tool.title}</h3>
+            <p className="mt-1 text-sm leading-6 text-slate-600">{tool.copy}</p>
+            <a
+                href="#"
+                className="mt-4 inline-flex rounded-full border border-[#d7e3f4] bg-[#f4f8ff] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-[#0b3d91]"
+            >
+                Check it out
+            </a>
+        </article>
+    );
+}
+
+function KeywordPill({ keyword }) {
+    return (
+        <span className="rounded-full border border-[#d7e3f4] bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm">
+            {keyword}
+        </span>
+    );
+}
+
+function InsightCard({ insight }) {
+    return (
+        <article className="rounded-[24px] border border-[#d7e3f4] bg-white p-4 shadow-sm">
+            <div className="mb-3 inline-flex rounded-full bg-[#eef4ff] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#0b3d91]">
+                Community
+            </div>
+            <p className="text-sm leading-6 text-slate-700">{insight}</p>
+        </article>
+    );
+}
+
+export default function Welcome({ auth = {}, canLogin, canRegister }) {
+    const isAuthed = Boolean(auth?.user);
+    const primaryHref = isAuthed ? route('dashboard') : route('register');
+
     return (
         <>
-            <Head title="PlexusBiz Automate" />
+            <Head title="PlexusBiz Automate | Electronics Store: Tech, PC Parts, AI PC & More" />
 
-            <div className="min-h-screen bg-[#e9f1fb] text-slate-900">
-                <header>
-                    <div className="bg-gradient-to-r from-[#0b1e44] via-[#16346b] to-[#1f4d94] text-[#d9e7ff]">
-                        <div className="mx-auto flex w-full max-w-[1240px] items-center justify-between px-4 py-2 text-[11px] uppercase tracking-[0.14em] sm:px-6 lg:px-8">
-                            <div className="hidden gap-6 md:flex">
-                                {topTools.map((tool) => (
-                                    <span key={tool}>{tool}</span>
-                                ))}
-                            </div>
-                            <span className="font-semibold">Limited tech drops every hour</span>
-                        </div>
-                    </div>
+            <div
+                id="hero"
+                className="show-tab-store show-img-bg relative min-h-screen overflow-hidden bg-[#eaf2ff] text-slate-900 antialiased"
+                style={{ fontFamily: "'Segoe UI', Arial, sans-serif" }}
+            >
+                <div
+                    className="pointer-events-none absolute inset-x-0 top-0 h-[26rem]"
+                    style={{
+                        background:
+                            'linear-gradient(180deg, rgba(202, 221, 255, 0.98) 0%, rgba(240, 246, 255, 0.96) 46%, rgba(234, 242, 255, 0) 100%)',
+                    }}
+                />
+                <div className="pointer-events-none absolute -left-24 top-28 h-72 w-72 rounded-full bg-[#2b74db]/12 blur-3xl" />
+                <div className="pointer-events-none absolute right-0 top-16 h-80 w-80 rounded-full bg-[#ff7b22]/10 blur-3xl" />
 
-                    <div className="border-b border-slate-200 bg-white/95 backdrop-blur">
-                        <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8 xl:flex-row xl:items-center xl:gap-6">
-                            <Link href="/" className="flex items-center gap-3 self-start xl:self-auto">
-                                <img
-                                    src="/images/project-logo.png"
-                                    alt="PlexusBiz Automate"
-                                    className="h-11 w-11 rounded-xl border border-slate-200 bg-white p-2 shadow-sm"
-                                />
-                                <div>
-                                    <p className="text-lg font-extrabold tracking-tight text-[#0b2450]">
-                                        PlexusBiz Automate
-                                    </p>
-                                    <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
-                                        Smart Commerce Hub
-                                    </p>
+                <header className="sticky top-0 z-40">
+                    <div className="border-b border-[#042e6f] bg-[#0b2e71] text-white shadow-[0_10px_24px_-18px_rgba(7,18,46,0.8)]">
+                        <div className="mx-auto grid w-full max-w-[1900px] grid-cols-[auto_auto_minmax(0,1fr)] items-center gap-3 px-4 py-3 sm:px-6 xl:grid-cols-[auto_auto_minmax(0,1fr)_auto] xl:gap-4 xl:px-8">
+                            <PlexusBizMark />
+
+                            <button
+                                type="button"
+                                className="hidden items-center gap-2 rounded-full px-3 py-2 text-left transition hover:bg-white/10 xl:flex"
+                            >
+                                <span className="grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-white/10 text-lg">
+                                    ⌖
+                                </span>
+                                <span className="leading-tight">
+                                    <span className="block text-[11px] font-semibold text-white/75">Hello</span>
+                                    <span className="block text-sm font-black tracking-[-0.02em]">Select address</span>
+                                </span>
+                            </button>
+
+                            <form className="flex min-w-0 flex-1" onSubmit={(event) => event.preventDefault()}>
+                                <div className="relative flex w-full items-center overflow-hidden rounded-full bg-white shadow-[0_10px_30px_-18px_rgba(9,20,48,0.9)]">
+                                    <input
+                                        type="search"
+                                        placeholder="Search products, deals, and parts"
+                                        className="min-w-0 flex-1 bg-transparent px-5 py-3.5 text-sm text-slate-800 outline-none placeholder:text-slate-400"
+                                    />
+                                    <div className="hidden max-w-[52%] items-center gap-2 border-l border-[#e3ebf7] px-3 lg:flex">
+                                        {topSearchSuggestions.map((suggestion) => (
+                                            <span
+                                                key={suggestion}
+                                                className="rounded-full bg-[#f3f6fb] px-3 py-1 text-xs font-semibold text-slate-700"
+                                            >
+                                                {suggestion}
+                                            </span>
+                                        ))}
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        className="flex h-full items-center justify-center bg-[#96b8ef] px-5 py-3.5 text-[#0b2e71] transition hover:bg-[#7ca7e8]"
+                                    >
+                                        <span className="text-2xl font-black leading-none">⌕</span>
+                                    </button>
                                 </div>
-                            </Link>
-
-                            <form className="relative flex-1">
-                                <input
-                                    type="search"
-                                    placeholder="Search products, bundles, accessories..."
-                                    className="w-full rounded-full border border-slate-200 bg-slate-50 px-5 py-3 text-sm outline-none transition focus:border-[#2362c9] focus:bg-white focus:ring-4 focus:ring-[#2362c9]/15"
-                                />
-                                <button
-                                    type="button"
-                                    className="absolute right-1.5 top-1.5 rounded-full bg-[#ff7b22] px-5 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:bg-[#ef6c12]"
-                                >
-                                    Search
-                                </button>
                             </form>
 
-                            <div className="flex items-center gap-2">
-                                {auth.user ? (
-                                    <Link
-                                        href={route('dashboard')}
-                                        className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-[#2362c9] hover:text-[#2362c9]"
-                                    >
-                                        Dashboard
+                            <div className="flex items-center gap-2 justify-self-end">
+                                <HeaderIcon>☾</HeaderIcon>
+                                <HeaderIcon>☀</HeaderIcon>
+                                <HeaderIcon className="hidden sm:grid">🔔</HeaderIcon>
+                                <HeaderIcon className="hidden sm:grid">🇺🇸</HeaderIcon>
+                                <div className="hidden items-center gap-2 rounded-full px-2 py-1 text-left sm:flex">
+                                    <span className="grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-white/10 text-lg">
+                                        ☼
+                                    </span>
+                                </div>
+                                {!isAuthed && canLogin && (
+                                    <Link href={route('login')} className="hidden rounded-full px-2 py-1 text-left sm:block">
+                                        <span className="block text-[11px] font-semibold text-white/75">Welcome</span>
+                                        <span className="block text-sm font-black tracking-[-0.02em]">Sign In / Register</span>
                                     </Link>
-                                ) : (
-                                    <>
-                                        {canLogin && (
-                                            <Link
-                                                href={route('login')}
-                                                className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-[#2362c9] hover:text-[#2362c9]"
-                                            >
-                                                Sign in
-                                            </Link>
-                                        )}
-
-                                        {canRegister && (
-                                            <Link
-                                                href={route('register')}
-                                                className="rounded-full bg-[#0f3f9f] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#0b2f79]"
-                                            >
-                                                Register
-                                            </Link>
-                                        )}
-                                    </>
                                 )}
-
-                                <button
-                                    type="button"
-                                    className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-[#2362c9] hover:text-[#2362c9]"
-                                >
-                                    Cart (0)
-                                </button>
+                                {isAuthed && (
+                                    <Link href={route('dashboard')} className="hidden rounded-full px-2 py-1 text-left sm:block">
+                                        <span className="block text-[11px] font-semibold text-white/75">Welcome</span>
+                                        <span className="block text-sm font-black tracking-[-0.02em]">Dashboard</span>
+                                    </Link>
+                                )}
+                                <Link href="#footer" className="hidden rounded-full px-2 py-1 text-left md:block">
+                                    <span className="block text-[11px] font-semibold text-white/75">Returns</span>
+                                    <span className="block text-sm font-black tracking-[-0.02em]">& Orders</span>
+                                </Link>
+                                <HeaderIcon className="h-11 w-11 bg-transparent text-2xl">🛒</HeaderIcon>
                             </div>
                         </div>
                     </div>
 
-                    <div className="border-b border-slate-200 bg-white">
-                        <div className="mx-auto flex w-full max-w-[1240px] items-center gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-8">
-                            {categories.map((category) => (
+                    <div className="border-b border-[#d8e4f5] bg-[#eef4fb] text-[#0b2e71]">
+                        <div className="mx-auto flex w-full max-w-[1900px] items-center justify-between gap-4 overflow-hidden px-4 py-3 sm:px-6 xl:px-8">
+                            <div className="flex items-center gap-4 whitespace-nowrap text-sm font-semibold">
                                 <button
-                                    key={category}
                                     type="button"
-                                    className="whitespace-nowrap rounded-full border border-slate-200 bg-slate-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-slate-700 transition hover:border-[#2362c9] hover:bg-[#edf4ff] hover:text-[#1a56b5]"
+                                    className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-[#0b2e71] transition hover:bg-white"
                                 >
-                                    {category}
+                                    <span className="text-lg">☰</span>
+                                    Menu
                                 </button>
-                            ))}
+                                {headerNavLinks.map((link) => (
+                                    <a
+                                        key={link.label}
+                                        href={link.href}
+                                        className={
+                                            link.active
+                                                ? 'rounded-full bg-[#1f68d9] px-3 py-1.5 font-black text-white shadow-sm'
+                                                : 'text-slate-700 transition hover:text-[#0b2e71]'
+                                        }
+                                    >
+                                        {link.label}
+                                    </a>
+                                ))}
+                            </div>
+
+                            <div className="flex items-center gap-4 whitespace-nowrap text-sm font-semibold">
+                                <a href="#footer" className="font-black italic text-[#0b2e71]">
+                                    PLEXUSBIZ BUSINESS
+                                </a>
+                                <a href="#footer" className="text-slate-700">
+                                    Feedback
+                                </a>
+                                <a href="#footer" className="text-slate-700">
+                                    Help Center
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </header>
 
-                <main className="mx-auto w-full max-w-[1240px] space-y-8 px-4 py-8 sm:px-6 lg:px-8">
-                    <section className="grid gap-6 lg:grid-cols-[280px_1fr_300px]">
-                        <aside className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                            <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-slate-400">
-                                Shop all categories
-                            </p>
-                            <ul className="mt-4 space-y-2">
-                                {categories.map((category) => (
-                                    <li key={category}>
-                                        <button
-                                            type="button"
-                                            className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm font-semibold text-slate-700 transition hover:bg-[#eef4ff] hover:text-[#1c4dac]"
-                                        >
-                                            <span>{category}</span>
-                                            <span className="text-slate-400">›</span>
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        </aside>
-
-                        <article className="relative overflow-hidden rounded-3xl border border-[#c7daf8] bg-gradient-to-r from-[#0b2e71] via-[#14499d] to-[#2a74d6] p-8 text-white shadow-[0_30px_60px_-35px_rgba(15,63,159,0.7)]">
-                            <div className="absolute inset-0 opacity-35">
-                                <img
-                                    src="/images/landing/hero-desk.jpg"
-                                    alt="Open source workspace image"
-                                    className="h-full w-full object-cover"
-                                />
-                            </div>
-                            <div className="absolute inset-0 bg-gradient-to-r from-[#082660]/95 via-[#0c377f]/82 to-[#2a74d6]/40" />
-
-                            <div className="relative z-10 max-w-[30rem]">
-                                <p className="inline-flex rounded-full border border-white/30 bg-white/10 px-4 py-1 text-[11px] font-bold uppercase tracking-[0.16em]">
-                                    Deal zone
-                                </p>
-                                <h1 className="mt-5 text-4xl font-extrabold tracking-tight sm:text-5xl">
-                                    Build your next workstation with cleaner bundles.
-                                </h1>
-                                <p className="mt-4 text-sm leading-7 text-blue-100">
-                                    Newegg-inspired shopping flow with faster discovery, stronger pricing contrast,
-                                    and action-first product cards.
-                                </p>
-
-                                <div className="mt-6 flex flex-wrap gap-3">
-                                    <button
-                                        type="button"
-                                        className="rounded-full bg-[#ff7b22] px-5 py-2.5 text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:bg-[#ef6c12]"
-                                    >
-                                        Shop today
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="rounded-full border border-white/35 bg-white/10 px-5 py-2.5 text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:bg-white/20"
-                                    >
-                                        View bundles
-                                    </button>
+                <main className="relative z-10 mx-auto w-full max-w-[1900px] space-y-6 px-4 py-4 sm:px-6 xl:px-8">
+                    <section className="grid gap-4 xl:grid-cols-[300px_minmax(0,1fr)]">
+                        <aside className="rounded-[24px] bg-[#0b2e71] p-4 text-white shadow-[0_18px_40px_-22px_rgba(7,18,46,0.85)]">
+                            <div className="mb-4 flex items-center justify-between gap-3 border-b border-white/10 pb-3">
+                                <div>
+                                    <p className="text-[11px] font-black uppercase tracking-[0.22em] text-white/55">
+                                        Shop categories
+                                    </p>
+                                    <h2 className="mt-2 text-lg font-black tracking-[-0.03em]">
+                                        Browse by department
+                                    </h2>
                                 </div>
+                                <span className="rounded-full bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#ffd59a]">
+                                    Live
+                                </span>
                             </div>
-                        </article>
 
-                        <aside className="space-y-4">
-                            {spotlightCards.map((card) => (
-                                <article
-                                    key={card.title}
-                                    className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-                                >
-                                    <img src={card.image} alt={card.title} className="h-36 w-full object-cover" />
-                                    <div className="p-4">
-                                        <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#1a56b5]">
-                                            {card.tag}
-                                        </p>
-                                        <h3 className="mt-2 text-sm font-bold text-slate-900">{card.title}</h3>
-                                        <p className="mt-1 text-xs leading-5 text-slate-600">{card.copy}</p>
-                                    </div>
-                                </article>
-                            ))}
+                            <div className="space-y-1">
+                                {categoryRailItems.map((item) => (
+                                    <button
+                                        key={item.title}
+                                        type="button"
+                                        className="flex w-full items-center gap-3 rounded-[16px] px-2 py-2 text-left transition hover:bg-white/8"
+                                    >
+                                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md border border-white/10 bg-white/10 text-[10px] font-black tracking-[0.08em] text-[#dce8ff]">
+                                            {item.abbr}
+                                        </span>
+                                        <span className="min-w-0 flex-1 text-sm font-semibold leading-5 text-white">
+                                            {item.title}
+                                        </span>
+                                        <span className="text-lg font-black text-white/35">›</span>
+                                    </button>
+                                ))}
+                            </div>
                         </aside>
+
+                        <div className="space-y-4">
+                            <article className="relative overflow-hidden rounded-[24px] border border-[#d7e3f4] bg-[#0b2e71] shadow-[0_24px_70px_-34px_rgba(8,24,66,0.9)]">
+                                <div
+                                    className="absolute inset-0"
+                                    style={layeredBackground(
+                                        heroBackground,
+                                        'linear-gradient(180deg, rgba(6,12,35,0.1), rgba(6,12,35,0.6))',
+                                    )}
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-r from-[#02071d]/85 via-[#07206a]/65 to-[#0f4bb0]/20" />
+                                <div className="relative grid min-h-[340px] gap-6 p-6 xl:grid-cols-[1.2fr_.8fr] xl:p-8">
+                                    <div className="flex flex-col justify-center">
+                                        <span className="inline-flex w-fit rounded-full border border-white/15 bg-white/10 px-4 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-[#ffd59a]">
+                                            PC Gaming Week Extended
+                                        </span>
+                                        <h1 className="mt-5 max-w-2xl text-4xl font-black tracking-[-0.06em] text-white sm:text-5xl xl:text-6xl">
+                                            Earn a $25 statement credit when you open a new PlexusBiz Store Credit Card.
+                                        </h1>
+                                        <p className="mt-4 max-w-xl text-sm leading-7 text-blue-100 sm:text-base">
+                                            Make a purchase of $500 or more and keep building with the same dense, deal-first rhythm you see in the reference page.
+                                        </p>
+                                        <div className="mt-6 flex flex-wrap items-center gap-3">
+                                            <a
+                                                href="#deals"
+                                                className="inline-flex rounded-full bg-[#ff8a00] px-5 py-2.5 text-xs font-black uppercase tracking-[0.16em] text-white shadow-sm transition hover:bg-[#ef7400]"
+                                            >
+                                                Shop now
+                                            </a>
+                                            <a
+                                                href="#build"
+                                                className="inline-flex rounded-full border border-white/20 bg-white/10 px-5 py-2.5 text-xs font-black uppercase tracking-[0.16em] text-white transition hover:bg-white/20"
+                                            >
+                                                PC Builder
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div className="relative flex items-end justify-end">
+                                        <div className="w-full max-w-[360px] rounded-[24px] border border-white/15 bg-white/10 p-4 backdrop-blur">
+                                            <div className="overflow-hidden rounded-[20px] bg-white shadow-[0_18px_50px_-30px_rgba(15,23,42,0.75)]">
+                                                <div
+                                                    className="aspect-[16/10]"
+                                                    style={layeredBackground(
+                                                        heroPreview,
+                                                        'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.2))',
+                                                    )}
+                                                />
+                                                <div className="space-y-3 p-4">
+                                                    <div className="flex items-center justify-between gap-3">
+                                                        <span className="rounded-full bg-[#0b2e71] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white">
+                                                            Shop now
+                                                        </span>
+                                                        <span className="text-xs font-bold text-[#ff8a00]">Offer valid 4/20/26 - 5/3/26</span>
+                                                    </div>
+                                                    <h2 className="text-lg font-bold leading-6 tracking-[-0.03em] text-slate-900">
+                                                        Build around current promos, credit offers, and sharp bundle pricing.
+                                                    </h2>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+
+                            <div className="grid gap-4 xl:grid-cols-3">
+                                {comboBundlesPrimary.map((bundle) => (
+                                    <BundleCard key={bundle.brand + bundle.savings} bundle={bundle} />
+                                ))}
+                            </div>
+
+                            <div className="grid gap-4 xl:grid-cols-2">
+                                {comboBundlesSecondary.map((bundle) => (
+                                    <BundleCard key={bundle.brand + bundle.savings} bundle={bundle} />
+                                ))}
+                            </div>
+                        </div>
                     </section>
 
-                    <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-                        <div className="flex flex-wrap items-end justify-between gap-4">
-                            <div>
-                                <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-slate-400">
-                                    Today&apos;s deals
-                                </p>
-                                <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-slate-900">
-                                    Flash Savings On Tech Workspace Picks
-                                </h2>
-                            </div>
-                            <span className="rounded-full bg-[#eef4ff] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-[#1a56b5]">
-                                Ends in 06h : 13m : 09s
-                            </span>
-                        </div>
+                    <section className="grid gap-4 xl:grid-cols-2">
+                        {saleBanners.map((banner) => (
+                            <PromoBanner key={banner.title} banner={banner} />
+                        ))}
+                    </section>
 
-                        <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                            {flashDeals.map((deal) => (
-                                <article
-                                    key={deal.title}
-                                    className="group overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:-translate-y-1 hover:border-[#a8c5f5] hover:shadow-md"
-                                >
-                                    <div className="h-44 overflow-hidden bg-slate-100">
-                                        <img
-                                            src={deal.image}
-                                            alt={deal.title}
-                                            className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                                        />
-                                    </div>
-                                    <div className="p-4">
-                                        <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-400">
-                                            {deal.category}
-                                        </p>
-                                        <h3 className="mt-2 line-clamp-2 text-sm font-bold leading-6 text-slate-900">
-                                            {deal.title}
-                                        </h3>
-                                        <div className="mt-3 flex items-center gap-2">
-                                            <span className="text-xl font-extrabold text-[#0f3f9f]">{deal.price}</span>
-                                            <span className="text-xs font-semibold text-slate-400 line-through">
-                                                {deal.oldPrice}
-                                            </span>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            className="mt-4 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] text-slate-700 transition hover:border-[#2362c9] hover:bg-[#eef4ff] hover:text-[#1a56b5]"
-                                        >
-                                            Add to cart
-                                        </button>
-                                    </div>
-                                </article>
+                    <section
+                        id="deals"
+                        className="rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm sm:p-7"
+                    >
+                        <SectionHeading
+                            kicker="Today's Best Deals"
+                            title="Flash pricing on the categories people actually search for."
+                            action="See all deals"
+                            href="#footer"
+                        />
+
+                        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+                            {bestDealItems.map((item) => (
+                                <CompactProductCard key={item.title} item={item} />
                             ))}
                         </div>
                     </section>
 
-                    <section className="grid gap-4 rounded-3xl border border-[#bed5f8] bg-gradient-to-r from-[#dbe8fc] via-[#eaf2ff] to-[#f3f7ff] p-5 sm:grid-cols-3 sm:p-7">
-                        {quickSignals.map((signal) => (
-                            <article
-                                key={signal.title}
-                                className="rounded-2xl border border-white/70 bg-white/70 p-4 shadow-sm"
-                            >
-                                <h3 className="text-sm font-extrabold uppercase tracking-[0.12em] text-[#1a56b5]">
-                                    {signal.title}
-                                </h3>
-                                <p className="mt-2 text-sm leading-6 text-slate-600">{signal.copy}</p>
-                            </article>
+                    <section className="grid gap-4 xl:grid-cols-[1.08fr_.92fr]">
+                        <div className="rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm sm:p-7">
+                            <SectionHeading
+                                kicker="Must-Have Office Tech Deals"
+                                title="A focused set of laptops and desk-friendly picks."
+                                action="See More"
+                                href="#tools"
+                            />
+
+                            <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                                {officeDealItems.map((item) => (
+                                    <CompactProductCard key={item.title} item={item} />
+                                ))}
+                            </div>
+                        </div>
+
+                        <PromoBanner
+                            banner={{
+                                title: 'REBUILD YOUR DESK SETUP:',
+                                subtitle: 'Must-Have Office Tech Deals',
+                                cta: 'Shop now',
+                                image: 'https://promotions.newegg.com/nepro/24-0162/420x500.jpg',
+                                accent: 'from-[#0a132f] via-[#082b61] to-[#0b2e71]',
+                            }}
+                        />
+                    </section>
+
+                    <section className="grid gap-4 xl:grid-cols-4">
+                        {categoryPanels.map((panel) => (
+                            <CategoryPanel key={panel.title} panel={panel} />
                         ))}
+                    </section>
+
+                    <section className="rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm sm:p-7">
+                        <SectionHeading
+                            kicker="Desktop PC's"
+                            title="A compact row of towers, minis, and bundled systems."
+                            action="See More"
+                            href="#featured"
+                        />
+                        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+                            {desktopPcItems.map((item) => (
+                                <CompactProductCard key={item.title} item={item} />
+                            ))}
+                        </div>
+                    </section>
+
+                    <section className="grid gap-4 xl:grid-cols-2">
+                        <section className="rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm sm:p-7">
+                            <SectionHeading
+                                kicker="Memory (RAM)"
+                                title="The RAM section from the reference, translated to product cards."
+                                action="See More"
+                                href="#featured"
+                            />
+                            <div className="mt-5 grid gap-4 md:grid-cols-2">
+                                {memoryItems.map((item) => (
+                                    <CompactProductCard key={item.title} item={item} />
+                                ))}
+                            </div>
+                        </section>
+
+                        <section className="rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm sm:p-7">
+                            <SectionHeading
+                                kicker="Electronics"
+                                title="Accessories, media players, and smaller tech essentials."
+                                action="See More"
+                                href="#featured"
+                            />
+                            <div className="mt-5 grid gap-4 md:grid-cols-2">
+                                {electronicsItems.map((item) => (
+                                    <CompactProductCard key={item.title} item={item} />
+                                ))}
+                            </div>
+                        </section>
+                    </section>
+
+                    <section className="grid gap-4 xl:grid-cols-[1.05fr_.95fr]">
+                        <section className="rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm sm:p-7">
+                            <SectionHeading
+                                kicker="More Items to Consider"
+                                title="A few more storage and network picks from the same feed."
+                                action="Shop Now"
+                                href="#footer"
+                            />
+                            <div className="mt-5 grid gap-4 md:grid-cols-2">
+                                {moreToConsiderItems.map((item) => (
+                                    <CompactProductCard key={item.title} item={item} />
+                                ))}
+                            </div>
+                        </section>
+
+                        <section className="grid gap-4">
+                            <section className="rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm sm:p-7">
+                                <SectionHeading
+                                    kicker="Community insights"
+                                    title="Real-world community picks and news blurbs."
+                                    action="See More"
+                                    href="#community"
+                                />
+                                <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                                    {communityInsights.map((insight) => (
+                                        <InsightCard key={insight} insight={insight} />
+                                    ))}
+                                </div>
+                            </section>
+
+                            <section className="rounded-[28px] border border-[#d7e3f4] bg-[#0b2e71] p-5 text-white shadow-sm sm:p-7">
+                                <SectionHeading
+                                    kicker="Shopping Tools"
+                                    title="Build the same utility rail shown in the reference."
+                                    action="Check it out"
+                                    href="#tools"
+                                />
+                                <div id="tools" className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                                    {shoppingTools.slice(0, 6).map((tool) => (
+                                        <ToolCard key={tool.title} tool={tool} />
+                                    ))}
+                                </div>
+                            </section>
+                        </section>
+                    </section>
+
+                    <section className="rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm sm:p-7">
+                        <SectionHeading
+                            kicker="Shopping Tools"
+                            title="The full builder and finder rail, kept close to the screenshot."
+                            action="See More"
+                            href="#footer"
+                        />
+                        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+                            {shoppingTools.map((tool) => (
+                                <ToolCard key={tool.title} tool={tool} />
+                            ))}
+                        </div>
+                    </section>
+
+                    <section id="brands" className="grid gap-4 rounded-[28px] border border-[#d7e3f4] bg-[#eef4ff] p-5 shadow-sm sm:p-7 xl:grid-cols-[1fr_320px]">
+                        <div>
+                            <SectionHeading
+                                kicker="Featured Brands"
+                                title="Brand strip plus keyword cloud."
+                                action="See More"
+                                href="#footer"
+                            />
+                            <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5 xl:grid-cols-10">
+                                {featuredBrands.map((brand) => (
+                                    <BrandPill key={brand} brand={brand} />
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="rounded-[24px] bg-white p-5 shadow-sm">
+                            <p className="text-[11px] font-black uppercase tracking-[0.22em] text-[#0b3d91]">
+                                Popular Products
+                            </p>
+                            <div className="mt-4 flex flex-wrap gap-2">
+                                {popularKeywords.slice(0, 18).map((keyword) => (
+                                    <KeywordPill key={keyword} keyword={keyword} />
+                                ))}
+                            </div>
+                        </div>
                     </section>
                 </main>
 
-                <footer className="border-t border-slate-200 bg-white/90">
-                    <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-3 px-4 py-6 text-xs text-slate-500 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-                        <p>Powered by PlexusBiz Automate storefront experience.</p>
-                        <p>Layout logic inspired by large-format ecommerce homepages.</p>
+                <footer
+                    id="footer"
+                    className="relative z-10 mt-4 border-t border-[#d4e0f3] bg-[#081733] text-slate-300"
+                >
+                    <div className="mx-auto w-full max-w-[1900px] px-4 py-10 sm:px-6 xl:px-8">
+                        <div className="flex flex-col gap-6 border-b border-white/10 pb-8 xl:flex-row xl:items-end xl:justify-between">
+                            <div>
+                                <p className="text-xl font-black tracking-[-0.04em] text-white">
+                                    PlexusBiz
+                                </p>
+                                <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400">
+                                    A PlexusBiz landing page structure rebuilt in React and Tailwind to match the reference layout, density, and color rhythm.
+                                </p>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-300">
+                                    Blue header
+                                </span>
+                                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-300">
+                                    Orange accents
+                                </span>
+                                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-300">
+                                    Dense modules
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="grid gap-8 py-8 sm:grid-cols-2 xl:grid-cols-4">
+                            {footerSections.map((section) => (
+                                <FooterColumn key={section.title} section={section} />
+                            ))}
+                        </div>
+
+                        <div className="flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+                            <p>Design concept only. Swap in real product data, prices, and links when ready.</p>
+                            <p>All section copy and layout rebuilt in React + Tailwind.</p>
+                        </div>
                     </div>
                 </footer>
             </div>

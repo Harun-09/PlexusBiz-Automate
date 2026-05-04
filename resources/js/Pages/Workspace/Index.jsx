@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, router, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 
 const statusTone = (value) => {
     const normalized = String(value || '').toLowerCase();
@@ -12,11 +12,104 @@ const statusTone = (value) => {
         return 'border-rose-200 bg-rose-50 text-rose-700';
     }
 
-    if (['pending', 'scheduled', 'running', 'draft', 'waiting_supplier'].includes(normalized)) {
+    if (['pending', 'processing', 'scheduled', 'running', 'draft', 'waiting_supplier'].includes(normalized)) {
         return 'border-amber-200 bg-amber-50 text-amber-700';
     }
 
     return 'border-gray-200 bg-gray-50 text-gray-700';
+};
+
+const formatGatewayLabel = (value) => {
+    const normalized = String(value || '').toLowerCase();
+
+    if (!normalized || normalized === 'stripe') {
+        return 'Stripe';
+    }
+
+    if (normalized === 'sslcommerz') {
+        return 'SSLCOMMERZ';
+    }
+
+    return normalized
+        .split(/[_-]/)
+        .filter(Boolean)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ');
+};
+
+const formatStatusLabel = (value) => {
+    const normalized = String(value || '').replace(/_/g, ' ').trim();
+
+    if (normalized === '') {
+        return '-';
+    }
+
+    return normalized
+        .split(/\s+/)
+        .filter(Boolean)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ');
+};
+
+const renderStatusPill = (status, label) => (
+    <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${statusTone(status)}`}>
+        {label || status || '-'}
+    </span>
+);
+
+const renderWorkspaceCell = (_column, value) => {
+    if (value === null || value === undefined || value === '') {
+        return <span className="text-gray-400">-</span>;
+    }
+
+    if (typeof value === 'object' && !Array.isArray(value)) {
+        if (value.kind === 'payment-summary') {
+            return (
+                <div className="flex flex-col gap-1">
+                    {renderStatusPill(value.status, formatStatusLabel(value.status))}
+                    <span className="text-xs text-gray-500">{formatGatewayLabel(value.method)}</span>
+                </div>
+            );
+        }
+
+        if (value.kind === 'payment-action') {
+            return (
+                <div className="flex flex-col gap-1">
+                    <Link
+                        href={value.href}
+                        method="post"
+                        as="button"
+                        preserveScroll
+                        className="inline-flex items-center justify-center rounded-full bg-blue-700 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    >
+                        {value.label}
+                    </Link>
+                    {value.gateway ? <span className="text-xs text-gray-500">via {value.gateway}</span> : null}
+                </div>
+            );
+        }
+
+        if (value.kind === 'link') {
+            return (
+                <Link
+                    href={value.href}
+                    className="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-3.5 py-1.5 text-xs font-semibold text-gray-700 shadow-sm transition hover:border-gray-400 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                >
+                    {value.label}
+                </Link>
+            );
+        }
+
+        if (value.kind === 'status') {
+            return renderStatusPill(value.status, value.label || formatStatusLabel(value.status));
+        }
+    }
+
+    if (Array.isArray(value)) {
+        return value.join(', ');
+    }
+
+    return String(value);
 };
 
 export default function WorkspaceIndex({ auth, workspace }) {
@@ -159,17 +252,17 @@ export default function WorkspaceIndex({ auth, workspace }) {
                                                 {workspace.columns.map((column) => {
                                                     const value = row[column] ?? '';
                                                     const isStatus = column.toLowerCase().includes('status') || column.toLowerCase() === 'stage';
+                                                    const isAction = column.toLowerCase() === 'action';
                                                     const wraps = ['content', 'error'].includes(column.toLowerCase());
 
                                                     return (
-                                                        <td key={column} className={`${wraps ? 'max-w-xl whitespace-normal' : 'whitespace-nowrap'} px-5 py-4 text-gray-700`}>
-                                                            {isStatus ? (
-                                                                <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${statusTone(value)}`}>
-                                                                    {value}
-                                                                </span>
-                                                            ) : (
-                                                                value
-                                                            )}
+                                                        <td
+                                                            key={column}
+                                                            className={`${wraps ? 'max-w-xl whitespace-normal' : 'whitespace-nowrap'} ${isAction ? 'text-left' : ''} px-5 py-4 text-gray-700`}
+                                                        >
+                                                            {isStatus && typeof value !== 'object'
+                                                                ? renderStatusPill(value, formatStatusLabel(value))
+                                                                : renderWorkspaceCell(column, value)}
                                                         </td>
                                                     );
                                                 })}

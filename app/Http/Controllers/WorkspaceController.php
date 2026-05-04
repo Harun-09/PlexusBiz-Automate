@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Domains\CRM\Enums\CustomerStatus;
 use App\Domains\CRM\Models\Customer;
 use App\Domains\ECommerce\Enums\OrderStatus;
+use App\Domains\ECommerce\Enums\PaymentStatus;
 use App\Domains\ECommerce\Enums\ProductStatus;
 use App\Domains\ECommerce\Models\Order;
 use App\Domains\ECommerce\Models\Product;
@@ -87,6 +88,7 @@ class WorkspaceController extends Controller
     {
         $filters = $this->filters($request, $this->enumValues(OrderStatus::class));
         $query = Order::query()->with(['buyer', 'items.supplier']);
+        $canInitiatePayment = $request->user()->hasRole('buyer') || $request->user()->hasRole('admin');
 
         if ($request->user()->hasRole('buyer')) {
             $query->where('buyer_id', $request->user()->id);
@@ -101,15 +103,19 @@ class WorkspaceController extends Controller
             ->latest()
             ->limit(50)
             ->get()
-            ->map(fn (Order $order): array => [
-            'Order' => $order->order_number,
-            'Buyer' => $order->buyer?->name,
-            'Status' => $order->status->value,
-            'Total' => $order->grand_total.' '.$order->currency,
-            'Placed' => $order->placed_at?->format('Y-m-d H:i') ?? 'n/a',
-        ]);
+            ->map(function (Order $order) use ($canInitiatePayment): array {
+                return [
+                    'Order' => $order->order_number,
+                    'Buyer' => $order->buyer?->name,
+                    'Status' => $order->status->value,
+                    'Payment' => $this->orderPaymentSummary($order),
+                    'Total' => $order->grand_total.' '.$order->currency,
+                    'Placed' => $order->placed_at?->format('Y-m-d H:i') ?? 'n/a',
+                    'Action' => $this->orderPaymentAction($order, $canInitiatePayment),
+                ];
+            });
 
-        return $this->page('Orders', 'Buyer, supplier, and admin order visibility is scoped by role.', [], ['Order', 'Buyer', 'Status', 'Total', 'Placed'], $rows, filters: $filters);
+        return $this->page('Orders', 'Buyer, supplier, and admin order visibility is scoped by role.', [], ['Order', 'Buyer', 'Status', 'Payment', 'Total', 'Placed', 'Action'], $rows, filters: $filters);
     }
 
     public function marketplace(Request $request): Response
@@ -303,5 +309,68 @@ class WorkspaceController extends Controller
     private function enumValues(string $enumClass): array
     {
         return array_map(fn (BackedEnum $case): string => $case->value, $enumClass::cases());
+    }
+
+    private function orderPaymentSummary(Order $order): array
+    {
+        $status = $order->payment_status ?: PaymentStatus::Pending->value;
+        $gateway = $order->payment_method ?: config('commerce.default_payment_gateway', 'stripe');
+
+        return [
+            'kind' => 'payment-summary',
+            'status' => $status,
+            'method' => $this->formatPaymentGateway($gateway),
+        ];
+    }
+
+    private function orderPaymentAction(Order $order, bool $canInitiatePayment): array
+    {
+        if ($order->isPaid()) {
+            $checkoutToken = trim((string) $order->checkout_token);
+
+            if ($checkoutToken !== '') {
+                return [
+                    'kind' => 'link',
+                    'label' => 'View receipt',
+                    'href' => route('checkout.success', [
+                        'orderNumber' => $order->order_number,
+                        'access_token' => $checkoutToken,
+                    ]),
+                ];
+            }
+
+            return [
+                'kind' => 'status',
+                'label' => 'Paid',
+                'status' => PaymentStatus::Completed->value,
+            ];
+        }
+
+        if (! $canInitiatePayment) {
+            return [
+                'kind' => 'status',
+                'label' => ucfirst($order->payment_status ?: PaymentStatus::Pending->value),
+                'status' => $order->payment_status ?: PaymentStatus::Pending->value,
+            ];
+        }
+
+        return [
+            'kind' => 'payment-action',
+            'label' => $order->payment_method ? 'Continue payment' : 'Pay now',
+            'href' => route('payment.process', $order->order_number),
+            'gateway' => $this->formatPaymentGateway($order->payment_method ?: config('commerce.default_payment_gateway', 'stripe')),
+        ];
+    }
+
+    private function formatPaymentGateway(?string $gateway): string
+    {
+        $gateway = strtolower(trim((string) $gateway));
+
+        return match ($gateway) {
+            'stripe' => 'Stripe',
+            'sslcommerz' => 'SSLCOMMERZ',
+            '' => 'Stripe',
+            default => ucwords(str_replace(['_', '-'], ' ', $gateway)),
+        };
     }
 }
