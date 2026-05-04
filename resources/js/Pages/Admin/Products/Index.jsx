@@ -147,6 +147,11 @@ export default function ProductsIndex({ auth, products, filters, statuses, suppl
                                                 <td className="whitespace-nowrap px-6 py-4"><StatusPill status={product.status} /></td>
                                                 <td className="whitespace-nowrap px-6 py-4">
                                                     <div className="flex items-center gap-2">
+                                                        <Link href={`/admin/bulk-pricing?product=${product.id}`}
+                                                            className="inline-flex items-center gap-1 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-100">
+                                                            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v8m-4-4h8m-7.5 7h7a4.5 4.5 0 0 0 4.5-4.5V7.5A4.5 4.5 0 0 0 15.5 3h-7A4.5 4.5 0 0 0 4 7.5v7A4.5 4.5 0 0 0 8.5 19Z" /></svg>
+                                                            Pricing
+                                                        </Link>
                                                         <Link href={`/admin/products/${product.id}/edit`}
                                                             className="inline-flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-sm transition hover:border-blue-300 hover:text-blue-700">
                                                             <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z" /></svg>

@@ -9,7 +9,7 @@ export default function CreateProduct({ auth, suppliers, statuses }) {
             header={
                 <div>
                     <h2 className="text-xl font-bold text-gray-950">Create Product</h2>
-                    <p className="mt-1 text-sm text-gray-500">Add a new product to the catalog.</p>
+                    <p className="mt-1 text-sm text-gray-500">Add a new product to the catalog. MOQ and tier pricing are managed separately.</p>
                 </div>
             }
         >

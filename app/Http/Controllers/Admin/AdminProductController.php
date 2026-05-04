@@ -105,13 +105,13 @@ class AdminProductController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
             'base_price' => ['required', 'numeric', 'min:0'],
-            'moq' => ['required', 'integer', 'min:1'],
             'stock_quantity' => ['required', 'integer', 'min:0'],
             'status' => ['required', 'string', Rule::in(array_map(fn (ProductStatus $s): string => $s->value, ProductStatus::cases()))],
         ]);
 
         Product::create([
             ...$validated,
+            'moq' => 1,
             'slug' => Str::slug($validated['name']),
             'reserved_quantity' => 0,
             'published_at' => $validated['status'] === 'active' ? now() : null,
@@ -159,7 +159,6 @@ class AdminProductController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
             'base_price' => ['required', 'numeric', 'min:0'],
-            'moq' => ['required', 'integer', 'min:1'],
             'stock_quantity' => ['required', 'integer', 'min:0'],
             'status' => ['required', 'string', Rule::in(array_map(fn (ProductStatus $s): string => $s->value, ProductStatus::cases()))],
         ]);

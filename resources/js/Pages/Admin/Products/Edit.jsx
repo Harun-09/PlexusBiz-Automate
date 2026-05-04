@@ -9,7 +9,7 @@ export default function EditProduct({ auth, product, suppliers, statuses }) {
             header={
                 <div>
                     <h2 className="text-xl font-bold text-gray-950">Edit Product</h2>
-                    <p className="mt-1 text-sm text-gray-500">Update product details, pricing, and inventory.</p>
+                    <p className="mt-1 text-sm text-gray-500">Update product details and inventory. MOQ and tier pricing live in the bulk pricing workspace.</p>
                 </div>
             }
         >

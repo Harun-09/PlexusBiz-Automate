@@ -75,6 +75,7 @@ const SIDEBAR_MODULES = [
         items: [
             { label: 'Admin Dashboard', href: '/admin', icon: 'A', roles: ['admin'] },
             { label: 'Users', href: '/admin/users', icon: 'U', roles: ['admin'] },
+            { label: 'Bulk Pricing & MOQ', href: '/admin/bulk-pricing', icon: 'BP', roles: ['admin'] },
             { label: 'Module Settings', href: '/settings/modules', icon: 'MS', roles: ['admin'] },
             { label: 'Audit Logs', href: '/admin/audit-logs', icon: 'AL', roles: ['admin'] },
         ],
