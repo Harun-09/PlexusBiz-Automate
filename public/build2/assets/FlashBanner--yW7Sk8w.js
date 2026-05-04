@@ -1,0 +1,1 @@
+import{t as e}from"./jsx-runtime-DFbqkGHq.js";var t=e();function n({message:e,type:n=`success`,className:r=``}){return e?(0,t.jsx)(`div`,{className:`rounded-2xl border px-4 py-3 text-sm font-medium shadow-sm ${n===`error`?`border-rose-200 bg-rose-50 text-rose-800`:`border-emerald-200 bg-emerald-50 text-emerald-800`} ${r}`,children:e}):null}export{n as t};

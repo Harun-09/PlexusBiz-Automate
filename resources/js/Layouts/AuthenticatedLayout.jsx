@@ -3,12 +3,14 @@ import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
+import Footer from '@/Components/Footer';
 import { Link } from '@inertiajs/react';
 
 const NAV_ITEMS = [
     { label: 'Dashboard', href: '/dashboard', roles: [] },
     { label: 'Admin', href: '/admin', roles: ['admin'] },
     { label: 'Users', href: '/admin/users', roles: ['admin'] },
+    { label: 'Suppliers', href: '/admin/suppliers', roles: ['admin'] },
     { label: 'Marketplace', href: '/marketplace', roles: ['buyer', 'admin'] },
     { label: 'Products', href: '/commerce/products', roles: ['supplier', 'admin'] },
     { label: 'Orders', href: '/commerce/orders', roles: ['buyer', 'supplier', 'admin'] },
@@ -16,6 +18,7 @@ const NAV_ITEMS = [
     { label: 'Campaigns', href: '/marketing/campaigns', roles: ['marketing_manager', 'admin'] },
     { label: 'Social', href: '/social/calendar', roles: ['marketing_manager', 'admin'] },
     { label: 'Workflow', href: '/workflow/logs', roles: ['marketing_manager', 'admin'] },
+    { label: 'Settings', href: '/settings/modules', roles: ['admin'] },
 ];
 
 export default function Authenticated({ user, header, children }) {
@@ -144,6 +147,7 @@ export default function Authenticated({ user, header, children }) {
             )}
 
             <main>{children}</main>
+            <Footer />
         </div>
     );
 }

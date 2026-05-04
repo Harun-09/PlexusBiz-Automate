@@ -52,11 +52,11 @@ class WorkspaceRoutesTest extends TestCase
             ->get('/admin/users?search=buyer&status=active')
             ->assertOk()
             ->assertInertia(fn (Assert $page): Assert => $page
-                ->component('Workspace/Index')
-                ->where('workspace.filters.search', 'buyer')
-                ->where('workspace.filters.status', 'active')
-                ->has('workspace.rows', 1)
-                ->where('workspace.rows.0.Email', 'buyer@plexus.test'));
+                ->component('Admin/Users/Index')
+                ->where('filters.search', 'buyer')
+                ->where('filters.status', 'active')
+                ->has('users.data', 1)
+                ->where('users.data.0.email', 'buyer@plexus.test'));
     }
 
     public function test_orders_workspace_exposes_payment_action_for_unpaid_buyer_orders(): void

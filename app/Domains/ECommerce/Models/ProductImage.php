@@ -53,6 +53,59 @@ class ProductImage extends Model
         return $path !== '' ? $path : null;
     }
 
+    public function variantMeta(string $variant): ?array
+    {
+        $variantMeta = data_get($this->storageMeta(), 'variants.'.$variant);
+
+        if (is_array($variantMeta)) {
+            return $variantMeta;
+        }
+
+        if (is_string($variantMeta) && $variantMeta !== '') {
+            return ['path' => $variantMeta];
+        }
+
+        return null;
+    }
+
+    public function variantPath(string $variant): ?string
+    {
+        $variantPath = data_get($this->variantMeta($variant) ?? [], 'path');
+
+        return is_string($variantPath) && $variantPath !== '' ? $variantPath : null;
+    }
+
+    public function variantUrl(string $variant): ?string
+    {
+        $path = $this->variantPath($variant);
+
+        if ($path === null) {
+            return null;
+        }
+
+        return Storage::disk(config('media.public_disk', 'public'))->url($path);
+    }
+
+    public function thumbnailPath(): ?string
+    {
+        return $this->variantPath('thumbnail');
+    }
+
+    public function previewPath(): ?string
+    {
+        return $this->variantPath('preview');
+    }
+
+    public function thumbnailUrl(): ?string
+    {
+        return $this->variantUrl('thumbnail');
+    }
+
+    public function previewUrl(): ?string
+    {
+        return $this->variantUrl('preview');
+    }
+
     public function url(): ?string
     {
         $path = $this->publicPath();

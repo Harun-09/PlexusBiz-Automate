@@ -14,8 +14,7 @@ class AssetStorageService
     public function storeProductImage(Product $product, UploadedFile $file, array $attributes = []): ProductImage
     {
         $manifest = $this->buildProductManifest($product, $file);
-        $this->copyToDisk($file, $manifest['original_disk'], $manifest['original_path']);
-        $this->copyToDisk($file, $manifest['public_disk'], $manifest['public_path']);
+        $this->persistManagedFile($file, $manifest);
 
         return ProductImage::create([
             'product_id' => $product->id,
@@ -30,8 +29,7 @@ class AssetStorageService
     public function attachSocialMediaFile(SocialPost $post, UploadedFile $file, array $attributes = []): SocialPost
     {
         $manifest = $this->buildSocialManifest($post, $file);
-        $this->copyToDisk($file, $manifest['original_disk'], $manifest['original_path']);
-        $this->copyToDisk($file, $manifest['public_disk'], $manifest['public_path']);
+        $this->persistManagedFile($file, $manifest);
 
         $post->forceFill(array_merge([
             'media_url' => $manifest['public_url'],
@@ -137,10 +135,46 @@ class AssetStorageService
             'size' => $file->getSize(),
             'source_name' => $file->getClientOriginalName(),
             'variants' => [
-                'thumbnail' => $thumbnailPath,
-                'preview' => $previewPath,
+                'thumbnail' => [
+                    'disk' => $publicDisk,
+                    'path' => $thumbnailPath,
+                    'url' => Storage::disk($publicDisk)->url($thumbnailPath),
+                    'max_width' => (int) config('media.thumbnail_max_width', 360),
+                    'max_height' => (int) config('media.thumbnail_max_height', 360),
+                    'generated' => false,
+                ],
+                'preview' => [
+                    'disk' => $publicDisk,
+                    'path' => $previewPath,
+                    'url' => Storage::disk($publicDisk)->url($previewPath),
+                    'max_width' => (int) config('media.preview_max_width', 1280),
+                    'max_height' => (int) config('media.preview_max_height', 720),
+                    'generated' => false,
+                ],
             ],
         ]);
+    }
+
+    private function persistManagedFile(UploadedFile $file, array &$manifest): void
+    {
+        $this->copyToDisk($file, $manifest['original_disk'], $manifest['original_path']);
+        $this->copyToDisk($file, $manifest['public_disk'], $manifest['public_path']);
+
+        foreach (['thumbnail', 'preview'] as $variant) {
+            $variantMeta = $manifest['variants'][$variant] ?? null;
+
+            if (! is_array($variantMeta)) {
+                continue;
+            }
+
+            $manifest['variants'][$variant]['generated'] = $this->writeManagedVariant(
+                $file,
+                $variantMeta['disk'],
+                $variantMeta['path'],
+                (int) $variantMeta['max_width'],
+                (int) $variantMeta['max_height'],
+            );
+        }
     }
 
     private function assetPath(string $directory, string $segment, string $stem, string $extension): string
@@ -151,6 +185,144 @@ class AssetStorageService
     private function copyToDisk(UploadedFile $file, string $disk, string $path): void
     {
         Storage::disk($disk)->putFileAs(dirname($path), $file, basename($path));
+    }
+
+    private function writeManagedVariant(UploadedFile $file, string $disk, string $path, int $maxWidth, int $maxHeight): bool
+    {
+        $mimeType = strtolower((string) $file->getMimeType());
+        $sourcePath = $file->getRealPath() ?: $file->getPathname();
+
+        if ($sourcePath === '' || $sourcePath === false || ! is_file($sourcePath)) {
+            $this->copyToDisk($file, $disk, $path);
+
+            return false;
+        }
+
+        if (! $this->isImageMimeType($mimeType)) {
+            $this->copyToDisk($file, $disk, $path);
+
+            return false;
+        }
+
+        $binary = $this->resizeImageBinary($sourcePath, $mimeType, $maxWidth, $maxHeight);
+
+        if ($binary === null) {
+            $this->copyToDisk($file, $disk, $path);
+
+            return false;
+        }
+
+        Storage::disk($disk)->put($path, $binary);
+
+        return true;
+    }
+
+    private function resizeImageBinary(string $sourcePath, string $mimeType, int $maxWidth, int $maxHeight): ?string
+    {
+        if ($maxWidth < 1 || $maxHeight < 1) {
+            return null;
+        }
+
+        $size = @getimagesize($sourcePath);
+        if (! is_array($size) || empty($size[0]) || empty($size[1])) {
+            return null;
+        }
+
+        $sourceWidth = (int) $size[0];
+        $sourceHeight = (int) $size[1];
+        $ratio = min($maxWidth / $sourceWidth, $maxHeight / $sourceHeight, 1);
+        $targetWidth = max(1, (int) round($sourceWidth * $ratio));
+        $targetHeight = max(1, (int) round($sourceHeight * $ratio));
+
+        $sourceImage = $this->createImageFromPath($sourcePath, $mimeType);
+        if ($sourceImage === null) {
+            return null;
+        }
+
+        $targetImage = imagecreatetruecolor($targetWidth, $targetHeight);
+        if ($targetImage === false) {
+            imagedestroy($sourceImage);
+
+            return null;
+        }
+
+        $usesAlpha = in_array($mimeType, ['image/png', 'image/webp', 'image/avif'], true);
+        if ($usesAlpha) {
+            imagealphablending($targetImage, false);
+            imagesavealpha($targetImage, true);
+            $transparent = imagecolorallocatealpha($targetImage, 0, 0, 0, 127);
+            imagefilledrectangle($targetImage, 0, 0, $targetWidth, $targetHeight, $transparent);
+        } else {
+            $white = imagecolorallocate($targetImage, 255, 255, 255);
+            imagefilledrectangle($targetImage, 0, 0, $targetWidth, $targetHeight, $white);
+        }
+
+        imagecopyresampled(
+            $targetImage,
+            $sourceImage,
+            0,
+            0,
+            0,
+            0,
+            $targetWidth,
+            $targetHeight,
+            $sourceWidth,
+            $sourceHeight,
+        );
+
+        $binary = $this->encodeImageBinary($targetImage, $mimeType);
+
+        imagedestroy($sourceImage);
+        imagedestroy($targetImage);
+
+        return $binary;
+    }
+
+    private function createImageFromPath(string $sourcePath, string $mimeType)
+    {
+        return match ($mimeType) {
+            'image/jpeg', 'image/jpg', 'image/pjpeg' => @imagecreatefromjpeg($sourcePath),
+            'image/png' => @imagecreatefrompng($sourcePath),
+            'image/gif' => @imagecreatefromgif($sourcePath),
+            'image/webp' => function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($sourcePath) : null,
+            'image/avif' => function_exists('imagecreatefromavif') ? @imagecreatefromavif($sourcePath) : null,
+            default => null,
+        };
+    }
+
+    private function encodeImageBinary($image, string $mimeType): ?string
+    {
+        ob_start();
+
+        $success = match ($mimeType) {
+            'image/jpeg', 'image/jpg', 'image/pjpeg' => imagejpeg($image, null, (int) config('media.image_quality', 86)),
+            'image/png' => imagepng($image, null, 6),
+            'image/gif' => imagegif($image),
+            'image/webp' => function_exists('imagewebp') ? imagewebp($image, null, (int) config('media.image_quality', 86)) : false,
+            'image/avif' => function_exists('imageavif') ? imageavif($image, null, (int) config('media.image_quality', 86)) : false,
+            default => false,
+        };
+
+        $binary = ob_get_clean();
+
+        if (! $success || $binary === false || $binary === '') {
+            return null;
+        }
+
+        return $binary;
+    }
+
+    private function isImageMimeType(string $mimeType): bool
+    {
+        return in_array($mimeType, [
+            'image/jpeg',
+            'image/jpg',
+            'image/pjpeg',
+            'image/png',
+            'image/gif',
+            'image/webp',
+            'image/avif',
+        ], true);
     }
 
     private function normalizeExtension(UploadedFile $file): string

@@ -21,6 +21,22 @@ class SocialPostResource extends JsonResource
                 'url' => $this->mediaUrl(),
                 'original_path' => $this->mediaOriginalPath(),
                 'public_path' => $this->mediaPublicPath(),
+                'variants' => [
+                    'thumbnail' => $this->mediaVariantPath('thumbnail') ? [
+                        'path' => $this->mediaVariantPath('thumbnail'),
+                        'url' => $this->mediaVariantUrl('thumbnail'),
+                        'generated' => (bool) data_get($this->mediaMeta(), 'variants.thumbnail.generated', false),
+                        'max_width' => data_get($this->mediaMeta(), 'variants.thumbnail.max_width'),
+                        'max_height' => data_get($this->mediaMeta(), 'variants.thumbnail.max_height'),
+                    ] : null,
+                    'preview' => $this->mediaVariantPath('preview') ? [
+                        'path' => $this->mediaVariantPath('preview'),
+                        'url' => $this->mediaVariantUrl('preview'),
+                        'generated' => (bool) data_get($this->mediaMeta(), 'variants.preview.generated', false),
+                        'max_width' => data_get($this->mediaMeta(), 'variants.preview.max_width'),
+                        'max_height' => data_get($this->mediaMeta(), 'variants.preview.max_height'),
+                    ] : null,
+                ],
                 'storage_meta' => $this->mediaMeta(),
                 'is_external' => $this->isExternalMediaUrl(),
             ] : null,

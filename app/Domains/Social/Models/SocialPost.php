@@ -102,6 +102,39 @@ class SocialPost extends Model
         return Storage::disk(config('media.public_disk', 'public'))->url($mediaUrl);
     }
 
+    public function mediaVariantMeta(string $variant): ?array
+    {
+        $variantMeta = data_get($this->mediaMeta(), 'variants.'.$variant);
+
+        if (is_array($variantMeta)) {
+            return $variantMeta;
+        }
+
+        if (is_string($variantMeta) && $variantMeta !== '') {
+            return ['path' => $variantMeta];
+        }
+
+        return null;
+    }
+
+    public function mediaVariantPath(string $variant): ?string
+    {
+        $variantPath = data_get($this->mediaVariantMeta($variant) ?? [], 'path');
+
+        return is_string($variantPath) && $variantPath !== '' ? $variantPath : null;
+    }
+
+    public function mediaVariantUrl(string $variant): ?string
+    {
+        $path = $this->mediaVariantPath($variant);
+
+        if ($path === null) {
+            return null;
+        }
+
+        return Storage::disk(config('media.public_disk', 'public'))->url($path);
+    }
+
     public function hasMedia(): bool
     {
         return $this->mediaUrl() !== null || $this->mediaOriginalPath() !== null || $this->mediaPublicPath() !== null;

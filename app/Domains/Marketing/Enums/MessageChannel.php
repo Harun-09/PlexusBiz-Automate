@@ -6,4 +6,5 @@ enum MessageChannel: string
 {
     case Email = 'email';
     case Sms = 'sms';
+    case System = 'system';
 }

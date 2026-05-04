@@ -180,22 +180,55 @@ class WorkspaceController extends Controller
 
     public function socialCalendar(Request $request): Response
     {
-        $filters = $this->filters($request, $this->enumValues(SocialPostStatus::class));
+        $month = (int) $request->query('month', now()->month);
+        $year = (int) $request->query('year', now()->year);
+        $statusFilter = (string) $request->query('status', '');
 
-        $rows = $this->applyListFilters(SocialPost::query(), $filters, ['content'])
+        $statuses = $this->enumValues(SocialPostStatus::class);
+
+        if ($statusFilter !== '' && ! in_array($statusFilter, $statuses, true)) {
+            $statusFilter = '';
+        }
+
+        $startOfMonth = now()->setDate($year, $month, 1)->startOfDay();
+        $endOfMonth = $startOfMonth->copy()->endOfMonth()->endOfDay();
+
+        $query = SocialPost::query();
+
+        if ($statusFilter !== '') {
+            $query->where('status', $statusFilter);
+        }
+
+        $posts = $query
+            ->whereBetween('scheduled_at', [$startOfMonth, $endOfMonth])
             ->orderBy('scheduled_at')
-            ->limit(50)
             ->get()
             ->map(fn (SocialPost $post): array => [
-            'Platform' => $post->platform->value,
-            'Status' => $post->status->value,
-            'Scheduled' => $post->scheduled_at?->format('Y-m-d H:i') ?? 'n/a',
-            'Content' => str($post->content)->limit(80)->toString(),
-            'Reach' => $post->reach_count,
-            'Clicks' => $post->clicks_count,
-        ]);
+                'id' => $post->id,
+                'platform' => $post->platform->value,
+                'status' => $post->status->value,
+                'content' => $post->content,
+                'content_short' => str($post->content)->limit(60)->toString(),
+                'scheduled_at' => $post->scheduled_at?->toISOString(),
+                'scheduled_date' => $post->scheduled_at?->format('Y-m-d'),
+                'scheduled_time' => $post->scheduled_at?->format('H:i'),
+                'published_at' => $post->published_at?->format('Y-m-d H:i'),
+                'likes' => $post->likes_count ?? 0,
+                'comments' => $post->comments_count ?? 0,
+                'shares' => $post->shares_count ?? 0,
+                'reach' => $post->reach_count ?? 0,
+                'clicks' => $post->clicks_count ?? 0,
+                'failure_reason' => $post->failure_reason,
+            ])
+            ->all();
 
-        return $this->page('Social Calendar', 'Scheduled posts and engagement placeholders.', [], ['Platform', 'Status', 'Scheduled', 'Content', 'Reach', 'Clicks'], $rows, filters: $filters);
+        return Inertia::render('Social/Calendar', [
+            'posts' => $posts,
+            'month' => $month,
+            'year' => $year,
+            'status' => $statusFilter,
+            'statuses' => $statuses,
+        ]);
     }
 
     public function workflowLogs(Request $request): Response

@@ -1,0 +1,1 @@
+import{t as e}from"./jsx-runtime-DFbqkGHq.js";var t=e();function n({className:e=``,...n}){let r=e.includes(`auth-checkbox`);return(0,t.jsx)(`input`,{...n,type:`checkbox`,className:r?`auth-checkbox ${e}`.trim():`rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 `+e})}export{n as t};

@@ -25,6 +25,7 @@ class CheckoutService
         private readonly NumberSequenceService $numbers,
         private readonly CustomerProfileService $customers,
         private readonly InteractionLogger $interactions,
+        private readonly InvoicePdfService $invoicePdf,
     ) {
     }
 
@@ -93,7 +94,7 @@ class CheckoutService
                 $this->inventory->deductForOrder($product, $prepared['cart_item']->quantity, $order, $buyer);
             }
 
-            $order->invoice()->create([
+            $invoice = $order->invoice()->create([
                 'invoice_number' => $this->numbers->invoiceNumber(),
                 'status' => InvoiceStatus::Issued,
                 'subtotal' => $order->subtotal,
@@ -102,6 +103,9 @@ class CheckoutService
                 'issued_at' => now(),
                 'due_at' => now()->addDays(7),
             ]);
+
+            // Generate PDF for invoice
+            $this->invoicePdf->generatePdf($invoice);
 
             $this->customers->attachOrder($customer, $order);
             $this->interactions->record(

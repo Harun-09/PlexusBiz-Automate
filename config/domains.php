@@ -15,6 +15,7 @@ return [
         'admin' => [
             'class' => AdminDomain::class,
             'enabled' => env('MODULE_ADMIN_ENABLED', true),
+            'locked' => true,
         ],
         'crm' => [
             'class' => CRMDomain::class,
@@ -35,6 +36,7 @@ return [
         'settings' => [
             'class' => SettingsDomain::class,
             'enabled' => env('MODULE_SETTINGS_ENABLED', true),
+            'locked' => true,
         ],
         'social' => [
             'class' => SocialDomain::class,

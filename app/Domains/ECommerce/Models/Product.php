@@ -64,4 +64,33 @@ class Product extends Model
     {
         return max(0, $this->stock_quantity - $this->reserved_quantity);
     }
+
+    public function primaryImage(): ?ProductImage
+    {
+        $images = $this->relationLoaded('images') ? $this->images : $this->images()->get();
+
+        return $images->firstWhere('is_primary', true) ?? $images->first();
+    }
+
+    public function primaryImageUrl(): string
+    {
+        return $this->primaryImage()?->url() ?: asset('images/landing/deal-imac.jpg');
+    }
+
+    /**
+     * @return array<int, array{id:int,url:string,alt:string,is_primary:bool}>
+     */
+    public function galleryImages(): array
+    {
+        $images = $this->relationLoaded('images') ? $this->images : $this->images()->get();
+
+        return $images->map(function (ProductImage $image): array {
+            return [
+                'id' => $image->id,
+                'url' => $image->url() ?: asset('images/landing/deal-imac.jpg'),
+                'alt' => $image->alt_text ?: $this->name,
+                'is_primary' => (bool) $image->is_primary,
+            ];
+        })->values()->all();
+    }
 }

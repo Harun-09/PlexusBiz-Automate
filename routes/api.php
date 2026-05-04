@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\SupportChatbotController;
 use App\Http\Controllers\Api\UserProfileController;
 use App\Http\Controllers\Api\V1\CampaignController;
+use App\Http\Controllers\Api\V1\MessageController;
 use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\OrderController;
 use App\Http\Controllers\Api\V1\ProductController;
@@ -37,4 +38,10 @@ Route::middleware('auth:sanctum')->prefix('v1')->name('v1.')->group(function ():
     Route::apiResource('workflow-logs', WorkflowLogController::class)->only(['index', 'show']);
     Route::apiResource('support-tickets', SupportTicketController::class)->only(['index', 'show']);
     Route::post('/support/chatbot/message', SupportChatbotController::class)->name('support.chatbot.message');
+
+    // Messages API
+    Route::get('/messages/unread-count', [MessageController::class, 'unreadCount'])->name('messages.unread-count');
+    Route::get('/messages/recent', [MessageController::class, 'recent'])->name('messages.recent');
+    Route::apiResource('messages', MessageController::class)->only(['index', 'store', 'show']);
+    Route::post('/messages/{message}/read', [MessageController::class, 'markAsRead'])->name('messages.mark-as-read');
 });

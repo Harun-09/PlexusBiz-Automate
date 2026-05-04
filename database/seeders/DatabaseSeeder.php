@@ -19,5 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(SocialSeeder::class);
         $this->call(SupportSeeder::class);
         $this->call(WorkflowSeeder::class);
+        $this->call(EnhancedDemoSeeder::class);
+        $this->call(BulkProductSeeder::class);
     }
 }

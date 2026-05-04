@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import FrontendLayout from '@/Layouts/FrontendLayout';
 
 const utilityLinks = [
     { label: "Today's Best Deals", href: '#deals' },
@@ -1085,9 +1086,9 @@ function BundleCard({ bundle }) {
             </div>
 
             <div className="mt-4 space-y-2">
-                {bundle.items.map((item) => (
+                {bundle.items.map((item, index) => (
                     <div
-                        key={item.title}
+                        key={`${item.title}-${index}`}
                         className={`flex items-center gap-3 rounded-[16px] p-2 ${isDark ? 'bg-white/10' : 'bg-white/80'}`}
                     >
                         <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-slate-100">
@@ -1309,7 +1310,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
     const primaryHref = isAuthed ? route('dashboard') : route('register');
 
     return (
-        <>
+        <FrontendLayout auth={auth} canLogin={canLogin}>
             <Head title="PlexusBiz Automate | Electronics Store: Tech, PC Parts, AI PC & More" />
 
             <div
@@ -1326,123 +1327,6 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                 />
                 <div className="pointer-events-none absolute -left-24 top-28 h-72 w-72 rounded-full bg-[#2b74db]/12 blur-3xl" />
                 <div className="pointer-events-none absolute right-0 top-16 h-80 w-80 rounded-full bg-[#ff7b22]/10 blur-3xl" />
-
-                <header className="sticky top-0 z-40">
-                    <div className="border-b border-[#042e6f] bg-[#0b2e71] text-white shadow-[0_10px_24px_-18px_rgba(7,18,46,0.8)]">
-                        <div className="mx-auto grid w-full max-w-[1900px] grid-cols-[auto_auto_minmax(0,1fr)] items-center gap-3 px-4 py-3 sm:px-6 xl:grid-cols-[auto_auto_minmax(0,1fr)_auto] xl:gap-4 xl:px-8">
-                            <PlexusBizMark />
-
-                            <AddressTile />
-
-                            <button
-                                type="button"
-                                className="hidden items-center gap-2 rounded-full px-3 py-2 text-left transition hover:bg-white/10 xl:flex"
-                            >
-                                <span className="grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-white/10 text-lg">
-                                    ⌖
-                                </span>
-                                <span className="leading-tight">
-                                    <span className="block text-[11px] font-semibold text-white/75">Hello</span>
-                                    <span className="block text-sm font-black tracking-[-0.02em]">Select address</span>
-                                </span>
-                            </button>
-
-                            <form className="flex min-w-0 flex-1" onSubmit={(event) => event.preventDefault()}>
-                                <div className="relative flex w-full items-center overflow-hidden rounded-full bg-white shadow-[0_10px_30px_-18px_rgba(9,20,48,0.9)]">
-                                    <input
-                                        type="search"
-                                        placeholder="Search products, deals, and parts"
-                                        className="min-w-0 flex-1 bg-transparent px-5 py-3.5 text-sm text-slate-800 outline-none placeholder:text-slate-400"
-                                    />
-                                    <div className="hidden max-w-[52%] items-center gap-2 border-l border-[#e3ebf7] px-3 lg:flex">
-                                        {topSearchSuggestions.map((suggestion) => (
-                                            <span
-                                                key={suggestion}
-                                                className="rounded-full bg-[#f3f6fb] px-3 py-1 text-xs font-semibold text-slate-700"
-                                            >
-                                                {suggestion}
-                                            </span>
-                                        ))}
-                                    </div>
-                                    <button
-                                        type="submit"
-                                        className="flex h-full items-center justify-center bg-[#96b8ef] px-5 py-3.5 text-[#0b2e71] transition hover:bg-[#7ca7e8]"
-                                    >
-                                        <span className="text-2xl font-black leading-none">⌕</span>
-                                    </button>
-                                </div>
-                            </form>
-
-                            <div className="flex items-center gap-2 justify-self-end">
-                                <HeaderIcon>☾</HeaderIcon>
-                                <HeaderIcon>☀</HeaderIcon>
-                                <HeaderIcon className="hidden sm:grid">🔔</HeaderIcon>
-                                <HeaderIcon className="hidden sm:grid">🇺🇸</HeaderIcon>
-                                <div className="hidden items-center gap-2 rounded-full px-2 py-1 text-left sm:flex">
-                                    <span className="grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-white/10 text-lg">
-                                        ☼
-                                    </span>
-                                </div>
-                                {!isAuthed && canLogin && (
-                                    <Link href={route('login')} className="hidden rounded-full px-2 py-1 text-left sm:block">
-                                        <span className="block text-[11px] font-semibold text-white/75">Welcome</span>
-                                        <span className="block text-sm font-black tracking-[-0.02em]">Sign In / Register</span>
-                                    </Link>
-                                )}
-                                {isAuthed && (
-                                    <Link href={route('dashboard')} className="hidden rounded-full px-2 py-1 text-left sm:block">
-                                        <span className="block text-[11px] font-semibold text-white/75">Welcome</span>
-                                        <span className="block text-sm font-black tracking-[-0.02em]">Dashboard</span>
-                                    </Link>
-                                )}
-                                <Link href="#footer" className="hidden rounded-full px-2 py-1 text-left md:block">
-                                    <span className="block text-[11px] font-semibold text-white/75">Returns</span>
-                                    <span className="block text-sm font-black tracking-[-0.02em]">& Orders</span>
-                                </Link>
-                                <HeaderIcon className="h-11 w-11 bg-transparent text-2xl">🛒</HeaderIcon>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="border-b border-[#d8e4f5] bg-[#eef4fb] text-[#0b2e71]">
-                        <div className="mx-auto flex w-full max-w-[1900px] items-center justify-between gap-4 overflow-hidden px-4 py-3 sm:px-6 xl:px-8">
-                            <div className="flex items-center gap-4 whitespace-nowrap text-sm font-semibold">
-                                <button
-                                    type="button"
-                                    className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-[#0b2e71] transition hover:bg-white"
-                                >
-                                    <span className="text-lg">☰</span>
-                                    Menu
-                                </button>
-                                {headerNavLinks.map((link) => (
-                                    <a
-                                        key={link.label}
-                                        href={link.href}
-                                        className={
-                                            link.active
-                                                ? 'rounded-full bg-[#1f68d9] px-3 py-1.5 font-black text-white shadow-sm'
-                                                : 'text-slate-700 transition hover:text-[#0b2e71]'
-                                        }
-                                    >
-                                        {link.label}
-                                    </a>
-                                ))}
-                            </div>
-
-                            <div className="flex items-center gap-4 whitespace-nowrap text-sm font-semibold">
-                                <a href="#footer" className="font-black italic text-[#0b2e71]">
-                                    PLEXUSBIZ BUSINESS
-                                </a>
-                                <a href="#footer" className="text-slate-700">
-                                    Feedback
-                                </a>
-                                <a href="#footer" className="text-slate-700">
-                                    Help Center
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </header>
 
                 <main className="relative z-10 mx-auto w-full max-w-[1900px] space-y-6 px-4 py-4 sm:px-6 xl:px-8">
                     <section className="grid gap-4 xl:grid-cols-[300px_minmax(0,1fr)]">
@@ -1746,47 +1630,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                         </div>
                     </section>
                 </main>
-
-                <footer
-                    id="footer"
-                    className="relative z-10 mt-4 border-t border-[#d4e0f3] bg-[#081733] text-slate-300"
-                >
-                    <div className="mx-auto w-full max-w-[1900px] px-4 py-10 sm:px-6 xl:px-8">
-                        <div className="flex flex-col gap-6 border-b border-white/10 pb-8 xl:flex-row xl:items-end xl:justify-between">
-                            <div>
-                                <p className="text-xl font-black tracking-[-0.04em] text-white">
-                                    PlexusBiz
-                                </p>
-                                <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400">
-                                    A PlexusBiz landing page structure rebuilt in React and Tailwind to match the reference layout, density, and color rhythm.
-                                </p>
-                            </div>
-                            <div className="flex flex-wrap gap-2">
-                                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-300">
-                                    Blue header
-                                </span>
-                                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-300">
-                                    Orange accents
-                                </span>
-                                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-300">
-                                    Dense modules
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="grid gap-8 py-8 sm:grid-cols-2 xl:grid-cols-4">
-                            {footerSections.map((section) => (
-                                <FooterColumn key={section.title} section={section} />
-                            ))}
-                        </div>
-
-                        <div className="flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-                            <p>Design concept only. Swap in real product data, prices, and links when ready.</p>
-                            <p>All section copy and layout rebuilt in React + Tailwind.</p>
-                        </div>
-                    </div>
-                </footer>
             </div>
-        </>
+        </FrontendLayout>
     );
 }

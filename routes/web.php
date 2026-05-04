@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
@@ -26,6 +27,8 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
+Route::get('/p/{slug}', [App\Http\Controllers\PageController::class, 'show'])->name('page.show');
 
 Route::redirect('/auth/login', '/login');
 
@@ -66,6 +69,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Invoice Routes
+    Route::prefix('invoices')->name('invoices.')->group(function (): void {
+        Route::get('/', [InvoiceController::class, 'index'])->name('index');
+        Route::post('/generate/{orderId}', [InvoiceController::class, 'generate'])->name('generate');
+        Route::get('/{invoice}', [InvoiceController::class, 'show'])->name('show');
+        Route::get('/{invoice}/download', [InvoiceController::class, 'download'])->name('download');
+        Route::get('/{invoice}/preview', [InvoiceController::class, 'stream'])->name('preview');
+    });
 });
 
 require __DIR__.'/auth.php';

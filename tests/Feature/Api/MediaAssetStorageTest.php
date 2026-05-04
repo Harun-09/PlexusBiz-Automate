@@ -35,7 +35,7 @@ class MediaAssetStorageTest extends TestCase
         $product = $this->product();
         $productImage = app(AssetStorageService::class)->storeProductImage(
             $product,
-            UploadedFile::fake()->createWithContent('product-image.jpg', 'product-image-bytes'),
+            UploadedFile::fake()->image('product-image.jpg', 1400, 900),
             [
                 'alt_text' => 'Front angle',
                 'sort_order' => 1,
@@ -51,11 +51,28 @@ class MediaAssetStorageTest extends TestCase
             ->assertJsonPath('data.images.0.original_path', $productImage->originalPath())
             ->assertJsonPath('data.images.0.public_path', $productImage->publicPath())
             ->assertJsonPath('data.images.0.storage_meta.strategy', 'private-original-public-copy')
+            ->assertJsonPath('data.images.0.variants.thumbnail.path', $productImage->thumbnailPath())
+            ->assertJsonPath('data.images.0.variants.thumbnail.generated', true)
+            ->assertJsonPath('data.images.0.variants.preview.path', $productImage->previewPath())
+            ->assertJsonPath('data.images.0.variants.preview.generated', true)
             ->assertJsonPath('data.images.0.url', $productImage->url())
             ->assertJsonPath('data.images.0.is_primary', true);
 
         Storage::disk('local')->assertExists($productImage->originalPath());
         Storage::disk('public')->assertExists($productImage->publicPath());
+        Storage::disk('public')->assertExists($productImage->thumbnailPath());
+        Storage::disk('public')->assertExists($productImage->previewPath());
+
+        $this->assertResizedImageWithin(
+            Storage::disk('public')->path($productImage->thumbnailPath()),
+            (int) data_get($productImage->storageMeta(), 'variants.thumbnail.max_width'),
+            (int) data_get($productImage->storageMeta(), 'variants.thumbnail.max_height'),
+        );
+        $this->assertResizedImageWithin(
+            Storage::disk('public')->path($productImage->previewPath()),
+            (int) data_get($productImage->storageMeta(), 'variants.preview.max_width'),
+            (int) data_get($productImage->storageMeta(), 'variants.preview.max_height'),
+        );
 
         $account = SocialAccount::create([
             'platform' => SocialPlatform::Facebook,
@@ -76,7 +93,7 @@ class MediaAssetStorageTest extends TestCase
 
         $socialPost = app(AssetStorageService::class)->attachSocialMediaFile(
             $socialPost,
-            UploadedFile::fake()->createWithContent('social-media.png', 'social-media-bytes'),
+            UploadedFile::fake()->image('social-media.png', 1800, 1200),
         );
 
         $this->getJson('/api/v1/social-posts/'.$socialPost->id)
@@ -87,10 +104,27 @@ class MediaAssetStorageTest extends TestCase
             ->assertJsonPath('data.media.original_path', $socialPost->mediaOriginalPath())
             ->assertJsonPath('data.media.public_path', $socialPost->mediaPublicPath())
             ->assertJsonPath('data.media.storage_meta.strategy', 'private-original-public-copy')
+            ->assertJsonPath('data.media.variants.thumbnail.path', $socialPost->mediaVariantPath('thumbnail'))
+            ->assertJsonPath('data.media.variants.thumbnail.generated', true)
+            ->assertJsonPath('data.media.variants.preview.path', $socialPost->mediaVariantPath('preview'))
+            ->assertJsonPath('data.media.variants.preview.generated', true)
             ->assertJsonPath('data.media.is_external', false);
 
         Storage::disk('local')->assertExists($socialPost->mediaOriginalPath());
         Storage::disk('public')->assertExists($socialPost->mediaPublicPath());
+        Storage::disk('public')->assertExists($socialPost->mediaVariantPath('thumbnail'));
+        Storage::disk('public')->assertExists($socialPost->mediaVariantPath('preview'));
+
+        $this->assertResizedImageWithin(
+            Storage::disk('public')->path($socialPost->mediaVariantPath('thumbnail')),
+            (int) data_get($socialPost->mediaMeta(), 'variants.thumbnail.max_width'),
+            (int) data_get($socialPost->mediaMeta(), 'variants.thumbnail.max_height'),
+        );
+        $this->assertResizedImageWithin(
+            Storage::disk('public')->path($socialPost->mediaVariantPath('preview')),
+            (int) data_get($socialPost->mediaMeta(), 'variants.preview.max_width'),
+            (int) data_get($socialPost->mediaMeta(), 'variants.preview.max_height'),
+        );
     }
 
     private function product(): Product
@@ -119,5 +153,17 @@ class MediaAssetStorageTest extends TestCase
             'status' => ProductStatus::Active,
             'published_at' => now(),
         ]);
+    }
+
+    private function assertResizedImageWithin(string $path, int $maxWidth, int $maxHeight): void
+    {
+        $this->assertFileExists($path);
+
+        $dimensions = getimagesize($path);
+
+        $this->assertIsArray($dimensions);
+        $this->assertNotFalse($dimensions);
+        $this->assertLessThanOrEqual($maxWidth, $dimensions[0]);
+        $this->assertLessThanOrEqual($maxHeight, $dimensions[1]);
     }
 }

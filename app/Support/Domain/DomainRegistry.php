@@ -3,6 +3,7 @@
 namespace App\Support\Domain;
 
 use App\Contracts\DomainModule;
+use App\Domains\Settings\Models\ModuleSetting;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
@@ -28,10 +29,28 @@ class DomainRegistry
      */
     public function enabled(): Collection
     {
+        $overrides = ModuleSetting::enabledMap();
+
         return collect($this->config->get('domains.modules', []))
-            ->filter(fn (array $definition): bool => (bool) ($definition['enabled'] ?? true))
+            ->filter(fn (array $definition, string $key): bool => $this->isEnabled($key, $definition, $overrides))
             ->map(fn (array $definition): DomainModule => $this->buildModule($definition))
             ->values();
+    }
+
+    /**
+     * @param array<string, bool> $overrides
+     */
+    private function isEnabled(string $key, array $definition, array $overrides): bool
+    {
+        if ((bool) ($definition['locked'] ?? false)) {
+            return true;
+        }
+
+        if (array_key_exists($key, $overrides)) {
+            return (bool) $overrides[$key];
+        }
+
+        return (bool) ($definition['enabled'] ?? true);
     }
 
     /**

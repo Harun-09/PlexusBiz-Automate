@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import Footer from '@/Components/Footer';
 
 export default function Guest({ children, variant = 'login', registerHero = {} }) {
     const isRegister = variant === 'register';
@@ -136,6 +137,7 @@ export default function Guest({ children, variant = 'login', registerHero = {} }
                     <div className="auth-card">{children}</div>
                 </main>
             </div>
+            <Footer />
         </div>
     );
 }
