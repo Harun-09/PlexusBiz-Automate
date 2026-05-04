@@ -27,6 +27,7 @@ class ProductResource extends JsonResource
                 'id' => $this->supplier?->id,
                 'company_name' => $this->supplier?->company_name,
             ]),
+            'images' => $this->whenLoaded('images', fn (): array => ProductImageResource::collection($this->images)->resolve($request)),
             'created_at' => $this->created_at?->toJSON(),
             'updated_at' => $this->updated_at?->toJSON(),
         ];

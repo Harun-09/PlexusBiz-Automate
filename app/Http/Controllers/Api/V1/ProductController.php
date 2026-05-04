@@ -17,7 +17,7 @@ class ProductController extends Controller
     {
         $this->authorize('viewAny', Product::class);
 
-        $query = Product::query()->with('supplier');
+        $query = Product::query()->with(['supplier', 'images']);
 
         if ($request->user()->hasRole('buyer')) {
             $query->where('status', ProductStatus::Active->value);
@@ -36,6 +36,6 @@ class ProductController extends Controller
     {
         $this->authorize('view', $product);
 
-        return ProductResource::make($product->load('supplier'));
+        return ProductResource::make($product->load(['supplier', 'images']));
     }
 }
