@@ -1,7 +1,5 @@
 import Dropdown from '@/Components/Dropdown';
 import NotificationBell from '@/Components/NotificationBell';
-import { Link, router } from '@inertiajs/react';
-import { useState } from 'react';
 
 const pathToBreadcrumbs = (path) => {
     const parts = path.split('/').filter(Boolean);
@@ -14,20 +12,12 @@ const pathToBreadcrumbs = (path) => {
 };
 
 export default function Header({ user, header, currentPath, onOpenSidebar }) {
-    const [search, setSearch] = useState('');
     const breadcrumbs = pathToBreadcrumbs(currentPath);
-    const roleLabel = (user?.roles || []).join(', ').replace(/_/g, ' ') || 'workspace';
-
-    const submitSearch = (event) => {
-        event.preventDefault();
-
-        const value = search.trim();
-        if (value === '') {
-            return;
-        }
-
-        router.get(currentPath || '/dashboard', { search: value }, { preserveState: true, preserveScroll: true });
-    };
+    const showBreadcrumbs = breadcrumbs.length > 1;
+    const roleLabel = (user?.roles || [])
+        .map((role) => String(role).replace(/_/g, ' '))
+        .filter(Boolean)
+        .join(', ') || 'workspace';
 
     return (
         <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
@@ -44,35 +34,19 @@ export default function Header({ user, header, currentPath, onOpenSidebar }) {
                 </button>
 
                 <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-1 text-xs font-semibold text-slate-500">
-                        {breadcrumbs.map((crumb, index) => (
-                            <span key={`${crumb}-${index}`} className="inline-flex items-center gap-1">
-                                {index > 0 ? <span className="text-slate-300">/</span> : null}
-                                {crumb}
-                            </span>
-                        ))}
-                    </div>
-                    <div className="mt-1 min-w-0">{header}</div>
+                    {showBreadcrumbs ? (
+                        <div className="flex flex-wrap items-center gap-1 text-xs font-semibold text-slate-500">
+                            {breadcrumbs.map((crumb, index) => (
+                                <span key={`${crumb}-${index}`} className="inline-flex items-center gap-1">
+                                    {index > 0 ? <span className="text-slate-300">/</span> : null}
+                                    {crumb}
+                                </span>
+                            ))}
+                        </div>
+                    ) : null}
+                    <div className={showBreadcrumbs ? 'mt-1 min-w-0' : 'min-w-0'}>{header}</div>
                 </div>
 
-                <form onSubmit={submitSearch} className="hidden min-w-[260px] max-w-sm flex-1 xl:block">
-                    <label className="sr-only" htmlFor="global-search">Search workspace</label>
-                    <input
-                        id="global-search"
-                        type="search"
-                        value={search}
-                        onChange={(event) => setSearch(event.target.value)}
-                        placeholder="Search current page"
-                        className="h-10 w-full rounded-lg border-slate-200 bg-slate-50 text-sm focus:border-blue-500 focus:ring-blue-500"
-                    />
-                </form>
-
-                <Link
-                    href="/dashboard"
-                    className="hidden h-10 items-center rounded-lg border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700 transition hover:border-blue-200 hover:text-blue-800 sm:inline-flex"
-                >
-                    Quick actions
-                </Link>
                 <NotificationBell />
 
                 <Dropdown>

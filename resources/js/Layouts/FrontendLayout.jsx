@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, Head } from '@inertiajs/react';
 
 const quickNavLinks = [
-    { label: 'Bulk Orders', href: route('products.index', { quick: 'bulk' }) },
-    { label: 'MOQ Pricing', href: route('products.index', { quick: 'moq' }) },
+    { label: 'Bulk Orders', href: route('products.bulk') },
+    { label: 'MOQ Pricing', href: route('products.moq') },
 ];
 
 const footerSections = [

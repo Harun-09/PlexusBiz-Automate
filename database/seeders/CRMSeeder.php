@@ -26,6 +26,7 @@ class CRMSeeder extends Seeder
         Lead::updateOrCreate(
             ['email' => 'procurement@example.com'],
             [
+                'customer_id' => $customer->id,
                 'assigned_user_id' => $marketing->id,
                 'source' => 'website',
                 'status' => LeadStatus::Qualified,

@@ -5,6 +5,83 @@ import FlashBanner from '@/Components/FlashBanner';
 
 const fallbackImage = '/images/landing/deal-imac.jpg';
 
+const catalogModes = {
+    catalog: {
+        routeName: 'products.index',
+        headTitle: 'Marketplace',
+        badge: 'Live marketplace',
+        kicker: 'Products, pricing tiers, and cart flow',
+        title: 'A tighter product experience with B2B stock, MOQ, and fast checkout.',
+        description: 'Browse active products, compare bulk prices, and jump straight into cart or checkout without leaving the store rhythm.',
+        cartTitle: 'Cart snapshot',
+        cartCopy: 'Items already inside the current buyer cart.',
+        featuredTitle: 'Featured picks',
+        featuredCopy: 'Quick access to products that already fit the active catalog flow.',
+        sectionLabel: 'Product catalog',
+        sectionTitle: 'Active products available for purchase',
+        sectionCopy: (visible, total) => (visible === total
+            ? `Showing ${total} items from the active catalog.`
+            : `Showing ${visible} of ${total} items from the active catalog.`),
+        noteTitle: 'Store notes',
+        notes: [
+            'Fast cart actions are wired to the current buyer account.',
+            'Bulk pricing is calculated from quantity tiers and MOQ rules.',
+            'Checkout uses the existing payment gateway flow already present in the app.',
+        ],
+    },
+    bulk: {
+        routeName: 'products.bulk',
+        headTitle: 'Bulk Orders',
+        badge: 'Bulk order workspace',
+        kicker: 'Volume buying and tier pricing',
+        title: 'Build bigger carts with clearer volume pricing and fewer clicks.',
+        description: 'Bulk-ready products show MOQ, stock, and pricing tiers together so your team can move from shortlist to checkout quickly.',
+        cartTitle: 'Bulk cart snapshot',
+        cartCopy: 'Current items in the order builder, including any quantity-heavy picks.',
+        featuredTitle: 'Tier ladder',
+        featuredCopy: 'A quick look at products where quantity bands change the unit price.',
+        sectionLabel: 'Bulk order catalog',
+        sectionTitle: 'Products that reward larger order sizes',
+        sectionCopy: (visible, total) => (visible === total
+            ? `Showing ${total} bulk-eligible items from the active catalog.`
+            : `Showing ${visible} of ${total} bulk-eligible items from the active catalog.`),
+        noteTitle: 'Bulk order notes',
+        notes: [
+            'Every card keeps MOQ and stock visible before add-to-cart.',
+            'Tier pricing is calculated from quantity bands already stored in the catalog.',
+            'Checkout keeps the selected quantity intact so the final total stays aligned with the order intent.',
+        ],
+    },
+    moq: {
+        routeName: 'products.moq',
+        headTitle: 'MOQ Pricing',
+        badge: 'MOQ pricing workspace',
+        kicker: 'Minimum order visibility',
+        title: 'See the threshold first, then buy with confidence.',
+        description: 'This view keeps MOQ-sensitive items in focus so the buyer knows the minimum order rule before adding anything to the cart.',
+        cartTitle: 'MOQ snapshot',
+        cartCopy: 'How many items are already waiting in the cart.',
+        featuredTitle: 'MOQ focus',
+        featuredCopy: 'Products with clear minimum quantities and stock context.',
+        sectionLabel: 'MOQ catalog',
+        sectionTitle: 'Products filtered around minimum order rules',
+        sectionCopy: (visible, total) => (visible === total
+            ? `Showing ${total} MOQ-aware items from the active catalog.`
+            : `Showing ${visible} of ${total} MOQ-aware items from the active catalog.`),
+        noteTitle: 'MOQ rules',
+        notes: [
+            'MOQ is shown prominently on every product card.',
+            'Bulk pricing still applies, but the page stays centered on the threshold you need to reach.',
+            'The cart defaults to the MOQ quantity so checkout starts from a valid order size.',
+        ],
+    },
+};
+
+const quickCatalogLinks = [
+    { label: 'Bulk Orders', key: 'bulk', routeName: 'products.bulk' },
+    { label: 'MOQ Pricing', key: 'moq', routeName: 'products.moq' },
+];
+
 function formatMoney(amount, currency = 'BDT') {
     const numericAmount = Number(amount ?? 0);
 
@@ -144,23 +221,39 @@ function Pagination({ links }) {
     );
 }
 
-export default function Index({ auth, flash, errors, cartCount, categories, featuredProducts, products, filters, currency }) {
+export default function Index({
+    auth,
+    flash,
+    errors,
+    cartCount,
+    categories,
+    featuredProducts,
+    products,
+    filters,
+    currency,
+    mode = 'catalog',
+}) {
     const [search, setSearch] = useState(filters?.search || '');
     const [category, setCategory] = useState(filters?.category || '');
     const validationMessage = Object.values(errors || {}).find(Boolean);
 
     const activeCategory = useMemo(() => category || '', [category]);
-    const activeQuick = filters?.quick || '';
-    const nextQuery = (nextCategory = activeCategory, nextQuick = activeQuick) => ({
+    const activeQuick = filters?.quick || (mode === 'bulk' ? 'bulk' : mode === 'moq' ? 'moq' : '');
+    const activeMode = catalogModes[activeQuick || mode] ?? catalogModes.catalog;
+    const catalogRouteName = activeMode.routeName;
+    const visibleCount = Number(products?.data?.length ?? 0);
+    const totalCount = Number(products?.meta?.total ?? visibleCount);
+    const totalProducts = Number(products?.meta?.total ?? products?.data?.length ?? 0);
+
+    const nextQuery = (nextCategory = activeCategory) => ({
         search: search.trim() || undefined,
         category: nextCategory || undefined,
-        quick: nextQuick || undefined,
     });
 
-    const runSearch = (nextCategory = activeCategory, nextQuick = activeQuick) => {
+    const runSearch = (nextCategory = activeCategory) => {
         router.get(
-            route('products.index'),
-            nextQuery(nextCategory, nextQuick),
+            route(catalogRouteName),
+            nextQuery(nextCategory),
             {
                 preserveScroll: true,
                 preserveState: false,
@@ -171,29 +264,37 @@ export default function Index({ auth, flash, errors, cartCount, categories, feat
 
     return (
         <FrontendLayout auth={auth} canLogin={true} cartCount={cartCount}>
-            <Head title="Marketplace" />
+            <Head title={activeMode.headTitle} />
 
-            <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(11,46,113,0.18),_transparent_35%),radial-gradient(circle_at_top_right,_rgba(255,138,0,0.18),_transparent_28%),linear-gradient(180deg,_#eef5ff_0%,_#f8fbff_46%,_#ffffff_100%)] text-slate-900">
+            <div
+                className={`min-h-screen text-slate-900 ${
+                    activeMode.routeName === 'products.moq'
+                        ? 'bg-[radial-gradient(circle_at_top_left,_rgba(11,46,113,0.18),_transparent_35%),radial-gradient(circle_at_top_right,_rgba(16,185,129,0.16),_transparent_28%),linear-gradient(180deg,_#eef5ff_0%,_#f8fbff_46%,_#ffffff_100%)]'
+                        : activeMode.routeName === 'products.bulk'
+                            ? 'bg-[radial-gradient(circle_at_top_left,_rgba(11,46,113,0.18),_transparent_35%),radial-gradient(circle_at_top_right,_rgba(255,138,0,0.22),_transparent_28%),linear-gradient(180deg,_#eef5ff_0%,_#f8fbff_46%,_#ffffff_100%)]'
+                            : 'bg-[radial-gradient(circle_at_top_left,_rgba(11,46,113,0.18),_transparent_35%),radial-gradient(circle_at_top_right,_rgba(255,138,0,0.18),_transparent_28%),linear-gradient(180deg,_#eef5ff_0%,_#f8fbff_46%,_#ffffff_100%)]'
+                }`}
+            >
                 <main className="mx-auto w-full max-w-[1500px] px-4 py-6 sm:px-6 lg:px-8">
                     <section className="overflow-hidden rounded-[32px] border border-[#d7e3f4] bg-[#0b2e71] shadow-[0_26px_80px_-40px_rgba(7,18,46,0.9)]">
                         <div className="grid gap-8 px-5 py-6 lg:grid-cols-[1.1fr_.9fr] lg:px-8 lg:py-8">
                             <div className="space-y-5 text-white">
                                 <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#ffd59a]">
-                                    Live marketplace
+                                    {activeMode.badge}
                                     <span className="rounded-full bg-white/15 px-2 py-0.5 text-white">
-                                        {products?.meta?.total || products?.data?.length || 0} products
+                                        {totalProducts} products
                                     </span>
                                 </div>
 
                                 <div className="space-y-3">
                                     <p className="text-sm font-semibold uppercase tracking-[0.24em] text-blue-200">
-                                        Products, pricing tiers, and cart flow
+                                        {activeMode.kicker}
                                     </p>
                                     <h1 className="max-w-2xl text-4xl font-black tracking-[-0.06em] sm:text-5xl">
-                                        A tighter product experience with B2B stock, MOQ, and fast checkout.
+                                        {activeMode.title}
                                     </h1>
                                     <p className="max-w-2xl text-base leading-7 text-blue-100">
-                                        Browse active products, compare bulk prices, and jump straight into cart or checkout without leaving the store rhythm.
+                                        {activeMode.description}
                                     </p>
                                 </div>
 
@@ -219,32 +320,29 @@ export default function Index({ auth, flash, errors, cartCount, categories, feat
                                 </button>
                             </form>
 
-                            <div className="flex flex-wrap items-center gap-2">
-                                <span className="text-[11px] font-black uppercase tracking-[0.24em] text-blue-200">
-                                    Quick picks
-                                </span>
-                                {[
-                                    { label: 'Bulk Orders', key: 'bulk' },
-                                    { label: 'MOQ Pricing', key: 'moq' },
-                                ].map((item) => {
-                                    const isActive = activeQuick === item.key;
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <span className="text-[11px] font-black uppercase tracking-[0.24em] text-blue-200">
+                                        Quick picks
+                                    </span>
+                                    {quickCatalogLinks.map((item) => {
+                                        const isActive = activeQuick === item.key;
 
-                                    return (
-                                        <Link
-                                            key={item.key}
-                                            href={route('products.index', nextQuery(activeCategory, item.key))}
-                                            preserveScroll
-                                            className={`rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.16em] transition ${
-                                                isActive
-                                                    ? 'border-white bg-white text-[#0b2e71]'
-                                                    : 'border-white/20 bg-white/10 text-white hover:bg-white/15'
-                                            }`}
-                                        >
-                                            {item.label}
-                                        </Link>
-                                    );
-                                })}
-                            </div>
+                                        return (
+                                            <Link
+                                                key={item.key}
+                                                href={route(item.routeName, nextQuery(activeCategory))}
+                                                preserveScroll
+                                                className={`rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.16em] transition ${
+                                                    isActive
+                                                        ? 'border-white bg-white text-[#0b2e71]'
+                                                        : 'border-white/20 bg-white/10 text-white hover:bg-white/15'
+                                                }`}
+                                            >
+                                                {item.label}
+                                            </Link>
+                                        );
+                                    })}
+                                </div>
 
                                 <div className="flex flex-wrap gap-2">
                                     <button
@@ -284,17 +382,20 @@ export default function Index({ auth, flash, errors, cartCount, categories, feat
                             <div className="grid gap-4 sm:grid-cols-2">
                                 <div className="rounded-[28px] border border-white/10 bg-white/10 p-5 text-white backdrop-blur">
                                     <p className="text-[11px] font-black uppercase tracking-[0.24em] text-blue-100">
-                                        Cart snapshot
+                                        {activeMode.cartTitle}
                                     </p>
                                     <p className="mt-3 text-4xl font-black tracking-[-0.06em]">{Number(cartCount || 0)}</p>
                                     <p className="mt-2 text-sm leading-6 text-blue-100">
-                                        Items already inside the current buyer cart.
+                                        {activeMode.cartCopy}
                                     </p>
                                 </div>
 
                                 <div className="rounded-[28px] border border-white/10 bg-white p-5 shadow-[0_16px_42px_-28px_rgba(15,23,42,0.8)]">
                                     <p className="text-[11px] font-black uppercase tracking-[0.24em] text-[#0b2e71]">
-                                        Featured picks
+                                        {activeMode.featuredTitle}
+                                    </p>
+                                    <p className="mt-2 text-sm leading-6 text-slate-500">
+                                        {activeMode.featuredCopy}
                                     </p>
                                     <div className="mt-4 space-y-3">
                                         {featuredProducts.slice(0, 3).map((product) => (
@@ -334,14 +435,14 @@ export default function Index({ auth, flash, errors, cartCount, categories, feat
                             <div className="flex items-end justify-between gap-4">
                                 <div>
                                     <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-500">
-                                        Product catalog
+                                        {activeMode.sectionLabel}
                                     </p>
                                     <h2 className="mt-1 text-2xl font-black tracking-[-0.04em] text-slate-950">
-                                        Active products available for purchase
+                                        {activeMode.sectionTitle}
                                     </h2>
                                 </div>
                                 <p className="text-sm text-slate-600">
-                                    Showing {products?.data?.length ?? 0} items from the active catalog.
+                                    {activeMode.sectionCopy(visibleCount, totalCount)}
                                 </p>
                             </div>
 
@@ -356,19 +457,19 @@ export default function Index({ auth, flash, errors, cartCount, categories, feat
 
                         <aside className="space-y-4">
                             <div className="rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm">
-                                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-[#0b2e71]">Store notes</p>
+                                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-[#0b2e71]">{activeMode.noteTitle}</p>
                                 <div className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
-                                    <p>Fast cart actions are wired to the current buyer account.</p>
-                                    <p>Bulk pricing is calculated from quantity tiers and MOQ rules.</p>
-                                    <p>Checkout uses the existing payment gateway flow already present in the app.</p>
+                                    {activeMode.notes.map((note) => (
+                                        <p key={note}>{note}</p>
+                                    ))}
                                 </div>
                             </div>
 
                             <div className="rounded-[28px] border border-[#d7e3f4] bg-gradient-to-br from-[#0b2e71] via-[#103a87] to-[#0f4fa8] p-5 text-white shadow-sm">
-                                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-blue-200">Cart shortcut</p>
+                                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-blue-200">{activeMode.cartTitle}</p>
                                 <p className="mt-3 text-3xl font-black tracking-[-0.05em]">{Number(cartCount || 0)}</p>
                                 <p className="mt-2 text-sm leading-6 text-blue-100">
-                                    Keep moving from discovery to checkout without losing the buying context.
+                                    {activeMode.cartCopy}
                                 </p>
                                 <Link
                                     href={route('cart.index')}

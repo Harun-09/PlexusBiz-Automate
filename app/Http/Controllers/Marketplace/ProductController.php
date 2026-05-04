@@ -22,7 +22,8 @@ class ProductController extends Controller
     {
         $search = trim((string) $request->query('search', ''));
         $categorySlug = trim((string) $request->query('category', ''));
-        $quick = trim((string) $request->query('quick', ''));
+        $mode = $this->catalogMode($request);
+        $quick = $mode === 'catalog' ? trim((string) $request->query('quick', '')) : $mode;
 
         $baseQuery = Product::query()
             ->with(['supplier', 'category', 'images', 'pricingTiers'])
@@ -62,6 +63,7 @@ class ProductController extends Controller
             ->all();
 
         return Inertia::render('Marketplace/Products/Index', [
+            'mode' => $mode,
             'filters' => [
                 'search' => $search,
                 'category' => $categorySlug,
@@ -73,6 +75,19 @@ class ProductController extends Controller
             'products' => $products,
             'currency' => config('commerce.currency', 'BDT'),
         ]);
+    }
+
+    private function catalogMode(Request $request): string
+    {
+        $routeName = $request->route()?->getName();
+
+        return match ($routeName) {
+            'products.bulk' => 'bulk',
+            'products.moq' => 'moq',
+            default => in_array(trim((string) $request->query('quick', '')), ['bulk', 'moq'], true)
+                ? trim((string) $request->query('quick', ''))
+                : 'catalog',
+        };
     }
 
     private function applyCatalogFilters(Builder $query, string $search, string $categorySlug, string $quick): void

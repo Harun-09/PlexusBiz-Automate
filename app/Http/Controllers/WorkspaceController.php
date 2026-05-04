@@ -11,13 +11,21 @@ use App\Domains\ECommerce\Models\Order;
 use App\Domains\ECommerce\Models\Product;
 use App\Domains\ECommerce\Models\Supplier;
 use App\Domains\Marketing\Enums\CampaignStatus;
+use App\Domains\Marketing\Enums\MessageChannel;
 use App\Domains\Marketing\Models\Campaign;
+use App\Domains\Marketing\Models\CampaignTemplate;
 use App\Domains\Notifications\Models\Message;
 use App\Domains\Social\Enums\SocialPostStatus;
+use App\Domains\Social\Enums\SocialPlatform;
+use App\Domains\Social\Models\SocialAccount;
 use App\Domains\Social\Models\SocialPost;
+use App\Domains\Support\Enums\SupportFaqStatus;
+use App\Domains\Support\Models\SupportFaq;
+use App\Domains\Workflow\Enums\AutomationRuleStatus;
 use App\Domains\Support\Enums\TicketStatus;
 use App\Domains\Support\Models\SupportTicket;
 use App\Domains\Workflow\Enums\WorkflowLogStatus;
+use App\Domains\Workflow\Models\AutomationRule;
 use App\Domains\Workflow\Models\WorkflowLog;
 use App\Enums\UserStatus;
 use App\Models\User;
@@ -217,19 +225,256 @@ class WorkspaceController extends Controller
     {
         $filters = $this->filters($request, $this->enumValues(CampaignStatus::class));
 
-        $rows = $this->applyListFilters(Campaign::query()->withCount(['recipients', 'logs']), $filters, ['name'])
+        $rows = $this->applyListFilters(Campaign::query()->withCount(['recipients', 'logs', 'templates']), $filters, ['name'])
             ->latest()
             ->limit(50)
             ->get()
             ->map(fn (Campaign $campaign): array => [
             'Campaign' => $campaign->name,
-            'Type' => $campaign->type->value,
+            'Type' => Str::headline($campaign->type->value),
             'Status' => $campaign->status->value,
+            'Templates' => $campaign->templates_count,
             'Recipients' => $campaign->recipients_count,
             'Logs' => $campaign->logs_count,
         ]);
 
-        return $this->page('Campaigns', 'Marketing campaigns, recipient count, and delivery logs.', [], ['Campaign', 'Type', 'Status', 'Recipients', 'Logs'], $rows, filters: $filters);
+        return $this->page('Campaigns', 'Marketing campaigns, recipient count, and delivery logs.', [
+            ['label' => 'Total Campaigns', 'value' => Campaign::count()],
+            ['label' => 'Draft Campaigns', 'value' => Campaign::where('status', CampaignStatus::Draft->value)->count()],
+            ['label' => 'Scheduled Campaigns', 'value' => Campaign::where('status', CampaignStatus::Scheduled->value)->count()],
+            ['label' => 'Templates', 'value' => CampaignTemplate::count()],
+        ], ['Campaign', 'Type', 'Status', 'Templates', 'Recipients', 'Logs'], $rows, filters: $filters, component: 'Marketing/Campaigns/Index');
+    }
+
+    public function socialPosts(Request $request): Response
+    {
+        $filters = $this->filters($request, $this->enumValues(SocialPostStatus::class));
+
+        $query = SocialPost::query()->with(['account', 'campaign']);
+
+        if ($filters['search'] !== '') {
+            $search = $filters['search'];
+
+            $query->where(function (Builder $builder) use ($search): void {
+                $builder->where('content', 'like', "%{$search}%")
+                    ->orWhere('platform', 'like', "%{$search}%")
+                    ->orWhereHas('account', fn (Builder $account) => $account
+                        ->where('name', 'like', "%{$search}%")
+                        ->orWhere('handle', 'like', "%{$search}%"))
+                    ->orWhereHas('campaign', fn (Builder $campaign) => $campaign
+                        ->where('name', 'like', "%{$search}%"));
+            });
+        }
+
+        if ($filters['status'] !== '') {
+            $query->where('status', $filters['status']);
+        }
+
+        $rows = $query
+            ->orderByDesc('scheduled_at')
+            ->limit(50)
+            ->get()
+            ->map(fn (SocialPost $post): array => [
+                'Post' => str($post->content)->limit(72)->toString(),
+                'Platform' => Str::headline($post->platform->value),
+                'Account' => $post->account?->name ?? 'n/a',
+                'Campaign' => $post->campaign?->name ?? 'n/a',
+                'Status' => $post->status->value,
+                'Scheduled' => $post->scheduled_at?->format('Y-m-d H:i') ?? 'n/a',
+                'Published' => $post->published_at?->format('Y-m-d H:i') ?? 'n/a',
+                'Likes' => $post->likes_count ?? 0,
+                'Comments' => $post->comments_count ?? 0,
+                'Shares' => $post->shares_count ?? 0,
+                'Reach' => $post->reach_count ?? 0,
+                'Clicks' => $post->clicks_count ?? 0,
+            ]);
+
+        return $this->page('Social Posts', 'Scheduled content across Facebook and Instagram with engagement tracking.', [
+            ['label' => 'Total Posts', 'value' => SocialPost::count()],
+            ['label' => 'Scheduled', 'value' => SocialPost::where('status', SocialPostStatus::Scheduled->value)->count()],
+            ['label' => 'Published', 'value' => SocialPost::where('status', SocialPostStatus::Published->value)->count()],
+            ['label' => 'Failed', 'value' => SocialPost::where('status', SocialPostStatus::Failed->value)->count()],
+        ], ['Post', 'Platform', 'Account', 'Campaign', 'Status', 'Scheduled', 'Published', 'Likes', 'Comments', 'Shares', 'Reach', 'Clicks'], $rows, filters: $filters, component: 'Social/Posts/Index');
+    }
+
+    public function socialAccounts(Request $request): Response
+    {
+        $filters = $this->filters($request, ['active', 'inactive']);
+
+        $query = SocialAccount::query()->withCount('posts');
+
+        if ($filters['search'] !== '') {
+            $search = $filters['search'];
+
+            $query->where(function (Builder $builder) use ($search): void {
+                $builder->where('name', 'like', "%{$search}%")
+                    ->orWhere('handle', 'like', "%{$search}%")
+                    ->orWhere('platform', 'like', "%{$search}%");
+            });
+        }
+
+        if ($filters['status'] !== '') {
+            $query->where('status', $filters['status']);
+        }
+
+        $rows = $query
+            ->latest()
+            ->limit(50)
+            ->get()
+            ->map(function (SocialAccount $account): array {
+                $credentials = $account->credentials_json ?? [];
+
+                return [
+                    'Account' => $account->name,
+                    'Platform' => Str::headline($account->platform->value),
+                    'Handle' => $account->handle,
+                    'Status' => (string) $account->status,
+                    'Posts' => $account->posts_count,
+                    'Mode' => is_array($credentials) ? (string) ($credentials['mode'] ?? 'n/a') : 'n/a',
+                ];
+            });
+
+        return $this->page('Social Accounts', 'Publishing accounts for Facebook and Instagram scheduling.', [
+            ['label' => 'Total Accounts', 'value' => SocialAccount::count()],
+            ['label' => 'Active Accounts', 'value' => SocialAccount::where('status', 'active')->count()],
+            ['label' => 'Facebook', 'value' => SocialAccount::where('platform', SocialPlatform::Facebook->value)->count()],
+            ['label' => 'Instagram', 'value' => SocialAccount::where('platform', SocialPlatform::Instagram->value)->count()],
+        ], ['Account', 'Platform', 'Handle', 'Status', 'Posts', 'Mode'], $rows, filters: $filters, component: 'Social/Accounts/Index');
+    }
+
+    public function campaignTemplates(Request $request): Response
+    {
+        $filters = $this->filters($request, ['active', 'inactive']);
+
+        $query = CampaignTemplate::query()->with('campaign');
+
+        if ($filters['search'] !== '') {
+            $search = $filters['search'];
+
+            $query->where(function (Builder $builder) use ($search): void {
+                $builder->where('template_key', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhere('subject', 'like', "%{$search}%")
+                    ->orWhere('body', 'like', "%{$search}%")
+                    ->orWhereHas('campaign', fn (Builder $campaign) => $campaign
+                        ->where('name', 'like', "%{$search}%"));
+            });
+        }
+
+        if ($filters['status'] !== '') {
+            $query->where('status', $filters['status']);
+        }
+
+        $rows = $query
+            ->latest()
+            ->limit(50)
+            ->get()
+            ->map(function (CampaignTemplate $template): array {
+                return [
+                    'Template' => $template->name,
+                    'Key' => $template->template_key ?? 'n/a',
+                    'Channel' => Str::headline($template->channel->value),
+                    'Campaign' => $template->campaign?->name ?? 'Standalone',
+                    'Subject' => $template->subject ?? '',
+                    'Variables' => is_array($template->variables) ? implode(', ', $template->variables) : '',
+                    'Status' => (string) $template->status,
+                ];
+            });
+
+        return $this->page('Campaign Templates', 'Template-based email and SMS marketing assets.', [
+            ['label' => 'Total Templates', 'value' => CampaignTemplate::count()],
+            ['label' => 'Email Templates', 'value' => CampaignTemplate::where('channel', MessageChannel::Email->value)->count()],
+            ['label' => 'SMS Templates', 'value' => CampaignTemplate::where('channel', MessageChannel::Sms->value)->count()],
+            ['label' => 'System Templates', 'value' => CampaignTemplate::where('channel', MessageChannel::System->value)->count()],
+        ], ['Template', 'Key', 'Channel', 'Campaign', 'Subject', 'Variables', 'Status'], $rows, filters: $filters, component: 'Marketing/Templates/Index');
+    }
+
+    public function workflowRules(Request $request): Response
+    {
+        $filters = $this->filters($request, $this->enumValues(AutomationRuleStatus::class));
+
+        $query = AutomationRule::query()->withCount('logs');
+
+        if ($filters['search'] !== '') {
+            $search = $filters['search'];
+
+            $query->where(function (Builder $builder) use ($search): void {
+                $builder->where('name', 'like', "%{$search}%")
+                    ->orWhere('trigger_event', 'like', "%{$search}%");
+            });
+        }
+
+        if ($filters['status'] !== '') {
+            $query->where('status', $filters['status']);
+        }
+
+        $rows = $query
+            ->orderBy('priority')
+            ->latest()
+            ->limit(50)
+            ->get()
+            ->map(function (AutomationRule $rule): array {
+                return [
+                    'Rule' => $rule->name,
+                    'Trigger' => Str::headline(str_replace(['.', '_'], ' ', $rule->trigger_event)),
+                    'Status' => $rule->status->value,
+                    'Priority' => $rule->priority,
+                    'Mode' => $rule->run_async ? 'async' : 'sync',
+                    'Conditions' => $this->workflowConditionsSummary($rule->conditions_json ?? []),
+                    'Actions' => $this->workflowActionsSummary($rule->actions_json ?? []),
+                    'Runs' => $rule->logs_count,
+                ];
+            });
+
+        return $this->page('Automation Rules', 'Rule-based IF condition THEN action workflows for orders, RFQs, and tickets.', [
+            ['label' => 'Total Rules', 'value' => AutomationRule::count()],
+            ['label' => 'Active Rules', 'value' => AutomationRule::where('status', AutomationRuleStatus::Active->value)->count()],
+            ['label' => 'Async Rules', 'value' => AutomationRule::where('run_async', true)->count()],
+            ['label' => 'Successful Logs', 'value' => WorkflowLog::where('status', WorkflowLogStatus::Success->value)->count()],
+        ], ['Rule', 'Trigger', 'Status', 'Priority', 'Mode', 'Conditions', 'Actions', 'Runs'], $rows, filters: $filters, component: 'Workflow/Rules/Index');
+    }
+
+    public function supportFaqs(Request $request): Response
+    {
+        $filters = $this->filters($request, $this->enumValues(SupportFaqStatus::class));
+
+        $query = SupportFaq::query();
+
+        if ($filters['search'] !== '') {
+            $search = $filters['search'];
+
+            $query->where(function (Builder $builder) use ($search): void {
+                $builder->where('question', 'like', "%{$search}%")
+                    ->orWhere('answer', 'like', "%{$search}%")
+                    ->orWhere('keywords_json', 'like', "%{$search}%");
+            });
+        }
+
+        if ($filters['status'] !== '') {
+            $query->where('status', $filters['status']);
+        }
+
+        $rows = $query
+            ->orderBy('priority')
+            ->latest()
+            ->limit(50)
+            ->get()
+            ->map(function (SupportFaq $faq): array {
+                return [
+                    'Question' => $faq->question,
+                    'Keywords' => is_array($faq->keywords_json) ? implode(', ', $faq->keywords_json) : '',
+                    'Status' => $faq->status->value,
+                    'Priority' => $faq->priority,
+                    'Answer' => $faq->answer,
+                ];
+            });
+
+        return $this->page('Support FAQ', 'Chatbot-ready answers used by customer and supplier support flows.', [
+            ['label' => 'Total FAQs', 'value' => SupportFaq::count()],
+            ['label' => 'Active FAQs', 'value' => SupportFaq::where('status', SupportFaqStatus::Active->value)->count()],
+            ['label' => 'Priority 10', 'value' => SupportFaq::where('priority', 10)->count()],
+            ['label' => 'Priority 20', 'value' => SupportFaq::where('priority', 20)->count()],
+        ], ['Question', 'Keywords', 'Status', 'Priority', 'Answer'], $rows, filters: $filters, component: 'Support/Faq/Index');
     }
 
     public function socialCalendar(Request $request): Response
@@ -302,7 +547,12 @@ class WorkspaceController extends Controller
             'Error' => $log->error ? str($log->error)->limit(80)->toString() : '',
         ]);
 
-        return $this->page('Workflow Logs', 'Automation execution history with payload snapshots stored in the database.', [], ['Rule', 'Trigger', 'Status', 'Executed', 'Error'], $rows, filters: $filters);
+        return $this->page('Workflow Logs', 'Automation execution history with payload snapshots stored in the database.', [
+            ['label' => 'Total Logs', 'value' => WorkflowLog::count()],
+            ['label' => 'Successful', 'value' => WorkflowLog::where('status', WorkflowLogStatus::Success->value)->count()],
+            ['label' => 'Failed', 'value' => WorkflowLog::where('status', WorkflowLogStatus::Failed->value)->count()],
+            ['label' => 'Running', 'value' => WorkflowLog::where('status', WorkflowLogStatus::Running->value)->count()],
+        ], ['Rule', 'Trigger', 'Status', 'Executed', 'Error'], $rows, filters: $filters, component: 'Workflow/Logs/Index');
     }
 
     public function supportTickets(Request $request): Response
@@ -332,7 +582,12 @@ class WorkspaceController extends Controller
                 'Updated' => $ticket->last_message_at?->format('Y-m-d H:i') ?? 'n/a',
             ]);
 
-        return $this->page('Support Tickets', 'Buyer and supplier support tickets with automated replies and supplier notifications.', [], ['Ticket', 'Subject', 'Requester', 'Supplier', 'Priority', 'Status', 'Updated'], $rows, filters: $filters);
+        return $this->page('Support Tickets', 'Buyer and supplier support tickets with automated replies and supplier notifications.', [
+            ['label' => 'Total Tickets', 'value' => SupportTicket::count()],
+            ['label' => 'Open', 'value' => SupportTicket::where('status', TicketStatus::Open->value)->count()],
+            ['label' => 'Waiting Supplier', 'value' => SupportTicket::where('status', TicketStatus::WaitingSupplier->value)->count()],
+            ['label' => 'Resolved', 'value' => SupportTicket::where('status', TicketStatus::Resolved->value)->count()],
+        ], ['Ticket', 'Subject', 'Requester', 'Supplier', 'Priority', 'Status', 'Updated'], $rows, filters: $filters, component: 'Support/Tickets/Index');
     }
 
     public function notifications(Request $request): Response
@@ -371,9 +626,9 @@ class WorkspaceController extends Controller
         );
     }
 
-    private function page(string $title, string $description, array $metrics, array $columns, iterable $rows, string $emptyState = 'No records found.', ?array $filters = null): Response
+    private function page(string $title, string $description, array $metrics, array $columns, iterable $rows, string $emptyState = 'No records found.', ?array $filters = null, string $component = 'Workspace/Index'): Response
     {
-        return Inertia::render('Workspace/Index', [
+        return Inertia::render($component, [
             'workspace' => [
                 'title' => $title,
                 'description' => $description,
@@ -501,5 +756,54 @@ class WorkspaceController extends Controller
     private function labelForAuditValue(string $value): string
     {
         return Str::headline(str_replace(['.', '_'], ' ', $value));
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $conditions
+     */
+    private function workflowConditionsSummary(array $conditions): string
+    {
+        if ($conditions === []) {
+            return 'No conditions';
+        }
+
+        return collect($conditions)
+            ->map(function (array $condition): string {
+                $field = (string) ($condition['field'] ?? 'field');
+                $operator = (string) ($condition['operator'] ?? 'equals');
+                $value = $condition['value'] ?? 'n/a';
+
+                if (is_array($value)) {
+                    $value = implode(', ', array_map('strval', $value));
+                }
+
+                $fieldLabel = Str::headline(str_replace(['.', '_'], ' ', $field));
+                $operatorLabel = Str::headline(str_replace('_', ' ', $operator));
+
+                return Str::limit("{$fieldLabel} {$operatorLabel} {$value}", 60);
+            })
+            ->implode(' | ');
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $actions
+     */
+    private function workflowActionsSummary(array $actions): string
+    {
+        if ($actions === []) {
+            return 'No actions';
+        }
+
+        return collect($actions)
+            ->map(function (array $action): string {
+                $type = (string) ($action['type'] ?? 'action');
+                $config = is_array($action['config'] ?? null) ? $action['config'] : [];
+                $message = (string) ($config['message'] ?? $config['subject'] ?? $config['url'] ?? '');
+
+                $summary = $message !== '' ? Str::headline(str_replace('_', ' ', $type)).": {$message}" : Str::headline(str_replace('_', ' ', $type));
+
+                return Str::limit($summary, 60);
+            })
+            ->implode(' | ');
     }
 }

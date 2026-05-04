@@ -20,6 +20,10 @@ class ModuleSetting extends Model
     public static function enabledMap(): array
     {
         try {
+            if (! static::getConnectionResolver()) {
+                return [];
+            }
+
             if (! Schema::hasTable((new static())->getTable())) {
                 return [];
             }

@@ -2,12 +2,15 @@
 import FrontendLayout from '@/Layouts/FrontendLayout';
 import LandingPromoStrip from '@/Components/LandingPromoStrip';
 import PromoArtwork from '@/Components/PromoArtwork';
-import PromoCarousel from '@/Components/PromoCarousel';
 
 const storeAsset = (path) => `/images/store/${path}`;
+const ecommerceAsset = (path) => `/images/ecommerce/${path}`;
 const productImage = (name) => storeAsset(`products/${name}.png`);
 const bannerImage = (name) => storeAsset(`banners/${name}.jpg`);
 const brandImage = (name) => storeAsset(`brands/${name}.png`);
+const ecommerceProductImage = (name) => ecommerceAsset(`products/${name}.jpg`);
+const ecommerceBannerImage = (name) => ecommerceAsset(`banners/${name}.jpg`);
+const ecommerceCardImage = (name) => ecommerceAsset(`cards/${name}.jpg`);
 
 const heroStats = [
     {
@@ -223,15 +226,50 @@ const footerSections = [
     },
 ];
 
-const heroBackground = bannerImage('hero-main');
+const heroBackground = ecommerceBannerImage('banner_04');
 
-function layeredBackground(imageUrl, fallbackGradient) {
-    return {
-        backgroundImage: `${fallbackGradient}, url(${imageUrl})`,
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: 'cover',
-    };
+const heroImageCards = [
+    { image: ecommerceCardImage('card_01') },
+    { image: ecommerceCardImage('card_04') },
+    { image: ecommerceCardImage('card_11') },
+];
+
+const lowerBannerImages = [
+    'banner_01',
+    'banner_06',
+].map(ecommerceBannerImage);
+
+function ProductImageFrame({ src, className = 'aspect-[4/3]', imageClassName = 'p-3' }) {
+    return (
+        <div className={`relative overflow-hidden bg-white ${className}`}>
+            <img
+                src={src}
+                alt=""
+                className={`absolute inset-0 h-full w-full object-contain ${imageClassName}`}
+                loading="lazy"
+            />
+        </div>
+    );
+}
+
+function ImageOnlyPromoCard({ image }) {
+    return (
+        <article className="h-full min-h-[160px] overflow-hidden rounded-[22px] border border-[#d7e3f4] bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+            <img src={image} alt="" className="h-full w-full object-cover" loading="lazy" />
+        </article>
+    );
+}
+
+function BannerImageGrid({ banners }) {
+    return (
+        <section className="grid gap-[15px] md:grid-cols-2">
+            {banners.map((banner) => (
+                <article key={banner} className="overflow-hidden rounded-[12px] bg-white shadow-sm">
+                    <img src={banner} alt="" className="h-[210px] w-full object-cover sm:h-[240px]" loading="lazy" />
+                </article>
+            ))}
+        </section>
+    );
 }
 
 function HeroStat({ value, label }) {
@@ -297,12 +335,9 @@ function DealCard({ item }) {
         <article className="group flex h-full flex-col overflow-hidden rounded-[28px] border border-[#d7e3f4] bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-[0_20px_50px_-24px_rgba(10,35,84,0.35)]">
             <div className="relative p-4">
                 <div className="overflow-hidden rounded-[22px] border border-[#eef3fb] bg-slate-50">
-                    <div
+                    <ProductImageFrame
+                        src={item.image}
                         className="aspect-[4/3] transition duration-500 group-hover:scale-[1.03]"
-                        style={layeredBackground(
-                            item.image,
-                            'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.14))',
-                        )}
                     />
                 </div>
                 <span className="absolute left-6 top-6 rounded-full bg-[#0b3d91] px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-white shadow-sm">
@@ -1085,32 +1120,49 @@ const brandLogoItems = [
     { name: 'Meta Quest', logo: brandImage('meta-quest') },
 ];
 
-const withShelfImages = (items, prefix) =>
+const uniqueEcommerceProductNames = [
+    'product_001',
+    'product_003',
+    'product_005',
+    'product_006',
+    'product_007',
+    'product_008',
+    'product_010',
+    'product_011',
+    'product_016',
+    'product_017',
+    'product_018',
+    'product_025',
+    'product_040',
+];
+
+const withUniqueProductImages = (items, startIndex = 0) =>
     items.map((item, index) => ({
         ...item,
         artVariant: undefined,
-        image: productImage(`${prefix}-${String(index + 1).padStart(2, '0')}`),
+        image: ecommerceProductImage(uniqueEcommerceProductNames[(startIndex + index) % uniqueEcommerceProductNames.length]),
     }));
 
-const smartComfortItems = officeDealItems;
-const gamingLaptopItems = withShelfImages([...bestDealItems, ...officeDealItems].slice(0, 6), 'shelf-gaming-laptop');
-const coolingDealItems = withShelfImages([...memoryItems, ...electronicsItems, ...desktopPcItems].slice(0, 6), 'shelf-cooling')
+const bestDealShelfItems = withUniqueProductImages(bestDealItems, 0);
+const smartComfortItems = withUniqueProductImages(officeDealItems, 5);
+const gamingLaptopItems = withUniqueProductImages([...bestDealItems, ...officeDealItems].slice(0, 6), 8);
+const coolingDealItems = withUniqueProductImages([...memoryItems, ...electronicsItems, ...desktopPcItems].slice(0, 6), 14)
     .map((item, index) => ({
         ...item,
         category: item.category || 'Cooling',
         rating: item.rating || '4.5',
         reviews: item.reviews || `${(index + 2) * 17}`,
     }));
-const printingDealItems = withShelfImages([...moreToConsiderItems, ...desktopPcItems, ...bestDealItems].slice(0, 6), 'shelf-printing')
+const printingDealItems = withUniqueProductImages([...moreToConsiderItems, ...desktopPcItems, ...bestDealItems].slice(0, 6), 20)
     .map((item, index) => ({
         ...item,
         category: item.category || '3D Printing',
         rating: item.rating || '4.3',
         reviews: item.reviews || `${(index + 1) * 14}`,
     }));
-const considerationItems = withShelfImages(
+const considerationItems = withUniqueProductImages(
     [...moreToConsiderItems, ...desktopPcItems, ...bestDealItems, ...officeDealItems].slice(0, 16),
-    'shelf-consider',
+    26,
 ).map((item, index) => ({
         ...item,
         category: item.category || (index % 2 === 0 ? 'Storage' : 'Components'),
@@ -1184,13 +1236,7 @@ function ShelfProductCard({ item }) {
                 {item.artVariant ? (
                     <PromoArtwork variant={item.artVariant} className="aspect-[4/3]" framed={false} />
                 ) : (
-                    <div
-                        className="aspect-[4/3]"
-                        style={layeredBackground(
-                            item.image,
-                            'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.16))',
-                        )}
-                    />
+                    <ProductImageFrame src={item.image} />
                 )}
             </div>
             <div className="mt-3">
@@ -1352,13 +1398,7 @@ function BundleCard({ bundle }) {
                         className={`flex items-center gap-3 rounded-[16px] p-2 ${isDark ? 'bg-white/10' : 'bg-white/80'}`}
                     >
                         <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-slate-100">
-                            <div
-                                className="h-full w-full"
-                                style={layeredBackground(
-                                    item.image,
-                                    'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.12))',
-                                )}
-                            />
+                            <ProductImageFrame src={item.image} className="h-full w-full" imageClassName="p-1.5" />
                         </div>
                         <p className={`text-[11px] font-semibold leading-5 ${isDark ? 'text-white/90' : 'text-slate-700'}`}>
                             {item.title}
@@ -1435,13 +1475,7 @@ function CompactProductCard({ item, dark = false }) {
         >
             <div className="p-4">
                 <div className="overflow-hidden rounded-[18px] bg-slate-50">
-                    <div
-                        className="aspect-[4/3]"
-                        style={layeredBackground(
-                            item.image,
-                            'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.16))',
-                        )}
-                    />
+                    <ProductImageFrame src={item.image} />
                 </div>
                 {item.badge ? (
                     <span className={`mt-3 inline-flex rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] ${dark ? 'bg-white/10 text-white' : 'bg-[#eef4ff] text-[#0b3d91]'}`}>
@@ -1629,20 +1663,20 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                             </article>
 
                             <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3 xl:min-h-0 xl:flex-1">
-                                {comboBundlesPrimary.map((bundle) => (
-                                    <BundleCard key={`top-${bundle.brand}-${bundle.price}`} bundle={bundle} />
+                                {heroImageCards.map((card) => (
+                                    <ImageOnlyPromoCard key={card.image} image={card.image} />
                                 ))}
                             </div>
                         </div>
                     </section>
 
                     <div className="space-y-10">
-                        <PromoCarousel slides={promoShowcaseSlides} />
+                        <BannerImageGrid banners={lowerBannerImages} />
 
                         <section id="deals" className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
                             <ShelfHeading title="Today's Best Deals" href="#footer" action="See all deals" />
                             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-                                {bestDealItems.map((item) => (
+                                {bestDealShelfItems.map((item) => (
                                     <ShelfProductCard key={item.title} item={item} />
                                 ))}
                             </div>

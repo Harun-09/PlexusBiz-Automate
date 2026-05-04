@@ -12,7 +12,7 @@ class DomainServiceProvider extends ServiceProvider
     {
         $this->app->singleton(DomainRegistry::class);
 
-        (new DomainRegistry($this->app['config']))->enabled()->each(function ($module): void {
+        (new DomainRegistry($this->app['config']))->all()->each(function ($module): void {
             foreach ($module->serviceProviders() as $provider) {
                 $this->app->register($provider);
             }

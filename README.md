@@ -16,6 +16,20 @@ The application keeps business logic grouped by domain under `app/Domains`:
 
 Domain routes are registered through `App\Providers\DomainServiceProvider` and the module registry in `config/domains.php`.
 
+## Assignment Coverage
+
+The assignment modules are implemented as live, data-backed flows:
+
+- E-Commerce: multi-vendor marketplace, supplier onboarding, product CRUD, inventory tracking, bulk pricing and MOQ, cart to checkout to confirmation, and invoices.
+- CRM: customer registration and profiling, purchase history, basic segmentation, lead management, and interaction history.
+- Social Media Automation: scheduled Facebook and Instagram posts, content calendar, rule-based publishing, campaign management, and engagement placeholders.
+- Marketing Automation: template-based email and SMS campaigns, trigger-based rules, and scheduling.
+- Workflow Automation: IF/THEN automation rules, queued and sync execution, scheduler support, and execution logs.
+- Admin Panel: RBAC, platform monitoring, user management, and module enable/disable control.
+- Order & Support Automation: auto confirmations, support tickets, auto replies, supplier notifications, and chatbot-ready API structure.
+
+Seeded data and feature tests cover the core flows so the platform remains dynamic rather than placeholder-only.
+
 ## Local Setup
 
 ```bash

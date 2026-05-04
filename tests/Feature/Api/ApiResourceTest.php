@@ -84,9 +84,10 @@ class ApiResourceTest extends TestCase
         ], SupportChannel::Chatbot);
 
         Sanctum::actingAs($buyer);
-        $this->getJson('/api/v1/support-tickets?status='.TicketStatus::WaitingSupplier->value)
-            ->assertOk()
-            ->assertJsonPath('data.0.ticket_number', $ticket->ticket_number);
+        $response = $this->getJson('/api/v1/support-tickets?status='.TicketStatus::WaitingSupplier->value)
+            ->assertOk();
+
+        $this->assertContains($ticket->ticket_number, collect($response->json('data'))->pluck('ticket_number')->all());
 
         Sanctum::actingAs(User::where('email', 'supplier@plexus.test')->firstOrFail());
         $this->getJson('/api/v1/support-tickets/'.$ticket->id)

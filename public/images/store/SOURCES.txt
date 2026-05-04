@@ -1,0 +1,157 @@
+﻿PlexusBiz store imagery
+
+The files in public/images/store/products and public/images/store/banners were rendered from real open-license Wikimedia Commons images. Product card assets are white-canvas PNGs; banner assets are cropped JPGs with no embedded marketing text.
+
+Sources:
+- adapterCable: ATX_power_supply_adapter_cable_R7309257_wp.jpg
+  Page: https://commons.wikimedia.org/wiki/File:ATX_power_supply_adapter_cable_R7309257_wp.jpg
+  License: Free Art License/GFDL/CC
+  Credit: Rainer Knaepper / Wikimedia Commons
+- camera: Surveillance_camera.jpg
+  Page: https://commons.wikimedia.org/wiki/File:Surveillance_camera.jpg
+  License: CC0 1.0
+  Credit: Neslihan Turan / Wikimedia Commons
+- charger: USB_Type-C_Cable_-_iPad_USB-C_Charger_(45640822114).jpg
+  Page: https://commons.wikimedia.org/wiki/File:USB_Type-C_Cable_-_iPad_USB-C_Charger_(45640822114).jpg
+  License: CC BY 2.0
+  Credit: Tony Webster / Wikimedia Commons
+- cooler: Computer_Cooler.jpg
+  Page: https://commons.wikimedia.org/wiki/File:Computer_Cooler.jpg
+  License: CC BY-SA 3.0/GFDL
+  Credit: Vlad2000Plus / Wikimedia Commons
+- coolingFan: Computer_Cooler.jpg
+  Page: https://commons.wikimedia.org/wiki/File:Computer_Cooler.jpg
+  License: CC BY-SA 3.0/GFDL
+  Credit: Vlad2000Plus / Wikimedia Commons
+- cpu: Am486dx2-66_(11).jpg
+  Page: https://commons.wikimedia.org/wiki/File:Am486dx2-66_(11).jpg
+  License: CC0 1.0
+  Credit: Oligopolism / Wikimedia Commons
+- deskSetup: Desk_Setup_(Unsplash).jpg
+  Page: https://commons.wikimedia.org/wiki/File:Desk_Setup_(Unsplash).jpg
+  License: CC0 1.0
+  Credit: Unsplash via Wikimedia Commons
+- desktopBundle: 32-bit-desktop.jpg
+  Page: https://commons.wikimedia.org/wiki/File:32-bit-desktop.jpg
+  License: CC0 1.0
+  Credit: Batocera Team / Wikimedia Commons
+- dualMonitor: Designer's_two-screen_setup_(Unsplash).jpg
+  Page: https://commons.wikimedia.org/wiki/File:Designer's_two-screen_setup_(Unsplash).jpg
+  License: CC0 1.0
+  Credit: Unsplash via Wikimedia Commons
+- filament: 3D_Printing_Filament.jpg
+  Page: https://commons.wikimedia.org/wiki/File:3D_Printing_Filament.jpg
+  License: CC BY 2.0
+  Credit: Creative Tools / Wikimedia Commons
+- gpu: Sapphire_ATI_Radeon_HD_2400_XT.jpg
+  Page: https://commons.wikimedia.org/wiki/File:Sapphire_ATI_Radeon_HD_2400_XT.jpg
+  License: Public domain
+  Credit: Tors / Wikimedia Commons
+- gpuAlt: Sapphire_ATI_Radeon_HD_2400_XT.jpg
+  Page: https://commons.wikimedia.org/wiki/File:Sapphire_ATI_Radeon_HD_2400_XT.jpg
+  License: Public domain
+  Credit: Tors / Wikimedia Commons
+- hdd: IBM_DPRA-21215.png
+  Page: https://commons.wikimedia.org/wiki/File:IBM_DPRA-21215.png
+  License: CC0 1.0
+  Credit: NickW1129 / Wikimedia Commons
+- hddAlt: IBM_DPRA-21215.png
+  Page: https://commons.wikimedia.org/wiki/File:IBM_DPRA-21215.png
+  License: CC0 1.0
+  Credit: NickW1129 / Wikimedia Commons
+- headphones: Headphones_(56330).jpg
+  Page: https://commons.wikimedia.org/wiki/File:Headphones_(56330).jpg
+  License: CC0 1.0
+  Credit: Wikimedia Commons contributor
+- kitchen: Oster_2-Slice_Toaster.jpg
+  Page: https://commons.wikimedia.org/wiki/File:Oster_2-Slice_Toaster.jpg
+  License: CC0 1.0
+  Credit: Wikimedia Commons contributor
+- laptop: AVANT-P870DMG-GAMING-LAPTOP.png
+  Page: https://commons.wikimedia.org/wiki/File:AVANT-P870DMG-GAMING-LAPTOP.png
+  License: CC BY-SA 4.0
+  Credit: Nikitarama / Wikimedia Commons
+- laptopAlt: HP_Victus_15_gaming_laptop_side_view.jpg
+  Page: https://commons.wikimedia.org/wiki/File:HP_Victus_15_gaming_laptop_side_view.jpg
+  License: CC0 1.0
+  Credit: Laziz940 / Wikimedia Commons
+- laptopLiving: Laptop_in_the_living_room_(Unsplash).jpg
+  Page: https://commons.wikimedia.org/wiki/File:Laptop_in_the_living_room_(Unsplash).jpg
+  License: CC0 1.0
+  Credit: Oliur Rahman / Unsplash via Wikimedia Commons
+- laser: 3D_printer.png
+  Page: https://commons.wikimedia.org/wiki/File:3D_printer.png
+  License: CC BY-SA 4.0
+  Credit: Nodin Cutfeet / Wikimedia Commons
+- livingRoom: Laptop_in_the_living_room_(Unsplash).jpg
+  Page: https://commons.wikimedia.org/wiki/File:Laptop_in_the_living_room_(Unsplash).jpg
+  License: CC0 1.0
+  Credit: Oliur Rahman / Unsplash via Wikimedia Commons
+- microSd: Intel_512G_M2_Solid_State_Drive.png
+  Page: https://commons.wikimedia.org/wiki/File:Intel_512G_M2_Solid_State_Drive.png
+  License: CC BY-SA 4.0
+  Credit: David290 / Wikimedia Commons
+- monitor: MonitorLCD_17in.jpg
+  Page: https://commons.wikimedia.org/wiki/File:MonitorLCD_17in.jpg
+  License: Public domain
+  Credit: Julo / Wikimedia Commons
+- motherboard: Atx_computer_motherboard_with_cpu_and_fan.jpg
+  Page: https://commons.wikimedia.org/wiki/File:Atx_computer_motherboard_with_cpu_and_fan.jpg
+  License: Public domain
+  Credit: Leon Brooks / Wikimedia Commons
+- motherboardAlt: Atx_computer_motherboard_with_cpu_and_fan.jpg
+  Page: https://commons.wikimedia.org/wiki/File:Atx_computer_motherboard_with_cpu_and_fan.jpg
+  License: Public domain
+  Credit: Leon Brooks / Wikimedia Commons
+- nas: Network_Attached_Storage.jpg
+  Page: https://commons.wikimedia.org/wiki/File:Network_Attached_Storage.jpg
+  License: CC BY-SA 2.5
+  Credit: Simon Haemmerle / Wikimedia Commons
+- pc: Miordenata02-nobackground.png
+  Page: https://commons.wikimedia.org/wiki/File:Miordenata02-nobackground.png
+  License: Public domain
+  Credit: Chaluco / Wikimedia Commons
+- pcAlt: 32-bit-desktop.jpg
+  Page: https://commons.wikimedia.org/wiki/File:32-bit-desktop.jpg
+  License: CC0 1.0
+  Credit: Batocera Team / Wikimedia Commons
+- pcCase: Miordenata02-nobackground.png
+  Page: https://commons.wikimedia.org/wiki/File:Miordenata02-nobackground.png
+  License: Public domain
+  Credit: Chaluco / Wikimedia Commons
+- printer3d: 3D_printer.png
+  Page: https://commons.wikimedia.org/wiki/File:3D_printer.png
+  License: CC BY-SA 4.0
+  Credit: Nodin Cutfeet / Wikimedia Commons
+- psu: SS-400ES_ATX_power_supply.jpg
+  Page: https://commons.wikimedia.org/wiki/File:SS-400ES_ATX_power_supply.jpg
+  License: Public domain
+  Credit: Hitachi-Train / Wikimedia Commons
+- qwerty: Qwerty_Keyboard.JPG
+  Page: https://commons.wikimedia.org/wiki/File:Qwerty_Keyboard.JPG
+  License: CC0 1.0
+  Credit: MarkBuckawicki / Wikimedia Commons
+- ram: DDR_RAM-3.jpg
+  Page: https://commons.wikimedia.org/wiki/File:DDR_RAM-3.jpg
+  License: Public domain
+  Credit: Laszlo Szalai / Wikimedia Commons
+- ramAlt: Sodimm-ram-ddr.jpg
+  Page: https://commons.wikimedia.org/wiki/File:Sodimm-ram-ddr.jpg
+  License: Public domain
+  Credit: M/ / Wikimedia Commons
+- rgbSetup: RGB_desktop_computer_setup_with_keyboard_and_monitor.jpg
+  Page: https://commons.wikimedia.org/wiki/File:RGB_desktop_computer_setup_with_keyboard_and_monitor.jpg
+  License: CC0 1.0
+  Credit: SankalpSasnur / Wikimedia Commons
+- router: Wireless_Router_(50841204223).jpg
+  Page: https://commons.wikimedia.org/wiki/File:Wireless_Router_(50841204223).jpg
+  License: CC BY 2.0
+  Credit: ajay_suresh / Wikimedia Commons
+- ssd: Intel_512G_M2_Solid_State_Drive.png
+  Page: https://commons.wikimedia.org/wiki/File:Intel_512G_M2_Solid_State_Drive.png
+  License: CC BY-SA 4.0
+  Credit: David290 / Wikimedia Commons
+- workspace: Desk_Setup_(Unsplash).jpg
+  Page: https://commons.wikimedia.org/wiki/File:Desk_Setup_(Unsplash).jpg
+  License: CC0 1.0
+  Credit: Unsplash via Wikimedia Commons

@@ -74,16 +74,18 @@ class SupportAutomationTest extends TestCase
 
         Sanctum::actingAs($buyer);
 
-        $this->postJson('/api/support/chatbot/message', [
+        $response = $this->postJson('/api/support/chatbot/message', [
             'message' => 'Can you check the shipping tracking eta for my order?',
             'create_ticket' => true,
             'supplier_id' => $supplier->id,
-        ])
+        ]);
+
+        $response
             ->assertOk()
             ->assertJsonPath('data.source', 'faq')
             ->assertJsonPath('data.ticket.status', TicketStatus::WaitingSupplier->value);
 
-        $ticket = SupportTicket::query()->firstOrFail();
+        $ticket = SupportTicket::query()->findOrFail($response->json('data.ticket.id'));
 
         $this->assertSame($buyer->id, $ticket->requester_id);
         $this->assertSame(SupportChannel::Chatbot, $ticket->channel);

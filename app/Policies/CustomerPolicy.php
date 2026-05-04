@@ -9,11 +9,11 @@ class CustomerPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('admin');
+        return $user->hasAnyRole(['admin', 'marketing_manager']);
     }
 
     public function view(User $user, Customer $customer): bool
     {
-        return $user->hasRole('admin') || $customer->user_id === $user->id;
+        return $user->hasAnyRole(['admin', 'marketing_manager']) || $customer->user_id === $user->id;
     }
 }
