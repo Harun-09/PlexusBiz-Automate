@@ -24,36 +24,59 @@ export default function ConfirmPassword() {
     };
 
     return (
-        <GuestLayout>
+        <GuestLayout
+            variant="register"
+            registerHero={{
+                eyebrow: 'Security check',
+                title: 'Confirm your identity.',
+                lead: 'This is a secure area. Please enter your password to confirm access to this module.',
+            }}
+        >
             <Head title="Confirm Password" />
 
-            <div className="mb-4 text-sm text-gray-600">
-                This is a secure area of the application. Please confirm your password before continuing.
+            <div className="auth-form auth-form--register">
+                <div className="auth-card-brand">
+                    <span className="auth-card-brand__mark">
+                        <img
+                            src="/images/project-logo.png"
+                            alt="PlexusBiz Automate"
+                            className="auth-card-brand__logo"
+                        />
+                    </span>
+                    <span className="auth-card-brand__copy">
+                        <strong>PlexusBiz Automate</strong>
+                        <span>Identity Verification</span>
+                    </span>
+                </div>
+
+                <div className="auth-form__header auth-form__header--register">
+                    <span className="auth-eyebrow">Verify</span>
+                    <h2>Enter your password.</h2>
+                </div>
+
+                <form onSubmit={submit} className="auth-form__body auth-form__body--register">
+                    <div className="auth-field">
+                        <InputLabel htmlFor="password" value="Password" className="auth-label" />
+                        <TextInput
+                            id="password"
+                            type="password"
+                            name="password"
+                            value={data.password}
+                            className="auth-input"
+                            isFocused={true}
+                            placeholder="Enter your password"
+                            onChange={(e) => setData('password', e.target.value)}
+                        />
+                        <InputError message={errors.password} className="auth-error" />
+                    </div>
+
+                    <div className="auth-form__actions mt-6">
+                        <PrimaryButton className="auth-submit w-full" disabled={processing}>
+                            {processing ? 'Verifying...' : 'Confirm Password'}
+                        </PrimaryButton>
+                    </div>
+                </form>
             </div>
-
-            <form onSubmit={submit}>
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        isFocused={true}
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="flex items-center justify-end mt-4">
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Confirm
-                    </PrimaryButton>
-                </div>
-            </form>
         </GuestLayout>
     );
 }

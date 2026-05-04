@@ -211,7 +211,15 @@ export default function Index({ auth, flash, errors, cart, suggestions, currency
         <FrontendLayout auth={auth} canLogin={true} cartCount={cart?.summary?.items_count || 0}>
             <Head title="Cart" />
 
-            <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(11,46,113,0.14),_transparent_30%),radial-gradient(circle_at_top_right,_rgba(255,138,0,0.16),_transparent_26%),linear-gradient(180deg,_#eef5ff_0%,_#f9fbff_46%,_#ffffff_100%)] text-slate-900">
+            <div className="min-h-screen bg-white"
+                style={{
+                    background: `
+                        radial-gradient(circle at top left, rgba(37, 99, 235, 0.18), transparent 28%),
+                        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.12), transparent 22%),
+                        linear-gradient(180deg, #ffffff 0%, #f8fbff 46%, #ffffff 100%)
+                    `
+                }}
+            >
                 <main className="mx-auto w-full max-w-[1500px] px-4 py-6 sm:px-6 lg:px-8">
                     <section className="overflow-hidden rounded-[32px] border border-[#d7e3f4] bg-[#0b2e71] shadow-[0_26px_80px_-40px_rgba(7,18,46,0.9)]">
                         <div className="grid gap-8 px-5 py-6 lg:grid-cols-[1.1fr_.9fr] lg:px-8 lg:py-8">

@@ -104,11 +104,12 @@ function PlexusBizMark() {
     );
 }
 
-function AddressTile() {
+function AddressTile({ onClick }) {
     return (
         <button
             type="button"
-            className="hidden min-w-0 items-center gap-2 rounded-[18px] px-2 py-2 text-left transition hover:bg-white/10 sm:flex sm:gap-3 sm:px-3 xl:hidden"
+            onClick={onClick}
+            className="hidden min-w-0 items-center gap-2 rounded-[18px] px-2 py-2 text-left transition hover:bg-white/10 sm:flex sm:gap-3 sm:px-3"
         >
             <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/15 bg-[#2c5fb7] shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] sm:h-9 sm:w-9">
                 <svg
@@ -273,6 +274,160 @@ function ThemeToggle() {
     );
 }
 
+function AddressSelectorModal({ isOpen, onClose, isAuthed }) {
+    const [zipCode, setZipCode] = useState('');
+    const [selectedRegion, setSelectedRegion] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    if (!isOpen) return null;
+
+    const handleApplyZip = () => {
+        if (zipCode.trim()) {
+            setIsLoading(true);
+            // Simulate API call
+            setTimeout(() => {
+                setIsLoading(false);
+                localStorage.setItem('deliveryZip', zipCode);
+                onClose();
+            }, 500);
+        }
+    };
+
+    const handleRegionChange = (e) => {
+        setSelectedRegion(e.target.value);
+        if (e.target.value) {
+            localStorage.setItem('deliveryRegion', e.target.value);
+            onClose();
+        }
+    };
+
+    const canDone = zipCode.trim() || selectedRegion;
+
+    return (
+        <div className="fixed inset-0 z-[100] flex items-start justify-center pt-20 sm:pt-24">
+            {/* Backdrop */}
+            <div 
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm" 
+                onClick={onClose}
+            />
+            
+            {/* Modal */}
+            <div className="relative w-full max-w-md mx-4 rounded-2xl bg-white shadow-2xl overflow-hidden">
+                {/* Triangle pointer */}
+                <div className="absolute -top-2 left-8 sm:left-12 w-4 h-4 bg-white rotate-45" />
+                
+                {/* Header */}
+                <div className="relative flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                    <h2 className="text-lg font-bold italic text-gray-900">Choose your location</h2>
+                    <button 
+                        onClick={onClose}
+                        className="p-2 text-gray-400 hover:text-gray-600 transition rounded-full hover:bg-gray-100"
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div className="p-6 space-y-6">
+                    {/* Description */}
+                    <p className="text-sm text-gray-600 leading-relaxed">
+                        Delivery options and delivery speeds may vary for different locations.
+                    </p>
+
+                    {/* Sign In Button */}
+                    {!isAuthed && (
+                        <>
+                            <button
+                                onClick={() => window.location.href = route('login')}
+                                className="w-full py-3 px-4 bg-[#0b2e71] hover:bg-[#15408a] text-white font-semibold rounded-full transition"
+                            >
+                                Sign In to see your addresses
+                            </button>
+
+                            {/* Divider */}
+                            <div className="relative flex items-center justify-center">
+                                <div className="absolute inset-0 flex items-center">
+                                    <div className="w-full border-t border-gray-200" />
+                                </div>
+                                <span className="relative px-4 bg-white text-sm text-gray-500">OR</span>
+                            </div>
+                        </>
+                    )}
+
+                    {/* ZIP Code Input */}
+                    <div className="flex gap-2">
+                        <div className="flex-1 relative">
+                            <input
+                                type="text"
+                                value={zipCode}
+                                onChange={(e) => setZipCode(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                                placeholder="Enter a US zip code"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-l-full focus:outline-none focus:ring-2 focus:ring-[#0b2e71] focus:border-transparent text-sm"
+                            />
+                        </div>
+                        <button
+                            onClick={handleApplyZip}
+                            disabled={!zipCode.trim() || isLoading}
+                            className="px-6 py-3 bg-[#96b8ef] hover:bg-[#7ca7e8] disabled:bg-gray-200 disabled:text-gray-400 text-[#0b2e71] font-semibold rounded-r-full transition"
+                        >
+                            {isLoading ? '...' : 'APPLY'}
+                        </button>
+                    </div>
+
+                    {/* Divider */}
+                    <div className="relative flex items-center justify-center">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-200" />
+                        </div>
+                        <span className="relative px-4 bg-white text-sm text-gray-500">OR</span>
+                    </div>
+
+                    {/* Region Dropdown */}
+                    <div className="relative">
+                        <select
+                            value={selectedRegion}
+                            onChange={handleRegionChange}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0b2e71] focus:border-transparent text-sm appearance-none bg-white cursor-pointer"
+                        >
+                            <option value="">Ship Outside the US</option>
+                            <option value="CA">Canada</option>
+                            <option value="UK">United Kingdom</option>
+                            <option value="EU">Europe</option>
+                            <option value="AU">Australia</option>
+                            <option value="BD">Bangladesh</option>
+                            <option value="IN">India</option>
+                            <option value="SG">Singapore</option>
+                            <option value="AE">UAE</option>
+                            <option value="OTHER">Other Countries</option>
+                        </select>
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Footer */}
+                <div className="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                    <button
+                        onClick={onClose}
+                        disabled={!canDone}
+                        className={`w-full py-3 px-4 rounded-full font-semibold transition ${
+                            canDone 
+                                ? 'bg-[#0b2e71] hover:bg-[#15408a] text-white' 
+                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        }`}
+                    >
+                        Done
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 function FooterColumn({ section }) {
     const [isOpen, setIsOpen] = useState(false);
     const slugify = (text) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
@@ -316,6 +471,7 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
     const isAuthed = Boolean(auth?.user);
     const headerRef = useRef(null);
     const [headerHeight, setHeaderHeight] = useState(148);
+    const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
 
     useEffect(() => {
         const updateHeaderHeight = () => {
@@ -339,39 +495,26 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                         <div className="mx-auto grid w-full max-w-[1900px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 px-4 py-3 sm:grid-cols-[auto_auto_minmax(0,1fr)_auto] sm:gap-3 sm:px-6 xl:gap-4 xl:px-8">
                             <PlexusBizMark />
 
-                            <AddressTile />
-
-                            <button
-                                type="button"
-                                className="hidden items-center gap-2 rounded-full px-3 py-2 text-left transition hover:bg-white/10 xl:flex"
-                            >
-                                <span className="grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-white/10 text-lg">
-                                    ⌖
-                                </span>
-                                <span className="leading-tight">
-                                    <span className="block text-[11px] font-semibold text-white/75">Hello</span>
-                                    <span className="block text-sm font-black tracking-[-0.02em]">Select address</span>
-                                </span>
-                            </button>
+                            <AddressTile onClick={() => setIsAddressModalOpen(true)} />
 
                             <form className="min-w-0 flex-1 xl:pl-1" onSubmit={(event) => event.preventDefault()}>
-                                <div className="relative flex h-12 w-full items-stretch overflow-hidden rounded-full border border-[#d9e3f3] bg-white shadow-[0_10px_30px_-18px_rgba(9,20,48,0.9)] sm:h-[56px]">
+                                <div className="relative flex h-10 w-full items-stretch overflow-hidden rounded-full border border-[#d9e3f3] bg-white shadow-[0_10px_30px_-18px_rgba(9,20,48,0.9)] sm:h-11">
                                     <input
                                         type="search"
                                         placeholder="Search products, deals, and parts"
-                                        className="min-w-0 flex-1 bg-transparent px-4 text-[14px] text-slate-800 outline-none placeholder:text-[#7c8aa3] sm:px-5"
+                                        className="min-w-0 flex-1 bg-transparent px-4 text-[13px] text-slate-800 outline-none placeholder:text-[#7c8aa3] sm:px-5"
                                     />
                                     <button
                                         type="submit"
                                         aria-label="Search"
-                                        className="flex h-full w-12 shrink-0 items-center justify-center bg-[#96b8ef] text-[#0b2e71] transition hover:bg-[#7ca7e8] sm:w-14"
+                                        className="flex h-full w-10 shrink-0 items-center justify-center bg-[#96b8ef] text-[#0b2e71] transition hover:bg-[#7ca7e8] sm:w-12"
                                     >
-                                        <SearchIcon className="h-5 w-5" />
+                                        <SearchIcon className="h-4 w-4" />
                                     </button>
                                 </div>
                             </form>
 
-                            <div className="flex items-center gap-2 justify-self-end xl:gap-2.5">
+                            <div className="flex items-center gap-2 justify-self-end xl:gap-3">
                                 {!isAuthed && canLogin && (
                                     <Link
                                         href={route('login')}
@@ -416,19 +559,26 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                                 )}
                                 <Link
                                     href={route('cart.index')}
-                                    className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white sm:hidden"
+                                    className="relative inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white sm:hidden"
                                 >
-                                    <CartIcon className="h-[18px] w-[18px]" />
+                                    <CartIcon className="h-6 w-6" />
                                     {Number(cartCount) > 0 && (
                                         <span className="absolute -right-1 -top-1 inline-flex min-w-5 items-center justify-center rounded-full bg-[#ff8a00] px-1.5 py-0.5 text-[10px] font-black leading-none text-white shadow-sm">
                                             {Number(cartCount) > 99 ? '99+' : Number(cartCount)}
                                         </span>
                                     )}
                                 </Link>
-                                <Link href={route('cart.index')} className="relative hidden sm:inline-flex">
-                                    <HeaderIcon className="h-5 w-5">
-                                        <CartIcon className="h-[19px] w-[19px]" />
-                                    </HeaderIcon>
+
+                                <button
+                                    type="button"
+                                    className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20"
+                                >
+                                    <BellIcon className="h-5 w-5" />
+                                    <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-[#ff8a00] border-2 border-[#0b2e71]"></span>
+                                </button>
+
+                                <Link href={route('cart.index')} className="relative hidden sm:inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20">
+                                    <CartIcon className="h-6 w-6" />
                                     {Number(cartCount) > 0 && (
                                         <span className="absolute -right-1 -top-1 inline-flex min-w-5 items-center justify-center rounded-full bg-[#ff8a00] px-1.5 py-0.5 text-[10px] font-black leading-none text-white shadow-sm">
                                             {Number(cartCount) > 99 ? '99+' : Number(cartCount)}
@@ -520,6 +670,12 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                         </div>
                     </div>
                 </footer>
+
+            <AddressSelectorModal 
+                isOpen={isAddressModalOpen} 
+                onClose={() => setIsAddressModalOpen(false)} 
+                isAuthed={isAuthed}
+            />
         </div>
     );
 }

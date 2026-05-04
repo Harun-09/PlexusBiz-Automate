@@ -1,1 +1,0 @@
-import{t as e}from"./jsx-runtime-DFbqkGHq.js";var t=e();function n({value:e,className:n=``,children:r,...i}){let a=n.includes(`auth-label`);return(0,t.jsx)(`label`,{...i,className:a?`auth-label ${n}`.trim():`block font-medium text-sm text-gray-700 ${n}`.trim(),children:e||r})}export{n as t};
