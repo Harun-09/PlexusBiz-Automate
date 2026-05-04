@@ -1,6 +1,8 @@
 ﻿import { Head, Link } from '@inertiajs/react';
 import FrontendLayout from '@/Layouts/FrontendLayout';
 import LandingPromoStrip from '@/Components/LandingPromoStrip';
+import PromoArtwork from '@/Components/PromoArtwork';
+import PromoCarousel from '@/Components/PromoCarousel';
 
 const heroStats = [
     {
@@ -22,7 +24,7 @@ const promoCards = [
         eyebrow: 'Shell Shocker',
         title: 'Flash pricing on desktop parts and build kits.',
         copy: 'Limited quantities, strong contrast, and a visible call to action for rapid scanning.',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/83-360-936-17.jpg',
+        artVariant: 'hero',
         pill: 'Ends soon',
         cta: 'See the drop',
         href: '#deals',
@@ -34,7 +36,7 @@ const promoCards = [
         eyebrow: 'AI Ready',
         title: 'Monitors and peripherals that stay competitive.',
         copy: 'Work, play, and quick comparison features in a clean, product-driven panel.',
-        image: 'https://c1.neweggimages.com/nobgproductcompressall300/24-027-380-01.jpg',
+        artVariant: 'banner',
         pill: 'New arrivals',
         cta: 'Compare picks',
         href: '#deals',
@@ -217,7 +219,6 @@ const footerSections = [
 ];
 
 const heroBackground = 'https://promotions.newegg.com/nepro/26-0375/Animation/bg_1920x1080.jpg';
-const heroPreview = 'https://c1.neweggimages.com/productimage/nb300/34-236-520-11.jpg';
 
 function layeredBackground(imageUrl, fallbackGradient) {
     return {
@@ -262,15 +263,9 @@ function PromoCard({ card }) {
 
             <p className={`mt-3 text-sm leading-6 ${card.copyClass}`}>{card.copy}</p>
 
-            {card.image ? (
-                <div className="mt-4 overflow-hidden rounded-[22px] border border-white/25 bg-slate-100">
-                    <div
-                        className="aspect-[16/10]"
-                        style={layeredBackground(
-                            card.image,
-                            'linear-gradient(180deg, rgba(255,255,255,0.03), rgba(15,23,42,0.2))',
-                        )}
-                    />
+            {card.artVariant ? (
+                <div className="mt-4 overflow-hidden rounded-[22px]">
+                    <PromoArtwork variant={card.artVariant} className="aspect-[16/10]" framed={false} />
                 </div>
             ) : (
                 <div className="mt-4 grid grid-cols-2 gap-2">
@@ -597,20 +592,30 @@ const comboBundlesSecondary = [
     },
 ];
 
-const saleBanners = [
+const promoShowcaseSlides = [
     {
-        title: 'Massive Mega Sale',
-        subtitle: 'Huge Savings on Notebooks & Gaming Laptops',
+        eyebrow: 'Memory Finder',
+        title: 'Select the Right RAM',
+        copy: 'Compare speed, latency, and capacity in a polished slider made for quick scanning.',
         cta: 'Shop now',
-        image: 'https://promotions.newegg.com/nepro/25-0323/420x240.jpg',
-        accent: 'from-[#4058d4] via-[#304ebf] to-[#253f99]',
+        href: '#deals',
+        artVariant: 'memory',
     },
     {
-        title: 'BEST SELLERS',
-        subtitle: 'Our most popular products, based on sales and updated frequently.',
+        eyebrow: 'Massive Mega Sale',
+        title: 'Huge Savings on Notebooks & Gaming Laptops',
+        copy: 'Keep the visual strong, dark, and product-driven so the call to action stays clear.',
         cta: 'Shop now',
-        image: 'https://promotions.newegg.com/nepro/24-0282/Best_Sellers/420x240.jpg',
-        accent: 'from-[#102e5f] via-[#0e2d64] to-[#123c7c]',
+        href: '#deals',
+        artVariant: 'banner',
+    },
+    {
+        eyebrow: 'Best Sellers',
+        title: 'Our most popular products, updated frequently.',
+        copy: 'A third slide keeps the carousel feeling alive without crowding the page.',
+        cta: 'See all',
+        href: '#deals',
+        artVariant: 'hero',
     },
 ];
 
@@ -720,32 +725,32 @@ const categoryPanels = [
     {
         title: 'Components & Storage',
         tiles: [
-            { label: 'CPU', image: 'https://c1.neweggimages.com/nobgproductcompressall300/19-118-505-08.jpg' },
-            { label: 'Motherboard', image: 'https://c1.neweggimages.com/nobgproductcompressall300/13-119-728-01.png' },
-            { label: 'SSD', image: 'https://c1.neweggimages.com/nobgproductcompressall300/20-985-133-04.jpg' },
-            { label: 'Hard Drive', image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-234-588-01.jpg' },
+            { label: 'CPU', artVariant: 'tile' },
+            { label: 'Motherboard', artVariant: 'tile' },
+            { label: 'SSD', artVariant: 'tile' },
+            { label: 'Hard Drive', artVariant: 'tile' },
         ],
     },
     {
         title: 'Laptops & Notebooks',
-        banner: 'https://promotions.newegg.com/nepro/25-0119/420x240.jpg',
+        bannerArtVariant: 'banner',
         bannerLabel: 'Shop Deals',
         bannerCopy: 'Power up your everyday',
     },
     {
         title: 'Electronics & Essentials',
         tiles: [
-            { label: 'Cameras', image: 'https://c1.neweggimages.com/nobgproductcompressall300/26-743-003-08.jpg' },
-            { label: 'Personal Care', image: 'https://c1.neweggimages.com/nobgproductcompressall300/14-126-807-10.png' },
-            { label: 'Printers & Supplies', image: 'https://c1.neweggimages.com/nobgproductcompressall300/34-236-520-11.jpg' },
-            { label: 'Flash Storage', image: 'https://c1.neweggimages.com/nobgproductcompressall300/26-153-335-06.jpg' },
+            { label: 'Cameras', artVariant: 'tile' },
+            { label: 'Personal Care', artVariant: 'tile' },
+            { label: 'Printers & Supplies', artVariant: 'tile' },
+            { label: 'Flash Storage', artVariant: 'tile' },
         ],
     },
     {
         title: 'Servers & Power',
         tiles: [
-            { label: 'Servers & Workstations', image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-995-001-01.jpg' },
-            { label: 'Power Protection', image: 'https://c1.neweggimages.com/nobgproductcompressall300/17-182-469-34.jpg' },
+            { label: 'Servers & Workstations', artVariant: 'tile' },
+            { label: 'Power Protection', artVariant: 'tile' },
         ],
     },
 ];
@@ -906,7 +911,7 @@ const moreToConsiderItems = [
         price: 'Shop Now',
         compare: '',
         save: '',
-        image: 'https://promotions.newegg.com/nepro/24-0162/420x500.jpg',
+        artVariant: 'banner',
     },
 ];
 
@@ -918,16 +923,16 @@ const communityInsights = [
 ];
 
 const shoppingTools = [
-    { title: 'PC Builder', copy: 'Compare parts and save builds.', image: 'https://c1.neweggimages.com/nobgproductcompressall300/19-118-505-08.jpg' },
-    { title: 'NAS Builder', copy: 'Plan disks and storage tiers.', image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-995-001-01.jpg' },
-    { title: 'PC Upgrader', copy: 'BETA upgrade recommendations.', image: 'https://c1.neweggimages.com/nobgproductcompressall300/83-360-936-17.jpg' },
-    { title: 'Gaming PC Finder', copy: 'Find a prebuilt that fits.', image: 'https://c1.neweggimages.com/nobgproductcompressall300/83-360-936-17.jpg' },
-    { title: 'Server Configurator', copy: 'Build around server needs.', image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-995-001-01.jpg' },
-    { title: 'PSU Wattage Calculator', copy: 'Estimate wattage fast.', image: 'https://c1.neweggimages.com/nobgproductcompressall300/17-182-469-34.jpg' },
-    { title: 'ASUS NUC Configurator', copy: 'Compact, powerful, AI ready*', image: 'https://c1.neweggimages.com/nobgproductcompressall300/34-236-520-11.jpg' },
-    { title: 'Laptop Finder', copy: 'Match size and performance.', image: 'https://c1.neweggimages.com/nobgproductcompressall300/34-236-520-11.jpg' },
-    { title: 'Memory Finder', copy: 'Sort RAM by speed and size.', image: 'https://c1.neweggimages.com/nobgproductcompressall300/20-236-941-08.jpg' },
-    { title: 'Network Builder', copy: 'Switches, routers, and Wi-Fi.', image: 'https://c1.neweggimages.com/nobgproductcompressall300/22-995-001-01.jpg' },
+    { title: 'PC Builder', copy: 'Compare parts and save builds.', artVariant: 'hero' },
+    { title: 'NAS Builder', copy: 'Plan disks and storage tiers.', artVariant: 'banner' },
+    { title: 'PC Upgrader', copy: 'BETA upgrade recommendations.', artVariant: 'tile' },
+    { title: 'Gaming PC Finder', copy: 'Find a prebuilt that fits.', artVariant: 'hero' },
+    { title: 'Server Configurator', copy: 'Build around server needs.', artVariant: 'banner' },
+    { title: 'PSU Wattage Calculator', copy: 'Estimate wattage fast.', artVariant: 'tile' },
+    { title: 'ASUS NUC Configurator', copy: 'Compact, powerful, AI ready*', artVariant: 'banner' },
+    { title: 'Laptop Finder', copy: 'Match size and performance.', artVariant: 'hero' },
+    { title: 'Memory Finder', copy: 'Sort RAM by speed and size.', artVariant: 'tile' },
+    { title: 'Network Builder', copy: 'Switches, routers, and Wi-Fi.', artVariant: 'banner' },
 ];
 
 const popularKeywords = [
@@ -1013,16 +1018,7 @@ const considerationItems = [...moreToConsiderItems, ...desktopPcItems, ...bestDe
         reviews: item.reviews || `${(index + 2) * 11}`,
     }));
 
-const toolPromoBanners = [
-    'https://promotions.newegg.com/nepro/24-0282/b2s/300x300.jpg',
-    'https://promotions.newegg.com/nepro/24-0282/Best_Sellers/420x240.jpg',
-    'https://promotions.newegg.com/nepro/24-0282/student/420x500.jpg',
-    'https://promotions.newegg.com/nepro/24-0282/NeweggSelect/420x240.jpg',
-    'https://promotions.newegg.com/nepro/24-0282/refreshed/420x240.jpg',
-];
-
-const dominanceBanner = 'https://promotions.newegg.com/nepro/26-0314/1920x180.jpg';
-const smartComfortBanner = 'https://promotions.newegg.com/nepro/26-0267/920x360.jpg';
+const toolPromoScenes = ['hero', 'tile', 'banner', 'tile', 'banner'];
 
 function SectionHeading({ kicker, title, action, href = '#' }) {
     return (
@@ -1079,13 +1075,17 @@ function ShelfProductCard({ item }) {
     return (
         <article className="flex h-full flex-col rounded-[10px] bg-[#edf2fb] p-4">
             <div className="overflow-hidden rounded-[8px] bg-white">
-                <div
-                    className="aspect-[4/3]"
-                    style={layeredBackground(
-                        item.image,
-                        'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.16))',
-                    )}
-                />
+                {item.artVariant ? (
+                    <PromoArtwork variant={item.artVariant} className="aspect-[4/3]" framed={false} />
+                ) : (
+                    <div
+                        className="aspect-[4/3]"
+                        style={layeredBackground(
+                            item.image,
+                            'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.16))',
+                        )}
+                    />
+                )}
             </div>
             <div className="mt-3">
                 <RatingDots rating={item.rating} reviews={item.reviews} />
@@ -1119,13 +1119,7 @@ function ToolStripCard({ tool, tone = 'from-[#587aa3] to-[#3367a5]' }) {
                     <p className="mt-1 text-sm font-semibold text-white/95 sm:text-base">Check it out &gt;</p>
                 </div>
                 <div className="overflow-hidden rounded-[8px] bg-white/10">
-                    <div
-                        className="aspect-[4/3]"
-                        style={layeredBackground(
-                            tool.image,
-                            'linear-gradient(180deg, rgba(255,255,255,0.04), rgba(15,23,42,0.16))',
-                        )}
-                    />
+                    <PromoArtwork variant={tool.artVariant || 'tile'} className="aspect-[4/3]" framed={false} />
                 </div>
             </div>
         </article>
@@ -1298,14 +1292,7 @@ function PromoBanner({ banner }) {
         <article className="overflow-hidden rounded-[28px] border border-[#d7e3f4] bg-white shadow-sm">
             <div className="grid min-h-[240px] gap-0 lg:grid-cols-2">
                 <div className="relative min-h-[240px] overflow-hidden">
-                    <div
-                        className="absolute inset-0"
-                        style={layeredBackground(
-                            banner.image,
-                            `linear-gradient(135deg, rgba(27,61,165,0.95) 0%, rgba(58,102,216,0.85) 100%)`,
-                        )}
-                    />
-                    <div className={`absolute inset-0 bg-gradient-to-r ${banner.accent} opacity-90`} />
+                    <PromoArtwork variant={banner.artVariant || 'banner'} className="h-full min-h-[240px]" framed={false} />
                 </div>
                 <div className="flex flex-col justify-center gap-4 bg-[#0b2e71] px-6 py-6 text-white">
                     <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#ffd59a]">
@@ -1380,14 +1367,12 @@ function CategoryPanel({ panel }) {
         <article className="overflow-hidden rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm">
             <h3 className="text-xl font-black tracking-[-0.04em] text-[#0b2e71] sm:text-2xl">{panel.title}</h3>
 
-            {panel.banner ? (
+            {panel.bannerArtVariant ? (
                 <div className="mt-4 overflow-hidden rounded-[18px] border border-[#eef3fb] bg-slate-50">
-                    <div
+                    <PromoArtwork
+                        variant={panel.bannerArtVariant}
                         className="min-h-[200px] sm:min-h-[250px]"
-                        style={layeredBackground(
-                            panel.banner,
-                            'linear-gradient(180deg, rgba(91, 33, 182, 0.75), rgba(17, 24, 39, 0.1))',
-                        )}
+                        framed={false}
                     />
                 </div>
             ) : null}
@@ -1400,13 +1385,7 @@ function CategoryPanel({ panel }) {
                     {panel.tiles.map((tile) => (
                         <div key={tile.label} className="rounded-[18px] bg-[#f4f8ff] p-3">
                             <div className="overflow-hidden rounded-[14px] bg-white">
-                                <div
-                                    className="aspect-[4/3]"
-                                    style={layeredBackground(
-                                        tile.image,
-                                        'linear-gradient(180deg, rgba(255,255,255,0.05), rgba(15,23,42,0.12))',
-                                    )}
-                                />
+                                <PromoArtwork variant={tile.artVariant || 'tile'} className="aspect-[4/3]" framed={false} />
                             </div>
                             <p className="mt-3 text-sm font-semibold text-slate-900">{tile.label}</p>
                         </div>
@@ -1421,13 +1400,7 @@ function ToolCard({ tool }) {
     return (
         <article className="overflow-hidden rounded-[24px] border border-[#d7e3f4] bg-white p-4 shadow-sm">
             <div className="overflow-hidden rounded-[18px] bg-[#0b3d91]">
-                <div
-                    className="aspect-[16/10]"
-                    style={layeredBackground(
-                        tool.image,
-                        'linear-gradient(180deg, rgba(255,255,255,0.04), rgba(15,23,42,0.14))',
-                    )}
-                />
+                <PromoArtwork variant={tool.artVariant || 'tile'} className="aspect-[16/10]" framed={false} />
             </div>
             <h3 className="mt-3 text-lg font-black tracking-[-0.03em] text-[#0b2e71]">{tool.title}</h3>
             <p className="mt-1 text-sm leading-6 text-slate-600">{tool.copy}</p>
@@ -1557,13 +1530,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                                     <div className="relative hidden xl:flex items-end justify-end">
                                         <div className="w-full max-w-[280px] rounded-[20px] border border-white/15 bg-white/10 p-3 backdrop-blur">
                                             <div className="overflow-hidden rounded-[16px] bg-white shadow-[0_18px_50px_-30px_rgba(15,23,42,0.75)]">
-                                                <div
-                                                    className="aspect-[16/10]"
-                                                    style={layeredBackground(
-                                                        heroPreview,
-                                                        'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.2))',
-                                                    )}
-                                                />
+                                                <PromoArtwork variant="hero" className="aspect-[16/10]" framed={false} />
                                                 <div className="space-y-2 p-3">
                                                     <div className="flex items-center justify-between gap-3">
                                                         <span className="rounded-full bg-[#0b2e71] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white">
@@ -1590,11 +1557,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                     </section>
 
                     <div className="space-y-10">
-                        <section className="grid gap-4 lg:grid-cols-2">
-                            {saleBanners.map((banner) => (
-                                <PromoBanner key={`mid-${banner.title}`} banner={banner} />
-                            ))}
-                        </section>
+                        <PromoCarousel slides={promoShowcaseSlides} />
 
                         <section id="deals" className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
                             <ShelfHeading title="Today's Best Deals" href="#footer" action="See all deals" />
@@ -1621,14 +1584,8 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                                         <ShelfProductCard key={item.title} item={item} />
                                     ))}
                                 </div>
-                                <article className="overflow-hidden rounded-[12px] bg-white">
-                                    <div
-                                        className="h-full min-h-[280px]"
-                                        style={layeredBackground(
-                                            smartComfortBanner,
-                                            'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(15,23,42,0.15))',
-                                        )}
-                                    />
+                                <article className="overflow-hidden rounded-[12px] bg-[#f7efe7]">
+                                    <PromoArtwork variant="smartHome" className="h-full min-h-[360px]" framed={false} />
                                 </article>
                             </div>
                         </section>
@@ -1640,13 +1597,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                         </section>
 
                         <section className="overflow-hidden rounded-[12px] bg-white">
-                            <div
-                                className="h-[120px] w-full"
-                                style={layeredBackground(
-                                    dominanceBanner,
-                                    'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.14))',
-                                )}
-                            />
+                            <PromoArtwork variant="tile" className="h-[120px] w-full" framed={false} />
                         </section>
 
                         <section className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
@@ -1728,61 +1679,22 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
 
                             <div className="mt-6 grid gap-4 xl:grid-cols-[1.15fr_1.15fr_1.05fr_.95fr]">
                                 <article className="overflow-hidden rounded-[12px] bg-white">
-                                    <div
-                                        className="h-[340px]"
-                                        style={layeredBackground(
-                                            toolPromoBanners[0],
-                                            'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.2))',
-                                        )}
-                                    />
+                                    <PromoArtwork variant={toolPromoScenes[0]} className="h-[340px]" framed={false} />
                                 </article>
                                 <div className="grid gap-4">
                                     <article className="overflow-hidden rounded-[12px] bg-white">
-                                        <div
-                                            className="h-[162px]"
-                                            style={layeredBackground(
-                                                toolPromoBanners[1],
-                                                'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.18))',
-                                            )}
-                                        />
+                                        <PromoArtwork variant={toolPromoScenes[1]} className="h-[162px]" framed={false} />
                                     </article>
                                     <article className="overflow-hidden rounded-[12px] bg-white">
-                                        <div
-                                            className="h-[162px]"
-                                            style={layeredBackground(
-                                                'https://promotions.newegg.com/nepro/24-0282/Best_Sellers/420x240.jpg',
-                                                'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.18))',
-                                            )}
-                                        />
+                                        <PromoArtwork variant={toolPromoScenes[2]} className="h-[162px]" framed={false} />
                                     </article>
                                 </div>
                                 <article className="overflow-hidden rounded-[12px] bg-white">
-                                    <div
-                                        className="h-[340px]"
-                                        style={layeredBackground(
-                                            toolPromoBanners[2],
-                                            'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.2))',
-                                        )}
-                                    />
+                                    <PromoArtwork variant={toolPromoScenes[3]} className="h-[340px]" framed={false} />
                                 </article>
                                 <div className="grid gap-4">
                                     <article className="overflow-hidden rounded-[12px] bg-white">
-                                        <div
-                                            className="h-[162px]"
-                                            style={layeredBackground(
-                                                toolPromoBanners[3],
-                                                'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.2))',
-                                            )}
-                                        />
-                                    </article>
-                                    <article className="overflow-hidden rounded-[12px] bg-white">
-                                        <div
-                                            className="h-[162px]"
-                                            style={layeredBackground(
-                                                toolPromoBanners[4],
-                                                'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.2))',
-                                            )}
-                                        />
+                                        <PromoArtwork variant={toolPromoScenes[4]} className="h-[162px]" framed={false} />
                                     </article>
                                 </div>
                             </div>

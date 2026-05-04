@@ -1,32 +1,5 @@
 import { useState } from 'react';
-
-const emailDealImage = '/images/landing/hero-desk.jpg';
-const appDealImage = '/images/landing/deal-two-monitor.jpg';
-
-function PromoVisual({ image, eyebrow, title, copy }) {
-    return (
-        <div className="hidden lg:block">
-            <div className="relative overflow-hidden rounded-[24px] border border-white/70 bg-white shadow-[0_20px_45px_-30px_rgba(15,23,42,0.55)]">
-                <div className="aspect-[4/3]">
-                    <img src={image} alt="" aria-hidden="true" className="h-full w-full object-cover" />
-                </div>
-
-                <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-[#0b3d91]/25" />
-
-                <div className="absolute left-3 top-3 flex flex-wrap gap-2">
-                    <span className="rounded-full bg-white/90 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#0b3d91]">
-                        {eyebrow}
-                    </span>
-                </div>
-
-                <div className="absolute bottom-3 left-3 right-3 rounded-[18px] border border-white/60 bg-white/92 p-3 shadow-[0_12px_30px_-24px_rgba(15,23,42,0.45)] backdrop-blur">
-                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#0b3d91]">{title}</p>
-                    <p className="mt-1 text-xs leading-5 text-slate-600">{copy}</p>
-                </div>
-            </div>
-        </div>
-    );
-}
+import PromoArtwork from '@/Components/PromoArtwork';
 
 function MiniQr() {
     const cells = Array.from({ length: 49 }, (_, index) => {
@@ -119,11 +92,10 @@ export default function LandingPromoStrip() {
                             </a>
                         </div>
 
-                        <PromoVisual
-                            image={emailDealImage}
-                            eyebrow="Homepage only"
-                            title="Fresh deals landing here"
-                            copy="Desktop gets a stronger visual rail while mobile keeps the signup flow compact."
+                        <PromoArtwork
+                            variant="strip"
+                            className="hidden lg:block lg:min-h-[230px]"
+                            framed={false}
                         />
                     </div>
                 </article>
@@ -164,11 +136,10 @@ export default function LandingPromoStrip() {
                             </div>
                         </div>
 
-                        <PromoVisual
-                            image={appDealImage}
-                            eyebrow="App access"
-                            title="Download flow on desktop"
-                            copy="The app rail can carry a stronger visual on larger screens without crowding the form."
+                        <PromoArtwork
+                            variant="strip"
+                            className="hidden lg:block lg:min-h-[230px]"
+                            framed={false}
                         />
                     </div>
                 </article>
