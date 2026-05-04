@@ -31,7 +31,7 @@ class AuditTrailTest extends TestCase
             ->get('/admin/audit-logs')
             ->assertOk()
             ->assertInertia(fn (Assert $page): Assert => $page
-                ->component('Workspace/Index')
+                ->component('Admin/AuditLogs/Index')
                 ->where('workspace.title', 'Audit Logs')
                 ->where('workspace.columns.0', 'Action')
                 ->where('workspace.columns.5', 'Executed'));

@@ -23,8 +23,21 @@ class WorkspaceRoutesTest extends TestCase
         $admin = User::where('email', 'admin@plexus.test')->firstOrFail();
         $buyer = User::where('email', 'buyer@plexus.test')->firstOrFail();
 
-        $this->actingAs($admin)->get('/admin')->assertOk();
-        $this->actingAs($admin)->get('/admin/audit-logs')->assertOk();
+        $this->actingAs($admin)
+            ->get('/admin')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page->component('Admin/Control/Index'));
+
+        $this->actingAs($admin)
+            ->get('/admin/customers')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page->component('Admin/Customers/Index'));
+
+        $this->actingAs($admin)
+            ->get('/admin/audit-logs')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page->component('Admin/AuditLogs/Index'));
+
         $this->actingAs($buyer)->get('/admin')->assertForbidden();
     }
 
@@ -37,10 +50,28 @@ class WorkspaceRoutesTest extends TestCase
         $marketing = User::where('email', 'marketing@plexus.test')->firstOrFail();
         $workflow = User::where('email', 'workflow@plexus.test')->firstOrFail();
 
-        $this->actingAs($buyer)->get('/marketplace')->assertOk();
+        $this->actingAs($buyer)
+            ->get('/marketplace')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page->component('Marketplace/Index'));
+
         $this->actingAs($buyer)->get('/support/tickets')->assertOk();
-        $this->actingAs($buyer)->get('/notifications')->assertOk();
-        $this->actingAs($supplier)->get('/commerce/products')->assertOk();
+
+        $this->actingAs($buyer)
+            ->get('/notifications')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page->component('Notifications/Index'));
+
+        $this->actingAs($supplier)
+            ->get('/commerce/products')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page->component('Commerce/Products/Index'));
+
+        $this->actingAs($supplier)
+            ->get('/commerce/orders')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page->component('Commerce/Orders/Index'));
+
         $this->actingAs($marketing)->get('/marketing/campaigns')->assertOk();
         $this->actingAs($marketing)->get('/workflow/logs')->assertOk();
         $this->actingAs($workflow)->get('/workflow/logs')->assertOk();
@@ -90,7 +121,7 @@ class WorkspaceRoutesTest extends TestCase
             ->get('/commerce/orders')
             ->assertOk()
             ->assertInertia(fn (Assert $page): Assert => $page
-                ->component('Workspace/Index')
+                ->component('Commerce/Orders/Index')
                 ->where('workspace.columns.3', 'Payment')
                 ->where('workspace.columns.6', 'Action')
                 ->has('workspace.rows', 1)

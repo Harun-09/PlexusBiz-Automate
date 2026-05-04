@@ -50,7 +50,7 @@ class WorkspaceController extends Controller
             ['label' => 'Scheduled Posts', 'value' => SocialPost::where('status', 'scheduled')->count()],
             ['label' => 'Failed Automations', 'value' => WorkflowLog::where('status', 'failed')->count()],
             ['label' => 'Audit Logs', 'value' => AuditLog::count()],
-        ], ['Metric', 'Value'], [], 'Admin KPIs are shown above.');
+        ], ['Metric', 'Value'], [], 'Admin KPIs are shown above.', component: 'Admin/Control/Index');
     }
 
     public function auditLogs(Request $request): Response
@@ -100,6 +100,7 @@ class WorkspaceController extends Controller
             $rows,
             'No audit logs found.',
             $filters,
+            component: 'Admin/AuditLogs/Index',
         );
     }
 
@@ -143,7 +144,7 @@ class WorkspaceController extends Controller
             'Status' => $product->status->value,
         ]);
 
-        return $this->page('Product Operations', 'Supplier-owned catalog, stock, MOQ, and status.', [], ['SKU', 'Product', 'Supplier', 'Stock', 'MOQ', 'Status'], $rows, filters: $filters);
+        return $this->page('Product Operations', 'Supplier-owned catalog, stock, MOQ, and status.', [], ['SKU', 'Product', 'Supplier', 'Stock', 'MOQ', 'Status'], $rows, filters: $filters, component: 'Commerce/Products/Index');
     }
 
     public function commerceOrders(Request $request): Response
@@ -177,7 +178,7 @@ class WorkspaceController extends Controller
                 ];
             });
 
-        return $this->page('Orders', 'Buyer, supplier, and admin order visibility is scoped by role.', [], ['Order', 'Buyer', 'Status', 'Payment', 'Total', 'Placed', 'Action'], $rows, filters: $filters);
+        return $this->page('Orders', 'Buyer, supplier, and admin order visibility is scoped by role.', [], ['Order', 'Buyer', 'Status', 'Payment', 'Total', 'Placed', 'Action'], $rows, filters: $filters, component: 'Commerce/Orders/Index');
     }
 
     public function marketplace(Request $request): Response
@@ -199,7 +200,7 @@ class WorkspaceController extends Controller
                 'Available' => $product->availableStock(),
             ]);
 
-        return $this->page('Marketplace', 'Active B2B products with supplier, MOQ, and stock context.', [], ['SKU', 'Product', 'Supplier', 'Price', 'MOQ', 'Available'], $rows, filters: $filters);
+        return $this->page('Marketplace', 'Active B2B products with supplier, MOQ, and stock context.', [], ['SKU', 'Product', 'Supplier', 'Price', 'MOQ', 'Available'], $rows, filters: $filters, component: 'Marketplace/Index');
     }
 
     public function customers(Request $request): Response
@@ -218,7 +219,7 @@ class WorkspaceController extends Controller
             'Status' => $customer->status->value,
         ]);
 
-        return $this->page('CRM Customers', 'Customer lifecycle, company profile, and status.', [], ['Customer', 'Company', 'Email', 'Stage', 'Status'], $rows, filters: $filters);
+        return $this->page('Customer Registry', 'Admin overview of customer accounts, lifecycle stage, and order activity.', [], ['Customer', 'Company', 'Email', 'Stage', 'Status'], $rows, filters: $filters, component: 'Admin/Customers/Index');
     }
 
     public function campaigns(Request $request): Response
@@ -623,6 +624,7 @@ class WorkspaceController extends Controller
             $rows,
             'No notifications found.',
             $filters,
+            component: 'Notifications/Index',
         );
     }
 
