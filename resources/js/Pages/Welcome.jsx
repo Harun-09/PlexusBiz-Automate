@@ -725,33 +725,40 @@ const categoryPanels = [
     {
         title: 'Components & Storage',
         tiles: [
-            { label: 'CPU', artVariant: 'tile' },
-            { label: 'Motherboard', artVariant: 'tile' },
-            { label: 'SSD', artVariant: 'tile' },
-            { label: 'Hard Drive', artVariant: 'tile' },
+            { label: 'CPU', artVariant: 'categoryTile', sceneLabel: 'CPU' },
+            { label: 'Graphics Card', artVariant: 'categoryTile', sceneLabel: 'Graphics Card' },
+            { label: 'SSD', artVariant: 'categoryTile', sceneLabel: 'SSD' },
+            { label: 'Hard Drive', artVariant: 'categoryTile', sceneLabel: 'Hard Drive' },
         ],
+        tileGridClass: 'mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2',
+        tileAspectClass: 'aspect-[4/3]',
     },
     {
-        title: 'Laptops & Notebooks',
-        bannerArtVariant: 'banner',
+        title: 'Gamer Paradise',
+        bannerArtVariant: 'gamingBanner',
         bannerLabel: 'Shop Deals',
-        bannerCopy: 'Power up your everyday',
+        bannerCopy: 'Power. Precision. Performance.',
+        bannerClassName: 'min-h-[240px] sm:min-h-[280px]',
     },
     {
-        title: 'Electronics & Essentials',
+        title: 'Entertainment & More',
         tiles: [
-            { label: 'Cameras', artVariant: 'tile' },
-            { label: 'Personal Care', artVariant: 'tile' },
-            { label: 'Printers & Supplies', artVariant: 'tile' },
-            { label: 'Flash Storage', artVariant: 'tile' },
+            { label: 'TV & Video', artVariant: 'categoryTile', sceneLabel: 'TV & Video' },
+            { label: 'Gift Cards', artVariant: 'categoryTile', sceneLabel: 'Gift Cards' },
         ],
+        tileGridClass: 'mt-4 grid grid-cols-1 gap-3',
+        tileAspectClass: 'aspect-[16/9]',
     },
     {
-        title: 'Servers & Power',
+        title: 'Home Tech Essentials',
         tiles: [
-            { label: 'Servers & Workstations', artVariant: 'tile' },
-            { label: 'Power Protection', artVariant: 'tile' },
+            { label: 'Home Audio', artVariant: 'categoryTile', sceneLabel: 'Home Audio' },
+            { label: 'Kitchen Appliances', artVariant: 'categoryTile', sceneLabel: 'Kitchen Appliances' },
+            { label: 'Security Cameras', artVariant: 'categoryTile', sceneLabel: 'Security Cameras' },
+            { label: 'Wireless Networking', artVariant: 'categoryTile', sceneLabel: 'Wireless Networking' },
         ],
+        tileGridClass: 'mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2',
+        tileAspectClass: 'aspect-[4/3]',
     },
 ];
 
@@ -1363,6 +1370,10 @@ function CompactProductCard({ item, dark = false }) {
 }
 
 function CategoryPanel({ panel }) {
+    const tileGridClass = panel.tileGridClass || 'mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2';
+    const tileAspectClass = panel.tileAspectClass || 'aspect-[4/3]';
+    const bannerClassName = panel.bannerClassName || 'min-h-[220px] sm:min-h-[260px]';
+
     return (
         <article className="overflow-hidden rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm">
             <h3 className="text-xl font-black tracking-[-0.04em] text-[#0b2e71] sm:text-2xl">{panel.title}</h3>
@@ -1371,7 +1382,7 @@ function CategoryPanel({ panel }) {
                 <div className="mt-4 overflow-hidden rounded-[18px] border border-[#eef3fb] bg-slate-50">
                     <PromoArtwork
                         variant={panel.bannerArtVariant}
-                        className="min-h-[200px] sm:min-h-[250px]"
+                        className={bannerClassName}
                         framed={false}
                     />
                 </div>
@@ -1381,11 +1392,16 @@ function CategoryPanel({ panel }) {
             {panel.bannerCopy ? <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">{panel.bannerCopy}</p> : null}
 
             {panel.tiles ? (
-                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className={tileGridClass}>
                     {panel.tiles.map((tile) => (
                         <div key={tile.label} className="rounded-[18px] bg-[#f4f8ff] p-3">
                             <div className="overflow-hidden rounded-[14px] bg-white">
-                                <PromoArtwork variant={tile.artVariant || 'tile'} className="aspect-[4/3]" framed={false} />
+                                <PromoArtwork
+                                    variant={tile.artVariant || 'categoryTile'}
+                                    sceneLabel={tile.sceneLabel || tile.label}
+                                    className={tileAspectClass}
+                                    framed={false}
+                                />
                             </div>
                             <p className="mt-3 text-sm font-semibold text-slate-900">{tile.label}</p>
                         </div>

@@ -11,6 +11,18 @@ const variantStyles = {
         accent: 'bg-[#ffd059]',
         inner: 'bg-[linear-gradient(160deg,#0c2a73_0%,#1555b7_45%,#1f68d9_100%)]',
     },
+    gamingBanner: {
+        shell: 'bg-[radial-gradient(circle_at_16%_18%,rgba(255,255,255,0.16),transparent_26%),radial-gradient(circle_at_82%_20%,rgba(255,91,242,0.22),transparent_22%),radial-gradient(circle_at_70%_80%,rgba(31,104,217,0.2),transparent_26%),linear-gradient(135deg,#050816_0%,#100f33_42%,#3412a3_75%,#6f2bda_100%)]',
+        aura: 'bg-fuchsia-300/20',
+        accent: 'bg-[#ff8a00]',
+        inner: 'bg-[linear-gradient(160deg,#060b1d_0%,#111c4f_45%,#3516ad_100%)]',
+    },
+    categoryTile: {
+        shell: 'bg-[radial-gradient(circle_at_18%_18%,rgba(255,255,255,0.74),transparent_24%),radial-gradient(circle_at_82%_18%,rgba(31,104,217,0.12),transparent_22%),linear-gradient(180deg,#fbfdff_0%,#ecf3ff_60%,#d8e4f7_100%)]',
+        aura: 'bg-[#1f68d9]/8',
+        accent: 'bg-[#ff8a00]',
+        inner: 'bg-white',
+    },
     smartHome: {
         shell: 'bg-[radial-gradient(circle_at_16%_18%,rgba(255,255,255,0.25),transparent_24%),radial-gradient(circle_at_78%_22%,rgba(255,178,89,0.3),transparent_24%),radial-gradient(circle_at_72%_82%,rgba(74,44,23,0.26),transparent_26%),linear-gradient(135deg,#f3dcc9_0%,#e6c3a3_34%,#bc835d_72%,#7b4a2b_100%)]',
         aura: 'bg-white/20',
@@ -37,7 +49,236 @@ const variantStyles = {
     },
 };
 
-function PromoArtwork({ variant = 'hero', label, title, copy, className = '', framed = false }) {
+function renderGamingBannerScene() {
+    return (
+        <>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_18%,rgba(255,255,255,0.14),transparent_24%),radial-gradient(circle_at_82%_20%,rgba(255,91,242,0.16),transparent_22%),radial-gradient(circle_at_72%_80%,rgba(31,104,217,0.18),transparent_26%),linear-gradient(135deg,rgba(10,11,29,0.2),rgba(18,18,56,0.05))]" />
+            <div className="absolute left-6 top-7 h-[66%] w-[50%] rounded-[28px] border border-white/16 bg-white/6 p-3 backdrop-blur">
+                <div className="relative h-full overflow-hidden rounded-[20px] bg-[linear-gradient(180deg,#060b1d_0%,#0b2e71_52%,#1f68d9_100%)] shadow-[0_20px_46px_-28px_rgba(0,0,0,0.7)]">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_22%,rgba(255,255,255,0.3),transparent_18%),radial-gradient(circle_at_70%_18%,rgba(255,138,0,0.26),transparent_16%),radial-gradient(circle_at_72%_78%,rgba(255,255,255,0.12),transparent_18%)] opacity-90" />
+                    <div className="absolute left-4 top-4 h-4 w-20 rounded-full bg-white/14" />
+                    <div className="absolute left-4 top-11 h-3 w-28 rounded-full bg-white/18" />
+                    <div className="absolute right-4 bottom-4 h-10 w-24 rounded-[12px] border border-white/20 bg-white/10" />
+                </div>
+            </div>
+
+            <div className="absolute left-[40%] bottom-8 h-20 w-[34%] rounded-[28px] border border-white/16 bg-white/8 p-3 backdrop-blur">
+                <div className="relative h-full overflow-hidden rounded-[18px] bg-[linear-gradient(135deg,#0b122e_0%,#21125c_55%,#ff8a00_120%)] shadow-[0_18px_36px_-26px_rgba(0,0,0,0.72)]">
+                    <div className="absolute left-4 top-4 h-3 w-20 rounded-full bg-white/20" />
+                    <div className="absolute left-4 top-9 h-2 w-32 rounded-full bg-white/12" />
+                    <div className="absolute right-4 bottom-4 h-6 w-10 rounded-[10px] bg-white/16" />
+                </div>
+            </div>
+
+            <div className="absolute right-6 top-7 h-[70%] w-[28%] rounded-[26px] border border-white/18 bg-white/8 p-3 backdrop-blur">
+                <div className="relative h-full rounded-[18px] bg-[linear-gradient(180deg,#090d1f_0%,#13184a_45%,#4f27d7_100%)] shadow-[0_20px_48px_-28px_rgba(0,0,0,0.72)]">
+                    <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0))]" />
+                    <div className="absolute left-1/2 top-1/2 h-20 w-12 -translate-x-1/2 -translate-y-1/2 rounded-[18px] bg-[linear-gradient(180deg,#1a1d3d_0%,#040712_100%)] shadow-[0_16px_30px_-22px_rgba(0,0,0,0.78)]">
+                        <div className="absolute inset-3 rounded-[12px] bg-[radial-gradient(circle_at_50%_45%,rgba(255,138,0,0.28),transparent_20%),linear-gradient(180deg,#0b2e71_0%,#1f68d9_100%)]" />
+                    </div>
+                    <div className="absolute left-4 bottom-4 h-2 w-14 rounded-full bg-white/15" />
+                </div>
+            </div>
+
+            <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between gap-4">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/18 bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-[#ffddb6] backdrop-blur">
+                    PC GAMING WEEK EXTENDED
+                </div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/18 bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-[#ffddb6] backdrop-blur">
+                    Shop now
+                </div>
+            </div>
+
+            <div className="absolute right-6 top-10 max-w-[330px] text-right text-white [text-shadow:0_3px_12px_rgba(8,10,28,0.55)]">
+                <h3 className="text-3xl font-black leading-[0.92] tracking-[-0.08em] sm:text-4xl lg:text-[3.25rem]">
+                    LEVEL UP YOUR GAME
+                </h3>
+                <p className="mt-3 text-sm font-semibold text-white/90 sm:text-base">
+                    Power. Precision. Performance.
+                </p>
+            </div>
+        </>
+    );
+}
+
+function renderCategoryTileScene(scene = '') {
+    const key = scene.toLowerCase();
+    const base = (
+        <>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,255,255,0.78),transparent_24%),radial-gradient(circle_at_82%_18%,rgba(31,104,217,0.12),transparent_22%),linear-gradient(180deg,#fbfdff_0%,#eef4ff_62%,#dbe6f7_100%)]" />
+            <div className="absolute inset-x-4 top-4 h-5 rounded-full bg-white/70 shadow-[0_10px_24px_-16px_rgba(15,23,42,0.38)]" />
+            <div className="absolute inset-x-4 bottom-4 h-1.5 rounded-full bg-[#dbe7fb]" />
+        </>
+    );
+
+    if (key.includes('cpu')) {
+        return (
+            <>
+                {base}
+                <div className="absolute left-5 top-10 h-24 w-24 rounded-[18px] bg-[linear-gradient(180deg,#163b95_0%,#0b2e71_100%)] shadow-[0_18px_34px_-22px_rgba(15,23,42,0.62)]">
+                    <div className="absolute inset-3 rounded-[14px] border border-white/10 bg-[linear-gradient(180deg,#2c57bf_0%,#123a8a_100%)]" />
+                    <div className="absolute right-4 bottom-4 h-6 w-10 rounded-[10px] bg-[#ff8a00]" />
+                </div>
+                <div className="absolute right-5 top-12 h-28 w-24 rounded-[18px] border border-slate-200 bg-white shadow-[0_16px_30px_-22px_rgba(15,23,42,0.45)]">
+                    <div className="absolute inset-3 rounded-[12px] bg-[linear-gradient(180deg,#f9fbff_0%,#dfe9ff_100%)]" />
+                    <div className="absolute left-4 top-4 h-3 w-12 rounded-full bg-[#0b3d91]/15" />
+                    <div className="absolute left-4 top-9 h-12 w-12 rounded-[12px] border border-[#0b3d91]/10 bg-[linear-gradient(180deg,#ffcf30_0%,#ff8a00_100%)]" />
+                </div>
+            </>
+        );
+    }
+
+    if (key.includes('graphics') || key.includes('video card') || key.includes('gpu') || key.includes('card')) {
+        return (
+            <>
+                {base}
+                <div className="absolute left-5 top-11 h-24 w-36 rounded-[22px] bg-[linear-gradient(180deg,#09111f_0%,#141c38_100%)] shadow-[0_20px_36px_-24px_rgba(15,23,42,0.72)]">
+                    <div className="absolute left-4 top-4 h-16 w-16 rounded-full border border-white/8 bg-[radial-gradient(circle_at_45%_45%,rgba(255,138,0,0.4),transparent_18%),radial-gradient(circle_at_54%_54%,rgba(255,255,255,0.18),transparent_24%),#1b2243]" />
+                    <div className="absolute right-3 top-5 h-14 w-14 rounded-full border border-white/8 bg-[radial-gradient(circle_at_46%_46%,rgba(255,91,242,0.34),transparent_18%),#1b2243]" />
+                    <div className="absolute bottom-3 left-4 h-2 w-12 rounded-full bg-[#ff8a00]/70" />
+                </div>
+                <div className="absolute right-5 top-10 h-28 w-20 rounded-[18px] border border-slate-200 bg-white shadow-[0_16px_30px_-22px_rgba(15,23,42,0.45)]">
+                    <div className="absolute inset-3 rounded-[12px] bg-[linear-gradient(180deg,#eef4ff_0%,#cfe1ff_100%)]" />
+                    <div className="absolute left-4 top-4 h-4 w-6 rounded-full bg-[#0b3d91]/20" />
+                </div>
+            </>
+        );
+    }
+
+    if (key.includes('ssd') || key.includes('flash')) {
+        return (
+            <>
+                {base}
+                <div className="absolute left-6 top-12 h-14 w-28 rounded-[18px] bg-[linear-gradient(180deg,#0f172a_0%,#1f2937_100%)] shadow-[0_16px_32px_-24px_rgba(15,23,42,0.7)]">
+                    <div className="absolute inset-3 rounded-[12px] bg-[linear-gradient(180deg,#0b3d91_0%,#1f68d9_100%)]" />
+                    <div className="absolute right-3 top-3 h-3 w-3 rounded-full bg-[#ff8a00]" />
+                </div>
+                <div className="absolute right-6 top-10 h-28 w-20 rounded-[18px] border border-slate-200 bg-white shadow-[0_16px_30px_-22px_rgba(15,23,42,0.45)]">
+                    <div className="absolute inset-3 rounded-[12px] bg-[linear-gradient(180deg,#eaf2ff_0%,#d6e2fb_100%)]" />
+                    <div className="absolute bottom-3 left-3 h-2 w-10 rounded-full bg-[#0b3d91]/18" />
+                </div>
+            </>
+        );
+    }
+
+    if (key.includes('hard drive') || key.includes('storage')) {
+        return (
+            <>
+                {base}
+                <div className="absolute left-5 top-10 h-28 w-[5.5rem] rounded-[18px] bg-[linear-gradient(180deg,#be123c_0%,#e11d48_45%,#9f1239_100%)] shadow-[0_16px_32px_-22px_rgba(190,18,60,0.55)]">
+                    <div className="absolute inset-3 rounded-[12px] border border-white/10 bg-white/12" />
+                </div>
+                <div className="absolute right-6 top-12 h-24 w-24 rounded-[18px] bg-[linear-gradient(180deg,#14532d_0%,#22c55e_100%)] shadow-[0_16px_32px_-22px_rgba(20,83,45,0.5)]">
+                    <div className="absolute inset-3 rounded-[12px] border border-white/10 bg-white/12" />
+                </div>
+            </>
+        );
+    }
+
+    if (key.includes('tv') || key.includes('video')) {
+        return (
+            <>
+                {base}
+                <div className="absolute left-5 top-10 h-24 w-36 rounded-[18px] bg-[linear-gradient(180deg,#0f172a_0%,#1f68d9_100%)] shadow-[0_16px_30px_-22px_rgba(15,23,42,0.48)]">
+                    <div className="absolute inset-3 rounded-[12px] bg-[linear-gradient(135deg,#f8fbff_0%,#cfe1ff_100%)]" />
+                    <div className="absolute left-5 bottom-4 h-2 w-14 rounded-full bg-[#0b3d91]/20" />
+                </div>
+                <div className="absolute right-6 top-12 h-20 w-12 rounded-[12px] bg-[linear-gradient(180deg,#0b3d91_0%,#1f68d9_100%)] shadow-[0_16px_30px_-22px_rgba(15,23,42,0.45)]" />
+                <div className="absolute right-12 top-8 h-4 w-4 rounded-full bg-[#ff8a00]" />
+            </>
+        );
+    }
+
+    if (key.includes('gift')) {
+        return (
+            <>
+                {base}
+                <div className="absolute left-6 top-11 h-20 w-28 rounded-[18px] bg-[linear-gradient(135deg,#0b3d91_0%,#1f68d9_100%)] shadow-[0_16px_30px_-22px_rgba(15,23,42,0.45)]" />
+                <div className="absolute left-12 top-8 h-20 w-28 rounded-[18px] bg-[linear-gradient(135deg,#ffcf30_0%,#ff8a00_100%)] shadow-[0_16px_30px_-22px_rgba(255,138,0,0.45)]" />
+                <div className="absolute right-6 top-12 h-18 w-24 rounded-[16px] bg-[linear-gradient(135deg,#f4f7ff_0%,#dbe7fb_100%)] shadow-[0_16px_30px_-22px_rgba(15,23,42,0.2)]" />
+            </>
+        );
+    }
+
+    if (key.includes('audio')) {
+        return (
+            <>
+                {base}
+                <div className="absolute left-6 top-10 h-24 w-20 rounded-[18px] bg-[linear-gradient(180deg,#fafafa_0%,#d9e4f3_100%)] shadow-[0_16px_30px_-22px_rgba(15,23,42,0.22)]">
+                    <div className="absolute inset-3 rounded-full border border-slate-200 bg-[radial-gradient(circle_at_50%_50%,#cfd8e8_0%,#eef4ff_58%,#dfe8f7_100%)]" />
+                </div>
+                <div className="absolute right-6 top-16 h-12 w-28 rounded-[16px] bg-[linear-gradient(180deg,#0f172a_0%,#1f2937_100%)] shadow-[0_16px_30px_-22px_rgba(15,23,42,0.55)]" />
+            </>
+        );
+    }
+
+    if (key.includes('kitchen') || key.includes('appliance')) {
+        return (
+            <>
+                {base}
+                <div className="absolute left-8 top-9 h-28 w-24 rounded-[22px] bg-[linear-gradient(180deg,#f8fafc_0%,#dfe7f4_100%)] shadow-[0_16px_32px_-22px_rgba(15,23,42,0.22)]">
+                    <div className="absolute inset-3 rounded-[18px] bg-[linear-gradient(180deg,#1f2937_0%,#111827_100%)]" />
+                    <div className="absolute right-3 top-3 h-4 w-4 rounded-full bg-[#ff8a00]" />
+                    <div className="absolute inset-x-5 bottom-4 h-4 rounded-[10px] bg-[#ffcf30]" />
+                </div>
+            </>
+        );
+    }
+
+    if (key.includes('camera')) {
+        return (
+            <>
+                {base}
+                <div className="absolute left-6 top-10 h-[6.5rem] w-[5.5rem] rounded-[18px] bg-[linear-gradient(180deg,#0f172a_0%,#111827_100%)] shadow-[0_16px_32px_-22px_rgba(15,23,42,0.55)]">
+                    <div className="absolute left-1/2 top-1/2 h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle_at_50%_50%,#1f68d9_0%,#0b3d91_46%,#030712_100%)]" />
+                    <div className="absolute bottom-3 left-1/2 h-2 w-8 -translate-x-1/2 rounded-full bg-[#ff8a00]" />
+                </div>
+                <div className="absolute right-6 top-12 h-20 w-20 rounded-full bg-[linear-gradient(180deg,#eaf2ff_0%,#cfe1ff_100%)] shadow-[0_16px_32px_-22px_rgba(15,23,42,0.2)]">
+                    <div className="absolute inset-3 rounded-full border border-[#0b3d91]/10 bg-white" />
+                </div>
+            </>
+        );
+    }
+
+    if (key.includes('wireless') || key.includes('network')) {
+        return (
+            <>
+                {base}
+                <div className="absolute left-6 top-12 h-20 w-[7.5rem] rounded-[18px] bg-[linear-gradient(180deg,#f8fafc_0%,#dbe7fb_100%)] shadow-[0_16px_32px_-22px_rgba(15,23,42,0.2)]">
+                    <div className="absolute inset-x-5 top-4 h-8 rounded-[12px] bg-[linear-gradient(180deg,#0b3d91_0%,#1f68d9_100%)]" />
+                    <div className="absolute left-6 top-[-10px] h-8 w-1.5 rounded-full bg-[#0b3d91]" />
+                    <div className="absolute right-6 top-[-10px] h-8 w-1.5 rounded-full bg-[#0b3d91]" />
+                    <div className="absolute right-3 bottom-3 h-2 w-6 rounded-full bg-[#ff8a00]" />
+                </div>
+                <div className="absolute right-6 top-12 h-20 w-[4.5rem] rounded-[18px] bg-[linear-gradient(180deg,#0f172a_0%,#1f2937_100%)] shadow-[0_16px_32px_-22px_rgba(15,23,42,0.55)]" />
+            </>
+        );
+    }
+
+    if (key.includes('printer')) {
+        return (
+            <>
+                {base}
+                <div className="absolute left-6 top-12 h-[5.5rem] w-32 rounded-[18px] bg-[linear-gradient(180deg,#f8fafc_0%,#dbe7fb_100%)] shadow-[0_16px_32px_-22px_rgba(15,23,42,0.2)]">
+                    <div className="absolute inset-x-5 top-4 h-8 rounded-[10px] bg-white shadow-inner" />
+                    <div className="absolute inset-x-4 bottom-4 h-5 rounded-[10px] bg-[linear-gradient(180deg,#0b3d91_0%,#1f68d9_100%)]" />
+                </div>
+            </>
+        );
+    }
+
+    return (
+        <>
+            {base}
+            <div className="absolute left-6 top-10 h-24 w-28 rounded-[18px] bg-[linear-gradient(180deg,#0b3d91_0%,#1f68d9_100%)] shadow-[0_16px_32px_-22px_rgba(15,23,42,0.45)]">
+                <div className="absolute inset-3 rounded-[12px] border border-white/10 bg-white/10" />
+            </div>
+            <div className="absolute right-6 top-12 h-20 w-[4.5rem] rounded-[16px] bg-[linear-gradient(180deg,#ffcf30_0%,#ff8a00_100%)] shadow-[0_16px_32px_-22px_rgba(255,138,0,0.45)]" />
+        </>
+    );
+}
+
+function PromoArtwork({ variant = 'hero', label, title, copy, sceneLabel, className = '', framed = false }) {
     const style = variantStyles[variant] ?? variantStyles.hero;
 
     return (
@@ -80,6 +321,12 @@ function PromoArtwork({ variant = 'hero', label, title, copy, className = '', fr
                 </div>
             ) : null}
 
+            {variant === 'gamingBanner' ? (
+                <div className="absolute inset-0">
+                    {renderGamingBannerScene()}
+                </div>
+            ) : null}
+
             {variant === 'banner' ? (
                 <div className="absolute inset-0">
                     <div className="absolute left-6 top-8 h-[68%] w-[52%] rounded-[28px] border border-white/20 bg-white/10 p-3 backdrop-blur">
@@ -102,6 +349,17 @@ function PromoArtwork({ variant = 'hero', label, title, copy, className = '', fr
                     </div>
 
                     <div className="absolute bottom-5 left-6 right-6 h-2 rounded-full bg-white/20" />
+                </div>
+            ) : null}
+
+            {variant === 'categoryTile' ? (
+                <div className="absolute inset-0">
+                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0))]" />
+                    <div className="absolute inset-0 rounded-[24px] p-3">
+                        <div className="relative h-full overflow-hidden rounded-[18px] bg-white shadow-[0_16px_36px_-24px_rgba(15,23,42,0.38)]">
+                            {renderCategoryTileScene(sceneLabel)}
+                        </div>
+                    </div>
                 </div>
             ) : null}
 
