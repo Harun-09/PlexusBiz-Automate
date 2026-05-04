@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+﻿import { Head, Link } from '@inertiajs/react';
 import FrontendLayout from '@/Layouts/FrontendLayout';
 import LandingPromoStrip from '@/Components/LandingPromoStrip';
 
@@ -394,12 +394,98 @@ function FooterColumn({ section }) {
     );
 }
 
-const marketplaceShortcutItems = [
-    { abbr: 'PRO', title: 'Products', href: route('products.index') },
-    { abbr: 'ORD', title: 'Orders', href: route('commerce.orders.index') },
-    { abbr: 'INV', title: 'Invoices', href: route('invoices.index') },
-    { abbr: 'SUP', title: 'Support', href: route('support.tickets.index') },
+function ProductsIcon({ className = '' }) {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
+            <path
+                d="M4.5 8.5 12 4l7.5 4.5L12 13 4.5 8.5Z"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinejoin="round"
+            />
+            <path
+                d="M4.5 8.5V16L12 20.5 19.5 16V8.5"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinejoin="round"
+            />
+            <path d="M12 13v7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+    );
+}
+
+function OrdersIcon({ className = '' }) {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
+            <rect x="6.5" y="4.5" width="11" height="15" rx="2.25" stroke="currentColor" strokeWidth="1.8" />
+            <path d="M9 4.5V3.25h6V4.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M9.2 10h5.6M9.2 13h5.6M9.2 16h3.4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="m8.6 10.2.8.8 1.4-1.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    );
+}
+
+function InvoicesIcon({ className = '' }) {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
+            <path
+                d="M7 3.75h7.75L18 7v13.25a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-16a1 1 0 0 1 1-1Z"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinejoin="round"
+            />
+            <path d="M14.75 3.75V7H18" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+            <path d="M9 11h6M9 14h6M9 17h4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+    );
+}
+
+function SupportIcon({ className = '' }) {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
+            <path d="M6.5 12a5.5 5.5 0 0 1 11 0v2.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            <path
+                d="M5.5 13.5v2.25a2.25 2.25 0 0 0 2.25 2.25H9v-6H7.75a2.25 2.25 0 0 0-2.25 2.25Z"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinejoin="round"
+            />
+            <path
+                d="M18.5 13.5v2.25A2.25 2.25 0 0 1 16.25 18H15v-6h1.25a2.25 2.25 0 0 1 2.25 2.25Z"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinejoin="round"
+            />
+            <path d="M11 18.7h2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+    );
+}
+
+const sidebarCategoryTitles = [
+    'Components & Storage',
+    'Computer Systems',
+    'Computer Peripherals',
+    'Server & Components',
+    'Appliances',
+    'Electronics',
+    'Gaming & VR',
+    'Networking',
+    'Smart Home & Security',
+    'Office Solutions',
+    'Software & Services',
+    'Automotive & Tools',
+    'Home & Outdoors',
+    'Health & Sports',
+    'Toys, Drones & Maker',
 ];
+
+const sidebarCategoryIcons = [ProductsIcon, OrdersIcon, InvoicesIcon, SupportIcon];
+
+const marketplaceShortcutItems = sidebarCategoryTitles.map((title, index) => ({
+    icon: sidebarCategoryIcons[index % sidebarCategoryIcons.length],
+    title,
+    href: '#deals',
+}));
 
 const comboBundlesPrimary = [
     {
@@ -890,6 +976,54 @@ const popularKeywords = [
     'touchscreen',
 ];
 
+const brandLogoItems = [
+    { name: 'ASUS', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/ASUS%20Logo.svg' },
+    { name: 'AMD', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/AMD%20Logo.svg' },
+    { name: 'ASRock', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/ASRock%20logo.svg' },
+    { name: 'GIGABYTE', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/Gigabyte%20Technology%20logo%2020080107.svg' },
+    { name: 'Intel', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/Intel%20logo%202023.svg' },
+    { name: 'MSI', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/Micro-Star%20International%20logo.svg' },
+    { name: 'Meta Quest', logo: 'https://commons.wikimedia.org/wiki/Special:FilePath/Meta%20Quest%20logo.svg' },
+];
+
+const smartComfortItems = officeDealItems;
+const gamingLaptopItems = [...bestDealItems, ...officeDealItems].slice(0, 6);
+const coolingDealItems = [...memoryItems, ...electronicsItems, ...desktopPcItems]
+    .slice(0, 6)
+    .map((item, index) => ({
+        ...item,
+        category: item.category || 'Cooling',
+        rating: item.rating || '4.5',
+        reviews: item.reviews || `${(index + 2) * 17}`,
+    }));
+const printingDealItems = [...moreToConsiderItems, ...desktopPcItems, ...bestDealItems]
+    .slice(0, 6)
+    .map((item, index) => ({
+        ...item,
+        category: item.category || '3D Printing',
+        rating: item.rating || '4.3',
+        reviews: item.reviews || `${(index + 1) * 14}`,
+    }));
+const considerationItems = [...moreToConsiderItems, ...desktopPcItems, ...bestDealItems, ...officeDealItems]
+    .slice(0, 16)
+    .map((item, index) => ({
+        ...item,
+        category: item.category || (index % 2 === 0 ? 'Storage' : 'Components'),
+        rating: item.rating || '4.4',
+        reviews: item.reviews || `${(index + 2) * 11}`,
+    }));
+
+const toolPromoBanners = [
+    'https://promotions.newegg.com/nepro/24-0282/b2s/300x300.jpg',
+    'https://promotions.newegg.com/nepro/24-0282/Best_Sellers/420x240.jpg',
+    'https://promotions.newegg.com/nepro/24-0282/student/420x500.jpg',
+    'https://promotions.newegg.com/nepro/24-0282/NeweggSelect/420x240.jpg',
+    'https://promotions.newegg.com/nepro/24-0282/refreshed/420x240.jpg',
+];
+
+const dominanceBanner = 'https://promotions.newegg.com/nepro/26-0314/1920x180.jpg';
+const smartComfortBanner = 'https://promotions.newegg.com/nepro/26-0267/920x360.jpg';
+
 function SectionHeading({ kicker, title, action, href = '#' }) {
     return (
         <div className="flex flex-wrap items-end justify-between gap-4">
@@ -903,10 +1037,115 @@ function SectionHeading({ kicker, title, action, href = '#' }) {
             </div>
             {action ? (
                 <a href={href} className="text-sm font-bold text-slate-600 transition hover:text-[#0b2e71]">
-                    {action} <span aria-hidden="true">›</span>
+                    {action} <span aria-hidden="true">&gt;</span>
                 </a>
             ) : null}
         </div>
+    );
+}
+
+function ShelfHeading({ title, href = '#', action = 'See More' }) {
+    return (
+        <div className="mb-5 flex flex-col items-start gap-2 sm:flex-row sm:items-end sm:gap-4">
+            <h2 className="text-2xl font-black tracking-[-0.04em] text-[#001e62] sm:text-3xl lg:text-4xl">
+                {title}
+            </h2>
+            <a href={href} className="text-sm font-bold text-slate-500 transition hover:text-[#0b2e71] sm:text-base">
+                {action} <span aria-hidden="true">&gt;</span>
+            </a>
+        </div>
+    );
+}
+
+function RatingDots({ rating = '4.5', reviews = '0' }) {
+    const dots = Math.max(1, Math.min(5, Math.round(Number.parseFloat(rating) || 4)));
+
+    return (
+        <div className="flex items-center gap-1.5 text-xs text-slate-500">
+            <span className="inline-flex items-center gap-0.5">
+                {Array.from({ length: 5 }).map((_, index) => (
+                    <span
+                        key={index}
+                        className={`h-2.5 w-2.5 rounded-full ${index < dots ? 'bg-[#ffb300]' : 'bg-[#d5dbe6]'}`}
+                    />
+                ))}
+            </span>
+            <span>({reviews})</span>
+        </div>
+    );
+}
+
+function ShelfProductCard({ item }) {
+    return (
+        <article className="flex h-full flex-col rounded-[10px] bg-[#edf2fb] p-4">
+            <div className="overflow-hidden rounded-[8px] bg-white">
+                <div
+                    className="aspect-[4/3]"
+                    style={layeredBackground(
+                        item.image,
+                        'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.16))',
+                    )}
+                />
+            </div>
+            <div className="mt-3">
+                <RatingDots rating={item.rating} reviews={item.reviews} />
+                <h3 className="mt-2 min-h-[3.2rem] text-sm font-semibold leading-6 text-slate-800 sm:text-[15px]">
+                    {item.title}
+                </h3>
+                {item.save ? (
+                    <p className="mt-1 text-xs font-semibold text-[#e64620]">{item.save}</p>
+                ) : null}
+                <div className="mt-2 flex items-end gap-2">
+                    <span className="text-3xl font-black tracking-[-0.05em] text-[#1f2937] sm:text-4xl">
+                        {item.price}
+                    </span>
+                    {item.compare ? (
+                        <span className="pb-1 text-xs font-semibold text-slate-400 line-through">
+                            {item.compare}
+                        </span>
+                    ) : null}
+                </div>
+            </div>
+        </article>
+    );
+}
+
+function ToolStripCard({ tool, tone = 'from-[#587aa3] to-[#3367a5]' }) {
+    return (
+        <article className={`relative overflow-hidden rounded-[10px] bg-gradient-to-r ${tone} p-4 text-white`}>
+            <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-[1fr_120px] sm:items-center">
+                <div>
+                    <h3 className="text-2xl font-black leading-tight sm:text-3xl">{tool.title}</h3>
+                    <p className="mt-1 text-sm font-semibold text-white/95 sm:text-base">Check it out &gt;</p>
+                </div>
+                <div className="overflow-hidden rounded-[8px] bg-white/10">
+                    <div
+                        className="aspect-[4/3]"
+                        style={layeredBackground(
+                            tool.image,
+                            'linear-gradient(180deg, rgba(255,255,255,0.04), rgba(15,23,42,0.16))',
+                        )}
+                    />
+                </div>
+            </div>
+        </article>
+    );
+}
+
+function BrandLogoCard({ brand }) {
+    return (
+        <article className="flex h-[110px] items-center justify-center rounded-[10px] bg-white p-4">
+            {brand.logo ? (
+                <img
+                    src={brand.logo}
+                    alt={brand.name}
+                    className="max-h-14 w-full object-contain"
+                    loading="lazy"
+                />
+            ) : (
+                <span className="text-2xl font-black tracking-tight text-slate-700">{brand.name}</span>
+            )}
+        </article>
     );
 }
 
@@ -978,7 +1217,7 @@ function BundleCard({ bundle }) {
 
     return (
         <article
-            className={`overflow-hidden rounded-[22px] border p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${isDark ? 'border-[#0f408f] bg-[#0b2e71] text-white' : `border-transparent bg-gradient-to-br ${bundle.accent} text-slate-900`}`}
+            className={`flex h-full flex-col overflow-hidden rounded-[22px] border p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${isDark ? 'border-[#0f408f] bg-[#0b2e71] text-white' : `border-transparent bg-gradient-to-br ${bundle.accent} text-slate-900`}`}
         >
             <div className="flex items-start justify-between gap-3">
                 <div>
@@ -1036,7 +1275,7 @@ function BundleCard({ bundle }) {
                 ) : null}
             </div>
 
-            <div className="mt-4 flex gap-3">
+            <div className="mt-auto flex flex-col gap-3 pt-4 sm:flex-row">
                 <button
                     type="button"
                     className={`flex-1 rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.16em] ${isDark ? 'border-white/15 bg-white/10 text-white' : 'border-[#d7e3f4] bg-white text-[#0b3d91]'}`}
@@ -1057,7 +1296,7 @@ function BundleCard({ bundle }) {
 function PromoBanner({ banner }) {
     return (
         <article className="overflow-hidden rounded-[28px] border border-[#d7e3f4] bg-white shadow-sm">
-            <div className={`grid min-h-[240px] gap-0 xl:grid-cols-2`}>
+            <div className="grid min-h-[240px] gap-0 lg:grid-cols-2">
                 <div className="relative min-h-[240px] overflow-hidden">
                     <div
                         className="absolute inset-0"
@@ -1072,7 +1311,7 @@ function PromoBanner({ banner }) {
                     <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#ffd59a]">
                         {banner.title}
                     </p>
-                    <h3 className="max-w-md text-3xl font-black tracking-[-0.05em]">
+                    <h3 className="max-w-md text-2xl font-black tracking-[-0.05em] sm:text-3xl">
                         {banner.subtitle}
                     </h3>
                     <a
@@ -1107,15 +1346,19 @@ function CompactProductCard({ item, dark = false }) {
                         {item.badge}
                     </span>
                 ) : null}
-                <p className={`mt-3 text-xs font-black uppercase tracking-[0.18em] ${dark ? 'text-white/60' : 'text-slate-400'}`}>
-                    {item.category}
-                </p>
+                {item.category ? (
+                    <p className={`mt-3 text-xs font-black uppercase tracking-[0.18em] ${dark ? 'text-white/60' : 'text-slate-400'}`}>
+                        {item.category}
+                    </p>
+                ) : null}
                 <h3 className={`mt-2 text-sm font-bold leading-6 ${dark ? 'text-white' : 'text-slate-900'}`}>
                     {item.title}
                 </h3>
-                <p className={`mt-2 text-xs leading-5 ${dark ? 'text-white/75' : 'text-slate-600'}`}>
-                    {item.short}
-                </p>
+                {item.short ? (
+                    <p className={`mt-2 text-xs leading-5 ${dark ? 'text-white/75' : 'text-slate-600'}`}>
+                        {item.short}
+                    </p>
+                ) : null}
                 <div className={`mt-3 flex items-end gap-2 ${dark ? 'text-white' : 'text-[#0b2e71]'}`}>
                     <span className="text-2xl font-black tracking-[-0.04em]">{item.price}</span>
                     {item.compare ? (
@@ -1135,12 +1378,12 @@ function CompactProductCard({ item, dark = false }) {
 function CategoryPanel({ panel }) {
     return (
         <article className="overflow-hidden rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm">
-            <h3 className="text-2xl font-black tracking-[-0.04em] text-[#0b2e71]">{panel.title}</h3>
+            <h3 className="text-xl font-black tracking-[-0.04em] text-[#0b2e71] sm:text-2xl">{panel.title}</h3>
 
             {panel.banner ? (
                 <div className="mt-4 overflow-hidden rounded-[18px] border border-[#eef3fb] bg-slate-50">
                     <div
-                        className="min-h-[250px]"
+                        className="min-h-[200px] sm:min-h-[250px]"
                         style={layeredBackground(
                             panel.banner,
                             'linear-gradient(180deg, rgba(91, 33, 182, 0.75), rgba(17, 24, 39, 0.1))',
@@ -1153,7 +1396,7 @@ function CategoryPanel({ panel }) {
             {panel.bannerCopy ? <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">{panel.bannerCopy}</p> : null}
 
             {panel.tiles ? (
-                <div className="mt-4 grid grid-cols-2 gap-3">
+                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                     {panel.tiles.map((tile) => (
                         <div key={tile.label} className="rounded-[18px] bg-[#f4f8ff] p-3">
                             <div className="overflow-hidden rounded-[14px] bg-white">
@@ -1227,7 +1470,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
 
             <div
                 id="hero"
-                className="show-tab-store show-img-bg relative h-[933px] overflow-hidden bg-[#eaf2ff] text-slate-900 antialiased"
+                className="show-tab-store show-img-bg relative min-h-screen overflow-x-hidden bg-[#eaf2ff] text-slate-900 antialiased"
                 style={{ fontFamily: "'Segoe UI', Arial, sans-serif" }}
             >
                 <div
@@ -1240,17 +1483,14 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                 <div className="pointer-events-none absolute -left-24 top-28 h-72 w-72 rounded-full bg-[#2b74db]/12 blur-3xl" />
                 <div className="pointer-events-none absolute right-0 top-16 h-80 w-80 rounded-full bg-[#ff7b22]/10 blur-3xl" />
 
-                <main className="relative z-10 mx-auto h-[850px] w-full max-w-[1900px] overflow-hidden px-4 py-4 sm:px-6 xl:px-8">
-                    <section className="grid h-full gap-4 xl:grid-cols-[280px_minmax(0,1fr)]">
-                        <aside className="h-full overflow-hidden rounded-[16px] bg-[#0b2e71] text-white shadow-[0_18px_40px_-22px_rgba(7,18,46,0.85)]">
+                <main className="relative z-10 mx-auto w-full max-w-[1900px] space-y-4 px-4 py-4 sm:px-6 xl:px-8">
+                    <section className="grid items-stretch gap-3 grid-cols-1 xl:grid-cols-[420px_minmax(0,1fr)]">
+                        <aside className="order-2 h-[380px] overflow-hidden rounded-[16px] bg-[#0b2e71] text-white shadow-[0_18px_40px_-22px_rgba(7,18,46,0.85)] sm:h-[440px] lg:h-[520px] xl:order-1 xl:h-[580px] xl:sticky xl:top-4">
                             <div className="flex h-full flex-col">
                                 <div className="mb-3 flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
                                     <div>
-                                        <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/55">
-                                            Marketplace shortcuts
-                                        </p>
-                                        <h2 className="mt-1 text-base font-black tracking-[-0.03em]">
-                                            Core B2B actions
+                                        <h2 className="text-base font-black tracking-[-0.03em]">
+                                            Business Essentials
                                         </h2>
                                     </div>
                                     <span className="rounded-full bg-white/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.16em] text-[#ffd59a]">
@@ -1264,8 +1504,8 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                                             href={item.href}
                                             className="flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-left transition hover:bg-white/10"
                                         >
-                                            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md border border-white/10 bg-white/10 text-[10px] font-black tracking-[0.08em] text-[#dce8ff]">
-                                                {item.abbr}
+                                            <span className="inline-flex shrink-0 items-center justify-center text-white/90">
+                                                <item.icon className="h-6 w-6" />
                                             </span>
                                             <span className="min-w-0 flex-1 text-sm font-semibold leading-5 text-white">
                                                 {item.title}
@@ -1277,248 +1517,299 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                             </div>
                         </aside>
 
-                        <div className="h-full overflow-y-auto space-y-3 pr-2">
-                            <article className="relative h-[280px] overflow-hidden rounded-[16px] border border-[#d7e3f4] bg-[#0b2e71] shadow-[0_24px_70px_-34px_rgba(8,24,66,0.9)]">
-                                <img
-                                    src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200&q=80"
-                                    alt="Gaming Setup"
-                                    className="absolute inset-0 h-full w-full object-cover"
+                        <div className="order-1 space-y-4 xl:order-2 xl:flex xl:h-[580px] xl:flex-col xl:gap-4 xl:space-y-0">
+                            <article className="relative min-h-[280px] overflow-hidden rounded-[16px] border border-[#d7e3f4] bg-[#0b2e71] shadow-[0_24px_70px_-34px_rgba(8,24,66,0.9)] sm:min-h-[300px] xl:h-[300px] xl:min-h-0 xl:flex-none">
+                                <div
+                                    className="absolute inset-0"
+                                    style={layeredBackground(
+                                        heroBackground,
+                                        'linear-gradient(180deg, rgba(6,12,35,0.1), rgba(6,12,35,0.6))',
+                                    )}
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-r from-[#0b2e71]/95 via-[#0b2e71]/70 to-transparent" />
-                                <div className="relative flex h-full flex-col justify-center p-6">
+                                <div className="absolute inset-0 bg-gradient-to-r from-[#02071d]/85 via-[#07206a]/65 to-[#0f4bb0]/20" />
+                                <div className="relative grid min-h-full gap-4 p-5 sm:p-6 xl:grid-cols-[1.2fr_.8fr] xl:p-8">
                                     <div className="flex flex-col justify-center">
                                         <span className="inline-flex w-fit rounded-full border border-white/15 bg-white/10 px-4 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-[#ffd59a]">
                                             PC Gaming Week Extended
                                         </span>
-                                        <h1 className="mt-5 max-w-2xl text-4xl font-black tracking-[-0.06em] text-white sm:text-5xl xl:text-6xl">
+                                        <h1 className="mt-4 max-w-2xl text-2xl font-black tracking-[-0.06em] text-white sm:text-3xl xl:text-4xl">
                                             Earn a $25 statement credit when you open a new PlexusBiz Store Credit Card.
                                         </h1>
-                                        <p className="mt-4 max-w-xl text-sm leading-7 text-blue-100 sm:text-base">
+                                        <p className="mt-3 max-w-xl text-sm leading-6 text-blue-100">
                                             Make a purchase of $500 or more and keep building with the same dense, deal-first rhythm you see in the reference page.
                                         </p>
-                                        <div className="mt-6 flex flex-wrap items-center gap-3">
+                                        <div className="mt-4 flex flex-wrap items-center gap-3">
                                             <a
                                                 href="#deals"
-                                                className="inline-flex rounded-full bg-[#ff8a00] px-5 py-2.5 text-xs font-black uppercase tracking-[0.16em] text-white shadow-sm transition hover:bg-[#ef7400]"
+                                                className="inline-flex rounded-full bg-[#ff8a00] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-white shadow-sm transition hover:bg-[#ef7400]"
                                             >
                                                 Shop now
                                             </a>
                                             <a
                                                 href="#build"
-                                                className="inline-flex rounded-full border border-white/20 bg-white/10 px-5 py-2.5 text-xs font-black uppercase tracking-[0.16em] text-white transition hover:bg-white/20"
+                                                className="inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-white transition hover:bg-white/20"
                                             >
                                                 Bulk orders
                                             </a>
                                         </div>
                                     </div>
+
+                                    <div className="relative hidden xl:flex items-end justify-end">
+                                        <div className="w-full max-w-[280px] rounded-[20px] border border-white/15 bg-white/10 p-3 backdrop-blur">
+                                            <div className="overflow-hidden rounded-[16px] bg-white shadow-[0_18px_50px_-30px_rgba(15,23,42,0.75)]">
+                                                <div
+                                                    className="aspect-[16/10]"
+                                                    style={layeredBackground(
+                                                        heroPreview,
+                                                        'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.2))',
+                                                    )}
+                                                />
+                                                <div className="space-y-2 p-3">
+                                                    <div className="flex items-center justify-between gap-3">
+                                                        <span className="rounded-full bg-[#0b2e71] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white">
+                                                            Shop now
+                                                        </span>
+                                                        <span className="text-xs font-bold text-[#ff8a00]">Offer valid 4/20/26 - 5/3/26</span>
+                                                    </div>
+                                                    <h2 className="text-base font-bold leading-5 tracking-[-0.03em] text-slate-900">
+                                                        Build around current promos, credit offers, and sharp bundle pricing.
+                                                    </h2>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </article>
 
-                            <div className="grid gap-4 xl:grid-cols-3">
+                            <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3 xl:min-h-0 xl:flex-1">
                                 {comboBundlesPrimary.map((bundle) => (
-                                    <BundleCard key={bundle.brand + bundle.savings} bundle={bundle} />
-                                ))}
-                            </div>
-
-                            <div className="grid gap-4 xl:grid-cols-2">
-                                {comboBundlesSecondary.map((bundle) => (
-                                    <BundleCard key={bundle.brand + bundle.savings} bundle={bundle} />
+                                    <BundleCard key={`top-${bundle.brand}-${bundle.price}`} bundle={bundle} />
                                 ))}
                             </div>
                         </div>
                     </section>
 
-                    <section className="grid gap-4 xl:grid-cols-2">
-                        {saleBanners.map((banner) => (
-                            <PromoBanner key={banner.title} banner={banner} />
-                        ))}
-                    </section>
-
-                    <section
-                        id="deals"
-                        className="rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm sm:p-7"
-                    >
-                        <SectionHeading
-                            kicker="Today's Best Deals"
-                            title="Flash pricing on the categories people actually search for."
-                            action="See all deals"
-                            href="#footer"
-                        />
-
-                        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-                            {bestDealItems.map((item) => (
-                                <CompactProductCard key={item.title} item={item} />
+                    <div className="space-y-10">
+                        <section className="grid gap-4 lg:grid-cols-2">
+                            {saleBanners.map((banner) => (
+                                <PromoBanner key={`mid-${banner.title}`} banner={banner} />
                             ))}
-                        </div>
-                    </section>
+                        </section>
 
-                    <section className="grid gap-4 xl:grid-cols-[1.08fr_.92fr]">
-                        <div className="rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm sm:p-7">
-                            <SectionHeading
-                                kicker="Must-Have Office Tech Deals"
-                                title="A focused set of laptops and desk-friendly picks."
-                                action="See More"
-                                href="#tools"
-                            />
-
-                            <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                                {officeDealItems.map((item) => (
-                                    <CompactProductCard key={item.title} item={item} />
+                        <section id="deals" className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
+                            <ShelfHeading title="Today's Best Deals" href="#footer" action="See all deals" />
+                            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+                                {bestDealItems.map((item) => (
+                                    <ShelfProductCard key={item.title} item={item} />
                                 ))}
                             </div>
-                        </div>
-
-                        <PromoBanner
-                            banner={{
-                                title: 'REBUILD YOUR DESK SETUP:',
-                                subtitle: 'Must-Have Office Tech Deals',
-                                cta: 'Shop now',
-                                image: 'https://promotions.newegg.com/nepro/24-0162/420x500.jpg',
-                                accent: 'from-[#0a132f] via-[#082b61] to-[#0b2e71]',
-                            }}
-                        />
-                    </section>
-
-                    <section className="grid gap-4 xl:grid-cols-4">
-                        {categoryPanels.map((panel) => (
-                            <CategoryPanel key={panel.title} panel={panel} />
-                        ))}
-                    </section>
-
-                    <section className="rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm sm:p-7">
-                        <SectionHeading
-                            kicker="Desktop PC's"
-                            title="A compact row of towers, minis, and bundled systems."
-                            action="See More"
-                            href="#featured"
-                        />
-                        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-                            {desktopPcItems.map((item) => (
-                                <CompactProductCard key={item.title} item={item} />
-                            ))}
-                        </div>
-                    </section>
-
-                    <section className="grid gap-4 xl:grid-cols-2">
-                        <section className="rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm sm:p-7">
-                            <SectionHeading
-                                kicker="Memory (RAM)"
-                                title="The RAM section from the reference, translated to product cards."
-                                action="See More"
-                                href="#featured"
-                            />
-                            <div className="mt-5 grid gap-4 md:grid-cols-2">
-                                {memoryItems.map((item) => (
-                                    <CompactProductCard key={item.title} item={item} />
-                                ))}
+                            <div className="mt-6 flex justify-center">
+                                <a
+                                    href="#footer"
+                                    className="inline-flex min-w-[220px] items-center justify-center rounded-full bg-[#1f67c9] px-6 py-3 text-sm font-black text-white"
+                                >
+                                    See all deals &gt;
+                                </a>
                             </div>
                         </section>
 
-                        <section className="rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm sm:p-7">
-                            <SectionHeading
-                                kicker="Electronics"
-                                title="Accessories, media players, and smaller tech essentials."
-                                action="See More"
-                                href="#featured"
-                            />
-                            <div className="mt-5 grid gap-4 md:grid-cols-2">
-                                {electronicsItems.map((item) => (
-                                    <CompactProductCard key={item.title} item={item} />
-                                ))}
-                            </div>
-                        </section>
-                    </section>
-
-                    <section className="grid gap-4 xl:grid-cols-[1.05fr_.95fr]">
-                        <section className="rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm sm:p-7">
-                            <SectionHeading
-                                kicker="More Items to Consider"
-                                title="A few more storage and network picks from the same feed."
-                                action="Shop Now"
-                                href="#footer"
-                            />
-                            <div className="mt-5 grid gap-4 md:grid-cols-2">
-                                {moreToConsiderItems.map((item) => (
-                                    <CompactProductCard key={item.title} item={item} />
-                                ))}
-                            </div>
-                        </section>
-
-                        <section className="grid gap-4">
-                            <section className="rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm sm:p-7">
-                                <SectionHeading
-                                    kicker="Community insights"
-                                    title="Real-world community picks and news blurbs."
-                                    action="See More"
-                                    href="#community"
-                                />
-                                <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                                    {communityInsights.map((insight) => (
-                                        <InsightCard key={insight} insight={insight} />
+                        <section className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
+                            <ShelfHeading title="Smart Comfort Home" href="#footer" />
+                            <div className="grid gap-6 xl:grid-cols-[1fr_860px]">
+                                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                                    {smartComfortItems.map((item) => (
+                                        <ShelfProductCard key={item.title} item={item} />
                                     ))}
                                 </div>
-                            </section>
+                                <article className="overflow-hidden rounded-[12px] bg-white">
+                                    <div
+                                        className="h-full min-h-[280px]"
+                                        style={layeredBackground(
+                                            smartComfortBanner,
+                                            'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(15,23,42,0.15))',
+                                        )}
+                                    />
+                                </article>
+                            </div>
+                        </section>
 
-                            <section className="rounded-[28px] border border-[#d7e3f4] bg-[#0b2e71] p-5 text-white shadow-sm sm:p-7">
-                                <SectionHeading
-                                    kicker="Shopping Tools"
-                                    title="Build the same utility rail shown in the reference."
-                                    action="Check it out"
-                                    href="#tools"
-                                />
-                                <div id="tools" className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                                    {shoppingTools.slice(0, 6).map((tool) => (
-                                        <ToolCard key={tool.title} tool={tool} />
+                        <section className="grid gap-4 xl:grid-cols-4">
+                            {categoryPanels.map((panel) => (
+                                <CategoryPanel key={panel.title} panel={panel} />
+                            ))}
+                        </section>
+
+                        <section className="overflow-hidden rounded-[12px] bg-white">
+                            <div
+                                className="h-[120px] w-full"
+                                style={layeredBackground(
+                                    dominanceBanner,
+                                    'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.14))',
+                                )}
+                            />
+                        </section>
+
+                        <section className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
+                            <ShelfHeading title="Gaming Laptops" href="#footer" />
+                            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+                                {gamingLaptopItems.map((item) => (
+                                    <ShelfProductCard key={`gaming-${item.title}`} item={item} />
+                                ))}
+                            </div>
+                        </section>
+
+                        <section className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
+                            <ShelfHeading title="Water / Liquid Cooling" href="#footer" />
+                            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+                                {coolingDealItems.map((item) => (
+                                    <ShelfProductCard key={`cooling-${item.title}`} item={item} />
+                                ))}
+                            </div>
+                        </section>
+
+                        <section className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
+                            <ShelfHeading title="3D Printing & Engraving" href="#footer" />
+                            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+                                {printingDealItems.map((item) => (
+                                    <ShelfProductCard key={`printing-${item.title}`} item={item} />
+                                ))}
+                            </div>
+                        </section>
+
+                        <section className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
+                            <ShelfHeading title="More Items to Consider" href="#footer" />
+                            <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-6">
+                                {considerationItems.slice(0, 6).map((item) => (
+                                    <ShelfProductCard key={`consider-top-${item.title}`} item={item} />
+                                ))}
+                            </div>
+                            <div className="mt-4 grid gap-4 md:grid-cols-3 xl:grid-cols-6">
+                                <article className="rounded-[10px] bg-[#0f4fb1] p-4 text-white xl:col-span-1">
+                                    <h3 className="text-lg font-black">Community insights</h3>
+                                    <ul className="mt-3 space-y-2 text-sm leading-6 text-white/95">
+                                        {communityInsights.map((insight) => (
+                                            <li key={insight}>• {insight}</li>
+                                        ))}
+                                    </ul>
+                                </article>
+                                {considerationItems.slice(6, 11).map((item) => (
+                                    <ShelfProductCard key={`consider-bottom-${item.title}`} item={item} />
+                                ))}
+                            </div>
+                            <div className="mt-6 flex justify-center">
+                                <button
+                                    type="button"
+                                    className="rounded-full border border-slate-300 px-8 py-2 text-sm font-black text-slate-600"
+                                >
+                                    Load More
+                                </button>
+                            </div>
+                        </section>
+
+                        <section id="tools" className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
+                            <ShelfHeading title="Shopping Tools" href="#footer" />
+                            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+                                {shoppingTools.map((tool, index) => (
+                                    <ToolStripCard
+                                        key={tool.title}
+                                        tool={tool}
+                                        tone={
+                                            [
+                                                'from-[#5c7fa8] to-[#3f6895]',
+                                                'from-[#0e89bf] to-[#147eb2]',
+                                                'from-[#264fb0] to-[#23409a]',
+                                                'from-[#5e759f] to-[#57709a]',
+                                                'from-[#0e939d] to-[#0f8a93]',
+                                            ][index % 5]
+                                        }
+                                    />
+                                ))}
+                            </div>
+
+                            <div className="mt-6 grid gap-4 xl:grid-cols-[1.15fr_1.15fr_1.05fr_.95fr]">
+                                <article className="overflow-hidden rounded-[12px] bg-white">
+                                    <div
+                                        className="h-[340px]"
+                                        style={layeredBackground(
+                                            toolPromoBanners[0],
+                                            'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.2))',
+                                        )}
+                                    />
+                                </article>
+                                <div className="grid gap-4">
+                                    <article className="overflow-hidden rounded-[12px] bg-white">
+                                        <div
+                                            className="h-[162px]"
+                                            style={layeredBackground(
+                                                toolPromoBanners[1],
+                                                'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.18))',
+                                            )}
+                                        />
+                                    </article>
+                                    <article className="overflow-hidden rounded-[12px] bg-white">
+                                        <div
+                                            className="h-[162px]"
+                                            style={layeredBackground(
+                                                'https://promotions.newegg.com/nepro/24-0282/Best_Sellers/420x240.jpg',
+                                                'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.18))',
+                                            )}
+                                        />
+                                    </article>
+                                </div>
+                                <article className="overflow-hidden rounded-[12px] bg-white">
+                                    <div
+                                        className="h-[340px]"
+                                        style={layeredBackground(
+                                            toolPromoBanners[2],
+                                            'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.2))',
+                                        )}
+                                    />
+                                </article>
+                                <div className="grid gap-4">
+                                    <article className="overflow-hidden rounded-[12px] bg-white">
+                                        <div
+                                            className="h-[162px]"
+                                            style={layeredBackground(
+                                                toolPromoBanners[3],
+                                                'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.2))',
+                                            )}
+                                        />
+                                    </article>
+                                    <article className="overflow-hidden rounded-[12px] bg-white">
+                                        <div
+                                            className="h-[162px]"
+                                            style={layeredBackground(
+                                                toolPromoBanners[4],
+                                                'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(15,23,42,0.2))',
+                                            )}
+                                        />
+                                    </article>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section id="brands" className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
+                            <ShelfHeading title="Featured Brands" href="#footer" />
+                            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-7">
+                                {brandLogoItems.map((brand) => (
+                                    <BrandLogoCard key={brand.name} brand={brand} />
+                                ))}
+                            </div>
+                            <article className="mt-8 rounded-[12px] border border-[#d7e0ef] bg-white p-4">
+                                <h3 className="text-2xl font-black italic tracking-[-0.03em] text-slate-800">Popular Products</h3>
+                                <div className="mt-4 flex flex-wrap gap-2">
+                                    {popularKeywords.map((keyword) => (
+                                        <KeywordPill key={keyword} keyword={keyword} />
                                     ))}
                                 </div>
-                            </section>
+                            </article>
                         </section>
-                    </section>
 
-                    <section className="rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm sm:p-7">
-                        <SectionHeading
-                            kicker="Shopping Tools"
-                            title="The full builder and finder rail, kept close to the screenshot."
-                            action="See More"
-                            href="#footer"
-                        />
-                        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-                            {shoppingTools.map((tool) => (
-                                <ToolCard key={tool.title} tool={tool} />
-                            ))}
-                        </div>
-                    </section>
-
-                    <section id="brands" className="grid gap-4 rounded-[28px] border border-[#d7e3f4] bg-[#eef4ff] p-5 shadow-sm sm:p-7 xl:grid-cols-[1fr_320px]">
-                        <div>
-                            <SectionHeading
-                                kicker="Featured Brands"
-                                title="Brand strip plus keyword cloud."
-                                action="See More"
-                                href="#footer"
-                            />
-                            <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5 xl:grid-cols-10">
-                                {featuredBrands.map((brand) => (
-                                    <BrandPill key={brand} brand={brand} />
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="rounded-[24px] bg-white p-5 shadow-sm">
-                            <p className="text-[11px] font-black uppercase tracking-[0.22em] text-[#0b3d91]">
-                                Popular Products
-                            </p>
-                            <div className="mt-4 flex flex-wrap gap-2">
-                                {popularKeywords.slice(0, 18).map((keyword) => (
-                                    <KeywordPill key={keyword} keyword={keyword} />
-                                ))}
-                            </div>
-                        </div>
-                    </section>
-
-                    <LandingPromoStrip />
+                        <LandingPromoStrip />
+                    </div>
                 </main>
             </div>
         </FrontendLayout>
     );
 }
+

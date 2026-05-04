@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, Head } from '@inertiajs/react';
 
-const headerNavLinks = [
-    { label: 'Products', href: route('products.index') },
-    { label: 'Orders', href: route('commerce.orders.index') },
-    { label: 'Invoices', href: route('invoices.index') },
-    { label: 'Support', href: route('support.tickets.index') },
+const quickNavLinks = [
+    { label: 'Bulk Orders', href: route('products.index', { quick: 'bulk' }) },
+    { label: 'MOQ Pricing', href: route('products.index', { quick: 'moq' }) },
 ];
 
 const footerSections = [
@@ -145,19 +143,6 @@ function HeaderIcon({ children, className = '' }) {
         <span className={`inline-flex items-center justify-center text-white ${className}`}>
             {children}
         </span>
-    );
-}
-
-function MenuIcon({ className = '' }) {
-    return (
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
-            <path
-                d="M4 6.75h16M4 12h12.5M4 17.25h16"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-            />
-        </svg>
     );
 }
 
@@ -497,7 +482,7 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
 
                             <AddressTile onClick={() => setIsAddressModalOpen(true)} />
 
-                            <form className="min-w-0 flex-1 xl:pl-1" onSubmit={(event) => event.preventDefault()}>
+                            <form className="order-4 col-span-full min-w-0 flex-1 sm:order-none sm:col-span-1 xl:mr-[200px] xl:pl-1" onSubmit={(event) => event.preventDefault()}>
                                 <div className="relative flex h-10 w-full items-stretch overflow-hidden rounded-full border border-[#d9e3f3] bg-white shadow-[0_10px_30px_-18px_rgba(9,20,48,0.9)] sm:h-11">
                                     <input
                                         type="search"
@@ -514,7 +499,7 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                                 </div>
                             </form>
 
-                            <div className="flex items-center gap-2 justify-self-end xl:gap-3">
+                            <div className="order-3 flex items-center gap-4 justify-self-end sm:order-none xl:gap-6 xl:pl-10">
                                 <button
                                     type="button"
                                     className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20"
@@ -526,11 +511,9 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                                 {!isAuthed && canLogin && (
                                     <Link
                                         href={route('login')}
-                                        className="inline-flex min-w-[132px] shrink-0 items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-2 text-left shadow-[0_6px_14px_-10px_rgba(9,20,48,0.7)] sm:hidden"
+                                        className="inline-flex min-w-[148px] shrink-0 items-center gap-3 rounded-full border border-white/15 bg-white/10 px-4 py-2.5 text-left shadow-[0_6px_14px_-10px_rgba(9,20,48,0.7)] sm:hidden"
                                     >
-                                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/15 bg-white/10">
-                                            <UserIcon className="h-[16px] w-[16px]" />
-                                        </span>
+                                        <UserIcon className="h-6 w-6 shrink-0 text-white" />
                                         <span className="min-w-0 leading-none">
                                             <span className="block whitespace-nowrap text-[11px] font-black tracking-[-0.02em]">
                                                 Sign In / Register
@@ -539,19 +522,25 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                                     </Link>
                                 )}
                                 {!isAuthed && canLogin && (
-                                    <Link href={route('login')} className="hidden rounded-full px-1.5 py-1 text-left sm:block">
-                                        <span className="block text-[10px] font-semibold text-white/75">Welcome</span>
-                                        <span className="block text-[13px] font-black tracking-[-0.02em]">Sign In / Register</span>
+                                    <Link
+                                        href={route('login')}
+                                        className="hidden min-w-[148px] shrink-0 items-center gap-3 rounded-full border border-white/15 bg-white/10 px-4 py-2.5 text-left shadow-[0_6px_14px_-10px_rgba(9,20,48,0.7)] sm:inline-flex"
+                                    >
+                                        <UserIcon className="h-6 w-6 shrink-0 text-white" />
+                                        <span className="min-w-0 leading-none">
+                                            <span className="block text-[10px] font-semibold text-white/75">Welcome</span>
+                                            <span className="block whitespace-nowrap text-[13px] font-black tracking-[-0.02em]">
+                                                Sign In / Register
+                                            </span>
+                                        </span>
                                     </Link>
                                 )}
                                 {isAuthed && (
                                     <Link
                                         href={route('dashboard')}
-                                        className="inline-flex min-w-[132px] shrink-0 items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-2 text-left shadow-[0_6px_14px_-10px_rgba(9,20,48,0.7)] sm:hidden"
+                                        className="inline-flex min-w-[148px] shrink-0 items-center gap-3 rounded-full border border-white/15 bg-white/10 px-4 py-2.5 text-left shadow-[0_6px_14px_-10px_rgba(9,20,48,0.7)] sm:hidden"
                                     >
-                                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/15 bg-white/10">
-                                            <UserIcon className="h-[16px] w-[16px]" />
-                                        </span>
+                                        <UserIcon className="h-6 w-6 shrink-0 text-white" />
                                         <span className="min-w-0 leading-none">
                                             <span className="block whitespace-nowrap text-[11px] font-black tracking-[-0.02em]">
                                                 Dashboard
@@ -560,9 +549,17 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                                     </Link>
                                 )}
                                 {isAuthed && (
-                                    <Link href={route('dashboard')} className="hidden rounded-full px-1.5 py-1 text-left sm:block">
-                                        <span className="block text-[10px] font-semibold text-white/75">Welcome</span>
-                                        <span className="block text-[13px] font-black tracking-[-0.02em]">Dashboard</span>
+                                    <Link
+                                        href={route('dashboard')}
+                                        className="hidden min-w-[148px] shrink-0 items-center gap-3 rounded-full border border-white/15 bg-white/10 px-4 py-2.5 text-left shadow-[0_6px_14px_-10px_rgba(9,20,48,0.7)] sm:inline-flex"
+                                    >
+                                        <UserIcon className="h-6 w-6 shrink-0 text-white" />
+                                        <span className="min-w-0 leading-none">
+                                            <span className="block text-[10px] font-semibold text-white/75">Welcome</span>
+                                            <span className="block whitespace-nowrap text-[13px] font-black tracking-[-0.02em]">
+                                                Dashboard
+                                            </span>
+                                        </span>
                                     </Link>
                                 )}
 
@@ -590,19 +587,23 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                         </div>
                     </div>
 
-                    <div className="border-b border-[#d8e4f5] bg-[#eef4fb] text-[#0b2e71]">
-                        <div className="mx-auto flex w-full max-w-[1900px] items-center gap-3 overflow-x-auto px-4 py-3 sm:px-6 xl:px-8">
-                            {headerNavLinks.map((link) => (
+                    <div className="border-b border-[#d8e4f5] bg-[#f8fbff] text-[#0b2e71]">
+                        <div className="mx-auto flex w-full max-w-[1900px] flex-wrap items-center gap-2 px-4 py-2 sm:px-6 xl:px-8">
+                            <span className="hidden shrink-0 text-[10px] font-black uppercase tracking-[0.24em] text-[#0b2e71]/55 sm:inline-flex">
+                                Quick filters
+                            </span>
+                            {quickNavLinks.map((link) => (
                                 <Link
                                     key={link.label}
                                     href={link.href}
-                                    className="shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-semibold text-slate-700 transition hover:bg-white hover:text-[#0b2e71]"
+                                    className="shrink-0 whitespace-nowrap rounded-full border border-[#d7e3f4] bg-white px-3 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-[#0b2e71] transition hover:border-[#ffb16d] hover:bg-[#fff3e8] hover:text-[#d75d00]"
                                 >
                                     {link.label}
                                 </Link>
                             ))}
                         </div>
                     </div>
+
                 </header>
             <div aria-hidden="true" style={{ height: headerHeight }} />
             

@@ -1,7 +1,7 @@
 {
     "private": true,
     "scripts": {
-        "dev": "vite",
+        "dev": "vite --configLoader native",
         "build": "vite build --configLoader native"
     },
     "devDependencies": {
