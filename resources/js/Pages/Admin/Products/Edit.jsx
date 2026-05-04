@@ -1,17 +1,14 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
 import ProductForm from './Form';
 
-export default function EditProduct({ auth, product, suppliers, statuses }) {
+export default function EditProduct({ product, suppliers, statuses }) {
     return (
-        <AuthenticatedLayout
-            user={auth.user}
-            header={
-                <div>
-                    <h2 className="text-xl font-bold text-gray-950">Edit Product</h2>
-                    <p className="mt-1 text-sm text-gray-500">Update product details, pricing, and inventory.</p>
-                </div>
-            }
+        <AdminLayout
+            header={{
+                title: 'Edit Product',
+                subtitle: 'Update product details, pricing, and inventory.'
+            }}
         >
             <Head title={`Edit ${product.name}`} />
             <div className="py-8">
@@ -27,6 +24,6 @@ export default function EditProduct({ auth, product, suppliers, statuses }) {
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 }

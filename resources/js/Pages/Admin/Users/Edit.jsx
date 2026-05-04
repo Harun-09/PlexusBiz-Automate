@@ -1,17 +1,14 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
 import UserForm from './Form';
 
-export default function EditUser({ auth, user, roles, statuses }) {
+export default function EditUser({ user, roles, statuses }) {
     return (
-        <AuthenticatedLayout
-            user={auth.user}
-            header={
-                <div>
-                    <h2 className="text-xl font-bold text-gray-950">Edit User</h2>
-                    <p className="mt-1 text-sm text-gray-500">Update user details, role, and account status.</p>
-                </div>
-            }
+        <AdminLayout
+            header={{
+                title: 'Edit User',
+                subtitle: 'Update user details, role, and account status.'
+            }}
         >
             <Head title={`Edit ${user.name}`} />
 
@@ -28,6 +25,6 @@ export default function EditUser({ auth, user, roles, statuses }) {
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 }

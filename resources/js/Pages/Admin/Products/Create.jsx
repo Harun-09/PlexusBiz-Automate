@@ -1,17 +1,14 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
 import ProductForm from './Form';
 
-export default function CreateProduct({ auth, suppliers, statuses }) {
+export default function CreateProduct({ suppliers, statuses }) {
     return (
-        <AuthenticatedLayout
-            user={auth.user}
-            header={
-                <div>
-                    <h2 className="text-xl font-bold text-gray-950">Create Product</h2>
-                    <p className="mt-1 text-sm text-gray-500">Add a new product to the catalog.</p>
-                </div>
-            }
+        <AdminLayout
+            header={{
+                title: 'Create Product',
+                subtitle: 'Add a new product to the catalog.'
+            }}
         >
             <Head title="Create Product" />
             <div className="py-8">
@@ -21,6 +18,6 @@ export default function CreateProduct({ auth, suppliers, statuses }) {
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 }

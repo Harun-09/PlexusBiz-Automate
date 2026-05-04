@@ -1,17 +1,14 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
 import SupplierForm from './Form';
 
-export default function EditSupplier({ auth, supplier, statuses }) {
+export default function EditSupplier({ supplier, statuses }) {
     return (
-        <AuthenticatedLayout
-            user={auth.user}
-            header={
-                <div>
-                    <h2 className="text-xl font-bold text-gray-950">Edit Supplier</h2>
-                    <p className="mt-1 text-sm text-gray-500">Update company details, approval status, and contact information.</p>
-                </div>
-            }
+        <AdminLayout
+            header={{
+                title: 'Edit Supplier',
+                subtitle: 'Update company details, approval status, and contact information.'
+            }}
         >
             <Head title={`Edit ${supplier.company_name}`} />
 
@@ -27,6 +24,6 @@ export default function EditSupplier({ auth, supplier, statuses }) {
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 }
