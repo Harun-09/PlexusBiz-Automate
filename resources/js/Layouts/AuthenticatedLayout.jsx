@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
@@ -27,10 +27,19 @@ export default function Authenticated({ user, header, children }) {
     const currentPath = typeof window === 'undefined' ? '' : window.location.pathname;
     const navItems = NAV_ITEMS.filter((item) => item.roles.length === 0 || item.roles.some((role) => roles.includes(role)));
     const isActive = (href) => currentPath === href || currentPath.startsWith(`${href}/`);
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 10);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <nav className="border-b border-gray-200 bg-white">
+        <div className="min-h-screen overflow-x-hidden bg-gray-100">
+            <nav className={`fixed top-0 left-0 right-0 z-50 border-b border-gray-200 bg-white transition-shadow duration-200 ${isScrolled ? 'shadow-lg' : ''}`}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex">
@@ -146,7 +155,7 @@ export default function Authenticated({ user, header, children }) {
                 </header>
             )}
 
-            <main>{children}</main>
+            <main className="pt-16">{children}</main>
             <Footer />
         </div>
     );

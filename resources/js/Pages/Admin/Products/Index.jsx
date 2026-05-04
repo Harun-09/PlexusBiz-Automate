@@ -48,14 +48,14 @@ export default function ProductsIndex({ auth, products, filters, statuses, suppl
         <AuthenticatedLayout
             user={auth.user}
             header={
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <h2 className="text-xl font-bold text-gray-950">Product Management</h2>
                         <p className="mt-1 text-sm text-gray-500">Manage catalog products, inventory, and supplier assignments.</p>
                     </div>
                     <Link
                         href="/admin/products/create"
-                        className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-slate-900 to-blue-700 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-700/20 transition hover:shadow-blue-700/30 hover:-translate-y-0.5"
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-slate-900 to-blue-700 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-700/20 transition hover:shadow-blue-700/30 hover:-translate-y-0.5 sm:w-auto"
                     >
                         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
                         Add Product
@@ -103,16 +103,16 @@ export default function ProductsIndex({ auth, products, filters, statuses, suppl
                                     {suppliers.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
                                 </select>
                             </div>
-                            <div className="flex gap-2">
-                                <button type="submit" className="inline-flex h-10 items-center rounded-xl bg-gray-950 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800">Apply</button>
-                                <button type="button" onClick={resetFilters} className="inline-flex h-10 items-center rounded-xl border border-gray-200 bg-white px-5 text-sm font-semibold text-gray-600 shadow-sm transition hover:bg-gray-50">Reset</button>
+                            <div className="flex flex-col gap-2 sm:flex-row">
+                                <button type="submit" className="inline-flex h-10 w-full items-center justify-center rounded-xl bg-gray-950 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 sm:w-auto">Apply</button>
+                                <button type="button" onClick={resetFilters} className="inline-flex h-10 w-full items-center justify-center rounded-xl border border-gray-200 bg-white px-5 text-sm font-semibold text-gray-600 shadow-sm transition hover:bg-gray-50 sm:w-auto">Reset</button>
                             </div>
                         </div>
                     </form>
 
                     {/* Table */}
                     <section className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-sm">
-                        <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+                        <div className="flex flex-col gap-3 border-b border-gray-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
                             <div>
                                 <h3 className="text-base font-bold text-gray-950">Products</h3>
                                 <p className="mt-0.5 text-sm text-gray-500">{products.total} total products</p>
@@ -167,9 +167,9 @@ export default function ProductsIndex({ auth, products, filters, statuses, suppl
                         )}
 
                         {products.last_page > 1 && (
-                            <div className="flex items-center justify-between border-t border-gray-100 px-6 py-4">
+                            <div className="flex flex-col gap-3 border-t border-gray-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
                                 <p className="text-sm text-gray-500">Page {products.current_page} of {products.last_page}</p>
-                                <div className="flex gap-2">
+                                <div className="flex flex-wrap gap-2">
                                     {products.links.filter((l) => l.url).map((link, i) => (
                                         <Link key={i} href={link.url} preserveScroll preserveState
                                             className={`inline-flex h-9 min-w-[36px] items-center justify-center rounded-lg border px-3 text-sm font-medium transition ${link.active ? 'border-blue-600 bg-blue-600 text-white shadow-sm' : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'}`}

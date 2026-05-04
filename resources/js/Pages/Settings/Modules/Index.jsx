@@ -144,20 +144,20 @@ export default function ModuleSettingsIndex({ auth, modules, summary, flash }) {
                     </div>
 
                     <form onSubmit={submit} className="space-y-4">
-                        <div className="flex items-center justify-between gap-4">
-                            <div>
-                                <h3 className="text-base font-black tracking-[-0.03em] text-gray-950">Domain Modules</h3>
-                                <p className="mt-1 text-sm text-gray-600">Save changes to update the live module registry.</p>
-                            </div>
+                            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <h3 className="text-base font-black tracking-[-0.03em] text-gray-950">Domain Modules</h3>
+                                    <p className="mt-1 text-sm text-gray-600">Save changes to update the live module registry.</p>
+                                </div>
 
-                            <button
-                                type="submit"
-                                disabled={processing}
-                                className="inline-flex items-center rounded-xl bg-gray-950 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
-                            >
-                                {processing ? 'Saving...' : 'Save Changes'}
-                            </button>
-                        </div>
+                                <button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="inline-flex w-full items-center justify-center rounded-xl bg-gray-950 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                                >
+                                    {processing ? 'Saving...' : 'Save Changes'}
+                                </button>
+                            </div>
 
                         <div className="space-y-4">
                             {modules.map((module) => (

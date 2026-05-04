@@ -154,6 +154,7 @@ function TierTable({ tiers, quantity, currency, basePrice }) {
 export default function Show({
     auth,
     flash,
+    errors,
     cartCount,
     currency,
     defaultQuantity,
@@ -168,6 +169,7 @@ export default function Show({
 
     const [selectedImage, setSelectedImage] = useState(gallery[0]?.url || product.primary_image_url || fallbackImage);
     const [quantity, setQuantity] = useState(Math.max(1, Number(defaultQuantity || product.moq || 1)));
+    const validationMessage = Object.values(errors || {}).find(Boolean);
 
     const availableStock = Number(product.available_stock ?? 0);
     const minimumOrder = Number(product.moq ?? 1);
@@ -245,6 +247,7 @@ export default function Show({
 
                     <FlashBanner message={flash?.success} />
                     <FlashBanner message={flash?.error} type="error" />
+                    <FlashBanner message={validationMessage} type="error" />
 
                     <section className="mt-5 grid gap-6 lg:grid-cols-[1.2fr_.8fr]">
                         <div className="space-y-6">

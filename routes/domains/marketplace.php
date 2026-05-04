@@ -12,7 +12,7 @@ Route::get('/products', [ProductController::class, 'index'])
 Route::get('/products/{product:slug}', [ProductController::class, 'show'])
     ->name('products.show');
 
-Route::middleware(['auth', 'can:manage cart'])->group(function (): void {
+Route::middleware(['auth', 'permission:manage_cart'])->group(function (): void {
     Route::get('/cart', [CartController::class, 'index'])
         ->name('cart.index');
 

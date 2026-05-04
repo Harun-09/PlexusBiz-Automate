@@ -158,7 +158,7 @@ export default function WorkspaceIndex({ auth, workspace }) {
             <div className="py-8">
                 <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
                     {workspace.metrics.length > 0 && (
-                        <section className="grid gap-4 md:grid-cols-4">
+                        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                             {workspace.metrics.map((metric) => (
                                 <div key={metric.label} className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
                                     <p className="text-sm font-medium text-gray-500">{metric.label}</p>
@@ -205,17 +205,17 @@ export default function WorkspaceIndex({ auth, workspace }) {
                                     </div>
                                 )}
 
-                                <div className="flex gap-2">
+                                <div className="flex flex-col gap-2 sm:flex-row">
                                     <button
                                         type="submit"
-                                        className="inline-flex h-10 items-center justify-center rounded-md bg-gray-950 px-4 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                                        className="inline-flex h-10 w-full items-center justify-center rounded-md bg-gray-950 px-4 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 sm:w-auto"
                                     >
                                         Apply
                                     </button>
                                     <button
                                         type="button"
                                         onClick={resetFilters}
-                                        className="inline-flex h-10 items-center justify-center rounded-md border border-gray-300 bg-white px-4 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                                        className="inline-flex h-10 w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 sm:w-auto"
                                     >
                                         Reset
                                     </button>

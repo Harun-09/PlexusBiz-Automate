@@ -1,26 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, Head } from '@inertiajs/react';
 
-const topSearchSuggestions = [
-    'gaming monitor',
-    'am5 motherboard',
-    'arc a380',
-    'small form factor gaming pc',
-    'nvidia dgx spark',
-];
-
 const headerNavLinks = [
-    { label: 'Shell Shocker', href: '#shell' },
-    { label: 'PC Builder', href: '#build' },
-    { label: 'Shopping Tools', href: '#tools' },
-    { label: 'Clearance', href: '#deals' },
-    { label: 'Best Sellers', href: '#featured' },
-    { label: 'PlexusBiz Card', href: '#footer' },
-    { label: 'Free Gift w/ AMD', href: '#deals' },
-    { label: 'Games', href: '#games', active: true },
-    { label: 'Laptop Upgrade', href: '#deals' },
-    { label: 'Trade-In', href: '#footer' },
-    { label: 'Gamer Community', href: '#community' },
+    { label: 'Products', href: route('products.index') },
+    { label: 'Orders', href: route('commerce.orders.index') },
+    { label: 'Invoices', href: route('invoices.index') },
+    { label: 'Support', href: route('support.tickets.index') },
 ];
 
 const footerSections = [
@@ -112,7 +97,7 @@ function PlexusBizMark() {
             <span className="hidden leading-tight xl:block">
                 <span className="block text-[18px] font-black tracking-[-0.04em] text-white">PlexusBiz</span>
                 <span className="hidden text-[11px] font-semibold uppercase tracking-[0.24em] text-white/70 xl:block">
-                    commerce hub
+                    e-commerce hub
                 </span>
             </span>
         </Link>
@@ -299,7 +284,7 @@ function FooterColumn({ section }) {
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex w-full items-center justify-between px-5 py-3.5 md:hidden focus:outline-none"
             >
-                <h3 className="text-[13px] font-bold text-white uppercase">{section.title}</h3>
+                <h3 className="text-[15px] font-bold text-white uppercase">{section.title}</h3>
                 <svg 
                     className={`h-4 w-4 text-white transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} 
                     fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -309,7 +294,7 @@ function FooterColumn({ section }) {
             </button>
             
             {/* Desktop Heading (hidden on mobile) */}
-            <h3 className="hidden text-[13px] font-bold text-white mb-4 md:block uppercase">
+            <h3 className="hidden text-[15px] font-bold text-white mb-4 md:block uppercase">
                 {section.title}
             </h3>
 
@@ -317,7 +302,7 @@ function FooterColumn({ section }) {
             <ul className={`md:mt-0 md:block ${isOpen ? 'block px-5 pb-2' : 'hidden'}`}>
                 {section.links.map((link, index) => (
                     <li key={link.label} className={index !== section.links.length - 1 ? 'border-b border-white/20 md:border-transparent' : ''}>
-                        <Link href={`/p/${slugify(link.label)}`} className="block py-3 md:py-1.5 text-[13px] text-gray-300 transition hover:text-white hover:underline">
+                        <Link href={`/p/${slugify(link.label)}`} className="block py-3 md:py-1.5 text-[15px] font-medium text-white/95 transition hover:text-white hover:underline">
                             {link.label}
                         </Link>
                     </li>
@@ -329,12 +314,29 @@ function FooterColumn({ section }) {
 
 export default function FrontendLayout({ auth, canLogin, cartCount = 0, children }) {
     const isAuthed = Boolean(auth?.user);
+    const headerRef = useRef(null);
+    const [headerHeight, setHeaderHeight] = useState(148);
+
+    useEffect(() => {
+        const updateHeaderHeight = () => {
+            if (!headerRef.current) {
+                return;
+            }
+
+            const nextHeight = Math.ceil(headerRef.current.getBoundingClientRect().height);
+            setHeaderHeight(nextHeight > 0 ? nextHeight : 148);
+        };
+
+        updateHeaderHeight();
+        window.addEventListener('resize', updateHeaderHeight);
+        return () => window.removeEventListener('resize', updateHeaderHeight);
+    }, [isAuthed, canLogin, cartCount]);
 
     return (
-        <div className="min-h-screen bg-[#eaf2ff] text-slate-900 antialiased" style={{ fontFamily: "'Segoe UI', Arial, sans-serif" }}>
-            <header className="sticky top-0 z-40">
+        <div className="min-h-screen overflow-x-hidden bg-[#eaf2ff] text-slate-900 antialiased" style={{ fontFamily: "'Segoe UI', Arial, sans-serif" }}>
+            <header ref={headerRef} className="fixed inset-x-0 top-0 z-50">
                     <div className="border-b border-[#042e6f] bg-[#0b2e71] text-white shadow-[0_10px_24px_-18px_rgba(7,18,46,0.8)]">
-                        <div className="mx-auto grid w-full max-w-[1900px] grid-cols-[auto_auto_minmax(0,1fr)_auto] items-center gap-2 px-4 py-3 sm:gap-3 sm:px-6 xl:gap-4 xl:px-8">
+                        <div className="mx-auto grid w-full max-w-[1900px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 px-4 py-3 sm:grid-cols-[auto_auto_minmax(0,1fr)_auto] sm:gap-3 sm:px-6 xl:gap-4 xl:px-8">
                             <PlexusBizMark />
 
                             <AddressTile />
@@ -353,26 +355,16 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                             </button>
 
                             <form className="min-w-0 flex-1 xl:pl-1" onSubmit={(event) => event.preventDefault()}>
-                                <div className="relative flex h-[56px] w-full items-stretch overflow-hidden rounded-full border border-[#d9e3f3] bg-white shadow-[0_10px_30px_-18px_rgba(9,20,48,0.9)]">
+                                <div className="relative flex h-12 w-full items-stretch overflow-hidden rounded-full border border-[#d9e3f3] bg-white shadow-[0_10px_30px_-18px_rgba(9,20,48,0.9)] sm:h-[56px]">
                                     <input
                                         type="search"
                                         placeholder="Search products, deals, and parts"
-                                        className="w-[300px] shrink-0 bg-transparent px-5 text-[14px] text-slate-800 outline-none placeholder:text-[#7c8aa3]"
+                                        className="min-w-0 flex-1 bg-transparent px-4 text-[14px] text-slate-800 outline-none placeholder:text-[#7c8aa3] sm:px-5"
                                     />
-                                    <div className="hidden min-w-[396px] flex-1 items-center gap-0.5 border-l border-[#edf1f7] px-2 lg:flex">
-                                        {topSearchSuggestions.map((suggestion) => (
-                                            <span
-                                                key={suggestion}
-                                                className="min-h-[32px] w-[60px] shrink-0 rounded-full bg-[#f5f7fb] px-2 py-1 text-center text-[6px] font-semibold leading-[1.05] text-slate-700 whitespace-normal break-words"
-                                            >
-                                                {suggestion}
-                                            </span>
-                                        ))}
-                                    </div>
                                     <button
                                         type="submit"
                                         aria-label="Search"
-                                        className="flex h-full w-14 shrink-0 items-center justify-center bg-[#96b8ef] text-[#0b2e71] transition hover:bg-[#7ca7e8]"
+                                        className="flex h-full w-12 shrink-0 items-center justify-center bg-[#96b8ef] text-[#0b2e71] transition hover:bg-[#7ca7e8] sm:w-14"
                                     >
                                         <SearchIcon className="h-5 w-5" />
                                     </button>
@@ -380,18 +372,40 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                             </form>
 
                             <div className="flex items-center gap-2 justify-self-end xl:gap-2.5">
-                                <HeaderIcon className="hidden h-5 w-5 sm:inline-flex">
-                                    <BellIcon className="h-[18px] w-[18px]" />
-                                </HeaderIcon>
-                                <FlagBadge className="hidden sm:inline-flex" />
-                                <ThemeToggle />
-                                <HeaderIcon className="hidden h-5 w-5 sm:inline-flex">
-                                    <UserIcon className="h-[18px] w-[18px]" />
-                                </HeaderIcon>
+                                {!isAuthed && canLogin && (
+                                    <Link
+                                        href={route('login')}
+                                        className="inline-flex min-w-[132px] shrink-0 items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-2 text-left shadow-[0_6px_14px_-10px_rgba(9,20,48,0.7)] sm:hidden"
+                                    >
+                                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/15 bg-white/10">
+                                            <UserIcon className="h-[16px] w-[16px]" />
+                                        </span>
+                                        <span className="min-w-0 leading-none">
+                                            <span className="block whitespace-nowrap text-[11px] font-black tracking-[-0.02em]">
+                                                Sign In / Register
+                                            </span>
+                                        </span>
+                                    </Link>
+                                )}
                                 {!isAuthed && canLogin && (
                                     <Link href={route('login')} className="hidden rounded-full px-1.5 py-1 text-left sm:block">
                                         <span className="block text-[10px] font-semibold text-white/75">Welcome</span>
                                         <span className="block text-[13px] font-black tracking-[-0.02em]">Sign In / Register</span>
+                                    </Link>
+                                )}
+                                {isAuthed && (
+                                    <Link
+                                        href={route('dashboard')}
+                                        className="inline-flex min-w-[132px] shrink-0 items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-2 text-left shadow-[0_6px_14px_-10px_rgba(9,20,48,0.7)] sm:hidden"
+                                    >
+                                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/15 bg-white/10">
+                                            <UserIcon className="h-[16px] w-[16px]" />
+                                        </span>
+                                        <span className="min-w-0 leading-none">
+                                            <span className="block whitespace-nowrap text-[11px] font-black tracking-[-0.02em]">
+                                                Dashboard
+                                            </span>
+                                        </span>
                                     </Link>
                                 )}
                                 {isAuthed && (
@@ -400,9 +414,16 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                                         <span className="block text-[13px] font-black tracking-[-0.02em]">Dashboard</span>
                                     </Link>
                                 )}
-                                <Link href="#footer" className="hidden rounded-full px-1.5 py-1 text-left md:block">
-                                    <span className="block text-[10px] font-semibold text-white/75">Returns</span>
-                                    <span className="block text-[13px] font-black tracking-[-0.02em]">& Orders</span>
+                                <Link
+                                    href={route('cart.index')}
+                                    className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white sm:hidden"
+                                >
+                                    <CartIcon className="h-[18px] w-[18px]" />
+                                    {Number(cartCount) > 0 && (
+                                        <span className="absolute -right-1 -top-1 inline-flex min-w-5 items-center justify-center rounded-full bg-[#ff8a00] px-1.5 py-0.5 text-[10px] font-black leading-none text-white shadow-sm">
+                                            {Number(cartCount) > 99 ? '99+' : Number(cartCount)}
+                                        </span>
+                                    )}
                                 </Link>
                                 <Link href={route('cart.index')} className="relative hidden sm:inline-flex">
                                     <HeaderIcon className="h-5 w-5">
@@ -419,51 +440,32 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                     </div>
 
                     <div className="border-b border-[#d8e4f5] bg-[#eef4fb] text-[#0b2e71]">
-                        <div className="mx-auto flex w-full max-w-[1900px] items-center justify-between gap-4 overflow-hidden px-4 py-3 sm:px-6 xl:px-8">
-                            <div className="flex items-center gap-4 whitespace-nowrap text-sm font-semibold">
-                                <button
-                                    type="button"
-                                    className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-[#0b2e71] transition hover:bg-white"
+                        <div className="mx-auto flex w-full max-w-[1900px] items-center gap-3 overflow-x-auto px-4 py-3 sm:px-6 xl:px-8">
+                            {headerNavLinks.map((link) => (
+                                <Link
+                                    key={link.label}
+                                    href={link.href}
+                                    className="shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-semibold text-slate-700 transition hover:bg-white hover:text-[#0b2e71]"
                                 >
-                                    <MenuIcon className="h-[18px] w-[18px]" />
-                                    Menu
-                                </button>
-                                {headerNavLinks.map((link) => (
-                                    <a
-                                        key={link.label}
-                                        href={link.href}
-                                        className={
-                                            link.active
-                                                ? 'rounded-full bg-[#1f68d9] px-3 py-1.5 font-black text-white shadow-sm'
-                                                : 'text-slate-700 transition hover:text-[#0b2e71]'
-                                        }
-                                    >
-                                        {link.label}
-                                    </a>
-                                ))}
-                            </div>
-
-                            <div className="flex items-center gap-4 whitespace-nowrap text-sm font-semibold">
-                                <a href="#footer" className="font-black italic text-[#0b2e71]">
-                                    PLEXUSBIZ BUSINESS
-                                </a>
-                                <a href="#footer" className="text-slate-700">
-                                    Feedback
-                                </a>
-                                <a href="#footer" className="text-slate-700">
-                                    Help Center
-                                </a>
-                            </div>
+                                    {link.label}
+                                </Link>
+                            ))}
                         </div>
                     </div>
                 </header>
+            <div aria-hidden="true" style={{ height: headerHeight }} />
             
             {children}
 
             <footer id="footer" className="relative z-10 w-full mt-4">
                     {/* Top Dark Section */}
-                    <div className="bg-[#0d1733] pt-6 md:pt-10 pb-8">
-                        <div className="mx-auto w-full max-w-[1900px] px-4 sm:px-6 lg:px-12">
+                    <div
+                        className="pt-10 md:pt-16 pb-12"
+                        style={{
+                            background: 'linear-gradient(90deg, #0b2e71 0%, #1f68d9 100%)',
+                        }}
+                    >
+                        <div className="mx-auto w-full max-w-[1900px] px-6 sm:px-10 lg:px-16 xl:px-20">
                             <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-2 md:gap-6 xl:gap-4">
                                 {footerSections.map((section) => (
                                     <FooterColumn key={section.title} section={section} />
@@ -472,17 +474,22 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                         </div>
                     </div>
 
-                    {/* Bottom White Section */}
-                    <div className="bg-white border-t border-gray-200 py-4">
-                        <div className="mx-auto w-full max-w-[1900px] px-6 lg:px-12 flex flex-col md:flex-row items-center justify-between gap-4">
-                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 text-[10px] text-gray-600">
+                    {/* Bottom Light Blue Section */}
+                    <div
+                        className="border-t border-blue-100 py-6"
+                        style={{
+                            background: 'linear-gradient(90deg, #eaf2ff 0%, #f8fbff 100%)',
+                        }}
+                    >
+                        <div className="mx-auto w-full max-w-[1900px] px-6 lg:px-16 xl:px-20 flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 text-xs sm:text-sm text-[#0b2e71]">
                                 <span>© 2000-{new Date().getFullYear()} PlexusBiz Inc. All rights reserved.</span>
                                 <div className="flex flex-wrap justify-center sm:justify-start items-center gap-3">
-                                    <a href="#" className="hover:text-blue-600 hover:underline whitespace-nowrap">Terms & Conditions</a>
-                                    <a href="#" className="hover:text-blue-600 hover:underline whitespace-nowrap">Privacy Policy</a>
-                                    <a href="#" className="flex items-center gap-1 hover:text-blue-600 hover:underline whitespace-nowrap">
+                                    <a href="#" className="font-medium hover:text-[#1f68d9] hover:underline whitespace-nowrap">Terms & Conditions</a>
+                                    <a href="#" className="font-medium hover:text-[#1f68d9] hover:underline whitespace-nowrap">Privacy Policy</a>
+                                    <a href="#" className="flex items-center gap-1 font-medium hover:text-[#1f68d9] hover:underline whitespace-nowrap">
                                         Your Privacy Choices
-                                        <svg className="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
+                                        <svg className="w-5 h-5 text-[#1f68d9]" viewBox="0 0 24 24" fill="currentColor">
                                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                                         </svg>
                                     </a>

@@ -63,8 +63,8 @@ export default function Dashboard({ auth, dashboard }) {
             <Head title="Dashboard" />
 
             <div className="py-10">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                         {dashboard.cards.map((card) => (
                             <StatCard key={card.label} card={card} />
                         ))}
@@ -72,12 +72,12 @@ export default function Dashboard({ auth, dashboard }) {
 
                     <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
                         <section className="rounded-[24px] border border-gray-200 bg-white p-6 shadow-sm">
-                            <div className="flex items-center justify-between gap-4">
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                 <div>
                                     <h3 className="text-base font-black tracking-[-0.03em] text-gray-950">Permissions</h3>
                                     <p className="mt-1 text-sm text-gray-600">Resolved from assigned roles and direct permissions.</p>
                                 </div>
-                                <span className="rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
+                                <span className="w-fit rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
                                     {dashboard.permissions.length} active
                                 </span>
                             </div>

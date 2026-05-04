@@ -144,19 +144,23 @@ function Pagination({ links }) {
     );
 }
 
-export default function Index({ auth, flash, cartCount, categories, featuredProducts, products, filters, currency }) {
+export default function Index({ auth, flash, errors, cartCount, categories, featuredProducts, products, filters, currency }) {
     const [search, setSearch] = useState(filters?.search || '');
     const [category, setCategory] = useState(filters?.category || '');
+    const validationMessage = Object.values(errors || {}).find(Boolean);
 
     const activeCategory = useMemo(() => category || '', [category]);
+    const activeQuick = filters?.quick || '';
+    const nextQuery = (nextCategory = activeCategory, nextQuick = activeQuick) => ({
+        search: search.trim() || undefined,
+        category: nextCategory || undefined,
+        quick: nextQuick || undefined,
+    });
 
-    const runSearch = (nextCategory = activeCategory) => {
+    const runSearch = (nextCategory = activeCategory, nextQuick = activeQuick) => {
         router.get(
             route('products.index'),
-            {
-                search: search.trim() || undefined,
-                category: nextCategory || undefined,
-            },
+            nextQuery(nextCategory, nextQuick),
             {
                 preserveScroll: true,
                 preserveState: false,
@@ -176,7 +180,9 @@ export default function Index({ auth, flash, cartCount, categories, featuredProd
                             <div className="space-y-5 text-white">
                                 <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#ffd59a]">
                                     Live marketplace
-                                    <span className="rounded-full bg-white/15 px-2 py-0.5 text-white">{products?.meta?.total ?? 0} products</span>
+                                    <span className="rounded-full bg-white/15 px-2 py-0.5 text-white">
+                                        {products?.meta?.total || products?.data?.length || 0} products
+                                    </span>
                                 </div>
 
                                 <div className="space-y-3">
@@ -208,10 +214,37 @@ export default function Index({ auth, flash, cartCount, categories, featuredProd
                                     <button
                                         type="submit"
                                         className="h-12 rounded-full bg-[#ff8a00] px-6 text-sm font-black uppercase tracking-[0.16em] text-white transition hover:bg-[#ef7400]"
-                                    >
-                                        Search
-                                    </button>
-                                </form>
+                                >
+                                    Search
+                                </button>
+                            </form>
+
+                            <div className="flex flex-wrap items-center gap-2">
+                                <span className="text-[11px] font-black uppercase tracking-[0.24em] text-blue-200">
+                                    Quick picks
+                                </span>
+                                {[
+                                    { label: 'Bulk Orders', key: 'bulk' },
+                                    { label: 'MOQ Pricing', key: 'moq' },
+                                ].map((item) => {
+                                    const isActive = activeQuick === item.key;
+
+                                    return (
+                                        <Link
+                                            key={item.key}
+                                            href={route('products.index', nextQuery(activeCategory, item.key))}
+                                            preserveScroll
+                                            className={`rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.16em] transition ${
+                                                isActive
+                                                    ? 'border-white bg-white text-[#0b2e71]'
+                                                    : 'border-white/20 bg-white/10 text-white hover:bg-white/15'
+                                            }`}
+                                        >
+                                            {item.label}
+                                        </Link>
+                                    );
+                                })}
+                            </div>
 
                                 <div className="flex flex-wrap gap-2">
                                     <button
@@ -294,6 +327,7 @@ export default function Index({ auth, flash, cartCount, categories, featuredProd
 
                     <FlashBanner message={flash?.success} className="mt-5" />
                     <FlashBanner message={flash?.error} type="error" className="mt-5" />
+                    <FlashBanner message={validationMessage} type="error" className="mt-5" />
 
                     <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
                         <div className="space-y-5">

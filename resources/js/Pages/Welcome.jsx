@@ -1,61 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import FrontendLayout from '@/Layouts/FrontendLayout';
-
-const utilityLinks = [
-    { label: "Today's Best Deals", href: '#deals' },
-    { label: 'Best Sellers', href: '#featured' },
-    { label: 'PC Builder', href: '#build' },
-    { label: 'Business', href: '#footer' },
-    { label: 'Help Center', href: '#footer' },
-];
-
-const categoryPills = [
-    'Components',
-    'Systems',
-    'Peripherals',
-    'Networking',
-    'Gaming',
-    'Smart Home',
-    'Office',
-    'Software',
-    'Automotive',
-    'Clearance',
-];
-
-const categoryMenu = [
-    {
-        title: 'Components & Storage',
-        detail: 'CPUs, motherboards, SSDs, cooling, and power',
-    },
-    {
-        title: 'Computer Systems',
-        detail: 'Desktops, laptops, mini PCs, and all-in-ones',
-    },
-    {
-        title: 'Computer Peripherals',
-        detail: 'Keyboards, mice, displays, audio, and docks',
-    },
-    {
-        title: 'Networking',
-        detail: 'Wi-Fi, routers, switches, and access points',
-    },
-    {
-        title: 'Gaming & VR',
-        detail: 'PC gaming, headsets, accessories, and capture',
-    },
-    {
-        title: 'Smart Home & Security',
-        detail: 'Lighting, cameras, sensors, and home automation',
-    },
-    {
-        title: 'Office Solutions',
-        detail: 'Printers, productivity gear, and workspace tools',
-    },
-    {
-        title: 'Home & Outdoors',
-        detail: 'Storage, hobby tech, and everyday essentials',
-    },
-];
+import LandingPromoStrip from '@/Components/LandingPromoStrip';
 
 const heroStats = [
     {
@@ -449,44 +394,11 @@ function FooterColumn({ section }) {
     );
 }
 
-const topSearchSuggestions = [
-    'gaming monitor',
-    'am5 motherboard',
-    'arc a380',
-    'small form factor gaming pc',
-    'nvidia dgx spark',
-];
-
-const headerNavLinks = [
-    { label: 'Shell Shocker', href: '#shell' },
-    { label: 'PC Builder', href: '#build' },
-    { label: 'Shopping Tools', href: '#tools' },
-    { label: 'Clearance', href: '#deals' },
-    { label: 'Best Sellers', href: '#featured' },
-    { label: 'PlexusBiz Card', href: '#footer' },
-    { label: 'Free Gift w/ AMD', href: '#deals' },
-    { label: 'Games', href: '#games', active: true },
-    { label: 'Laptop Upgrade', href: '#deals' },
-    { label: 'Trade-In', href: '#footer' },
-    { label: 'Gamer Community', href: '#community' },
-];
-
-const categoryRailItems = [
-    { abbr: 'CPU', title: 'Components & Storage' },
-    { abbr: 'SYS', title: 'Computer Systems' },
-    { abbr: 'PER', title: 'Computer Peripherals' },
-    { abbr: 'SRV', title: 'Server & Components' },
-    { abbr: 'APP', title: 'Appliances' },
-    { abbr: 'ELE', title: 'Electronics' },
-    { abbr: 'VR', title: 'Gaming & VR' },
-    { abbr: 'NET', title: 'Networking' },
-    { abbr: 'SMH', title: 'Smart Home & Security' },
-    { abbr: 'OFF', title: 'Office Solutions' },
-    { abbr: 'SFW', title: 'Software & Services' },
-    { abbr: 'AUTO', title: 'Automotive & Tools' },
-    { abbr: 'HOM', title: 'Home & Outdoors' },
-    { abbr: 'HEA', title: 'Health & Sports' },
-    { abbr: 'DRN', title: 'Toys, Drones & Maker' },
+const marketplaceShortcutItems = [
+    { abbr: 'PRO', title: 'Products', href: route('products.index') },
+    { abbr: 'ORD', title: 'Orders', href: route('commerce.orders.index') },
+    { abbr: 'INV', title: 'Invoices', href: route('invoices.index') },
+    { abbr: 'SUP', title: 'Support', href: route('support.tickets.index') },
 ];
 
 const comboBundlesPrimary = [
@@ -1334,10 +1246,10 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                             <div className="mb-4 flex items-center justify-between gap-3 border-b border-white/10 pb-3">
                                 <div>
                                     <p className="text-[11px] font-black uppercase tracking-[0.22em] text-white/55">
-                                        Shop categories
+                                        Marketplace shortcuts
                                     </p>
                                     <h2 className="mt-2 text-lg font-black tracking-[-0.03em]">
-                                        Browse by department
+                                        Core B2B actions
                                     </h2>
                                 </div>
                                 <span className="rounded-full bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#ffd59a]">
@@ -1346,10 +1258,10 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                             </div>
 
                             <div className="space-y-1">
-                                {categoryRailItems.map((item) => (
-                                    <button
+                                {marketplaceShortcutItems.map((item) => (
+                                    <Link
                                         key={item.title}
-                                        type="button"
+                                        href={item.href}
                                         className="flex w-full items-center gap-3 rounded-[16px] px-2 py-2 text-left transition hover:bg-white/8"
                                     >
                                         <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md border border-white/10 bg-white/10 text-[10px] font-black tracking-[0.08em] text-[#dce8ff]">
@@ -1358,8 +1270,8 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                                         <span className="min-w-0 flex-1 text-sm font-semibold leading-5 text-white">
                                             {item.title}
                                         </span>
-                                        <span className="text-lg font-black text-white/35">›</span>
-                                    </button>
+                                        <span className="text-lg font-black text-white/35">&gt;</span>
+                                    </Link>
                                 ))}
                             </div>
                         </aside>
@@ -1396,10 +1308,10 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                                                 href="#build"
                                                 className="inline-flex rounded-full border border-white/20 bg-white/10 px-5 py-2.5 text-xs font-black uppercase tracking-[0.16em] text-white transition hover:bg-white/20"
                                             >
-                                                PC Builder
-                                            </a>
-                                        </div>
+                                            Bulk orders
+                                        </a>
                                     </div>
+                                </div>
 
                                     <div className="relative flex items-end justify-end">
                                         <div className="w-full max-w-[360px] rounded-[24px] border border-white/15 bg-white/10 p-4 backdrop-blur">
@@ -1629,6 +1541,8 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                             </div>
                         </div>
                     </section>
+
+                    <LandingPromoStrip />
                 </main>
             </div>
         </FrontendLayout>

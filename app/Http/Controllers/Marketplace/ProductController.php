@@ -10,6 +10,7 @@ use App\Domains\ECommerce\Models\Product;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\ProductResource;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -21,32 +22,21 @@ class ProductController extends Controller
     {
         $search = trim((string) $request->query('search', ''));
         $categorySlug = trim((string) $request->query('category', ''));
+        $quick = trim((string) $request->query('quick', ''));
 
-        $query = Product::query()
+        $baseQuery = Product::query()
             ->with(['supplier', 'category', 'images', 'pricingTiers'])
             ->where('status', ProductStatus::Active->value);
 
-        if ($search !== '') {
-            $query->where(function ($builder) use ($search): void {
-                $builder->where('sku', 'like', '%'.$search.'%')
-                    ->orWhere('name', 'like', '%'.$search.'%')
-                    ->orWhereHas('supplier', fn ($supplier) => $supplier->where('company_name', 'like', '%'.$search.'%'));
-            });
-        }
+        $this->applyCatalogFilters($baseQuery, $search, $categorySlug, $quick);
 
-        if ($categorySlug !== '') {
-            $query->whereHas('category', fn ($category) => $category->where('slug', $categorySlug));
-        }
-
-        $products = $query
+        $products = (clone $baseQuery)
             ->latest('published_at')
             ->paginate(12)
             ->withQueryString()
             ->through(fn (Product $product): array => $this->presentProductCard($product));
 
-        $featuredProducts = Product::query()
-            ->with(['supplier', 'category', 'images', 'pricingTiers'])
-            ->where('status', ProductStatus::Active->value)
+        $featuredProducts = (clone $baseQuery)
             ->latest('published_at')
             ->limit(6)
             ->get()
@@ -75,6 +65,7 @@ class ProductController extends Controller
             'filters' => [
                 'search' => $search,
                 'category' => $categorySlug,
+                'quick' => $quick,
             ],
             'cartCount' => $this->cartCount($request->user()),
             'categories' => $categories,
@@ -82,6 +73,38 @@ class ProductController extends Controller
             'products' => $products,
             'currency' => config('commerce.currency', 'BDT'),
         ]);
+    }
+
+    private function applyCatalogFilters(Builder $query, string $search, string $categorySlug, string $quick): void
+    {
+        if ($search !== '') {
+            $query->where(function (Builder $builder) use ($search): void {
+                $builder->where('sku', 'like', '%'.$search.'%')
+                    ->orWhere('name', 'like', '%'.$search.'%')
+                    ->orWhereHas('supplier', fn ($supplier) => $supplier->where('company_name', 'like', '%'.$search.'%'));
+            });
+        }
+
+        if ($categorySlug !== '') {
+            $query->whereHas('category', fn ($category) => $category->where('slug', $categorySlug));
+        }
+
+        if ($quick === '') {
+            return;
+        }
+
+        switch ($quick) {
+            case 'bulk':
+                $query->where(function (Builder $builder): void {
+                    $builder->where('moq', '>', 1)
+                        ->orWhereHas('pricingTiers');
+                });
+                break;
+
+            case 'moq':
+                $query->where('moq', '>', 1);
+                break;
+        }
     }
 
     public function show(Request $request, Product $product): Response

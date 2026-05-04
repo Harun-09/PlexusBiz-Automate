@@ -1,149 +1,108 @@
-import { useState } from 'react';
 import { Link } from '@inertiajs/react';
 
-export default function Footer() {
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
+const footerSections = [
+    {
+        title: 'Quick Links',
+        links: [
+            { label: 'Marketplace', href: '/marketplace' },
+            { label: 'About Us', href: '/about' },
+            { label: 'Contact', href: '/contact' },
+        ],
+    },
+    {
+        title: 'Support',
+        links: [
+            { label: 'Help Center', href: '/support/tickets' },
+            { label: 'FAQs', href: '/faq' },
+        ],
+    },
+    {
+        title: 'Contact',
+        links: [
+            { label: 'Dhaka, Bangladesh', text: true },
+            { label: 'support@plexusbiz.com', href: 'mailto:support@plexusbiz.com' },
+        ],
+    },
+    {
+        title: 'Legal',
+        links: [
+            { label: 'Terms', href: '/terms' },
+            { label: 'Privacy', href: '/privacy' },
+        ],
+    },
+];
 
-    const handleEmailSubmit = (e) => {
-        e.preventDefault();
-        alert('Thank you for subscribing!');
-        setEmail('');
-    };
-
-    const handleSendLink = (e) => {
-        e.preventDefault();
-        alert('Download link sent!');
-        setPhone('');
-    };
-
+export default function FooterSimple() {
     return (
-        <>
-            {/* SEO Section */}
-            <section className="bg-gray-50 border-t border-gray-200 py-8">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                        Make <strong>PlexusBiz</strong> your one-stop B2B marketplace for industrial supplies, 
-                        office equipment, and safety gear. Serving businesses across Asia Pacific and beyond 
-                        with competitive wholesale pricing and volume discounts.
-                    </p>
-                </div>
-            </section>
-
-            {/* Deals & App Cards */}
-            <section className="bg-indigo-50 border-t border-indigo-100 py-8">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        
-                        {/* Card 1 - Email */}
-                        <div className="bg-white rounded-xl shadow p-6">
-                            <h3 className="text-lg font-bold text-gray-900 italic mb-2">
-                                Deals Just For You
-                            </h3>
-                            <p className="text-sm text-gray-600 mb-4">
-                                Sign up to receive exclusive offers in your inbox.
-                            </p>
-                            <form onSubmit={handleEmailSubmit} className="flex">
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="Enter your e-mail address"
-                                    className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    required
+        <footer id="footer" className="w-full text-white">
+            <div
+                className="border-t border-white/10 bg-gradient-to-r from-[#0b2e71] to-[#1f68d9] py-10"
+            >
+                <div className="mx-auto w-full max-w-[1900px] px-4 sm:px-6 lg:px-8 xl:px-10">
+                    <div className="mb-8 flex flex-col gap-5 border-b border-white/20 pb-6 sm:flex-row sm:items-end sm:justify-between">
+                        <Link href="/" className="group inline-flex items-center gap-4">
+                            <span className="grid h-16 w-16 shrink-0 place-items-center rounded-[22px] border border-white/15 bg-white p-2 shadow-[0_18px_42px_-26px_rgba(0,0,0,0.45)] transition group-hover:scale-[1.02]">
+                                <img
+                                    src="/images/project-logo.png"
+                                    alt="PlexusBiz Automate"
+                                    className="h-full w-full rounded-[16px] object-cover"
                                 />
-                                <button
-                                    type="submit"
-                                    className="px-6 py-2 bg-blue-600 text-white text-sm font-semibold rounded-r-md hover:bg-blue-700"
-                                >
-                                    Sign up
-                                </button>
-                            </form>
-                            <Link href="#" className="text-sm text-blue-600 hover:text-blue-800 mt-3 inline-block">
-                                View Latest Email Deals →
-                            </Link>
-                        </div>
-
-                        {/* Card 2 - App */}
-                        <div className="bg-white rounded-xl shadow p-6">
-                            <h3 className="text-lg font-bold text-gray-900 mb-2">
-                                Download Our APP
-                            </h3>
-                            <p className="text-sm text-gray-600 mb-4">
-                                Enter your phone number and we'll send a download link.
-                            </p>
-                            <form onSubmit={handleSendLink} className="flex">
-                                <span className="px-3 py-2 bg-gray-100 border border-r-0 border-gray-300 rounded-l-md text-sm text-gray-600">
-                                    +1
+                            </span>
+                            <span className="min-w-0 space-y-1">
+                                <span className="inline-flex w-fit rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-[#ffd59a]">
+                                    B2B Marketplace
                                 </span>
-                                <input
-                                    type="tel"
-                                    value={phone}
-                                    onChange={(e) => setPhone(e.target.value)}
-                                    placeholder="Enter your phone number"
-                                    className="flex-1 px-4 py-2 text-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    required
-                                />
-                                <button
-                                    type="submit"
-                                    className="px-5 py-2 bg-blue-500 text-white text-sm font-semibold rounded-r-md hover:bg-blue-600"
-                                >
-                                    Send Link
-                                </button>
-                            </form>
-                            <div className="flex items-center gap-3 mt-4">
-                                <span className="text-sm text-gray-500">OR</span>
-                                <div className="w-12 h-12 bg-gray-200 rounded"></div>
-                                <div className="text-xs">
-                                    <p className="font-medium text-gray-900">Scan QR code</p>
-                                    <p className="text-gray-500">to download App</p>
-                                </div>
+                                <span className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                                    <span className="text-[2rem] font-black tracking-[-0.07em] text-white transition group-hover:text-[#ffd59a] sm:text-[2.2rem]">
+                                        PlexusBiz
+                                    </span>
+                                    <span className="text-[11px] font-semibold uppercase tracking-[0.38em] text-white/65">
+                                        Commerce Hub
+                                    </span>
+                                </span>
+                                <span className="block max-w-xl text-sm leading-6 text-white/78">
+                                    B2B commerce, supplier onboarding, bulk orders, invoices, and support in one place.
+                                </span>
+                            </span>
+                        </Link>
+
+                        <div className="flex flex-wrap gap-2 text-xs font-black uppercase tracking-[0.18em] text-white/70 sm:justify-end">
+                            <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1">Bulk Orders</span>
+                            <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1">Supplier Tools</span>
+                            <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1">Invoices</span>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-8 text-sm md:grid-cols-4">
+                        {footerSections.map((section) => (
+                            <div key={section.title}>
+                                <h4 className="mb-3 font-semibold">{section.title}</h4>
+                                <ul className="space-y-2 text-white/90">
+                                    {section.links.map((link) => (
+                                        <li key={link.label}>
+                                            {link.text ? (
+                                                <span>{link.label}</span>
+                                            ) : link.href.startsWith('mailto:') || link.href.startsWith('#') ? (
+                                                <a href={link.href} className="hover:text-white">
+                                                    {link.label}
+                                                </a>
+                                            ) : (
+                                                <Link href={link.href} className="hover:text-white">
+                                                    {link.label}
+                                                </Link>
+                                            )}
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
-                        </div>
+                        ))}
+                    </div>
 
+                    <div className="mt-8 border-t border-white/20 pt-4 text-center text-sm text-white/90">
+                        &copy; 2024 PlexusBiz Automate. All rights reserved.
                     </div>
                 </div>
-            </section>
-
-            {/* Main Footer */}
-            <footer className="bg-slate-900 text-white py-8">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-sm">
-                        <div>
-                            <h4 className="font-semibold mb-3">Quick Links</h4>
-                            <ul className="space-y-2 text-slate-400">
-                                <li><Link href="/marketplace" className="hover:text-white">Marketplace</Link></li>
-                                <li><Link href="/about" className="hover:text-white">About Us</Link></li>
-                                <li><Link href="/contact" className="hover:text-white">Contact</Link></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 className="font-semibold mb-3">Support</h4>
-                            <ul className="space-y-2 text-slate-400">
-                                <li><Link href="/support/tickets" className="hover:text-white">Help Center</Link></li>
-                                <li><Link href="/faq" className="hover:text-white">FAQs</Link></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 className="font-semibold mb-3">Contact</h4>
-                            <ul className="space-y-2 text-slate-400">
-                                <li>Dhaka, Bangladesh</li>
-                                <li>support@plexusbiz.com</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 className="font-semibold mb-3">Legal</h4>
-                            <ul className="space-y-2 text-slate-400">
-                                <li><Link href="/terms" className="hover:text-white">Terms</Link></li>
-                                <li><Link href="/privacy" className="hover:text-white">Privacy</Link></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div className="border-t border-slate-800 mt-8 pt-4 text-center text-sm text-slate-400">
-                        © 2024 PlexusBiz Automate. All rights reserved.
-                    </div>
-                </div>
-            </footer>
-        </>
+            </div>
+        </footer>
     );
 }

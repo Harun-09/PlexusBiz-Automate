@@ -202,9 +202,10 @@ function SuggestionCard({ product, currency }) {
     );
 }
 
-export default function Index({ auth, flash, cart, suggestions, currency }) {
+export default function Index({ auth, flash, errors, cart, suggestions, currency }) {
     const summary = cart?.summary || {};
     const items = Array.isArray(cart?.items) ? cart.items : [];
+    const validationMessage = Object.values(errors || {}).find(Boolean);
 
     return (
         <FrontendLayout auth={auth} canLogin={true} cartCount={cart?.summary?.items_count || 0}>
@@ -277,6 +278,7 @@ export default function Index({ auth, flash, cart, suggestions, currency }) {
 
                     <FlashBanner message={flash?.success} className="mt-5" />
                     <FlashBanner message={flash?.error} type="error" className="mt-5" />
+                    <FlashBanner message={validationMessage} type="error" className="mt-5" />
 
                     {items.length > 0 ? (
                         <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
