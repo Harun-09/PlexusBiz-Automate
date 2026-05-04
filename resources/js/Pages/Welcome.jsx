@@ -999,19 +999,54 @@ function SectionHeading({ kicker, title, action, href = '#' }) {
 
 function PlexusBizMark() {
     return (
-        <Link href="/" className="flex items-center gap-3">
+        <Link href="/" className="flex shrink-0 items-center gap-2 sm:gap-3">
             <img
                 src="/images/project-logo.png"
                 alt="PlexusBiz Automate"
-                className="h-12 w-12 rounded-full bg-white object-cover shadow-[0_0_18px_rgba(255,255,255,0.18)]"
+                className="h-11 w-11 rounded-full bg-white object-cover shadow-[0_0_18px_rgba(255,255,255,0.18)] sm:h-12 sm:w-12"
             />
-            <span className="leading-tight">
+            <span className="hidden leading-tight sm:block">
                 <span className="block text-[20px] font-black tracking-[-0.04em] text-white">PlexusBiz</span>
                 <span className="block text-[11px] font-semibold uppercase tracking-[0.24em] text-white/70">
                     commerce hub
                 </span>
             </span>
         </Link>
+    );
+}
+
+function AddressTile() {
+    return (
+        <button
+            type="button"
+            className="flex min-w-0 items-center gap-2 rounded-[18px] px-2 py-2 text-left transition hover:bg-white/10 sm:gap-3 sm:px-3 xl:hidden"
+        >
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/15 bg-[#2c5fb7] shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] sm:h-9 sm:w-9">
+                <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="h-4.5 w-4.5 text-white sm:h-5 sm:w-5"
+                    fill="none"
+                >
+                    <path
+                        d="M12 2.75c-3.6 0-6.5 2.8-6.5 6.3 0 4.9 6.5 11.9 6.5 11.9s6.5-7 6.5-11.9c0-3.5-2.9-6.3-6.5-6.3Z"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinejoin="round"
+                    />
+                    <path
+                        d="M12 6.9a2.1 2.1 0 1 1 0 4.2 2.1 2.1 0 0 1 0-4.2Z"
+                        fill="currentColor"
+                    />
+                </svg>
+            </span>
+            <span className="leading-tight">
+                <span className="block text-[10px] font-semibold text-white/75 sm:text-[11px]">Hello</span>
+                <span className="block text-[13px] font-black tracking-[-0.02em] text-white sm:text-sm">
+                    Select address
+                </span>
+            </span>
+        </button>
     );
 }
 
@@ -1296,6 +1331,8 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                     <div className="border-b border-[#042e6f] bg-[#0b2e71] text-white shadow-[0_10px_24px_-18px_rgba(7,18,46,0.8)]">
                         <div className="mx-auto grid w-full max-w-[1900px] grid-cols-[auto_auto_minmax(0,1fr)] items-center gap-3 px-4 py-3 sm:px-6 xl:grid-cols-[auto_auto_minmax(0,1fr)_auto] xl:gap-4 xl:px-8">
                             <PlexusBizMark />
+
+                            <AddressTile />
 
                             <button
                                 type="button"
