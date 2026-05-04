@@ -48,10 +48,17 @@ class RbacSeeder extends Seeder
             PermissionName::ManageMarketing->value,
         ]);
 
+        $roles[RoleName::WorkflowManager->value]->syncPermissions([
+            PermissionName::ViewDashboard->value,
+            PermissionName::ManageAutomationRules->value,
+            PermissionName::ManageWorkflowLogs->value,
+        ]);
+
         $this->seedRoleUser('Admin User', 'admin@plexus.test', RoleName::Admin);
         $this->seedRoleUser('Supplier User', 'supplier@plexus.test', RoleName::Supplier);
         $this->seedRoleUser('Buyer User', 'buyer@plexus.test', RoleName::Buyer);
         $this->seedRoleUser('Marketing Manager', 'marketing@plexus.test', RoleName::MarketingManager);
+        $this->seedRoleUser('Workflow Manager', 'workflow@plexus.test', RoleName::WorkflowManager);
     }
 
     private function seedRoleUser(string $name, string $email, RoleName $role): void

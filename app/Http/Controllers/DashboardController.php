@@ -13,9 +13,11 @@ use App\Domains\Social\Models\SocialPost;
 use App\Domains\Support\Enums\TicketStatus;
 use App\Domains\Support\Models\SupportTicket;
 use App\Domains\Workflow\Enums\WorkflowLogStatus;
+use App\Domains\Workflow\Models\AutomationRule;
 use App\Domains\Workflow\Models\WorkflowLog;
 use App\Enums\RoleName;
 use App\Models\User;
+use App\Support\Audit\Models\AuditLog;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -50,6 +52,7 @@ class DashboardController extends Controller
             RoleName::Admin => $this->adminCards(),
             RoleName::Supplier => $this->supplierCards($user),
             RoleName::MarketingManager => $this->marketingCards(),
+            RoleName::WorkflowManager => $this->workflowManagerCards(),
             RoleName::Buyer => $this->buyerCards($user),
         };
     }
@@ -88,6 +91,12 @@ class DashboardController extends Controller
                 $this->formatCount($pendingPayments),
                 'Orders that still need payment completion.',
                 'rose',
+            ),
+            $this->statCard(
+                'Audit Logs',
+                $this->formatCount(AuditLog::count()),
+                'Critical admin and workflow changes recorded so far.',
+                'slate',
             ),
         ];
     }
@@ -231,6 +240,44 @@ class DashboardController extends Controller
     }
 
     /**
+     * @return array<int, array<string, string>>
+     */
+    private function workflowManagerCards(): array
+    {
+        $activeRules = AutomationRule::where('status', 'active')->count();
+        $totalRuns = WorkflowLog::count();
+        $failedRuns = WorkflowLog::where('status', WorkflowLogStatus::Failed->value)->count();
+        $runningRuns = WorkflowLog::where('status', WorkflowLogStatus::Running->value)->count();
+
+        return [
+            $this->statCard(
+                'Active Rules',
+                $this->formatCount($activeRules),
+                'Automation rules currently eligible to run.',
+                'blue',
+            ),
+            $this->statCard(
+                'Workflow Runs',
+                $this->formatCount($totalRuns),
+                'Execution logs captured with payload snapshots.',
+                'emerald',
+            ),
+            $this->statCard(
+                'Failed Runs',
+                $this->formatCount($failedRuns),
+                'Automation executions that need review.',
+                'rose',
+            ),
+            $this->statCard(
+                'Running',
+                $this->formatCount($runningRuns),
+                'Queued or in-progress automation executions.',
+                'amber',
+            ),
+        ];
+    }
+
+    /**
      * @return array<string, string>
      */
     private function statCard(string $label, string $value, string $description, string $tone): array
@@ -263,21 +310,27 @@ class DashboardController extends Controller
                 ['label' => 'Users', 'href' => '/admin/users'],
                 ['label' => 'Suppliers', 'href' => '/admin/suppliers'],
                 ['label' => 'Module Settings', 'href' => '/settings/modules'],
+                ['label' => 'Audit Logs', 'href' => '/admin/audit-logs'],
                 ['label' => 'Workflow Logs', 'href' => '/workflow/logs'],
             ],
             RoleName::Supplier => [
                 ['label' => 'Products', 'href' => '/commerce/products'],
-                ['label' => 'Inventory', 'href' => '/commerce/inventory'],
+                ['label' => 'Inventory', 'href' => '/commerce/products'],
                 ['label' => 'Orders', 'href' => '/commerce/orders'],
             ],
             RoleName::MarketingManager => [
                 ['label' => 'Campaigns', 'href' => '/marketing/campaigns'],
                 ['label' => 'Social Calendar', 'href' => '/social/calendar'],
-                ['label' => 'Automation Rules', 'href' => '/workflow/rules'],
+                ['label' => 'Workflow Logs', 'href' => '/workflow/logs'],
+            ],
+            RoleName::WorkflowManager => [
+                ['label' => 'Workflow Logs', 'href' => '/workflow/logs'],
+                ['label' => 'Failed Logs', 'href' => '/workflow/logs?status=failed'],
+                ['label' => 'Dashboard', 'href' => '/dashboard'],
             ],
             RoleName::Buyer => [
                 ['label' => 'Marketplace', 'href' => '/marketplace'],
-                ['label' => 'Cart', 'href' => '/commerce/cart'],
+                ['label' => 'Cart', 'href' => '/cart'],
                 ['label' => 'Support', 'href' => '/support/tickets'],
             ],
         };

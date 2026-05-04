@@ -24,6 +24,7 @@ class WorkspaceRoutesTest extends TestCase
         $buyer = User::where('email', 'buyer@plexus.test')->firstOrFail();
 
         $this->actingAs($admin)->get('/admin')->assertOk();
+        $this->actingAs($admin)->get('/admin/audit-logs')->assertOk();
         $this->actingAs($buyer)->get('/admin')->assertForbidden();
     }
 
@@ -34,12 +35,15 @@ class WorkspaceRoutesTest extends TestCase
         $buyer = User::where('email', 'buyer@plexus.test')->firstOrFail();
         $supplier = User::where('email', 'supplier@plexus.test')->firstOrFail();
         $marketing = User::where('email', 'marketing@plexus.test')->firstOrFail();
+        $workflow = User::where('email', 'workflow@plexus.test')->firstOrFail();
 
         $this->actingAs($buyer)->get('/marketplace')->assertOk();
         $this->actingAs($buyer)->get('/support/tickets')->assertOk();
+        $this->actingAs($buyer)->get('/notifications')->assertOk();
         $this->actingAs($supplier)->get('/commerce/products')->assertOk();
         $this->actingAs($marketing)->get('/marketing/campaigns')->assertOk();
         $this->actingAs($marketing)->get('/workflow/logs')->assertOk();
+        $this->actingAs($workflow)->get('/workflow/logs')->assertOk();
     }
 
     public function test_workspace_tables_support_search_and_status_filters(): void

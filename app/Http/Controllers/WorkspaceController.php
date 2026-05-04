@@ -12,6 +12,7 @@ use App\Domains\ECommerce\Models\Product;
 use App\Domains\ECommerce\Models\Supplier;
 use App\Domains\Marketing\Enums\CampaignStatus;
 use App\Domains\Marketing\Models\Campaign;
+use App\Domains\Notifications\Models\Message;
 use App\Domains\Social\Enums\SocialPostStatus;
 use App\Domains\Social\Models\SocialPost;
 use App\Domains\Support\Enums\TicketStatus;
@@ -20,9 +21,11 @@ use App\Domains\Workflow\Enums\WorkflowLogStatus;
 use App\Domains\Workflow\Models\WorkflowLog;
 use App\Enums\UserStatus;
 use App\Models\User;
+use App\Support\Audit\Models\AuditLog;
 use BackedEnum;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -38,7 +41,58 @@ class WorkspaceController extends Controller
             ['label' => 'Campaigns', 'value' => Campaign::count()],
             ['label' => 'Scheduled Posts', 'value' => SocialPost::where('status', 'scheduled')->count()],
             ['label' => 'Failed Automations', 'value' => WorkflowLog::where('status', 'failed')->count()],
+            ['label' => 'Audit Logs', 'value' => AuditLog::count()],
         ], ['Metric', 'Value'], [], 'Admin KPIs are shown above.');
+    }
+
+    public function auditLogs(Request $request): Response
+    {
+        $filters = $this->filters($request);
+
+        $query = AuditLog::query()->with('actor');
+
+        if ($filters['search'] !== '') {
+            $search = $filters['search'];
+
+            $query->where(function (Builder $query) use ($search): void {
+                $query->where('module_key', 'like', '%'.$search.'%')
+                    ->orWhere('action', 'like', '%'.$search.'%')
+                    ->orWhere('subject_label', 'like', '%'.$search.'%')
+                    ->orWhere('description', 'like', '%'.$search.'%')
+                    ->orWhereHas('actor', fn (Builder $actor) => $actor
+                        ->where('name', 'like', '%'.$search.'%')
+                        ->orWhere('email', 'like', '%'.$search.'%'));
+            });
+        }
+
+        $rows = $query
+            ->latest()
+            ->limit(50)
+            ->get()
+            ->map(fn (AuditLog $log): array => [
+                'Action' => $this->labelForAuditValue($log->action),
+                'Module' => $this->labelForAuditValue($log->module_key),
+                'Actor' => $log->actor ? "{$log->actor->name} ({$log->actor->email})" : 'System',
+                'Subject' => $log->subject_label ?: ($log->subject_type ? class_basename($log->subject_type) : 'n/a'),
+                'Description' => $log->description ?? '',
+                'Executed' => $log->created_at?->format('Y-m-d H:i') ?? 'n/a',
+                'IP' => $log->ip_address ?? 'n/a',
+            ]);
+
+        return $this->page(
+            'Audit Logs',
+            'Critical admin and workflow changes with actor, subject, and request context.',
+            [
+                ['label' => 'Total Logs', 'value' => AuditLog::count()],
+                ['label' => 'Today', 'value' => AuditLog::whereDate('created_at', today())->count()],
+                ['label' => 'Admin Changes', 'value' => AuditLog::where('module_key', 'admin')->count()],
+                ['label' => 'Workflow Changes', 'value' => AuditLog::where('module_key', 'workflow')->count()],
+            ],
+            ['Action', 'Module', 'Actor', 'Subject', 'Description', 'Executed', 'IP'],
+            $rows,
+            'No audit logs found.',
+            $filters,
+        );
     }
 
     public function users(Request $request): Response
@@ -237,6 +291,7 @@ class WorkspaceController extends Controller
 
         $rows = $this->applyListFilters(WorkflowLog::query()->with('rule'), $filters, ['trigger_event', 'error'])
             ->latest()
+            ->orderByDesc('id')
             ->limit(50)
             ->get()
             ->map(fn (WorkflowLog $log): array => [
@@ -278,6 +333,42 @@ class WorkspaceController extends Controller
             ]);
 
         return $this->page('Support Tickets', 'Buyer and supplier support tickets with automated replies and supplier notifications.', [], ['Ticket', 'Subject', 'Requester', 'Supplier', 'Priority', 'Status', 'Updated'], $rows, filters: $filters);
+    }
+
+    public function notifications(Request $request): Response
+    {
+        $filters = $this->filters($request);
+        $query = Message::query()->with(['sender', 'receiver']);
+
+        if (! $request->user()->hasRole('admin')) {
+            $query->where('receiver_id', $request->user()->id);
+        }
+
+        $rows = $this->applyListFilters($query, $filters, ['subject', 'body', 'channel'])
+            ->latest()
+            ->limit(50)
+            ->get()
+            ->map(fn (Message $message): array => [
+                'Subject' => $message->subject ?? 'System notification',
+                'Channel' => $message->channel->value,
+                'Status' => $message->status->value,
+                'From' => $message->sender?->name ?? 'System',
+                'To' => $message->receiver?->name ?? 'Broadcast',
+                'Sent' => $message->sent_at?->format('Y-m-d H:i') ?? 'n/a',
+            ]);
+
+        return $this->page(
+            'Notifications',
+            'In-app, email, SMS, and system messages routed through the notifications domain.',
+            [
+                ['label' => 'Visible Messages', 'value' => $rows->count()],
+                ['label' => 'Unread', 'value' => (clone $query)->whereNull('read_at')->count()],
+            ],
+            ['Subject', 'Channel', 'Status', 'From', 'To', 'Sent'],
+            $rows,
+            'No notifications found.',
+            $filters,
+        );
     }
 
     private function page(string $title, string $description, array $metrics, array $columns, iterable $rows, string $emptyState = 'No records found.', ?array $filters = null): Response
@@ -405,5 +496,10 @@ class WorkspaceController extends Controller
             '' => 'Stripe',
             default => ucwords(str_replace(['_', '-'], ' ', $gateway)),
         };
+    }
+
+    private function labelForAuditValue(string $value): string
+    {
+        return Str::headline(str_replace(['.', '_'], ' ', $value));
     }
 }

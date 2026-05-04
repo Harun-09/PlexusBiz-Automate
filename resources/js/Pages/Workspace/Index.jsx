@@ -253,7 +253,7 @@ export default function WorkspaceIndex({ auth, workspace }) {
                                                     const value = row[column] ?? '';
                                                     const isStatus = column.toLowerCase().includes('status') || column.toLowerCase() === 'stage';
                                                     const isAction = column.toLowerCase() === 'action';
-                                                    const wraps = ['content', 'error'].includes(column.toLowerCase());
+                                                    const wraps = ['content', 'description', 'error'].includes(column.toLowerCase());
 
                                                     return (
                                                         <td

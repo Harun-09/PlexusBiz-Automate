@@ -6,6 +6,7 @@ use App\Domains\ECommerce\Enums\SupplierStatus;
 use App\Domains\ECommerce\Models\Supplier;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\Audit\AuditLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -79,7 +80,7 @@ class AdminSupplierController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, AuditLogger $auditLogger): RedirectResponse
     {
         $validated = $request->validate([
             'user_id' => ['required', 'integer', 'exists:users,id', Rule::unique('suppliers', 'user_id')],
@@ -103,6 +104,23 @@ class AdminSupplierController extends Controller
             $user->assignRole('supplier');
         }
 
+        $auditLogger->record(
+            actor: $request->user(),
+            moduleKey: 'admin',
+            action: 'admin.suppliers.created',
+            description: 'Supplier profile created from admin console.',
+            subjectType: Supplier::class,
+            subjectId: $supplier->id,
+            subjectLabel: $supplier->company_name,
+            after: $this->supplierAuditSnapshot($supplier->fresh()),
+            metadata: [
+                'user_id' => $supplier->user_id,
+                'status' => $supplier->status->value,
+            ],
+            ipAddress: $request->ip(),
+            userAgent: $request->userAgent(),
+        );
+
         return redirect()->route('admin.suppliers.index')->with('success', 'Supplier created successfully.');
     }
 
@@ -125,7 +143,7 @@ class AdminSupplierController extends Controller
         ]);
     }
 
-    public function update(Request $request, Supplier $supplier): RedirectResponse
+    public function update(Request $request, Supplier $supplier, AuditLogger $auditLogger): RedirectResponse
     {
         $validated = $request->validate([
             'company_name' => ['required', 'string', 'max:255'],
@@ -135,6 +153,7 @@ class AdminSupplierController extends Controller
             'status' => ['required', 'string', Rule::in(array_map(fn (SupplierStatus $s): string => $s->value, SupplierStatus::cases()))],
         ]);
 
+        $before = $this->supplierAuditSnapshot($supplier->loadMissing('user'));
         $wasApproved = $supplier->status === SupplierStatus::Approved;
         $isNowApproved = $validated['status'] === 'approved';
 
@@ -147,13 +166,69 @@ class AdminSupplierController extends Controller
             ] : []),
         ]);
 
+        $supplier->refresh()->loadMissing('user');
+        $after = $this->supplierAuditSnapshot($supplier);
+
+        if ($before !== $after) {
+            $auditLogger->record(
+                actor: $request->user(),
+                moduleKey: 'admin',
+                action: 'admin.suppliers.updated',
+                description: 'Supplier profile updated from admin console.',
+                subjectType: Supplier::class,
+                subjectId: $supplier->id,
+                subjectLabel: $supplier->company_name,
+                before: $before,
+                after: $after,
+                metadata: [
+                    'status_changed' => $before['status'] !== $after['status'],
+                ],
+                ipAddress: $request->ip(),
+                userAgent: $request->userAgent(),
+            );
+        }
+
         return redirect()->route('admin.suppliers.index')->with('success', 'Supplier updated successfully.');
     }
 
-    public function destroy(Supplier $supplier): RedirectResponse
+    public function destroy(Request $request, Supplier $supplier, AuditLogger $auditLogger): RedirectResponse
     {
+        $before = $this->supplierAuditSnapshot($supplier->loadMissing('user'));
         $supplier->delete();
 
+        $auditLogger->record(
+            actor: $request->user(),
+            moduleKey: 'admin',
+            action: 'admin.suppliers.deleted',
+            description: 'Supplier profile deleted from admin console.',
+            subjectType: Supplier::class,
+            subjectId: $supplier->id,
+            subjectLabel: $supplier->company_name,
+            before: $before,
+            metadata: [
+                'status' => $before['status'],
+            ],
+            ipAddress: $request->ip(),
+            userAgent: $request->userAgent(),
+        );
+
         return redirect()->route('admin.suppliers.index')->with('success', 'Supplier deleted successfully.');
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function supplierAuditSnapshot(Supplier $supplier): array
+    {
+        return [
+            'user_id' => $supplier->user_id,
+            'company_name' => $supplier->company_name,
+            'contact_email' => $supplier->contact_email,
+            'phone' => $supplier->phone,
+            'tax_number' => $supplier->tax_number,
+            'status' => $supplier->status->value,
+            'approved_at' => $supplier->approved_at?->toDateTimeString(),
+            'approved_by' => $supplier->approved_by,
+        ];
     }
 }

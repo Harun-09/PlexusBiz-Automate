@@ -8,6 +8,7 @@ enum RoleName: string
     case Supplier = 'supplier';
     case Buyer = 'buyer';
     case MarketingManager = 'marketing_manager';
+    case WorkflowManager = 'workflow_manager';
 
     public function label(): string
     {
@@ -16,6 +17,7 @@ enum RoleName: string
             self::Supplier => 'Supplier',
             self::Buyer => 'Buyer',
             self::MarketingManager => 'Marketing Manager',
+            self::WorkflowManager => 'Workflow Manager',
         };
     }
 

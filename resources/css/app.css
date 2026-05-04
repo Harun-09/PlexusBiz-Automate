@@ -4,6 +4,22 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+    .app-shell-scrollbar {
+        scrollbar-color: #cbd5e1 transparent;
+        scrollbar-width: thin;
+    }
+
+    .app-shell-scrollbar::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .app-shell-scrollbar::-webkit-scrollbar-thumb {
+        border-radius: 999px;
+        background: #cbd5e1;
+    }
+}
+
 @layer base {
     .auth-page {
         position: relative;

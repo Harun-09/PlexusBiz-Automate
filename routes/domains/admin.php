@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function (): void {
     Route::get('/', [WorkspaceController::class, 'admin'])->name('dashboard');
     Route::get('/customers', [WorkspaceController::class, 'customers'])->name('customers.index');
+    Route::get('/audit-logs', [WorkspaceController::class, 'auditLogs'])->name('audit-logs');
 
     Route::resource('users', AdminUserController::class)->except('show');
     Route::resource('suppliers', AdminSupplierController::class)->except('show');

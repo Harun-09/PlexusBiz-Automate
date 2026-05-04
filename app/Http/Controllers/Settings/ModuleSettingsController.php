@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Settings;
 
 use App\Domains\Settings\Models\ModuleSetting;
 use App\Http\Controllers\Controller;
+use App\Support\Audit\AuditLogger;
 use App\Support\Domain\DomainRegistry;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -47,7 +48,7 @@ class ModuleSettingsController extends Controller
         ]);
     }
 
-    public function update(Request $request): RedirectResponse
+    public function update(Request $request, AuditLogger $auditLogger): RedirectResponse
     {
         $validated = $request->validate([
             'modules' => ['required', 'array'],
@@ -55,6 +56,9 @@ class ModuleSettingsController extends Controller
         ]);
 
         $definitions = config('domains.modules', []);
+        $beforeMap = ModuleSetting::enabledMap();
+        $beforeSnapshot = $this->moduleSnapshot($definitions, $beforeMap);
+        $changedModules = [];
 
         foreach ($definitions as $key => $definition) {
             if ((bool) ($definition['locked'] ?? false)) {
@@ -62,7 +66,30 @@ class ModuleSettingsController extends Controller
             }
 
             $enabled = (bool) data_get($validated, 'modules.'.$key, false);
+            $current = array_key_exists($key, $beforeMap)
+                ? (bool) $beforeMap[$key]
+                : (bool) ($definition['enabled'] ?? true);
+
             ModuleSetting::setEnabled($key, $enabled);
+
+            if ($current !== $enabled) {
+                $changedModules[] = $key;
+            }
+        }
+
+        if ($changedModules !== []) {
+            $auditLogger->record(
+                actor: $request->user(),
+                moduleKey: 'settings',
+                action: 'settings.modules.updated',
+                description: 'Module settings updated.',
+                subjectLabel: 'Module settings',
+                before: $beforeSnapshot,
+                after: $this->moduleSnapshot($definitions, ModuleSetting::enabledMap()),
+                metadata: [
+                    'changed_modules' => $changedModules,
+                ],
+            );
         }
 
         return back()->with('success', 'Module settings updated successfully.');
@@ -97,5 +124,27 @@ class ModuleSettingsController extends Controller
             'workflow' => 'Automation rules, execution logs, and error tracking.',
             default => 'Domain module toggle controlled from the admin console.',
         };
+    }
+
+    /**
+     * @param array<string, array<string, mixed>> $definitions
+     * @param array<string, bool> $overrides
+     * @return array<string, bool>
+     */
+    private function moduleSnapshot(array $definitions, array $overrides): array
+    {
+        $snapshot = [];
+
+        foreach ($definitions as $key => $definition) {
+            if ((bool) ($definition['locked'] ?? false)) {
+                continue;
+            }
+
+            $snapshot[$key] = array_key_exists($key, $overrides)
+                ? (bool) $overrides[$key]
+                : (bool) ($definition['enabled'] ?? true);
+        }
+
+        return $snapshot;
     }
 }

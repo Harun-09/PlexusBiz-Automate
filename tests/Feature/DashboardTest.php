@@ -19,6 +19,10 @@ use App\Domains\Support\Enums\SupportChannel;
 use App\Domains\Support\Enums\TicketPriority;
 use App\Domains\Support\Enums\TicketStatus;
 use App\Domains\Support\Models\SupportTicket;
+use App\Domains\Workflow\Enums\AutomationRuleStatus;
+use App\Domains\Workflow\Enums\WorkflowActionType;
+use App\Domains\Workflow\Enums\WorkflowTriggerEvent;
+use App\Domains\Workflow\Models\AutomationRule;
 use App\Domains\Workflow\Enums\WorkflowLogStatus;
 use App\Domains\Workflow\Models\WorkflowLog;
 use App\Models\User;
@@ -225,6 +229,48 @@ class DashboardTest extends TestCase
                 ->where('dashboard.cards.2.value', '1')
                 ->where('dashboard.cards.3.label', 'Failed Automations')
                 ->where('dashboard.cards.3.value', '1'));
+    }
+
+    public function test_workflow_manager_dashboard_shows_automation_stats(): void
+    {
+        $this->seed(RbacSeeder::class);
+
+        $workflowUser = User::where('email', 'workflow@plexus.test')->firstOrFail();
+
+        AutomationRule::create([
+            'name' => 'Workflow dashboard rule',
+            'trigger_event' => WorkflowTriggerEvent::OrderPlaced->value,
+            'conditions_json' => [
+                ['field' => 'order.grand_total', 'operator' => 'greater_than', 'value' => 100],
+            ],
+            'actions_json' => [
+                ['type' => WorkflowActionType::CreateNotification->value, 'config' => []],
+            ],
+            'status' => AutomationRuleStatus::Active->value,
+            'priority' => 1,
+            'run_async' => false,
+        ]);
+
+        WorkflowLog::create([
+            'trigger_event' => WorkflowTriggerEvent::OrderPlaced->value,
+            'payload' => ['order' => ['id' => 1]],
+            'status' => WorkflowLogStatus::Failed->value,
+            'error' => 'Mock failure',
+            'executed_at' => now(),
+        ]);
+
+        $this->actingAs($workflowUser)
+            ->get('/dashboard')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page
+                ->component('Dashboard')
+                ->where('dashboard.role.key', 'workflow_manager')
+                ->where('dashboard.cards.0.label', 'Active Rules')
+                ->where('dashboard.cards.0.value', '1')
+                ->where('dashboard.cards.1.label', 'Workflow Runs')
+                ->where('dashboard.cards.1.value', '1')
+                ->where('dashboard.cards.2.label', 'Failed Runs')
+                ->where('dashboard.cards.2.value', '1'));
     }
 
     private function seedSharedCommerceData(): void

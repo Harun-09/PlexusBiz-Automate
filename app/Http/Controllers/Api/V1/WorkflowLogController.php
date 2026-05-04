@@ -21,6 +21,7 @@ class WorkflowLogController extends Controller
         $this->applySearch($query, $request, ['trigger_event', 'error']);
         $this->applyStatus($query, $request);
         $this->applySort($query, $request, ['created_at', 'executed_at']);
+        $query->orderByDesc('id');
 
         return WorkflowLogResource::collection($query->paginate($request->perPage())->withQueryString());
     }

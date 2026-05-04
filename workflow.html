@@ -255,7 +255,7 @@
             <tr>
                 <td>Admin, supplier, buyer, marketing, and workflow UI</td>
                 <td><span class="status done">Done</span></td>
-                <td>Build dashboards, data tables, forms, filters, status badges, empty states, and role-aware navigation with React and Tailwind.</td>
+                <td>Build no-footer authenticated AppShell, role-aware sidebar, responsive mobile drawer, top header, dashboards, data tables, forms, filters, status badges, empty states, and Workflow Manager dashboard with React and Tailwind.</td>
             </tr>
             <tr>
                 <td>Support automation and chatbot API</td>
@@ -289,10 +289,12 @@
 
     <section>
         <h2>Prompt Review Update</h2>
-        <p>The attached master prompt was reviewed end to end. Core scope is complete; the only explicit gaps that were not spelled out are supporting-business details, not the main platform modules.</p>
+        <p>The attached master prompt was reviewed end to end. The core platform modules are covered, and the dedicated audit log trail for admin settings, module enable/disable changes, supplier approval, role changes, and critical workflow changes is now implemented in code.</p>
         <ul>
-            <li>Missing or weakly specified: payment capture, shipping, tax, returns/refunds, and multi-company buyer tenancy.</li>
-            <li>Not explicitly detailed: CSV import/export and bulk admin operations.</li>
+            <li>Implemented in code: a dedicated <code>audit_logs</code> table, audit writer, and list view for critical admin and workflow actions.</li>
+            <li>Implemented in UI: shared authenticated <code>AppShell.jsx</code> with no footer, role-aware sidebar, mobile drawer, top header, global search, notification shortcut, quick actions, user menu, and reusable dashboard components.</li>
+            <li>Missing or weakly specified in the PDFs: payment capture, shipping, tax, returns/refunds, and multi-company buyer tenancy.</li>
+            <li>Not explicitly detailed in the PDFs: CSV import/export and bulk admin operations.</li>
             <li>Asset storage for product and social media files is now defined in code with original uploads, public delivery paths, naming conventions, generated thumbnail/preview variants, and lifecycle cleanup rules.</li>
             <li>Mock-provider contract details for social/email/SMS can still be clarified, but the adapter requirement itself is already covered.</li>
             <li>Branding should remain PlexusBiz in implementation; Newegg is only the visual reference for layout density and component rhythm.</li>
