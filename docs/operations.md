@@ -203,18 +203,26 @@ Render setup:
 php artisan key:generate --show
 ```
 
-Set these Render environment variables:
+If you are using the Render blueprint in this repo as-is, it is wired for Render Postgres and expects `DB_CONNECTION=pgsql` plus `DATABASE_URL`.
+
+If you are deploying to Render with your own MySQL server, use these environment variables instead:
 
 ```env
 APP_KEY=base64:...
 APP_URL=https://your-service.onrender.com
 APP_ENV=production
 APP_DEBUG=false
-DB_CONNECTION=pgsql
-DATABASE_URL=<Render Postgres internal connection string>
+DB_CONNECTION=mysql
+DB_HOST=<your-mysql-host>
+DB_PORT=3306
+DB_DATABASE=<your-database-name>
+DB_USERNAME=<your-database-user>
+DB_PASSWORD=<your-database-password>
 LOG_CHANNEL=stderr
 RUN_MIGRATIONS=true
 ```
+
+`APP_URL` must be the final Render service URL or your custom domain. `php artisan key:generate --show` prints the `APP_KEY` value you copy into Render.
 
 The Docker entrypoint caches config, routes, views, and events at container start. It also runs migrations only when `RUN_MIGRATIONS=true`.
 
