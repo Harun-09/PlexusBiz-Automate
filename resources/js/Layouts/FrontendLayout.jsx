@@ -456,6 +456,8 @@ function FooterColumn({ section }) {
 
 export default function FrontendLayout({ auth, canLogin, cartCount = 0, children }) {
     const isAuthed = Boolean(auth?.user);
+    const accountHref = isAuthed ? route('dashboard') : route('login');
+    const accountLabel = isAuthed ? 'Dashboard' : 'Sign In / Register';
     const headerRef = useRef(null);
     const [headerHeight, setHeaderHeight] = useState(148);
     const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
@@ -511,7 +513,7 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                                 </button>
 
                                 {!isAuthed && canLogin && (
-                                    <Link
+                                    <a
                                         href={route('login')}
                                         className="inline-flex min-w-[148px] shrink-0 items-center gap-3 rounded-full border border-white/15 bg-white/10 px-4 py-2.5 text-left shadow-[0_6px_14px_-10px_rgba(9,20,48,0.7)] sm:hidden"
                                     >
@@ -521,10 +523,10 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                                                 Sign In / Register
                                             </span>
                                         </span>
-                                    </Link>
+                                    </a>
                                 )}
                                 {!isAuthed && canLogin && (
-                                    <Link
+                                    <a
                                         href={route('login')}
                                         className="hidden min-w-[148px] shrink-0 items-center gap-3 rounded-full border border-white/15 bg-white/10 px-4 py-2.5 text-left shadow-[0_6px_14px_-10px_rgba(9,20,48,0.7)] sm:inline-flex"
                                     >
@@ -534,30 +536,30 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                                                 Sign In / Register
                                             </span>
                                         </span>
-                                    </Link>
+                                    </a>
                                 )}
                                 {isAuthed && (
                                     <Link
-                                        href={route('dashboard')}
+                                        href={accountHref}
                                         className="inline-flex min-w-[148px] shrink-0 items-center gap-3 rounded-full border border-white/15 bg-white/10 px-4 py-2.5 text-left shadow-[0_6px_14px_-10px_rgba(9,20,48,0.7)] sm:hidden"
                                     >
                                         <UserIcon className="h-6 w-6 shrink-0 text-white" />
                                         <span className="min-w-0 leading-none">
                                             <span className="block whitespace-nowrap text-[11px] font-black tracking-[-0.02em] text-white">
-                                                Sign In / Register
+                                                {accountLabel}
                                             </span>
                                         </span>
                                     </Link>
                                 )}
                                 {isAuthed && (
                                     <Link
-                                        href={route('dashboard')}
+                                        href={accountHref}
                                         className="hidden min-w-[148px] shrink-0 items-center gap-3 rounded-full border border-white/15 bg-white/10 px-4 py-2.5 text-left shadow-[0_6px_14px_-10px_rgba(9,20,48,0.7)] sm:inline-flex"
                                     >
                                         <UserIcon className="h-6 w-6 shrink-0 text-white" />
                                         <span className="min-w-0 leading-none">
                                             <span className="block whitespace-nowrap text-[13px] font-black tracking-[-0.02em] text-white">
-                                                Sign In / Register
+                                                {accountLabel}
                                             </span>
                                         </span>
                                     </Link>
