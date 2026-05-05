@@ -69,7 +69,9 @@ class CampaignDispatchTest extends TestCase
 
     private function customer(array $tags): Customer
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'account_type' => 'buyer',
+        ]);
 
         return Customer::create([
             'user_id' => $user->id,
