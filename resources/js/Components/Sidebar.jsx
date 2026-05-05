@@ -1,4 +1,33 @@
-import SidebarItem from '@/Components/SidebarItem';
+import SidebarItem, { SidebarIcon } from '@/Components/SidebarItem';
+import {
+    AlertTriangleIcon,
+    CalendarDaysIcon,
+    ChatBubbleIcon,
+    ChartBarIcon,
+    ClipboardListIcon,
+    ClockIcon,
+    CubeIcon,
+    DashboardIcon,
+    DocumentTextIcon,
+    FileSearchIcon,
+    FunnelIcon,
+    IdentificationIcon,
+    LifeBuoyIcon,
+    MegaphoneIcon,
+    PlusSquareIcon,
+    QuestionMarkCircleIcon,
+    CalculatorIcon,
+    ShoppingCartIcon,
+    ShieldCheckIcon,
+    SlidersHorizontalIcon,
+    SparklesIcon,
+    StorefrontIcon,
+    TargetIcon,
+    TagIcon,
+    TruckIcon,
+    UsersIcon,
+    WorkflowIcon,
+} from '@/Components/SidebarIcons';
 import { canAccess } from '@/Utils/access';
 import { Link } from '@inertiajs/react';
 import { useState } from 'react';
@@ -8,87 +37,87 @@ const SIDEBAR_MODULES = [
         key: 'ecommerce',
         label: 'E-Commerce',
         roles: ['buyer', 'supplier', 'admin'],
-        icon: 'EC',
+        icon: StorefrontIcon,
         items: [
-            { label: 'Marketplace Catalog', href: '/marketplace', icon: 'M', roles: ['buyer', 'supplier', 'admin'] },
-            { label: 'Bulk Orders', href: '/products/bulk-orders', icon: 'BO', roles: ['buyer', 'supplier', 'admin'] },
-            { label: 'MOQ Pricing', href: '/products/moq-pricing', icon: 'MQ', roles: ['buyer', 'supplier', 'admin'] },
-            { label: 'Cart', href: '/cart', icon: 'C', roles: ['buyer'], permissions: ['manage_cart'] },
-            { label: 'Supplier Onboarding', href: '/admin/suppliers', icon: 'SO', roles: ['admin'], permissions: ['manage_suppliers'] },
-            { label: 'Product CRUD', href: '/admin/products', icon: 'PR', roles: ['admin'], permissions: ['manage_products'] },
-            { label: 'Inventory & Stock', href: '/commerce/products', icon: 'IS', roles: ['supplier', 'admin'], permissions: ['manage_own_products', 'manage_products'], requiresSupplierApproval: true },
-            { label: 'Add Product', href: '/commerce/products/create', icon: 'AP', roles: ['supplier'], permissions: ['manage_own_products'], requiresSupplierApproval: true },
-            { label: 'Orders', href: '/commerce/orders', icon: 'O', roles: ['buyer', 'supplier', 'admin'] },
-            { label: 'Supplier Orders', href: '/commerce/supplier-orders', icon: 'SO', roles: ['supplier', 'admin'], permissions: ['manage_own_orders', 'manage_orders'], requiresSupplierApproval: true },
-            { label: 'Invoices', href: '/invoices', icon: 'I', roles: ['buyer', 'supplier', 'admin'] },
+            { label: 'Marketplace Catalog', href: '/marketplace', icon: StorefrontIcon, roles: ['buyer', 'supplier', 'admin'] },
+            { label: 'Bulk Orders', href: '/products/bulk-orders', icon: ShoppingCartIcon, roles: ['buyer', 'supplier', 'admin'] },
+            { label: 'MOQ Pricing', href: '/products/moq-pricing', icon: TagIcon, roles: ['buyer', 'supplier', 'admin'] },
+            { label: 'Cart', href: '/cart', icon: ShoppingCartIcon, roles: ['buyer'], permissions: ['manage_cart'] },
+            { label: 'Supplier Onboarding', href: '/admin/suppliers', icon: TruckIcon, roles: ['admin'], permissions: ['manage_suppliers'] },
+            { label: 'Product CRUD', href: '/admin/products', icon: CubeIcon, roles: ['admin'], permissions: ['manage_products'] },
+            { label: 'Inventory & Stock', href: '/commerce/products', icon: ChartBarIcon, roles: ['supplier', 'admin'], permissions: ['manage_own_products', 'manage_products'], requiresSupplierApproval: true },
+            { label: 'Add Product', href: '/commerce/products/create', icon: PlusSquareIcon, roles: ['supplier'], permissions: ['manage_own_products'], requiresSupplierApproval: true },
+            { label: 'Orders', href: '/commerce/orders', icon: ClipboardListIcon, roles: ['buyer', 'supplier', 'admin'] },
+            { label: 'Supplier Orders', href: '/commerce/supplier-orders', icon: TruckIcon, roles: ['supplier', 'admin'], permissions: ['manage_own_orders', 'manage_orders'], requiresSupplierApproval: true },
+            { label: 'Invoices', href: '/invoices', icon: DocumentTextIcon, roles: ['buyer', 'supplier', 'admin'] },
         ],
     },
     {
         key: 'crm',
         label: 'CRM',
         roles: ['admin', 'marketing_manager'],
-        icon: 'CR',
+        icon: UsersIcon,
         items: [
-            { label: 'Customers', href: '/crm/customers', icon: 'CU', roles: ['admin', 'marketing_manager'] },
-            { label: 'Purchase History', href: '/crm/purchases', icon: 'PH', roles: ['admin', 'marketing_manager'] },
-            { label: 'Segments', href: '/crm/segments', icon: 'SG', roles: ['admin', 'marketing_manager'] },
-            { label: 'Leads', href: '/crm/leads', icon: 'LD', roles: ['admin', 'marketing_manager'] },
-            { label: 'Interactions', href: '/crm/interactions', icon: 'IN', roles: ['admin', 'marketing_manager'] },
+            { label: 'Customers', href: '/crm/customers', icon: UsersIcon, roles: ['admin', 'marketing_manager'] },
+            { label: 'Purchase History', href: '/crm/purchases', icon: ClockIcon, roles: ['admin', 'marketing_manager'] },
+            { label: 'Segments', href: '/crm/segments', icon: FunnelIcon, roles: ['admin', 'marketing_manager'] },
+            { label: 'Leads', href: '/crm/leads', icon: TargetIcon, roles: ['admin', 'marketing_manager'] },
+            { label: 'Interactions', href: '/crm/interactions', icon: ChatBubbleIcon, roles: ['admin', 'marketing_manager'] },
         ],
     },
     {
         key: 'social',
         label: 'Social Media Automation',
         roles: ['marketing_manager', 'admin'],
-        icon: 'SM',
+        icon: MegaphoneIcon,
         items: [
-            { label: 'Social Calendar', href: '/social/calendar', icon: 'C', roles: ['marketing_manager', 'admin'], permissions: ['manage_social_posts'] },
-            { label: 'Scheduled Posts', href: '/social/posts', icon: 'P', roles: ['marketing_manager', 'admin'], permissions: ['manage_social_posts'] },
-            { label: 'Social Accounts', href: '/social/accounts', icon: 'A', roles: ['marketing_manager', 'admin'], permissions: ['manage_social_accounts'] },
+            { label: 'Social Calendar', href: '/social/calendar', icon: CalendarDaysIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_posts'] },
+            { label: 'Scheduled Posts', href: '/social/posts', icon: ClockIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_posts'] },
+            { label: 'Social Accounts', href: '/social/accounts', icon: IdentificationIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_accounts'] },
         ],
     },
     {
         key: 'marketing',
         label: 'Marketing Automation',
         roles: ['marketing_manager', 'admin'],
-        icon: 'MK',
+        icon: SparklesIcon,
         items: [
-            { label: 'Campaigns', href: '/marketing/campaigns', icon: 'C', roles: ['marketing_manager', 'admin'] },
-            { label: 'Campaign Templates', href: '/marketing/templates', icon: 'T', roles: ['marketing_manager', 'admin'] },
+            { label: 'Campaigns', href: '/marketing/campaigns', icon: MegaphoneIcon, roles: ['marketing_manager', 'admin'] },
+            { label: 'Campaign Templates', href: '/marketing/templates', icon: DocumentTextIcon, roles: ['marketing_manager', 'admin'] },
         ],
     },
     {
         key: 'workflow',
         label: 'Workflow Automation',
         roles: ['workflow_manager', 'marketing_manager', 'admin'],
-        icon: 'WF',
+        icon: WorkflowIcon,
         items: [
-            { label: 'Automation Rules', href: '/workflow/rules', icon: 'R', roles: ['workflow_manager', 'marketing_manager', 'admin'] },
-            { label: 'Workflow Logs', href: '/workflow/logs', icon: 'WL', roles: ['workflow_manager', 'marketing_manager', 'admin'] },
-            { label: 'Failed Logs', href: '/workflow/logs?status=failed', icon: 'F', roles: ['workflow_manager', 'marketing_manager', 'admin'] },
+            { label: 'Automation Rules', href: '/workflow/rules', icon: WorkflowIcon, roles: ['workflow_manager', 'marketing_manager', 'admin'] },
+            { label: 'Workflow Logs', href: '/workflow/logs', icon: ClipboardListIcon, roles: ['workflow_manager', 'marketing_manager', 'admin'] },
+            { label: 'Failed Logs', href: '/workflow/logs?status=failed', icon: AlertTriangleIcon, roles: ['workflow_manager', 'marketing_manager', 'admin'] },
         ],
     },
     {
         key: 'admin',
         label: 'Admin Panel',
         roles: ['admin'],
-        icon: 'AD',
+        icon: ShieldCheckIcon,
         items: [
-            { label: 'Admin Dashboard', href: '/admin', icon: 'A', roles: ['admin'] },
-            { label: 'Users', href: '/admin/users', icon: 'U', roles: ['admin'] },
-            { label: 'Bulk Pricing & MOQ', href: '/admin/bulk-pricing', icon: 'BP', roles: ['admin'] },
-            { label: 'Module Settings', href: '/settings/modules', icon: 'MS', roles: ['admin'] },
-            { label: 'Audit Logs', href: '/admin/audit-logs', icon: 'AL', roles: ['admin'] },
+            { label: 'Admin Dashboard', href: '/admin', icon: DashboardIcon, roles: ['admin'] },
+            { label: 'Users', href: '/admin/users', icon: UsersIcon, roles: ['admin'] },
+            { label: 'Bulk Pricing & MOQ', href: '/admin/bulk-pricing', icon: CalculatorIcon, roles: ['admin'] },
+            { label: 'Module Settings', href: '/settings/modules', icon: SlidersHorizontalIcon, roles: ['admin'] },
+            { label: 'Audit Logs', href: '/admin/audit-logs', icon: FileSearchIcon, roles: ['admin'] },
         ],
     },
     {
         key: 'support',
         label: 'Order & Support Automation',
         roles: ['buyer', 'supplier', 'admin', 'marketing_manager'],
-        icon: 'SP',
+        icon: LifeBuoyIcon,
         items: [
-            { label: 'Support Tickets', href: '/support/tickets', icon: 'ST', roles: ['buyer', 'supplier', 'admin'], permissions: ['manage_own_tickets', 'manage_tickets'] },
-            { label: 'Support FAQ', href: '/support/faq', icon: 'Q', roles: ['buyer', 'supplier', 'admin', 'marketing_manager'] },
+            { label: 'Support Tickets', href: '/support/tickets', icon: LifeBuoyIcon, roles: ['buyer', 'supplier', 'admin'], permissions: ['manage_own_tickets', 'manage_tickets'] },
+            { label: 'Support FAQ', href: '/support/faq', icon: QuestionMarkCircleIcon, roles: ['buyer', 'supplier', 'admin', 'marketing_manager'] },
         ],
     },
 ];
@@ -154,7 +183,7 @@ export default function Sidebar({ user, currentPath, onNavigate = null }) {
                     <p className="px-3 text-[11px] font-black uppercase text-slate-500">Workspace</p>
                     <div className="mt-2 space-y-1">
                         <SidebarItem
-                            item={{ label: 'Dashboard', href: '/dashboard', icon: 'D' }}
+                            item={{ label: 'Dashboard', href: '/dashboard', icon: DashboardIcon }}
                             active={isActive('/dashboard')}
                             onNavigate={onNavigate}
                         />
@@ -172,9 +201,7 @@ export default function Sidebar({ user, currentPath, onNavigate = null }) {
                                 className="flex w-full items-center gap-3 px-4 py-3 text-left"
                                 aria-expanded={open}
                             >
-                                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-white/10 text-[11px] font-black text-slate-200 ring-1 ring-white/10">
-                                    {module.icon}
-                                </span>
+                                <SidebarIcon icon={module.icon} size="module" active={open} />
                                 <span className="min-w-0 flex-1">
                                     <span className="block text-sm font-black text-white">{module.label}</span>
                                     <span className="block text-[11px] font-semibold uppercase text-slate-500">
