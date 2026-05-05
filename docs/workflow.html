@@ -309,6 +309,7 @@
             <li>Added assignment-friendly aliases for supplier onboarding, supplier products, admin leads, social posts, campaigns, automation rules, modules, tickets, customer profile, and order lookup.</li>
             <li>Seeded assignment-friendly login aliases: <code>admin@example.com</code>, <code>supplier@example.com</code>, <code>buyer@example.com</code>, and <code>marketing@example.com</code>, all using <code>password</code>.</li>
             <li>Added lead create/edit/delete UI for CRM proof at <code>/crm/leads/create</code> and alias <code>/admin/leads/create</code>.</li>
+            <li>Added social account registry create/edit/delete UI for publishing identity management at <code>/social/accounts</code> and <code>/social/accounts/create</code>.</li>
             <li>Added social post schedule create/edit/delete UI for Facebook and Instagram proof at <code>/social/posts/create</code> and alias <code>/admin/social-posts/create</code>.</li>
             <li>Added automation rule create/edit/delete UI for IF event THEN action proof at <code>/workflow/rules/create</code> and alias <code>/admin/automation-rules/create</code>.</li>
             <li>Added named scheduler commands: <code>campaigns:send-scheduled</code>, <code>carts:check-abandoned</code>, and <code>social-posts:publish-due</code>.</li>
@@ -335,6 +336,7 @@
             <li>CRM purchase history invoice actions now open and download correctly for marketing managers as well as buyers, suppliers, and admins.</li>
             <li>CRM interaction history now logs in-app messages and support ticket conversations alongside order and RFQ events, so the customer timeline is complete.</li>
             <li>Marketing automation now explicitly covers the three requested trigger rules: new customer welcome, abandoned cart reminder, and order confirmation campaigns, with scheduled campaign dispatch wired and local campaign datetimes normalized before storage.</li>
+            <li>Social media automation now includes a real account registry add/edit/delete flow, so the publishing identities can be created from the UI instead of only being seeded.</li>
             <li>Missing or weakly specified in the PDFs: payment capture, shipping, tax, returns/refunds, and multi-company buyer tenancy.</li>
             <li>Not explicitly detailed in the PDFs: CSV import/export and bulk admin operations.</li>
             <li>Asset storage for product and social media files is now defined in code with original uploads, public delivery paths, naming conventions, generated thumbnail/preview variants, and lifecycle cleanup rules.</li>

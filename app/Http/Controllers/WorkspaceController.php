@@ -641,9 +641,26 @@ class WorkspaceController extends Controller
                     'Account' => $account->name,
                     'Platform' => Str::headline($account->platform->value),
                     'Handle' => $account->handle,
-                    'Status' => (string) $account->status,
+                    'Status' => Str::headline((string) $account->status),
                     'Posts' => $account->posts_count,
-                    'Mode' => is_array($credentials) ? (string) ($credentials['mode'] ?? 'n/a') : 'n/a',
+                    'Mode' => is_array($credentials) && isset($credentials['mode'])
+                        ? Str::headline((string) $credentials['mode'])
+                        : 'N/A',
+                    'Actions' => [
+                        [
+                            'kind' => 'link',
+                            'label' => 'Edit',
+                            'href' => route('social.accounts.edit', $account),
+                        ],
+                        [
+                            'kind' => 'link',
+                            'label' => 'Delete',
+                            'href' => route('social.accounts.destroy', $account),
+                            'method' => 'delete',
+                            'variant' => 'danger',
+                            'confirm' => 'Delete this social account? Scheduled and historical posts will remain in the registry history.',
+                        ],
+                    ],
                 ];
             });
 
@@ -652,7 +669,7 @@ class WorkspaceController extends Controller
             ['label' => 'Active Accounts', 'value' => SocialAccount::where('status', 'active')->count()],
             ['label' => 'Facebook', 'value' => SocialAccount::where('platform', SocialPlatform::Facebook->value)->count()],
             ['label' => 'Instagram', 'value' => SocialAccount::where('platform', SocialPlatform::Instagram->value)->count()],
-        ], ['Account', 'Platform', 'Handle', 'Status', 'Posts', 'Mode'], $rows, filters: $filters, component: 'Social/Accounts/Index');
+        ], ['Account', 'Platform', 'Handle', 'Status', 'Posts', 'Mode', 'Actions'], $rows, filters: $filters, component: 'Social/Accounts/Index');
     }
 
     public function campaignTemplates(Request $request): Response

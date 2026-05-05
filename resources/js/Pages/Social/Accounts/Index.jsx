@@ -5,9 +5,9 @@ const moduleConfig = {
     tag: 'Accounts',
     theme: 'social',
     heroTitle: 'Account registry',
-    heroCopy: 'Track publishing accounts, active or inactive state, and the platform split without leaving the automation module.',
+    heroCopy: 'Create and review publishing accounts, active or inactive state, and the platform split without leaving the automation module.',
     panelTitle: 'What this page covers',
-    panelCopy: 'The list is meant to keep publishing identities visible so post scheduling and mock API modes remain easy to audit.',
+    panelCopy: 'The list is meant to keep publishing identities visible so add, edit, and mock API modes remain easy to audit.',
     highlights: [
         {
             label: 'Active state',
@@ -25,7 +25,7 @@ const moduleConfig = {
     panelBullets: [
         {
             label: 'Mock mode',
-            detail: 'Credential metadata can still capture whether the account is live or mocked.',
+            detail: 'Registry metadata can still capture whether the account is live or mocked.',
         },
         {
             label: 'Publishing health',
@@ -37,7 +37,8 @@ const moduleConfig = {
         },
     ],
     actions: [
-        { label: 'Open Calendar', href: '/social/calendar', variant: 'primary' },
+        { label: 'Add Account', href: '/social/accounts/create', variant: 'primary' },
+        { label: 'Open Calendar', href: '/social/calendar', variant: 'secondary' },
         { label: 'Review Posts', href: '/social/posts', variant: 'secondary' },
     ],
 };
