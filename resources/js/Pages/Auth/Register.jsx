@@ -219,7 +219,7 @@ export default function Register({ accountTypes = [] }) {
 
                     <div className="auth-register-grid auth-register-grid--two">
                         <div className="auth-field">
-                            <InputLabel htmlFor="employees" value="Employees" className="auth-label" />
+                            <InputLabel htmlFor="employees" value="Company size" className="auth-label" />
 
                             <select
                                 id="employees"
@@ -230,7 +230,7 @@ export default function Register({ accountTypes = [] }) {
                                 required
                             >
                                 <option value="" disabled>
-                                    Select team size
+                                    Select company size
                                 </option>
                                 {employeeOptions.map((option) => (
                                     <option key={option} value={option}>
