@@ -7,7 +7,7 @@ use App\Domains\ECommerce\Models\Invoice;
 use App\Domains\ECommerce\Models\Order;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class InvoicePdfService
 {
@@ -48,26 +48,44 @@ class InvoicePdfService
         return $filename;
     }
 
-    public function download(Invoice $invoice): Response
+    public function download(Invoice $invoice): StreamedResponse
     {
-        $pdf = Pdf::loadView('invoices.template', [
-            'invoice' => $invoice->load(['order.buyer', 'order.items.product', 'order.items.supplier']),
-        ]);
+        $filename = 'invoice-' . $invoice->invoice_number . '.pdf';
+        $pdfContents = $this->renderPdfContents($invoice);
 
-        return $pdf->download('invoice-' . $invoice->invoice_number . '.pdf');
+        return response()->streamDownload(function () use ($pdfContents): void {
+            echo $pdfContents;
+        }, $filename, [
+            'Content-Type' => 'application/pdf',
+            'Content-Length' => (string) strlen($pdfContents),
+        ]);
     }
 
-    public function stream(Invoice $invoice): Response
+    public function stream(Invoice $invoice): StreamedResponse
     {
-        $pdf = Pdf::loadView('invoices.template', [
-            'invoice' => $invoice->load(['order.buyer', 'order.items.product', 'order.items.supplier']),
-        ]);
+        $filename = 'invoice-' . $invoice->invoice_number . '.pdf';
+        $pdfContents = $this->renderPdfContents($invoice);
 
-        return $pdf->stream('invoice-' . $invoice->invoice_number . '.pdf');
+        return response()->stream(function () use ($pdfContents): void {
+            echo $pdfContents;
+        }, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Length' => (string) strlen($pdfContents),
+            'Content-Disposition' => 'inline; filename="' . $filename . '"',
+        ]);
     }
 
     private function generateInvoiceNumber(): string
     {
         return 'INV-' . now()->format('Y') . '-' . strtoupper(Str::random(8));
+    }
+
+    private function renderPdfContents(Invoice $invoice): string
+    {
+        $pdf = Pdf::loadView('invoices.template', [
+            'invoice' => $invoice->load(['order.buyer', 'order.items.product', 'order.items.supplier']),
+        ]);
+
+        return $pdf->output();
     }
 }
