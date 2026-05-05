@@ -1,6 +1,19 @@
+import KpiCard from '@/Components/KpiCard';
+import PageHeader from '@/Components/PageHeader';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
+
+const pricingColumns = [
+    { label: 'SKU', className: 'w-[120px]' },
+    { label: 'Product', className: 'w-[280px]' },
+    { label: 'Supplier', className: 'w-[220px]' },
+    { label: 'MOQ', className: 'w-[88px]' },
+    { label: 'Tiers', className: 'w-[88px]' },
+    { label: 'Base price', className: 'w-[140px]' },
+    { label: 'Status', className: 'w-[110px]' },
+    { label: 'Action', className: 'w-[110px]' },
+];
 
 const statusTone = (value) => {
     const n = String(value || '').toLowerCase();
@@ -102,7 +115,7 @@ function ManagementPanel({ product }) {
 
     return (
         <section className="space-y-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="rounded-2xl bg-slate-950 px-5 py-4 text-white shadow-lg shadow-slate-950/10">
+            <div className="rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 px-5 py-4 text-white shadow-lg shadow-slate-950/10">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div>
                         <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">Selected product</p>
@@ -140,7 +153,7 @@ function ManagementPanel({ product }) {
                 </div>
             </div>
 
-                <div className="grid gap-5 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+                    <div className="grid gap-5 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
                     <form onSubmit={submitMoq} className="min-w-0 rounded-2xl border border-slate-200 bg-slate-50/80 p-5">
                         <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">MOQ control</p>
                         <h4 className="mt-2 text-lg font-bold text-slate-950">Update minimum order quantity</h4>
@@ -330,29 +343,27 @@ export default function BulkPricingIndex({ auth, summary, products, selectedProd
         <AuthenticatedLayout
             user={auth.user}
             header={
-                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                    <div>
-                        <p className="text-[11px] font-black uppercase tracking-[0.24em] text-blue-500">E-Commerce backend</p>
-                        <h2 className="mt-1 text-2xl font-black text-slate-950">Bulk Pricing &amp; MOQ</h2>
-                        <p className="mt-1 text-sm text-slate-500">
-                            Manage minimum order quantity and tiered unit pricing from a dedicated backend workspace.
-                        </p>
-                    </div>
-                    <div className="flex flex-wrap gap-3">
-                        <Link
-                            href="/admin/products"
-                            className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
-                        >
-                            Product CRUD
-                        </Link>
-                        <Link
-                            href="/admin/products/create"
-                            className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-slate-900 to-blue-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-700/20 transition hover:shadow-blue-700/30 hover:-translate-y-0.5"
-                        >
-                            Add Product
-                        </Link>
-                    </div>
-                </div>
+                <PageHeader
+                    eyebrow="E-Commerce backend"
+                    title="Bulk Pricing &amp; MOQ"
+                    description="Manage minimum order quantity and tiered unit pricing from a dedicated backend workspace."
+                    actions={(
+                        <>
+                            <Link
+                                href="/admin/products"
+                                className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+                            >
+                                Product CRUD
+                            </Link>
+                            <Link
+                                href="/admin/products/create"
+                                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-slate-900 to-blue-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-700/20 transition hover:shadow-blue-700/30 hover:-translate-y-0.5"
+                            >
+                                Add Product
+                            </Link>
+                        </>
+                    )}
+                />
             }
         >
             <Head title="Bulk Pricing & MOQ" />
@@ -371,32 +382,36 @@ export default function BulkPricingIndex({ auth, summary, products, selectedProd
             <div className="py-8">
                 <div className="space-y-6">
                     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                            <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">Products</p>
-                            <p className="mt-2 text-3xl font-black text-slate-950">{summary.total_products}</p>
-                            <p className="mt-1 text-sm text-slate-500">Available catalog records across the backend.</p>
-                        </div>
-                        <div className="rounded-3xl border border-blue-200 bg-blue-50 p-5 shadow-sm">
-                            <p className="text-[11px] font-black uppercase tracking-[0.24em] text-blue-500">Tiered products</p>
-                            <p className="mt-2 text-3xl font-black text-blue-950">{summary.products_with_tiers}</p>
-                            <p className="mt-1 text-sm text-blue-900/80">Products already configured with bulk discounts.</p>
-                        </div>
-                        <div className="rounded-3xl border border-amber-200 bg-amber-50 p-5 shadow-sm">
-                            <p className="text-[11px] font-black uppercase tracking-[0.24em] text-amber-500">Needs setup</p>
-                            <p className="mt-2 text-3xl font-black text-amber-950">{summary.products_without_tiers}</p>
-                            <p className="mt-1 text-sm text-amber-900/80">Products still waiting for tier rules.</p>
-                        </div>
-                        <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
-                            <p className="text-[11px] font-black uppercase tracking-[0.24em] text-emerald-500">Average MOQ</p>
-                            <p className="mt-2 text-3xl font-black text-emerald-950">{summary.average_moq}</p>
-                            <p className="mt-1 text-sm text-emerald-900/80">{summary.total_tiers} total tier rules across the catalog.</p>
-                        </div>
+                        <KpiCard
+                            label="Products"
+                            value={summary.total_products}
+                            description="Available catalog records across the backend."
+                            tone="slate"
+                        />
+                        <KpiCard
+                            label="Tiered products"
+                            value={summary.products_with_tiers}
+                            description="Products already configured with bulk discounts."
+                            tone="blue"
+                        />
+                        <KpiCard
+                            label="Needs setup"
+                            value={summary.products_without_tiers}
+                            description="Products still waiting for tier rules."
+                            tone="amber"
+                        />
+                        <KpiCard
+                            label="Average MOQ"
+                            value={summary.average_moq}
+                            description={`${summary.total_tiers} total tier rules across the catalog.`}
+                            tone="emerald"
+                        />
                     </div>
 
-                    <div className="grid gap-6 xl:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)]">
+                    <div className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,0.65fr)]">
                         <section className="min-w-0 space-y-5">
                             <form onSubmit={submitFilters} className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                                <div className="grid gap-4 md:grid-cols-[1fr_180px_180px_auto] md:items-end">
+                                <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_180px_180px_auto] md:items-end">
                                     <div>
                                         <label htmlFor="pricing-search" className="block text-xs font-bold uppercase tracking-wider text-slate-500">Search</label>
                                         <input
@@ -471,12 +486,15 @@ export default function BulkPricingIndex({ auth, summary, products, selectedProd
                                     <div className="px-6 py-16 text-center text-sm text-slate-400">No products found.</div>
                                 ) : (
                                     <div className="overflow-x-auto">
-                                        <table className="min-w-full divide-y divide-slate-100 text-sm">
+                                        <table className="min-w-full table-fixed divide-y divide-slate-100 text-sm">
                                             <thead className="bg-slate-50/80">
                                                 <tr>
-                                                    {['SKU', 'Product', 'Supplier', 'MOQ', 'Tiers', 'Base price', 'Status', 'Action'].map((head) => (
-                                                        <th key={head} className="whitespace-nowrap px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
-                                                            {head}
+                                                    {pricingColumns.map((column) => (
+                                                        <th
+                                                            key={column.label}
+                                                            className={`whitespace-nowrap px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-slate-500 ${column.className}`}
+                                                        >
+                                                            {column.label}
                                                         </th>
                                                     ))}
                                                 </tr>
@@ -486,12 +504,13 @@ export default function BulkPricingIndex({ auth, summary, products, selectedProd
                                                     const active = selectedProduct?.id === product.id;
 
                                                     return (
-                                                        <tr key={product.id} className={`transition hover:bg-blue-50/30 ${active ? 'bg-blue-50/50' : ''}`}>
+                                                        <tr key={product.id} className={`transition hover:bg-blue-50/30 ${active ? 'bg-blue-50/50 ring-1 ring-inset ring-blue-100' : ''}`}>
                                                             <td className="whitespace-nowrap px-6 py-4 font-mono text-xs font-semibold text-slate-600">{product.sku}</td>
                                                             <td className="px-6 py-4 font-medium text-slate-900">
-                                                                <div className="flex flex-col">
-                                                                    <span>{product.name}</span>
-                                                                    <span className="text-xs text-slate-500">Tier summary and MOQ live in the selected workspace.</span>
+                                                                <div className="max-w-[280px]">
+                                                                    <p className="truncate text-sm font-semibold leading-5 text-slate-950" title={product.name}>
+                                                                        {product.name}
+                                                                    </p>
                                                                 </div>
                                                             </td>
                                                             <td className="whitespace-nowrap px-6 py-4 text-slate-600">{product.supplier || '-'}</td>
@@ -507,7 +526,7 @@ export default function BulkPricingIndex({ auth, summary, products, selectedProd
                                                                         ...data,
                                                                         product: product.id,
                                                                     })).toString()}`}
-                                                                    className="inline-flex items-center gap-1 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-100"
+                                                                    className="inline-flex items-center justify-center gap-1 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-100"
                                                                 >
                                                                     Manage
                                                                 </Link>

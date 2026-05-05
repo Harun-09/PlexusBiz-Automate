@@ -297,9 +297,9 @@
             </tr>
             <tr>
                 <td>9</td>
-                <td>Support tickets and notifications</td>
-                <td><span class="route">/buyer/tickets</span>, <span class="route">/support/tickets</span></td>
-                <td>Ticket create, reply, status update, and notification entry</td>
+                <td>Support tickets, notifications, and chatbot API</td>
+                <td><span class="route">/buyer/tickets</span>, <span class="route">/support/tickets</span>, <span class="route">POST /api/v1/support/chatbot/message</span></td>
+                <td>Ticket create, reply, status update, notification entry, FAQ match, and optional chatbot ticket creation</td>
             </tr>
             <tr>
                 <td>10</td>
@@ -429,6 +429,7 @@
         <ol>
             <li>Open <span class="route">/admin/automation-rules</span> or <span class="route">/workflow/rules</span>.</li>
             <li>Open <span class="route">/workflow/rules/create</span> and create an IF / THEN rule, such as <code>order.placed</code> with <code>send_email</code> and <code>send_sms</code>.</li>
+            <li>If the evaluator asks about real SMS delivery, explain that the demo uses the mock SMS provider until external API credentials are configured in <code>.env</code>.</li>
             <li>Save the rule and reopen the rules list to show it is stored.</li>
             <li>Trigger the relevant event, such as order placement, RFQ creation, or support ticket creation; RFQ creation is dispatched through the <code>RfqCreated</code> event listener.</li>
             <li>Open <span class="route">/workflow/logs</span> and show the execution record.</li>
@@ -447,6 +448,8 @@
             <li>Update the ticket status or assignment if the role allows it.</li>
             <li>Show the notification entry or in-app message that was produced by the support flow.</li>
             <li>Explain that the system also supports supplier notifications and FAQ matching.</li>
+            <li>For chatbot-ready API proof, send an authenticated POST request to <code>/api/v1/support/chatbot/message</code> with <code>{"message":"What is the minimum order quantity?"}</code> and show the JSON answer from the FAQ matcher.</li>
+            <li>If the message does not match an FAQ or <code>create_ticket</code> is true, explain that the same endpoint can create a support ticket with channel <code>chatbot</code>.</li>
         </ol>
     </section>
 
@@ -466,7 +469,7 @@
         <h2>Step 11. Prove API, Scheduler, Queue, And Backup</h2>
         <ol>
             <li>Run <code>php artisan route:list --path=api/v1</code> and show the API surface.</li>
-            <li>Point out the key endpoints for products, orders, customers, campaigns, social posts, workflow logs, and support tickets.</li>
+            <li>Point out the key endpoints for products, orders, customers, campaigns, social posts, workflow logs, support tickets, notifications, and <code>/api/v1/support/chatbot/message</code>.</li>
             <li>Run <code>php artisan schedule:list</code> and <code>php artisan schedule:run</code> if needed.</li>
             <li>Show the queue worker command: <code>php artisan queue:work</code>.</li>
             <li>Show the operational commands from <a href="operations.html">docs/operations.html</a>.</li>

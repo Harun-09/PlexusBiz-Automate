@@ -121,7 +121,7 @@ class AdminProductController extends Controller
 
         $product = Product::create([
             ...$validated,
-            'slug' => Str::slug($validated['name']),
+            'slug' => $this->uniqueProductSlug($validated['name']),
             'reserved_quantity' => 0,
             'published_at' => $validated['status'] === 'active' ? now() : null,
         ]);
@@ -196,7 +196,7 @@ class AdminProductController extends Controller
 
         $product->update([
             ...$validated,
-            'slug' => Str::slug($validated['name']),
+            'slug' => $this->uniqueProductSlug($validated['name'], $product),
             ...($isNowActive && ! $wasActive ? ['published_at' => now()] : []),
         ]);
 
@@ -247,5 +247,24 @@ class AdminProductController extends Controller
                 'unit_price' => $raw,
             ],
         );
+    }
+
+    private function uniqueProductSlug(string $name, ?Product $ignoreProduct = null): string
+    {
+        $baseSlug = Str::slug($name) ?: 'product';
+        $slug = $baseSlug;
+        $suffix = 2;
+
+        while (
+            Product::query()
+                ->when($ignoreProduct !== null, fn ($query) => $query->where('id', '!=', $ignoreProduct->id))
+                ->where('slug', $slug)
+                ->exists()
+        ) {
+            $slug = $baseSlug.'-'.$suffix;
+            $suffix++;
+        }
+
+        return $slug;
     }
 }

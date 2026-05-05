@@ -113,7 +113,7 @@ function ProductCard({ product, currency }) {
                         }}
                     />
                     <div className="absolute left-3 top-3 flex flex-wrap gap-2">
-                        <span className="rounded-full bg-[#0b2e71] px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white">
+                        <span className="rounded-full bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1] px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white">
                             {product.category?.name || 'Product'}
                         </span>
                         <span className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] ${inStock ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
@@ -211,7 +211,7 @@ function Pagination({ links }) {
                     preserveScroll
                     className={`min-w-10 rounded-full px-4 py-2 text-sm font-semibold transition ${
                         link.active
-                            ? 'bg-[#0b2e71] text-white shadow-sm'
+                            ? 'bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1] text-white shadow-sm'
                             : 'border border-[#dbe5f1] bg-white text-slate-700 hover:border-[#ffb16d] hover:text-[#d75d00]'
                     }`}
                     dangerouslySetInnerHTML={{ __html: link.label }}
@@ -241,7 +241,8 @@ export default function Index({
     const activeQuick = filters?.quick || (mode === 'bulk' ? 'bulk' : mode === 'moq' ? 'moq' : '');
     const activeMode = catalogModes[activeQuick || mode] ?? catalogModes.catalog;
     const catalogRouteName = activeMode.routeName;
-    const showHeroSidebar = activeMode.routeName !== 'products.bulk';
+    const showHeroSection = activeMode.routeName === 'products.index';
+    const showHeroSidebar = showHeroSection;
     const visibleCount = Number(products?.data?.length ?? 0);
     const totalCount = Number(products?.meta?.total ?? visibleCount);
     const totalProducts = Number(products?.meta?.total ?? products?.data?.length ?? 0);
@@ -270,14 +271,14 @@ export default function Index({
             <div
                 className={`min-h-screen text-slate-900 ${
                     activeMode.routeName === 'products.moq'
-                        ? 'bg-[radial-gradient(circle_at_top_left,_rgba(11,46,113,0.18),_transparent_35%),radial-gradient(circle_at_top_right,_rgba(16,185,129,0.16),_transparent_28%),linear-gradient(180deg,_#eef5ff_0%,_#f8fbff_46%,_#ffffff_100%)]'
+                        ? 'bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.82),_transparent_35%),radial-gradient(circle_at_top_right,_rgba(245,214,167,0.55),_transparent_30%),linear-gradient(180deg,_#f6eddc_0%,_#fbf8f0_44%,_#ffffff_100%)]'
                         : activeMode.routeName === 'products.bulk'
-                            ? 'bg-[radial-gradient(circle_at_top_left,_rgba(11,46,113,0.18),_transparent_35%),radial-gradient(circle_at_top_right,_rgba(255,138,0,0.22),_transparent_28%),linear-gradient(180deg,_#eef5ff_0%,_#f8fbff_46%,_#ffffff_100%)]'
+                            ? 'bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.82),_transparent_35%),radial-gradient(circle_at_top_right,_rgba(245,214,167,0.55),_transparent_30%),linear-gradient(180deg,_#f6eddc_0%,_#fbf8f0_44%,_#ffffff_100%)]'
                             : 'bg-[radial-gradient(circle_at_top_left,_rgba(11,46,113,0.18),_transparent_35%),radial-gradient(circle_at_top_right,_rgba(255,138,0,0.18),_transparent_28%),linear-gradient(180deg,_#eef5ff_0%,_#f8fbff_46%,_#ffffff_100%)]'
                 }`}
             >
                 <main className="w-full px-4 py-6 sm:px-6 lg:px-8">
-                    <section className="overflow-hidden rounded-[32px] border border-[#d7e3f4] bg-[#0b2e71] shadow-[0_26px_80px_-40px_rgba(7,18,46,0.9)]">
+                    <section className={`${showHeroSection ? 'overflow-hidden rounded-[32px] border border-[#d7e3f4] bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1] shadow-[0_26px_80px_-40px_rgba(7,18,46,0.9)]' : 'hidden'}`}>
                         <div className={`grid gap-8 px-5 py-6 lg:px-8 lg:py-8 ${showHeroSidebar ? 'lg:grid-cols-[1.1fr_.9fr]' : ''}`}>
                             <div className="space-y-5 text-white">
                                 <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#ffd59a]">
@@ -429,6 +430,98 @@ export default function Index({
                         </div>
                     </section>
 
+                    {!showHeroSection ? (
+                        <section className="space-y-4">
+                            <div className="flex flex-wrap items-center gap-2">
+                                <span className="rounded-full border border-[#d7e3f4] bg-white px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#0b2e71]">
+                                    {activeMode.badge}
+                                </span>
+                                <span className="rounded-full border border-[#d7e3f4] bg-white px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">
+                                    {totalProducts} products
+                                </span>
+                                <span className="rounded-full border border-[#d7e3f4] bg-white px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">
+                                    {activeMode.kicker}
+                                </span>
+                            </div>
+
+                            <form
+                                className="flex flex-col gap-3 lg:flex-row lg:items-center"
+                                onSubmit={(event) => {
+                                    event.preventDefault();
+                                    runSearch();
+                                }}
+                            >
+                                <input
+                                    type="search"
+                                    value={search}
+                                    onChange={(event) => setSearch(event.target.value)}
+                                    placeholder="Search SKU, product name, or supplier"
+                                    className="h-12 w-full rounded-full border border-slate-200 bg-white px-5 text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400 focus:border-[#4f7fe0] focus:bg-white lg:w-[360px] lg:flex-none"
+                                />
+                                <div className="flex flex-wrap items-center gap-2">
+                                    {quickCatalogLinks.map((item) => {
+                                        const isActive = activeQuick === item.key;
+
+                                        return (
+                                            <Link
+                                                key={item.key}
+                                                href={route(item.routeName, nextQuery(activeCategory))}
+                                                preserveScroll
+                                                className={`rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.16em] transition ${
+                                                    isActive
+                                                        ? 'border-[#0b2e71] bg-[#0b2e71] text-white'
+                                                        : 'border-[#d7e3f4] bg-white text-[#0b2e71] hover:border-[#ffb16d] hover:text-[#d75d00]'
+                                                }`}
+                                            >
+                                                {item.label}
+                                            </Link>
+                                        );
+                                    })}
+                                    <button
+                                        type="submit"
+                                        className="h-12 rounded-full bg-[#ff8a00] px-6 text-sm font-black uppercase tracking-[0.16em] text-white transition hover:bg-[#ef7400]"
+                                    >
+                                        Search
+                                    </button>
+                                </div>
+                            </form>
+
+                            <div className="flex flex-wrap gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setCategory('');
+                                        runSearch('');
+                                    }}
+                                    className={`rounded-full px-4 py-2 text-xs font-black uppercase tracking-[0.16em] transition ${
+                                        activeCategory === ''
+                                            ? 'bg-[#0b2e71] text-white'
+                                            : 'border border-[#d7e3f4] bg-white text-slate-700 hover:border-[#4f7fe0] hover:text-[#0b2e71]'
+                                    }`}
+                                >
+                                    All
+                                </button>
+                                {categories.map((item) => (
+                                    <button
+                                        key={item.slug}
+                                        type="button"
+                                        onClick={() => {
+                                            setCategory(item.slug);
+                                            runSearch(item.slug);
+                                        }}
+                                        className={`rounded-full px-4 py-2 text-xs font-black uppercase tracking-[0.16em] transition ${
+                                            activeCategory === item.slug
+                                                ? 'bg-[#ff8a00] text-white'
+                                                : 'border border-[#d7e3f4] bg-white text-slate-700 hover:border-[#ffb16d] hover:text-[#d75d00]'
+                                        }`}
+                                    >
+                                        {item.name} <span className="opacity-75">({item.active_products_count})</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </section>
+                    ) : null}
+
                     <FlashBanner message={flash?.success} className="mt-5" />
                     <FlashBanner message={flash?.error} type="error" className="mt-5" />
                     <FlashBanner message={validationMessage} type="error" className="mt-5" />
@@ -469,7 +562,7 @@ export default function Index({
                             </div>
 
                             {showHeroSidebar ? (
-                                <div className="rounded-[28px] border border-[#d7e3f4] bg-gradient-to-br from-[#0b2e71] via-[#103a87] to-[#0f4fa8] p-5 text-white shadow-sm">
+                                <div className="rounded-[28px] border border-[#d7e3f4] bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1] p-5 text-white shadow-sm">
                                     <p className="text-[11px] font-black uppercase tracking-[0.24em] text-blue-200">{activeMode.cartTitle}</p>
                                     <p className="mt-3 text-3xl font-black tracking-[-0.05em]">{Number(cartCount || 0)}</p>
                                     <p className="mt-2 text-sm leading-6 text-blue-100">

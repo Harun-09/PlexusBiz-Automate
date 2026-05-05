@@ -1,5 +1,7 @@
 import { Link } from '@inertiajs/react';
 
+const blueSurfaceGradient = 'bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1]';
+
 const footerSections = [
     {
         title: 'Quick Links',
@@ -37,7 +39,7 @@ export default function FooterSimple() {
     return (
         <footer id="footer" className="w-full text-white">
             <div
-                className="border-t border-white/10 bg-gradient-to-r from-[#0b2e71] to-[#1f68d9] py-10"
+                className={`border-t border-white/10 py-10 ${blueSurfaceGradient}`}
             >
                 <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 xl:px-10">
                     <div className="mb-8 flex flex-col gap-5 border-b border-white/20 pb-6 sm:flex-row sm:items-end sm:justify-between">
@@ -100,7 +102,7 @@ export default function FooterSimple() {
                     </div>
 
                     <div className="mt-8 border-t border-white/20 pt-4 text-center text-sm text-white/90">
-                        &copy; 2024 PlexusBiz Automate. All rights reserved.
+                        &copy; 2003-{new Date().getFullYear()} PlexusBiz Automate. All rights reserved.
                     </div>
                 </div>
             </div>

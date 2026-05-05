@@ -7,6 +7,7 @@ import { canAccess } from '@/Utils/access';
 
 const storeAsset = (path) => `/images/store/${path}`;
 const ecommerceAsset = (path) => `/images/ecommerce/${path}`;
+const blueSurfaceGradient = 'bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1]';
 const productImage = (name) => storeAsset(`products/${name}.png`);
 const bannerImage = (name) => storeAsset(`banners/${name}.jpg`);
 const brandImage = (name) => storeAsset(`brands/${name}.png`);
@@ -38,7 +39,7 @@ const promoCards = [
         pill: 'Ends soon',
         cta: 'See the drop',
         href: '#deals',
-        tone: 'border-[#1d4b9d] bg-[#0b2e71] text-white',
+        tone: `border-[#1d4b9d] ${blueSurfaceGradient} text-white`,
         copyClass: 'text-blue-100',
         buttonClass: 'border-white/15 bg-white/10 text-white hover:bg-white/20',
     },
@@ -163,7 +164,7 @@ const featureTiles = [
         copy: 'CPU, boards, SSDs, memory, cooling, and power supplies in one clear flow.',
         action: 'Browse parts',
         href: '#deals',
-        tone: 'border-[#1d4b9d] bg-gradient-to-br from-[#0b3d91] via-[#1559b8] to-[#2d79da] text-white',
+        tone: `border-[#1d4b9d] ${blueSurfaceGradient} text-white`,
         copyClass: 'text-blue-100',
         actionClass: 'border-white/15 bg-white/10 text-white hover:bg-white/20',
     },
@@ -342,7 +343,7 @@ function DealCard({ item }) {
                         className="aspect-[4/3] transition duration-500 group-hover:scale-[1.03]"
                     />
                 </div>
-                <span className="absolute left-6 top-6 rounded-full bg-[#0b3d91] px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-white shadow-sm">
+                <span className={`absolute left-6 top-6 rounded-full ${blueSurfaceGradient} px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-white shadow-sm`}>
                     {item.badge}
                 </span>
                 <span className="absolute right-6 top-6 rounded-full bg-white/95 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#ff7b22] shadow-sm">
@@ -501,7 +502,7 @@ function SupportIcon({ className = '' }) {
 const marketplaceShortcutItems = [
     { icon: ProductsIcon, label: 'Marketplace Catalog', href: '/products' },
     { icon: OrdersIcon, label: 'Bulk Orders', href: '/products/bulk-orders' },
-    { icon: InvoicesIcon, label: 'MOQ Pricing', href: '/products/moq-pricing', featured: true },
+    { icon: InvoicesIcon, label: 'MOQ Pricing', href: '/products/moq-pricing' },
     { icon: SupportIcon, label: 'Supplier Onboarding', href: route('supplier.apply') },
     { icon: ProductsIcon, label: 'Product CRUD', href: '/admin/products', access: { roles: ['admin'], permissions: ['manage_products'] } },
     { icon: OrdersIcon, label: 'Inventory & Stock', href: '/commerce/products', access: { roles: ['supplier', 'admin'], permissions: ['manage_own_products', 'manage_products'], requiresSupplierApproval: true } },
@@ -566,7 +567,7 @@ const comboBundlesPrimary = [
         price: '$1,399.99',
         compare: '$1,799.99',
         cta: 'See all',
-        accent: 'from-[#0b2e71] to-[#114b9f]',
+        accent: 'from-[#4f7fe0] via-[#3f70d4] to-[#2953b1]',
         tone: 'dark',
         note: '+ $20 off w/ promo code SSF6252, limited offer',
         items: [
@@ -1255,9 +1256,9 @@ function ShelfProductCard({ item }) {
     );
 }
 
-function ToolStripCard({ tool, tone = 'from-[#587aa3] to-[#3367a5]' }) {
+function ToolStripCard({ tool, tone = blueSurfaceGradient }) {
     return (
-        <article className={`relative overflow-hidden rounded-[10px] bg-gradient-to-r ${tone} p-4 text-white`}>
+        <article className={`relative overflow-hidden rounded-[10px] ${tone} p-4 text-white`}>
             <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-[1fr_120px] sm:items-center">
                 <div>
                     <h3 className="text-2xl font-black leading-tight sm:text-3xl">{tool.title}</h3>
@@ -1365,7 +1366,7 @@ function BundleCard({ bundle }) {
 
     return (
         <article
-            className={`flex h-full flex-col overflow-hidden rounded-[22px] border p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${isDark ? 'border-[#0f408f] bg-[#0b2e71] text-white' : `border-transparent bg-gradient-to-br ${bundle.accent} text-slate-900`}`}
+                className={`flex h-full flex-col overflow-hidden rounded-[22px] border p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${isDark ? `border-white/10 ${blueSurfaceGradient} text-white` : `border-transparent bg-gradient-to-br ${bundle.accent} text-slate-900`}`}
         >
             <div className="flex items-start justify-between gap-3">
                 <div>
@@ -1442,7 +1443,7 @@ function PromoBanner({ banner }) {
                 <div className="relative min-h-[240px] overflow-hidden">
                     <PromoArtwork variant={banner.artVariant || 'banner'} className="h-full min-h-[240px]" framed={false} />
                 </div>
-                <div className="flex flex-col justify-center gap-4 bg-[#0b2e71] px-6 py-6 text-white">
+                <div className={`flex flex-col justify-center gap-4 ${blueSurfaceGradient} px-6 py-6 text-white`}>
                     <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#ffd59a]">
                         {banner.title}
                     </p>
@@ -1464,7 +1465,7 @@ function PromoBanner({ banner }) {
 function CompactProductCard({ item, dark = false }) {
     return (
         <article
-            className={`overflow-hidden rounded-[24px] border shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${dark ? 'border-white/10 bg-[#0b2e71] text-white' : 'border-[#d7e3f4] bg-white text-slate-900'}`}
+            className={`overflow-hidden rounded-[24px] border shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${dark ? `border-white/10 ${blueSurfaceGradient} text-white` : 'border-[#d7e3f4] bg-white text-slate-900'}`}
         >
             <div className="p-4">
                 <div className="overflow-hidden rounded-[18px] bg-slate-50">
@@ -1555,7 +1556,7 @@ function CategoryPanel({ panel }) {
 function ToolCard({ tool }) {
     return (
         <article className="overflow-hidden rounded-[24px] border border-[#d7e3f4] bg-white p-4 shadow-sm">
-            <div className="overflow-hidden rounded-[18px] bg-[#0b3d91]">
+            <div className={`overflow-hidden rounded-[18px] ${blueSurfaceGradient}`}>
                 <PromoArtwork variant={tool.artVariant || 'tile'} className="aspect-[16/10]" framed={false} />
             </div>
             <h3 className="mt-3 text-lg font-black tracking-[-0.03em] text-[#0b2e71]">{tool.title}</h3>
@@ -1615,7 +1616,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
 
                 <main className="relative z-10 w-full space-y-4 px-4 py-4 sm:px-6 xl:px-8">
                     <section className="grid items-stretch gap-3 grid-cols-1 xl:grid-cols-[420px_minmax(0,1fr)]">
-                        <aside className="order-2 h-[380px] overflow-hidden rounded-[16px] bg-gradient-to-br from-[#0b2e71] via-[#1a4a8c] to-[#0d3d8c] text-white shadow-[0_18px_40px_-22px_rgba(7,18,46,0.85)] sm:h-[440px] lg:h-[520px] xl:order-1 xl:h-[580px] xl:sticky xl:top-4">
+                        <aside className={`order-2 h-[380px] overflow-hidden rounded-[16px] ${blueSurfaceGradient} text-white shadow-[0_18px_40px_-22px_rgba(7,18,46,0.85)] sm:h-[440px] lg:h-[520px] xl:order-1 xl:h-[580px] xl:sticky xl:top-4`}>
                             <div className="flex h-full flex-col">
                                 <div className="mb-3 flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
                                     <div>
@@ -1632,21 +1633,15 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                                         <Link
                                             key={item.label}
                                             href={item.href}
-                                            className={`flex w-full items-center gap-3 rounded-[12px] border border-white/5 px-3 py-2.5 text-left transition ${
-                                                item.featured
-                                                    ? 'bg-gradient-to-r from-[#67b9ff] via-[#4fa8ff] to-[#4598f8] text-white shadow-[0_14px_28px_-18px_rgba(75,168,255,0.9)] hover:from-[#71c1ff] hover:to-[#4d9fff]'
-                                                    : 'bg-gradient-to-r from-white/8 via-white/6 to-white/[0.03] text-white hover:from-white/14 hover:via-white/9 hover:to-white/[0.06]'
-                                            }`}
+                                            className="flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-left transition hover:bg-white/10"
                                         >
-                                            <span className={`inline-flex shrink-0 items-center justify-center ${item.featured ? 'text-white' : 'text-white/90'}`}>
+                                            <span className="inline-flex shrink-0 items-center justify-center text-white/90">
                                                 <item.icon className="h-6 w-6" />
                                             </span>
                                             <span className="min-w-0 flex-1 text-sm font-semibold leading-5 text-white">
                                                 {item.label}
                                             </span>
-                                            <span className={`text-lg font-black ${item.featured ? 'text-white/75' : 'text-white/40'}`}>
-                                                &gt;
-                                            </span>
+                                            <span className="text-lg font-black text-white/35">&gt;</span>
                                         </Link>
                                     ))}
                                 </div>
@@ -1783,15 +1778,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                                     <ToolStripCard
                                         key={tool.title}
                                         tool={tool}
-                                        tone={
-                                            [
-                                                'from-[#5c7fa8] to-[#3f6895]',
-                                                'from-[#0e89bf] to-[#147eb2]',
-                                                'from-[#264fb0] to-[#23409a]',
-                                                'from-[#5e759f] to-[#57709a]',
-                                                'from-[#0e939d] to-[#0f8a93]',
-                                            ][index % 5]
-                                        }
+                                        tone={blueSurfaceGradient}
                                     />
                                 ))}
                             </div>

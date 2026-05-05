@@ -255,7 +255,7 @@ export default function Show({
                                 <div className="grid gap-0 xl:grid-cols-[1fr_112px]">
                                     <div className="relative bg-[#f3f7ff] p-4 sm:p-6">
                                         <div className="absolute left-6 top-6 z-10 flex flex-wrap gap-2">
-                                            <span className="rounded-full bg-[#0b2e71] px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white">
+                                            <span className="rounded-full bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1] px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white">
                                                 {product.supplier?.company_name || 'PlexusBiz supplier'}
                                             </span>
                                             <span className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] ${canPurchase ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
@@ -317,7 +317,7 @@ export default function Show({
                                     </p>
                                 </div>
 
-                                <div className="rounded-[28px] border border-[#d7e3f4] bg-gradient-to-br from-[#0b2e71] via-[#103a87] to-[#0f4fa8] p-5 text-white shadow-sm">
+                                <div className="rounded-[28px] border border-[#d7e3f4] bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1] p-5 text-white shadow-sm">
                                     <p className="text-[11px] font-black uppercase tracking-[0.24em] text-blue-200">
                                         Purchase flow
                                     </p>
@@ -448,7 +448,7 @@ export default function Show({
                                                 type="button"
                                                 disabled={!canPurchase}
                                                 onClick={addToCart}
-                                                className="inline-flex items-center justify-center rounded-full bg-[#0b2e71] px-5 py-3 text-sm font-black uppercase tracking-[0.14em] text-white transition hover:bg-[#09255b] disabled:cursor-not-allowed disabled:bg-slate-300"
+                                                className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1] px-5 py-3 text-sm font-black uppercase tracking-[0.14em] text-white transition hover:brightness-105 disabled:cursor-not-allowed disabled:bg-slate-300"
                                             >
                                                 Add to cart
                                             </button>

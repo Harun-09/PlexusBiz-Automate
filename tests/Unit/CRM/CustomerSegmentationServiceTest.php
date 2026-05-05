@@ -8,6 +8,7 @@ use App\Domains\CRM\Models\Customer;
 use App\Domains\CRM\Services\CustomerSegmentationService;
 use App\Domains\ECommerce\Enums\OrderStatus;
 use App\Domains\ECommerce\Models\Order;
+use App\Enums\RoleName;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -18,8 +19,8 @@ class CustomerSegmentationServiceTest extends TestCase
 
     public function test_it_segments_customers_by_tags_and_total_spend(): void
     {
-        $matchedUser = User::factory()->create();
-        $otherUser = User::factory()->create();
+        $matchedUser = User::factory()->create(['account_type' => RoleName::Buyer->value]);
+        $otherUser = User::factory()->create(['account_type' => RoleName::Buyer->value]);
 
         $matched = Customer::create([
             'user_id' => $matchedUser->id,

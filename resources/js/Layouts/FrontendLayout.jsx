@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, Head } from '@inertiajs/react';
 
+const blueSurfaceGradient = 'bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1]';
+
 const quickNavLinks = [
     { label: 'Bulk Orders', href: route('products.bulk') },
     { label: 'MOQ Pricing', href: route('products.moq') },
@@ -251,7 +253,7 @@ function FlagBadge({ className = '' }) {
 function ThemeToggle() {
     return (
         <span className="hidden h-10 items-center rounded-full border border-white/15 bg-white px-1.5 text-left shadow-[0_6px_14px_-10px_rgba(9,20,48,0.7)] sm:flex">
-            <span className="grid h-7 w-7 place-items-center rounded-full bg-[#0b2e71] text-white">
+            <span className={`grid h-7 w-7 place-items-center rounded-full ${blueSurfaceGradient} text-white`}>
                 <MoonIcon className="h-3.5 w-3.5" />
             </span>
             <span className="grid h-7 w-7 place-items-center rounded-full bg-[#edf2fb] text-[#0b2e71]">
@@ -327,7 +329,7 @@ function AddressSelectorModal({ isOpen, onClose, isAuthed }) {
                         <>
                             <button
                                 onClick={() => window.location.href = route('login')}
-                                className="w-full py-3 px-4 bg-[#0b2e71] hover:bg-[#15408a] text-white font-semibold rounded-full transition"
+                                className={`w-full rounded-full px-4 py-3 font-semibold text-white transition hover:brightness-105 ${blueSurfaceGradient}`}
                             >
                                 Sign In to see your addresses
                             </button>
@@ -345,21 +347,21 @@ function AddressSelectorModal({ isOpen, onClose, isAuthed }) {
                     {/* ZIP Code Input */}
                     <div className="flex gap-2">
                         <div className="flex-1 relative">
-                            <input
-                                type="text"
-                                value={zipCode}
-                                onChange={(e) => setZipCode(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                                placeholder="Enter a US zip code"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-l-full focus:outline-none focus:ring-2 focus:ring-[#0b2e71] focus:border-transparent text-sm"
-                            />
-                        </div>
-                        <button
-                            onClick={handleApplyZip}
-                            disabled={!zipCode.trim() || isLoading}
-                            className="px-6 py-3 bg-[#96b8ef] hover:bg-[#7ca7e8] disabled:bg-gray-200 disabled:text-gray-400 text-[#0b2e71] font-semibold rounded-r-full transition"
-                        >
-                            {isLoading ? '...' : 'APPLY'}
-                        </button>
+                                <input
+                                    type="text"
+                                    value={zipCode}
+                                    onChange={(e) => setZipCode(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                                    placeholder="Enter a US zip code"
+                                    className="w-full rounded-l-full border border-gray-300 px-4 py-3 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#4f7fe0]"
+                                />
+                            </div>
+                            <button
+                                onClick={handleApplyZip}
+                                disabled={!zipCode.trim() || isLoading}
+                                className={`rounded-r-full px-6 py-3 font-semibold text-white transition hover:brightness-105 disabled:bg-gray-200 disabled:text-gray-400 ${blueSurfaceGradient}`}
+                            >
+                                {isLoading ? '...' : 'APPLY'}
+                            </button>
                     </div>
 
                     {/* Divider */}
@@ -375,7 +377,7 @@ function AddressSelectorModal({ isOpen, onClose, isAuthed }) {
                         <select
                             value={selectedRegion}
                             onChange={handleRegionChange}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0b2e71] focus:border-transparent text-sm appearance-none bg-white cursor-pointer"
+                            className="w-full cursor-pointer appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#4f7fe0]"
                         >
                             <option value="">Ship Outside the US</option>
                             <option value="CA">Canada</option>
@@ -403,7 +405,7 @@ function AddressSelectorModal({ isOpen, onClose, isAuthed }) {
                         disabled={!canDone}
                         className={`w-full py-3 px-4 rounded-full font-semibold transition ${
                             canDone 
-                                ? 'bg-[#0b2e71] hover:bg-[#15408a] text-white' 
+                                ? `text-white hover:brightness-105 ${blueSurfaceGradient}`
                                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                         }`}
                     >
@@ -420,7 +422,7 @@ function FooterColumn({ section }) {
     const slugify = (text) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
     return (
-        <div className={`mb-3 md:mb-0 transition-all duration-200 border border-white/20 md:border-transparent md:p-0 ${isOpen ? 'rounded-[12px] bg-[#0b192c]' : 'rounded-full'}`}>
+        <div className={`mb-3 md:mb-0 transition-all duration-200 border border-white/20 md:border-transparent md:p-0 ${isOpen ? `rounded-[12px] ${blueSurfaceGradient}` : 'rounded-full'}`}>
             {/* Mobile Toggle Button */}
             <button 
                 onClick={() => setIsOpen(!isOpen)}
@@ -480,7 +482,7 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
     return (
         <div className="min-h-screen overflow-x-hidden bg-[#eaf2ff] text-slate-900 antialiased" style={{ fontFamily: "'Segoe UI', Arial, sans-serif" }}>
             <header ref={headerRef} className="fixed inset-x-0 top-0 z-50">
-                    <div className="border-b border-[#042e6f] bg-[#0b2e71] text-white shadow-[0_10px_24px_-18px_rgba(7,18,46,0.8)]">
+                    <div className={`border-b border-white/10 text-white shadow-[0_10px_24px_-18px_rgba(7,18,46,0.8)] ${blueSurfaceGradient}`}>
                         <div className="mx-auto grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 px-4 py-3 sm:grid-cols-[auto_auto_minmax(0,1fr)_auto] sm:gap-3 sm:px-6 xl:gap-4 xl:px-8">
                             <PlexusBizMark />
 
@@ -614,10 +616,7 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
             <footer id="footer" className="relative z-10 w-full mt-4">
                     {/* Top Dark Section */}
                     <div
-                        className="pt-10 md:pt-16 pb-12"
-                        style={{
-                            background: 'linear-gradient(90deg, #0b2e71 0%, #1f68d9 100%)',
-                        }}
+                        className={`pb-12 pt-10 md:pt-16 ${blueSurfaceGradient}`}
                     >
                         <div className="mx-auto w-full px-6 sm:px-10 lg:px-16 xl:px-20">
                             <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-2 md:gap-6 xl:gap-4">
@@ -637,7 +636,7 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                     >
                         <div className="mx-auto flex w-full flex-col items-center justify-between gap-6 px-6 md:flex-row md:items-center lg:px-16 xl:px-20">
                             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 text-xs sm:text-sm text-[#0b2e71]">
-                                <span>© 2000-{new Date().getFullYear()} PlexusBiz Inc. All rights reserved.</span>
+                                <span>© 2003-{new Date().getFullYear()} PlexusBiz Inc. All rights reserved.</span>
                                 <div className="flex flex-wrap justify-center sm:justify-start items-center gap-3">
                                     <a href="#" className="font-medium hover:text-[#1f68d9] hover:underline whitespace-nowrap">Terms & Conditions</a>
                                     <a href="#" className="font-medium hover:text-[#1f68d9] hover:underline whitespace-nowrap">Privacy Policy</a>

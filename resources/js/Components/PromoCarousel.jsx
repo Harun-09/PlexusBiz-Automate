@@ -49,7 +49,7 @@ export default function PromoCarousel({ slides = [], className = '' }) {
         <article className={`overflow-hidden rounded-[28px] border border-[#d7e3f4] bg-white shadow-sm ${className}`}>
             <div className="relative">
                 <div className="grid min-h-[300px] gap-0 lg:grid-cols-[1.08fr_.92fr]">
-                    <div className="relative min-h-[300px] overflow-hidden bg-[#06102b]">
+                    <div className="relative min-h-[300px] overflow-hidden bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1]">
                         {currentSlide.imageUrl ? (
                             <img
                                 src={currentSlide.imageUrl}
@@ -93,7 +93,7 @@ export default function PromoCarousel({ slides = [], className = '' }) {
                         ) : null}
                     </div>
 
-                    <div className="flex flex-col justify-center gap-4 bg-[#0b2e71] px-6 py-6 text-white">
+                    <div className="flex flex-col justify-center gap-4 bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1] px-6 py-6 text-white">
                         <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#ffd59a]">
                             {currentSlide.eyebrow || 'Featured'}
                         </p>

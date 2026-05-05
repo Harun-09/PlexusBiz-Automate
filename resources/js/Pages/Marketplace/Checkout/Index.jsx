@@ -85,7 +85,7 @@ function GatewayCard({ gateway, selectedGateway, onSelect }) {
 
 function SummaryRow({ label, value, emphasized = false }) {
     return (
-        <div className={`flex items-center justify-between gap-4 rounded-2xl px-4 py-3 ${emphasized ? 'bg-[#0b2e71] text-white' : 'bg-slate-50 text-slate-700'}`}>
+        <div className={`flex items-center justify-between gap-4 rounded-2xl px-4 py-3 ${emphasized ? 'bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1] text-white' : 'bg-slate-50 text-slate-700'}`}>
             <span className={emphasized ? 'text-blue-100' : 'text-slate-500'}>{label}</span>
             <span className={`font-black ${emphasized ? 'text-white' : 'text-slate-950'}`}>{value}</span>
         </div>
@@ -109,7 +109,7 @@ export default function Index({ auth, flash, errors, cart, buyer, csrfToken, cur
 
             <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(11,46,113,0.14),_transparent_30%),radial-gradient(circle_at_top_right,_rgba(255,138,0,0.16),_transparent_26%),linear-gradient(180deg,_#eef5ff_0%,_#f9fbff_46%,_#ffffff_100%)] text-slate-900">
                 <main className="w-full px-4 py-6 sm:px-6 lg:px-8">
-                    <section className="overflow-hidden rounded-[32px] border border-[#d7e3f4] bg-[#0b2e71] shadow-[0_26px_80px_-40px_rgba(7,18,46,0.9)]">
+                    <section className="overflow-hidden rounded-[32px] border border-[#d7e3f4] bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1] shadow-[0_26px_80px_-40px_rgba(7,18,46,0.9)]">
                         <div className="grid gap-8 px-5 py-6 lg:grid-cols-[1.08fr_.92fr] lg:px-8 lg:py-8">
                             <div className="space-y-5 text-white">
                                 <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#ffd59a]">
@@ -256,7 +256,7 @@ export default function Index({ auth, flash, errors, cart, buyer, csrfToken, cur
                                         <SummaryRow label="Discount" value={formatMoney(summary.discount_total || 0, currency)} />
                                     </dl>
 
-                                    <div className="mt-5 rounded-[24px] bg-[#0b2e71] p-4 text-white">
+                                    <div className="mt-5 rounded-[24px] bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1] p-4 text-white">
                                         <p className="text-[11px] font-black uppercase tracking-[0.24em] text-blue-100">
                                             Grand total
                                         </p>
@@ -292,13 +292,13 @@ export default function Index({ auth, flash, errors, cart, buyer, csrfToken, cur
                                     </p>
                                     <Link
                                         href={route('products.index')}
-                                        className="inline-flex rounded-full bg-[#0b2e71] px-5 py-3 text-sm font-black uppercase tracking-[0.14em] text-white transition hover:bg-[#09255b]"
+                                        className="inline-flex rounded-full bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1] px-5 py-3 text-sm font-black uppercase tracking-[0.14em] text-white transition hover:brightness-105"
                                     >
                                         Browse products
                                     </Link>
                                 </div>
 
-                                <div className="rounded-[28px] bg-[linear-gradient(145deg,_#0b2e71,_#103a87,_#ff8a00)] p-6 text-white shadow-[0_16px_60px_-30px_rgba(15,23,42,0.8)]">
+                                <div className="rounded-[28px] bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1] p-6 text-white shadow-[0_16px_60px_-30px_rgba(15,23,42,0.8)]">
                                     <p className="text-[11px] font-black uppercase tracking-[0.24em] text-blue-100">
                                         Next step
                                     </p>

@@ -31,9 +31,7 @@ class InvoicePdfService
 
     public function generatePdf(Invoice $invoice): string
     {
-        $pdf = Pdf::loadView('invoices.template', [
-            'invoice' => $this->loadInvoice($invoice),
-        ]);
+        $pdf = $this->invoicePdf($invoice);
 
         $filename = 'invoices/' . $invoice->invoice_number . '.pdf';
         $path = storage_path('app/public/' . $filename);
@@ -49,16 +47,12 @@ class InvoicePdfService
 
     public function download(Invoice $invoice): Response
     {
-        return Pdf::loadView('invoices.template', [
-            'invoice' => $this->loadInvoice($invoice),
-        ])->download($this->downloadName($invoice));
+        return $this->invoicePdf($invoice)->download($this->downloadName($invoice));
     }
 
     public function stream(Invoice $invoice): Response
     {
-        return Pdf::loadView('invoices.template', [
-            'invoice' => $this->loadInvoice($invoice),
-        ])->stream($this->downloadName($invoice));
+        return $this->invoicePdf($invoice)->stream($this->downloadName($invoice));
     }
 
     private function generateInvoiceNumber(): string
@@ -74,5 +68,12 @@ class InvoicePdfService
     private function loadInvoice(Invoice $invoice): Invoice
     {
         return $invoice->load(['order.buyer', 'order.items.product', 'order.items.supplier']);
+    }
+
+    private function invoicePdf(Invoice $invoice)
+    {
+        return Pdf::loadView('invoices.template', [
+            'invoice' => $this->loadInvoice($invoice),
+        ])->setPaper('a4', 'portrait');
     }
 }

@@ -45,7 +45,7 @@ export default function SupplierApply({ countries = [] }) {
 
             <section className="bg-[#f4f7fc] py-16">
                 <div className="grid w-full gap-8 px-4 sm:px-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:px-8">
-                    <div className="rounded-[32px] border border-[#d8e3f6] bg-gradient-to-br from-[#0b2e71] via-[#123e8f] to-[#1f68d9] p-8 text-white shadow-[0_30px_100px_rgba(10,32,88,0.24)]">
+                    <div className="rounded-[32px] border border-[#d8e3f6] bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1] p-8 text-white shadow-[0_30px_100px_rgba(10,32,88,0.24)]">
                         <span className="inline-flex rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.24em] text-[#ffd59a]">
                             Supplier onboarding
                         </span>

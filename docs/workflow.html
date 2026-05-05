@@ -346,6 +346,18 @@
             <li>Branding should remain PlexusBiz in implementation; Newegg is only the visual reference for layout density and component rhythm.</li>
         </ul>
     </section>
+
+    <section>
+        <h2>2026-05-06 Requirement Recheck</h2>
+        <p>The assignment PDF and the master prompt were rechecked against the current codebase and docs. The chatbot-ready API is implemented and now has explicit proof coverage in the demo guide.</p>
+        <ul>
+            <li>Verified chatbot-ready API structure: <code>POST /api/support/chatbot/message</code> and <code>POST /api/v1/support/chatbot/message</code> both route to <code>SupportChatbotController</code>, validate with <code>ChatbotMessageRequest</code>, use FAQ matching, and can create <code>chatbot</code> channel support tickets.</li>
+            <li>Added a versioned endpoint regression test in <code>tests/Feature/Support/SupportAutomationTest.php</code> so the v1 API proof route is covered directly.</li>
+            <li>Updated <code>docs/requirement-proof-guide.html</code> so Step 9 and Step 11 explicitly show the chatbot API proof path and expected JSON behavior.</li>
+            <li>Adjusted authenticated page header alignment so role dashboard search/actions sit vertically centered with the page title block instead of floating at the top edge.</li>
+            <li>Confirmed scheduler and API proof commands expose the required campaign, cart, social-post, workflow, support, notification, and chatbot surfaces.</li>
+        </ul>
+    </section>
 </main>
 </body>
 </html>

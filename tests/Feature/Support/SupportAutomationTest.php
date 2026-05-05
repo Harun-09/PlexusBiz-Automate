@@ -94,4 +94,23 @@ class SupportAutomationTest extends TestCase
             'sender_type' => 'chatbot',
         ]);
     }
+
+    public function test_versioned_chatbot_endpoint_matches_faq(): void
+    {
+        $this->seed([
+            RbacSeeder::class,
+            SupportSeeder::class,
+        ]);
+
+        $buyer = User::where('email', 'buyer@plexus.test')->firstOrFail();
+
+        Sanctum::actingAs($buyer);
+
+        $this->postJson('/api/v1/support/chatbot/message', [
+            'message' => 'What is the minimum order quantity for bulk products?',
+        ])
+            ->assertOk()
+            ->assertJsonPath('data.source', 'faq')
+            ->assertJsonPath('data.ticket', null);
+    }
 }

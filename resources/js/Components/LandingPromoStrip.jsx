@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+const blueSurfaceGradient = 'bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1]';
+
 function MiniQr() {
     const cells = Array.from({ length: 49 }, (_, index) => {
         const row = Math.floor(index / 7);
@@ -18,7 +20,7 @@ function MiniQr() {
             {cells.map((fill, index) => (
                 <span
                     key={index}
-                    className={`rounded-[2px] ${fill ? 'bg-[#0b3d91]' : 'bg-[#dbe7fb]'}`}
+                    className={`rounded-[2px] ${fill ? 'bg-[#3f70d4]' : 'bg-[#dbe7fb]'}`}
                 />
             ))}
         </div>
@@ -62,12 +64,12 @@ export default function LandingPromoStrip() {
                                 />
                                 <button
                                     type="submit"
-                                    className="rounded-b-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white hover:bg-blue-700 sm:rounded-l-none sm:rounded-r-md"
+                                    className={`rounded-b-md px-6 py-2 text-sm font-semibold text-white transition hover:brightness-105 sm:rounded-l-none sm:rounded-r-md ${blueSurfaceGradient}`}
                                 >
                                     Sign up
                                 </button>
                             </form>
-                            <a href="#" className="mt-3 inline-block text-sm text-blue-600 hover:text-blue-800">
+                            <a href="#" className="mt-3 inline-block text-sm text-[#3f70d4] hover:text-[#2953b1]">
                                 View Latest Email Deals &rarr;
                             </a>
                         </div>
@@ -102,7 +104,7 @@ export default function LandingPromoStrip() {
                                 />
                                 <button
                                     type="submit"
-                                    className="rounded-b-md bg-blue-500 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-600 sm:rounded-l-none sm:rounded-r-md"
+                                    className={`rounded-b-md px-5 py-2 text-sm font-semibold text-white transition hover:brightness-105 sm:rounded-l-none sm:rounded-r-md ${blueSurfaceGradient}`}
                                 >
                                     Send Link
                                 </button>

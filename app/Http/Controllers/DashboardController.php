@@ -442,7 +442,7 @@ class DashboardController extends Controller
             ],
             RoleName::MarketingManager => [
                 ['label' => 'Email Campaigns', 'href' => '/marketing/campaigns'],
-                ['label' => 'Social Campaigns', 'href' => '/social/campaigns'],
+                ['label' => 'Social Campaigns', 'href' => '/social/posts'],
                 ['label' => 'Social Calendar', 'href' => '/social/calendar'],
                 ['label' => 'Workflow Logs', 'href' => '/workflow/logs'],
             ],
