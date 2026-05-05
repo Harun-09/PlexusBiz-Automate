@@ -9,6 +9,7 @@ use App\Domains\ECommerce\Models\Order;
 use App\Domains\ECommerce\Models\OrderItem;
 use App\Domains\ECommerce\Models\Product;
 use App\Domains\ECommerce\Models\Supplier;
+use App\Domains\ECommerce\Models\SupplierOrder;
 use App\Domains\Marketing\Enums\CampaignStatus;
 use App\Domains\Marketing\Enums\CampaignType;
 use App\Domains\Marketing\Models\Campaign;
@@ -150,6 +151,17 @@ class DashboardTest extends TestCase
             'status' => OrderStatus::Processing->value,
         ]);
 
+        SupplierOrder::create([
+            'order_id' => $order->id,
+            'supplier_id' => $supplier->id,
+            'supplier_order_number' => 'SO-SUPPLIER-001',
+            'status' => OrderStatus::Processing->value,
+            'subtotal' => '1200.00',
+            'grand_total' => '1200.00',
+            'currency' => 'BDT',
+            'placed_at' => now(),
+        ]);
+
         SupportTicket::create([
             'ticket_number' => 'TKT-SUPPLIER-001',
             'requester_id' => $buyer->id,
@@ -172,10 +184,12 @@ class DashboardTest extends TestCase
                 ->where('dashboard.cards.0.value', '2')
                 ->where('dashboard.cards.1.label', 'Active Listings')
                 ->where('dashboard.cards.1.value', '1')
-                ->where('dashboard.cards.2.label', 'Pending Fulfillment')
+                ->where('dashboard.cards.2.label', 'Low Stock Alerts')
                 ->where('dashboard.cards.2.value', '1')
-                ->where('dashboard.cards.3.label', 'Open Tickets')
-                ->where('dashboard.cards.3.value', '1'));
+                ->where('dashboard.cards.6.label', 'Pending Fulfillment')
+                ->where('dashboard.cards.6.value', '1')
+                ->where('dashboard.cards.7.label', 'Open Tickets')
+                ->where('dashboard.cards.7.value', '1'));
     }
 
     public function test_marketing_dashboard_shows_live_campaign_stats(): void

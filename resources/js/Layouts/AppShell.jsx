@@ -23,7 +23,7 @@ export default function AppShell({ user, header, children, flash = null }) {
     }, [sidebarOpen]);
 
     return (
-        <div className="min-h-screen bg-slate-100 text-slate-900">
+        <div className="min-h-screen bg-[#f5f7fb] text-slate-900">
             <div className="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:w-72 lg:flex-col">
                 <Sidebar user={user} currentPath={currentPath} />
             </div>

@@ -141,17 +141,17 @@ export default function Sidebar({ user, currentPath, onNavigate = null }) {
     const isOpen = (key) => openKeys.includes(key) || activeModuleKey === key;
 
     return (
-        <aside className="flex h-full min-h-0 flex-col border-r border-slate-200 bg-white">
-            <div className="flex h-16 items-center border-b border-slate-200 px-4">
+        <aside className="flex h-full min-h-0 flex-col border-r border-slate-800 bg-slate-950">
+            <div className="flex h-16 items-center border-b border-white/10 px-4">
                 <Link href={route('dashboard')} className="flex items-center gap-3">
                     <img
                         src="/images/project-logo.png"
                         alt="PlexusBiz"
-                        className="h-10 w-10 rounded-full bg-white object-cover shadow-[0_0_14px_rgba(15,23,42,0.14)]"
+                        className="h-10 w-10 rounded-lg bg-white object-cover shadow"
                     />
                     <span className="leading-tight">
-                        <span className="block text-sm font-black text-slate-950">PlexusBiz</span>
-                        <span className="block text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
+                        <span className="block text-sm font-black text-white">PlexusBiz</span>
+                        <span className="block text-[11px] font-semibold uppercase text-slate-400">
                             e-commerce hub
                         </span>
                     </span>
@@ -160,7 +160,7 @@ export default function Sidebar({ user, currentPath, onNavigate = null }) {
 
             <nav className="app-shell-scrollbar min-h-0 flex-1 space-y-5 overflow-y-auto px-3 py-4">
                 <div>
-                    <p className="px-3 text-[11px] font-black uppercase tracking-wider text-slate-400">Workspace</p>
+                    <p className="px-3 text-[11px] font-black uppercase text-slate-500">Workspace</p>
                     <div className="mt-2 space-y-1">
                         <SidebarItem
                             item={{ label: 'Dashboard', href: '/dashboard', icon: 'D' }}
@@ -174,23 +174,23 @@ export default function Sidebar({ user, currentPath, onNavigate = null }) {
                     const open = isOpen(module.key);
 
                     return (
-                        <div key={module.key} className="rounded-2xl border border-slate-200 bg-slate-50/70 shadow-sm">
+                        <div key={module.key} className="rounded-lg border border-white/10 bg-white/[0.04]">
                             <button
                                 type="button"
                                 onClick={() => toggleModule(module.key)}
                                 className="flex w-full items-center gap-3 px-4 py-3 text-left"
                                 aria-expanded={open}
                             >
-                                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white text-[11px] font-black text-slate-700 ring-1 ring-slate-200">
+                                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-white/10 text-[11px] font-black text-slate-200 ring-1 ring-white/10">
                                     {module.icon}
                                 </span>
                                 <span className="min-w-0 flex-1">
-                                    <span className="block text-sm font-black text-slate-900">{module.label}</span>
-                                    <span className="block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                                    <span className="block text-sm font-black text-white">{module.label}</span>
+                                    <span className="block text-[11px] font-semibold uppercase text-slate-500">
                                         {module.items.length} menus
                                     </span>
                                 </span>
-                                <Chevron className={`h-4 w-4 shrink-0 text-slate-500 transition ${open ? 'rotate-180' : ''}`} />
+                                <Chevron className={`h-4 w-4 shrink-0 text-slate-400 transition ${open ? 'rotate-180' : ''}`} />
                             </button>
 
                             {open ? (

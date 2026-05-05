@@ -14,9 +14,115 @@ const SearchIcon = () => (
     </svg>
 );
 
+const roleThemes = {
+    admin: {
+        accent: 'bg-blue-700',
+        border: 'border-blue-100',
+        badge: 'border-blue-200 bg-blue-50 text-blue-700',
+        soft: 'bg-blue-50 text-blue-700',
+        summary: 'Admin command center',
+        overview: 'Control users, suppliers, products, modules, and governance from a clean executive dashboard.',
+        focus: [
+            'Watch platform-wide order, payment, and customer movement.',
+            'Keep admin, audit, and module controls one click away.',
+            'Use live counts before acting on approvals or configuration.',
+        ],
+    },
+    supplier: {
+        accent: 'bg-emerald-600',
+        border: 'border-emerald-100',
+        badge: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+        soft: 'bg-emerald-50 text-emerald-700',
+        summary: 'Supplier operations hub',
+        overview: 'Track products, inventory, fulfillment, and buyer support in one supplier-facing workspace.',
+        focus: [
+            'Keep catalog health, stock alerts, and fulfillment together.',
+            'Approved suppliers get product creation shortcuts quickly.',
+            'Support visibility stays connected to supplier-side work.',
+        ],
+    },
+    marketing_manager: {
+        accent: 'bg-rose-600',
+        border: 'border-rose-100',
+        badge: 'border-rose-200 bg-rose-50 text-rose-700',
+        soft: 'bg-rose-50 text-rose-700',
+        summary: 'Marketing command board',
+        overview: 'Keep campaigns, templates, social publishing, and workflow logs in a single performance view.',
+        focus: [
+            'Campaign and template actions stay close to performance signals.',
+            'Scheduled and published social posts remain easy to compare.',
+            'Workflow failures stay visible before they affect campaigns.',
+        ],
+    },
+    workflow_manager: {
+        accent: 'bg-teal-600',
+        border: 'border-teal-100',
+        badge: 'border-teal-200 bg-teal-50 text-teal-700',
+        soft: 'bg-teal-50 text-teal-700',
+        summary: 'Workflow operations board',
+        overview: 'Monitor automation rules, execution logs, and failed runs with an operations-first layout.',
+        focus: [
+            'Active rules and run states stay visible without deep navigation.',
+            'Failed runs are treated as an operational queue.',
+            'Automation shortcuts keep troubleshooting focused.',
+        ],
+    },
+    buyer: {
+        accent: 'bg-amber-500',
+        border: 'border-amber-100',
+        badge: 'border-amber-200 bg-amber-50 text-amber-800',
+        soft: 'bg-amber-50 text-amber-800',
+        summary: 'Buyer workspace',
+        overview: 'Review orders, spending, and support activity from a business-ready buyer dashboard.',
+        focus: [
+            'Order, invoice, and support paths stay grouped for repeat work.',
+            'Pending activity is visible before returning to the marketplace.',
+            'Checkout shortcuts keep the buying workflow fast.',
+        ],
+    },
+};
+
+const quickLinkCopy = {
+    Users: 'Manage access, roles, and platform accounts.',
+    Customers: 'Review CRM profiles and buying activity.',
+    Suppliers: 'Approve vendors and track onboarding state.',
+    Products: 'Open catalog, pricing, and stock operations.',
+    Inventory: 'Check stock, availability, and catalog health.',
+    Orders: 'Track buyer orders and fulfillment progress.',
+    'Supplier Orders': 'Handle supplier-side fulfillment work.',
+    'Add Product': 'Create a new supplier catalog item.',
+    Campaigns: 'Manage email campaigns and schedules.',
+    'Social Calendar': 'Plan and review future social posts.',
+    'Workflow Logs': 'Audit automation runs and failures.',
+    Marketplace: 'Browse the live product catalog.',
+    Cart: 'Continue the buyer checkout flow.',
+    Support: 'Open buyer and supplier support requests.',
+    'Failed Logs': 'Review failed workflow executions.',
+    Dashboard: 'Return to the role overview.',
+    'Module Settings': 'Enable or disable platform modules.',
+    'Audit Logs': 'Review critical administrative actions.',
+};
+
+const statusTone = (value) => {
+    const normalized = normalize(value);
+
+    if (normalized === 'active') {
+        return 'border-emerald-200 bg-emerald-50 text-emerald-700';
+    }
+
+    if (normalized === 'inactive') {
+        return 'border-slate-200 bg-slate-50 text-slate-600';
+    }
+
+    return 'border-blue-200 bg-blue-50 text-blue-700';
+};
+
+const formatStatus = (value) => String(value || 'active').replace(/[_-]/g, ' ');
+
 export default function Dashboard({ auth, dashboard }) {
     const [query, setQuery] = useState('');
     const normalizedQuery = normalize(query);
+    const theme = roleThemes[dashboard.role.key] || roleThemes.buyer;
 
     const filteredPermissions = useMemo(() => {
         if (normalizedQuery === '') {
@@ -40,10 +146,7 @@ export default function Dashboard({ auth, dashboard }) {
     }, [dashboard.quickLinks, normalizedQuery]);
 
     const searchField = (
-        <form
-            onSubmit={(event) => event.preventDefault()}
-            className="w-full min-w-[280px] sm:w-[360px]"
-        >
+        <form onSubmit={(event) => event.preventDefault()} className="w-full min-w-[260px] sm:w-[360px]">
             <label htmlFor="dashboard-search" className="sr-only">
                 Search dashboard
             </label>
@@ -57,106 +160,206 @@ export default function Dashboard({ auth, dashboard }) {
                     value={query}
                     onChange={(event) => setQuery(event.target.value)}
                     placeholder="Search shortcuts or permissions"
-                    className="h-11 w-full rounded-xl border-slate-200 bg-slate-50 pl-10 text-sm focus:border-blue-500 focus:bg-white focus:ring-blue-500"
+                    className="h-11 w-full rounded-lg border border-slate-200 bg-white pl-10 text-sm text-slate-700 shadow-sm transition focus:border-blue-500 focus:ring-blue-500"
                 />
             </div>
         </form>
     );
 
+    const featuredCards = dashboard.cards.slice(0, 3);
+    const topQuickLinks = filteredQuickLinks.slice(0, 4);
+
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<PageHeader title={`${dashboard.role.label} Dashboard`} actions={searchField} />}
+            header={
+                <PageHeader
+                    eyebrow="Role workspace"
+                    title={`${dashboard.role.label} Dashboard`}
+                    description={theme.overview}
+                    actions={searchField}
+                />
+            }
         >
             <Head title={`${dashboard.role.label} Dashboard`} />
 
-            <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                {dashboard.cards.map((card) => (
-                    <KpiCard
-                        key={card.label}
-                        label={card.label}
-                        value={card.value}
-                        description={card.description}
-                        tone={card.tone}
-                    />
-                ))}
-            </section>
-
-            <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
-                <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                        <div>
-                            <h2 className="text-base font-black text-slate-950">Permissions</h2>
-                            <p className="mt-1 text-sm leading-6 text-slate-600">
-                                Resolved from assigned roles and direct permissions.
-                            </p>
-                        </div>
-                        <span className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-bold text-slate-600">
-                            {filteredPermissions.length} / {dashboard.permissions.length}
-                        </span>
-                    </div>
-
-                    {filteredPermissions.length > 0 ? (
-                        <div className="mt-5 flex flex-wrap gap-2">
-                            {filteredPermissions.map((permission) => (
-                                <span
-                                    key={permission}
-                                    className="rounded-md border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-semibold text-slate-700"
-                                >
-                                    {permission.replaceAll('_', ' ')}
+            <div className="space-y-6">
+                <section className={`overflow-hidden rounded-lg border bg-white shadow-sm ${theme.border}`}>
+                    <div className={`h-1.5 ${theme.accent}`} />
+                    <div className="grid gap-0 xl:grid-cols-[minmax(0,1.25fr)_360px]">
+                        <div className="p-6 sm:p-8">
+                            <div className="flex flex-wrap items-center gap-2">
+                                <span className={`rounded-md border px-3 py-1 text-xs font-bold uppercase ${theme.badge}`}>
+                                    {dashboard.role.label}
                                 </span>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="mt-5">
-                            <EmptyState
-                                title="No permissions match"
-                                description="Try a different search term or clear the search box to view the full permission set."
-                            />
-                        </div>
-                    )}
-                </section>
+                                <span className="rounded-md border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-bold uppercase text-slate-600">
+                                    {dashboard.cards.length} live metrics
+                                </span>
+                                <span className="rounded-md border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-bold uppercase text-slate-600">
+                                    {dashboard.quickLinks.length} shortcuts
+                                </span>
+                                <span className={`rounded-md border px-3 py-1 text-xs font-bold uppercase ${statusTone(dashboard.status)}`}>
+                                    {formatStatus(dashboard.status)}
+                                </span>
+                            </div>
 
-                <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                        <div>
-                            <h2 className="text-base font-black text-slate-950">Quick Actions</h2>
-                            <p className="mt-1 text-sm leading-6 text-slate-600">
-                                Live shortcuts for the current role.
+                            <h2 className="mt-5 text-2xl font-extrabold text-slate-950 sm:text-3xl">
+                                {theme.summary}
+                            </h2>
+                            <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
+                                {theme.overview}
                             </p>
-                        </div>
-                        <span className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
-                            {filteredQuickLinks.length} shortcuts
-                        </span>
-                    </div>
 
-                    {filteredQuickLinks.length > 0 ? (
-                        <div className="mt-5 grid gap-3">
-                            {filteredQuickLinks.map((link) => (
-                                <Link
-                                    key={link.href}
-                                    href={link.href}
-                                    className="group flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-800"
-                                >
-                                    <span>{link.label}</span>
-                                    <span
-                                        aria-hidden="true"
-                                        className="text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-blue-700"
-                                    >
-                                        -&gt;
-                                    </span>
-                                </Link>
-                            ))}
+                            {featuredCards.length > 0 ? (
+                                <dl className="mt-6 grid overflow-hidden rounded-lg border border-slate-200 bg-slate-50 sm:grid-cols-3 sm:divide-x sm:divide-slate-200">
+                                    {featuredCards.map((card) => (
+                                        <div key={card.label} className="border-b border-slate-200 p-4 last:border-b-0 sm:border-b-0">
+                                            <dt className="text-xs font-bold uppercase text-slate-500">{card.label}</dt>
+                                            <dd className="mt-2 text-2xl font-extrabold text-slate-950">{card.value}</dd>
+                                            <p className="mt-1 text-xs leading-5 text-slate-500">{card.description}</p>
+                                        </div>
+                                    ))}
+                                </dl>
+                            ) : null}
                         </div>
-                    ) : (
-                        <div className="mt-5">
-                            <EmptyState
-                                title="No shortcuts match"
-                                description="The role shortcuts are still available, but none match the current search text."
-                            />
-                        </div>
-                    )}
+
+                        <aside className="border-t border-slate-200 bg-slate-50 p-6 sm:p-8 xl:border-l xl:border-t-0">
+                            <p className="text-xs font-bold uppercase text-slate-500">Operational focus</p>
+                            <h3 className="mt-2 text-lg font-extrabold text-slate-950">
+                                {dashboard.role.label} priorities
+                            </h3>
+
+                            <div className="mt-4 space-y-3">
+                                {theme.focus.map((item) => (
+                                    <div key={item} className="flex gap-3">
+                                        <span className={`mt-2 h-2 w-2 rounded-sm ${theme.accent}`} />
+                                        <p className="text-sm leading-6 text-slate-600">{item}</p>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {topQuickLinks.length > 0 ? (
+                                <div className="mt-6 border-t border-slate-200 pt-5">
+                                    <p className="text-xs font-bold uppercase text-slate-500">Fast path</p>
+                                    <div className="mt-3 grid gap-2">
+                                        {topQuickLinks.map((link) => (
+                                            <Link
+                                                key={link.href}
+                                                href={link.href}
+                                                className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-200 hover:text-blue-700"
+                                            >
+                                                <span>{link.label}</span>
+                                                <span className={`rounded-md px-2 py-0.5 text-xs font-bold ${theme.soft}`}>
+                                                    Open
+                                                </span>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : null}
+                        </aside>
+                    </div>
                 </section>
+
+                {dashboard.cards.length > 0 ? (
+                    <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                        {dashboard.cards.map((card) => (
+                            <KpiCard
+                                key={card.label}
+                                label={card.label}
+                                value={card.value}
+                                description={card.description}
+                                tone={card.tone}
+                            />
+                        ))}
+                    </section>
+                ) : null}
+
+                <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_390px]">
+                    <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                            <div>
+                                <p className="text-xs font-bold uppercase text-slate-500">Access</p>
+                                <h2 className="mt-1 text-xl font-extrabold text-slate-950">Permissions</h2>
+                                <p className="mt-2 text-sm leading-6 text-slate-600">
+                                    Resolved from assigned roles and direct permissions for the current workspace.
+                                </p>
+                            </div>
+                            <span className="inline-flex rounded-md border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-bold text-slate-600">
+                                {filteredPermissions.length} / {dashboard.permissions.length}
+                            </span>
+                        </div>
+
+                        {filteredPermissions.length > 0 ? (
+                            <div className="mt-5 flex flex-wrap gap-2">
+                                {filteredPermissions.map((permission) => (
+                                    <span
+                                        key={permission}
+                                        className="rounded-md border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-semibold text-slate-700"
+                                    >
+                                        {permission.replaceAll('_', ' ')}
+                                    </span>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="mt-5">
+                                <EmptyState
+                                    title="No permissions match"
+                                    description="Try a different search term or clear the search box to view the full permission set."
+                                />
+                            </div>
+                        )}
+                    </section>
+
+                    <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                            <div>
+                                <p className="text-xs font-bold uppercase text-slate-500">Navigation</p>
+                                <h2 className="mt-1 text-xl font-extrabold text-slate-950">Quick Actions</h2>
+                                <p className="mt-2 text-sm leading-6 text-slate-600">
+                                    Live shortcuts for the current role.
+                                </p>
+                            </div>
+                            <span className={`inline-flex rounded-md border px-3 py-1 text-xs font-bold ${theme.badge}`}>
+                                {filteredQuickLinks.length} shortcuts
+                            </span>
+                        </div>
+
+                        {filteredQuickLinks.length > 0 ? (
+                            <div className="mt-5 grid gap-3">
+                                {filteredQuickLinks.map((link) => (
+                                    <Link
+                                        key={link.href}
+                                        href={link.href}
+                                        className="group rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-blue-200 hover:shadow-md"
+                                    >
+                                        <div className="flex items-start justify-between gap-4">
+                                            <div>
+                                                <p className="text-sm font-extrabold text-slate-950">{link.label}</p>
+                                                <p className="mt-1 text-xs leading-5 text-slate-500">
+                                                    {quickLinkCopy[link.label] || 'Open this workspace area in one click.'}
+                                                </p>
+                                                <p className="mt-2 break-all text-xs font-semibold text-slate-400">
+                                                    {link.href}
+                                                </p>
+                                            </div>
+                                            <span className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-bold text-slate-500 transition group-hover:border-blue-200 group-hover:text-blue-700">
+                                                Open
+                                            </span>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="mt-5">
+                                <EmptyState
+                                    title="No shortcuts match"
+                                    description="The role shortcuts are still available, but none match the current search text."
+                                />
+                            </div>
+                        )}
+                    </section>
+                </div>
             </div>
         </AuthenticatedLayout>
     );

@@ -1,22 +1,25 @@
 const toneClasses = {
-    blue: 'border-blue-100 bg-blue-50 text-blue-800',
-    emerald: 'border-emerald-100 bg-emerald-50 text-emerald-800',
-    amber: 'border-amber-100 bg-amber-50 text-amber-800',
-    rose: 'border-rose-100 bg-rose-50 text-rose-800',
-    slate: 'border-slate-200 bg-white text-slate-900',
+    blue: { border: 'border-blue-100', bar: 'bg-blue-600', text: 'text-blue-700' },
+    emerald: { border: 'border-emerald-100', bar: 'bg-emerald-600', text: 'text-emerald-700' },
+    amber: { border: 'border-amber-100', bar: 'bg-amber-500', text: 'text-amber-700' },
+    rose: { border: 'border-rose-100', bar: 'bg-rose-600', text: 'text-rose-700' },
+    slate: { border: 'border-slate-200', bar: 'bg-slate-900', text: 'text-slate-700' },
 };
 
 export default function KpiCard({ label, value, description, tone = 'slate' }) {
     const toneClass = toneClasses[tone] || toneClasses.slate;
 
     return (
-        <section className={`rounded-lg border p-5 shadow-sm ${toneClass}`}>
+        <section className={`relative overflow-hidden rounded-lg border bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${toneClass.border}`}>
+            <div className={`absolute inset-x-0 top-0 h-1 ${toneClass.bar}`} />
             <div className="flex items-start justify-between gap-3">
-                <p className="text-xs font-black uppercase tracking-wider opacity-70">{label}</p>
-                <span className="rounded-full bg-white/70 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide">Live</span>
+                <p className="text-xs font-bold uppercase text-slate-500">{label}</p>
+                <span className={`rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] font-bold uppercase ${toneClass.text}`}>
+                    Live
+                </span>
             </div>
-            <p className="mt-3 text-3xl font-black tracking-tight">{value}</p>
-            {description ? <p className="mt-3 text-sm leading-6 opacity-80">{description}</p> : null}
+            <p className="mt-4 text-3xl font-extrabold text-slate-950">{value}</p>
+            {description ? <p className="mt-3 text-sm leading-6 text-slate-600">{description}</p> : null}
         </section>
     );
 }

@@ -6,7 +6,7 @@
 
 @layer components {
     .app-shell-scrollbar {
-        scrollbar-color: #cbd5e1 transparent;
+        scrollbar-color: #475569 transparent;
         scrollbar-width: thin;
     }
 
@@ -16,7 +16,7 @@
 
     .app-shell-scrollbar::-webkit-scrollbar-thumb {
         border-radius: 999px;
-        background: #cbd5e1;
+        background: #475569;
     }
 
     .input {

@@ -20,12 +20,12 @@ export default function Header({ user, header, currentPath, onOpenSidebar }) {
         .join(', ') || 'workspace';
 
     return (
-        <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
+        <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
             <div className="flex min-h-16 items-center gap-3 px-4 sm:px-6">
                 <button
                     type="button"
                     onClick={onOpenSidebar}
-                    className="grid h-10 w-10 place-items-center rounded-lg border border-slate-200 text-slate-600 lg:hidden"
+                    className="grid h-10 w-10 place-items-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm lg:hidden"
                     aria-label="Open navigation"
                 >
                     <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-current stroke-2">
@@ -47,16 +47,16 @@ export default function Header({ user, header, currentPath, onOpenSidebar }) {
                     <div className={showBreadcrumbs ? 'mt-1 min-w-0' : 'min-w-0'}>{header}</div>
                 </div>
 
-                <div className="flex items-center gap-5">
+                <div className="flex items-center gap-4">
                     <NotificationBell />
 
                     <Dropdown>
                         <Dropdown.Trigger>
                             <button
                                 type="button"
-                                className="flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-2.5 text-left text-sm transition hover:border-blue-200"
+                                className="flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-2.5 text-left text-sm shadow-sm transition hover:border-blue-200"
                             >
-                                <span className="grid h-7 w-7 place-items-center rounded-md bg-slate-950 text-xs font-black text-white">
+                                <span className="grid h-7 w-7 place-items-center rounded-md bg-blue-700 text-xs font-black text-white">
                                     {user?.name?.slice(0, 1) || 'U'}
                                 </span>
                                 <span className="hidden leading-tight md:block">
