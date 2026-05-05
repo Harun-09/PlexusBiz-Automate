@@ -7,6 +7,7 @@ use App\Domains\ECommerce\Models\Invoice;
 use App\Domains\ECommerce\Models\Order;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 
 class InvoicePdfService
 {
@@ -47,7 +48,7 @@ class InvoicePdfService
         return $filename;
     }
 
-    public function download(Invoice $invoice): \Symfony\Component\HttpFoundation\StreamedResponse
+    public function download(Invoice $invoice): Response
     {
         $pdf = Pdf::loadView('invoices.template', [
             'invoice' => $invoice->load(['order.buyer', 'order.items.product', 'order.items.supplier']),
@@ -56,7 +57,7 @@ class InvoicePdfService
         return $pdf->download('invoice-' . $invoice->invoice_number . '.pdf');
     }
 
-    public function stream(Invoice $invoice): \Symfony\Component\HttpFoundation\StreamedResponse
+    public function stream(Invoice $invoice): Response
     {
         $pdf = Pdf::loadView('invoices.template', [
             'invoice' => $invoice->load(['order.buyer', 'order.items.product', 'order.items.supplier']),

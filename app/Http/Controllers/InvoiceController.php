@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class InvoiceController extends Controller
 {
@@ -69,14 +69,14 @@ class InvoiceController extends Controller
         ]);
     }
 
-    public function download(Invoice $invoice): StreamedResponse
+    public function download(Invoice $invoice): HttpResponse
     {
         $this->authorize('view', $invoice);
 
         return $this->invoicePdfService->download($invoice);
     }
 
-    public function stream(Invoice $invoice): StreamedResponse
+    public function stream(Invoice $invoice): HttpResponse
     {
         $this->authorize('view', $invoice);
 
