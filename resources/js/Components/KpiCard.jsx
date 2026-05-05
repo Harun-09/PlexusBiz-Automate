@@ -10,8 +10,9 @@ export default function KpiCard({ label, value, description, tone = 'slate' }) {
     const toneClass = toneClasses[tone] || toneClasses.slate;
 
     return (
-        <section className={`relative overflow-hidden rounded-lg border bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${toneClass.border}`}>
-            <div className={`absolute inset-x-0 top-0 h-1 ${toneClass.bar}`} />
+        <section className={`group relative overflow-hidden rounded-2xl border bg-gradient-to-br from-white via-white to-slate-50 p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-lg ${toneClass.border}`}>
+            <div className={`absolute inset-x-0 top-0 h-1.5 ${toneClass.bar}`} />
+            <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-slate-50/70 to-transparent opacity-0 transition group-hover:opacity-100" />
             <div className="flex items-start justify-between gap-3">
                 <p className="text-xs font-bold uppercase text-slate-500">{label}</p>
                 <span className={`rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] font-bold uppercase ${toneClass.text}`}>
