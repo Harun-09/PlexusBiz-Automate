@@ -20,6 +20,7 @@ use App\Domains\Workflow\Enums\WorkflowLogStatus;
 use App\Domains\Workflow\Models\AutomationRule;
 use App\Domains\Workflow\Models\WorkflowLog;
 use App\Enums\RoleName;
+use App\Enums\UserStatus;
 use App\Models\User;
 use App\Support\Audit\Models\AuditLog;
 use Illuminate\Http\Request;
@@ -70,6 +71,7 @@ class DashboardController extends Controller
         $revenue = Order::where('payment_status', PaymentStatus::Completed->value)->sum('grand_total');
         $pendingOrders = Order::where('status', OrderStatus::Pending->value)->count();
         $pendingPayments = Order::where('payment_status', PaymentStatus::Pending->value)->count();
+        $pendingApplications = User::where('status', UserStatus::Pending->value)->count();
         $customers = Customer::count();
 
         return [
@@ -96,6 +98,12 @@ class DashboardController extends Controller
                 $this->formatCount($pendingPayments),
                 'Orders that still need payment completion.',
                 'rose',
+            ),
+            $this->statCard(
+                'Pending Applications',
+                $this->formatCount($pendingApplications),
+                'Role requests waiting for admin review.',
+                'amber',
             ),
             $this->statCard(
                 'Customers',

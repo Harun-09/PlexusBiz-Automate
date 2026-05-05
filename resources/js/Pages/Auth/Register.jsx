@@ -18,21 +18,20 @@ const countryOptions = [
     'Australia',
 ];
 
-export default function Register() {
+export default function Register({ accountTypes = [] }) {
     const { data, setData, post, processing, errors, reset } = useForm({
-        name: '',
         first_name: '',
         last_name: '',
+        account_type: '',
+        company_name: '',
         job_title: '',
         phone: '',
         employees: '',
-        company: '',
         country: 'Bangladesh',
         email: '',
         password: '',
         password_confirmation: '',
         agree_terms: false,
-        marketing_opt_in: false,
     });
 
     useEffect(() => {
@@ -41,14 +40,6 @@ export default function Register() {
         };
     }, []);
 
-    useEffect(() => {
-        const fullName = [data.first_name, data.last_name].filter(Boolean).join(' ').trim();
-
-        if (data.name !== fullName) {
-            setData('name', fullName);
-        }
-    }, [data.first_name, data.last_name, data.name, setData]);
-
     const submit = (e) => {
         e.preventDefault();
 
@@ -56,7 +47,14 @@ export default function Register() {
     };
 
     return (
-        <GuestLayout variant="register">
+        <GuestLayout
+            variant="register"
+            registerHero={{
+                eyebrow: 'Account approval',
+                title: 'Request access to the platform.',
+                lead: 'Submit your business details and wait for admin review before sign-in is enabled.',
+            }}
+        >
             <Head title="Create account" />
 
             <div className="auth-form auth-form--register">
@@ -76,7 +74,11 @@ export default function Register() {
 
                 <div className="auth-form__header auth-form__header--register">
                     <span className="auth-eyebrow">Create your account</span>
-                    <h2>Create your account.</h2>
+                    <h2>Request a role account.</h2>
+                </div>
+
+                <div className="mb-5 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm leading-6 text-blue-900">
+                    Submit the role and business details below. Admin review is required before the account becomes active.
                 </div>
 
                 <form onSubmit={submit} className="auth-form__body auth-form__body--register">
@@ -117,9 +119,48 @@ export default function Register() {
                         </div>
                     </div>
 
-                    <InputError message={errors.name} className="auth-error" />
+                    <div className="auth-field">
+                        <InputLabel htmlFor="account_type" value="Account type" className="auth-label" />
+
+                        <select
+                            id="account_type"
+                            name="account_type"
+                            value={data.account_type}
+                            className="auth-input auth-select"
+                            onChange={(e) => setData('account_type', e.target.value)}
+                            required
+                        >
+                            <option value="" disabled>
+                                Select account type
+                            </option>
+                            {accountTypes.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                    {option.label}
+                                </option>
+                            ))}
+                        </select>
+
+                        <InputError message={errors.account_type} className="auth-error" />
+                    </div>
 
                     <div className="auth-register-grid auth-register-grid--two">
+                        <div className="auth-field">
+                            <InputLabel htmlFor="company_name" value="Company" className="auth-label" />
+
+                            <TextInput
+                                id="company_name"
+                                name="company_name"
+                                value={data.company_name}
+                                className="auth-input"
+                                autoComplete="organization"
+                                placeholder="PlexusBiz Automate"
+                                onChange={(e) => setData('company_name', e.target.value)}
+                                required
+                            />
+
+                            <InputError message={errors.company_name} className="auth-error" />
+                        </div>
+
                         <div className="auth-field">
                             <InputLabel htmlFor="job_title" value="Job title" className="auth-label" />
 
@@ -135,23 +176,6 @@ export default function Register() {
                             />
 
                             <InputError message={errors.job_title} className="auth-error" />
-                        </div>
-
-                        <div className="auth-field">
-                            <InputLabel htmlFor="company" value="Company" className="auth-label" />
-
-                            <TextInput
-                                id="company"
-                                name="company"
-                                value={data.company}
-                                className="auth-input"
-                                autoComplete="organization"
-                                placeholder="PlexusBiz Automate"
-                                onChange={(e) => setData('company', e.target.value)}
-                                required
-                            />
-
-                            <InputError message={errors.company} className="auth-error" />
                         </div>
                     </div>
 
@@ -186,6 +210,7 @@ export default function Register() {
                                 autoComplete="tel"
                                 placeholder="+880 1XXXXXXXXX"
                                 onChange={(e) => setData('phone', e.target.value)}
+                                required
                             />
 
                             <InputError message={errors.phone} className="auth-error" />
@@ -202,6 +227,7 @@ export default function Register() {
                                 value={data.employees}
                                 className="auth-input auth-select"
                                 onChange={(e) => setData('employees', e.target.value)}
+                                required
                             >
                                 <option value="" disabled>
                                     Select team size
@@ -225,6 +251,7 @@ export default function Register() {
                                 value={data.country}
                                 className="auth-input auth-select"
                                 onChange={(e) => setData('country', e.target.value)}
+                                required
                             >
                                 {countryOptions.map((option) => (
                                     <option key={option} value={option}>
@@ -292,22 +319,10 @@ export default function Register() {
                                 I agree to the <span className="auth-link">Main Services Agreement</span>.
                             </span>
                         </label>
-
-                        <label className="auth-consent auth-consent--secondary">
-                            <Checkbox
-                                name="marketing_opt_in"
-                                checked={data.marketing_opt_in}
-                                className="auth-checkbox auth-checkbox--register"
-                                onChange={(e) => setData('marketing_opt_in', e.target.checked)}
-                            />
-                            <span>
-                                Yes, I would like to receive product updates and release notes.
-                            </span>
-                        </label>
                     </div>
 
                     <PrimaryButton className="auth-submit" disabled={processing}>
-                        {processing ? 'Creating account...' : 'Start my free trial'}
+                        {processing ? 'Submitting request...' : 'Submit for approval'}
                     </PrimaryButton>
 
                     <div className="auth-alt-action">

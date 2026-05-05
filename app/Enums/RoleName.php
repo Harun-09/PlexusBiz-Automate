@@ -24,6 +24,41 @@ enum RoleName: string
     /**
      * @return array<int, string>
      */
+    public static function publicValues(): array
+    {
+        return array_map(
+            fn (self $role): string => $role->value,
+            [
+                self::Buyer,
+                self::Supplier,
+                self::MarketingManager,
+                self::WorkflowManager,
+            ],
+        );
+    }
+
+    /**
+     * @return array<int, array{value: string, label: string}>
+     */
+    public static function publicOptions(): array
+    {
+        return array_map(
+            fn (self $role): array => [
+                'value' => $role->value,
+                'label' => $role->label(),
+            ],
+            [
+                self::Buyer,
+                self::Supplier,
+                self::MarketingManager,
+                self::WorkflowManager,
+            ],
+        );
+    }
+
+    /**
+     * @return array<int, string>
+     */
     public static function values(): array
     {
         return array_map(fn (self $role): string => $role->value, self::cases());

@@ -16,7 +16,7 @@ const StatusPill = ({ status }) => (
     </span>
 );
 
-export default function UsersIndex({ auth, users, filters, statuses, roles, flash }) {
+export default function UsersIndex({ auth, users, pendingApplications = [], filters, statuses, roles, flash }) {
     const [showDeleteModal, setShowDeleteModal] = useState(null);
     const { data, setData } = useForm({
         search: filters.search || '',
@@ -41,6 +41,13 @@ export default function UsersIndex({ auth, users, filters, statuses, roles, flas
         router.delete(`/admin/users/${showDeleteModal}`, {
             preserveScroll: true,
             onFinish: () => setShowDeleteModal(null),
+        });
+    };
+
+    const reviewApplication = (userId, action) => {
+        router.patch(`/admin/users/${userId}/${action}`, {}, {
+            preserveScroll: true,
+            preserveState: true,
         });
     };
 
@@ -109,6 +116,68 @@ export default function UsersIndex({ auth, users, filters, statuses, roles, flas
                             </div>
                         </div>
                     </form>
+
+                    {pendingApplications.length > 0 && (
+                        <section className="overflow-hidden rounded-2xl border border-amber-200 bg-white shadow-sm">
+                            <div className="border-b border-amber-100 bg-amber-50/40 px-6 py-4">
+                                <h3 className="text-base font-bold text-gray-950">Pending applications</h3>
+                                <p className="mt-0.5 text-sm text-gray-600">Review account-type requests before activation.</p>
+                            </div>
+
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full divide-y divide-amber-100 text-sm">
+                                    <thead className="bg-white">
+                                        <tr>
+                                            {['Name', 'Email', 'Account Type', 'Company', 'Status', 'Requested', 'Actions'].map((h) => (
+                                                <th key={h} className="whitespace-nowrap px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-gray-500">{h}</th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-amber-50 bg-white">
+                                        {pendingApplications.map((application) => (
+                                            <tr key={application.id} className="transition hover:bg-amber-50/40">
+                                                <td className="whitespace-nowrap px-6 py-4 font-medium text-gray-900">{application.name}</td>
+                                                <td className="whitespace-nowrap px-6 py-4 text-gray-600">{application.email}</td>
+                                                <td className="whitespace-nowrap px-6 py-4">
+                                                    <span className="rounded-lg bg-amber-100 px-2.5 py-1 text-xs font-semibold capitalize text-amber-700">
+                                                        {application.account_type_label}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 text-gray-600">
+                                                    <div className="font-medium text-gray-900">{application.company_name || '-'}</div>
+                                                    <div className="mt-1 text-xs text-gray-500">
+                                                        {application.job_title || '-'}
+                                                        {application.employees ? ` • ${application.employees}` : ''}
+                                                        {application.country ? ` • ${application.country}` : ''}
+                                                    </div>
+                                                </td>
+                                                <td className="whitespace-nowrap px-6 py-4"><StatusPill status="pending" /></td>
+                                                <td className="whitespace-nowrap px-6 py-4 text-gray-500">{application.created_at}</td>
+                                                <td className="whitespace-nowrap px-6 py-4">
+                                                    <div className="flex items-center gap-2">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => reviewApplication(application.id, 'approve')}
+                                                            className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-white px-3 py-1.5 text-xs font-semibold text-emerald-700 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50"
+                                                        >
+                                                            Approve
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => reviewApplication(application.id, 'reject')}
+                                                            className="inline-flex items-center gap-1 rounded-lg border border-rose-200 bg-white px-3 py-1.5 text-xs font-semibold text-rose-700 shadow-sm transition hover:border-rose-300 hover:bg-rose-50"
+                                                        >
+                                                            Reject
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    )}
 
                     {/* Table */}
                     <section className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-sm">

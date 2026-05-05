@@ -2,6 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import EmptyState from '@/Components/EmptyState';
 import PageHeader from '@/Components/PageHeader';
 import { Head, Link, router, useForm } from '@inertiajs/react';
+import { downloadPdf } from '@/Utils/pdf';
 
 const statusTone = (status) => {
     const value = String(status || '').toLowerCase();
@@ -97,6 +98,10 @@ export default function Index({ auth, invoices, filters, flash }) {
             preserveState: true,
             replace: true,
         });
+    };
+
+    const handleDownload = async (invoice) => {
+        await downloadPdf(route('invoices.download', invoice.id), `invoice-${invoice.invoice_number}.pdf`);
     };
 
     return (
@@ -257,22 +262,15 @@ export default function Index({ auth, invoices, filters, flash }) {
                                                         href={route('invoices.show', invoice.id)}
                                                         className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:border-blue-200 hover:text-blue-800"
                                                     >
-                                                        View
-                                                    </Link>
-                                                    <a
-                                                        href={route('invoices.preview', invoice.id)}
-                                                        target="_blank"
-                                                        rel="noreferrer"
-                                                        className="inline-flex items-center justify-center rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 transition hover:bg-blue-100"
-                                                    >
                                                         Preview
-                                                    </a>
-                                                    <a
-                                                        href={route('invoices.download', invoice.id)}
+                                                    </Link>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleDownload(invoice)}
                                                         className="inline-flex items-center justify-center rounded-lg bg-slate-950 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-slate-800"
                                                     >
                                                         Download
-                                                    </a>
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>

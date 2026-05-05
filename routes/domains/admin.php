@@ -33,6 +33,8 @@ Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function
     Route::delete('/bulk-pricing/{product}/tiers/{tier}', [AdminBulkPricingController::class, 'destroyTier'])->name('bulk-pricing.tiers.destroy');
 
     Route::resource('users', AdminUserController::class)->except('show');
+    Route::patch('/users/{user}/approve', [AdminUserController::class, 'approve'])->name('users.approve');
+    Route::patch('/users/{user}/reject', [AdminUserController::class, 'reject'])->name('users.reject');
     Route::resource('suppliers', AdminSupplierController::class)->except('show');
     Route::resource('products', AdminProductController::class)->except('show');
 });
