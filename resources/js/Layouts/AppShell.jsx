@@ -5,7 +5,9 @@ import { useEffect, useState } from 'react';
 
 export default function AppShell({ user, header, children, flash = null, showBreadcrumbs = true }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const currentPath = typeof window === 'undefined' ? '/dashboard' : window.location.pathname;
+    const currentPath = typeof window === 'undefined'
+        ? '/dashboard'
+        : `${window.location.pathname}${window.location.search}`;
 
     useEffect(() => {
         if (!sidebarOpen) {

@@ -143,9 +143,32 @@ export default function Sidebar({ user, currentPath, onNavigate = null }) {
     const modules = visibleModules(user);
     const [openKeys, setOpenKeys] = useState([]);
 
-    const isActive = (href) => {
-        const [path] = href.split('?');
-        return currentPath === path || (path !== '/' && currentPath.startsWith(`${path}/`));
+    const [currentUrlPath, currentUrlSearch = ''] = currentPath.split('?');
+    const currentUrl = `${currentUrlPath}${currentUrlSearch ? `?${currentUrlSearch}` : ''}`;
+
+    const splitHref = (href) => {
+        const [path, search = ''] = href.split('?');
+        return {
+            path,
+            search: search ? `?${search}` : '',
+        };
+    };
+
+    const hasMatchingQueryItem = (moduleItems) => moduleItems.some((item) => {
+        const { search } = splitHref(item.href);
+        return search && item.href === currentUrl;
+    });
+
+    const isActive = (href, moduleItems = []) => {
+        const { path, search } = splitHref(href);
+
+        if (search) {
+            return currentUrl === href;
+        }
+
+        const matchesPath = currentUrlPath === path || (path !== '/' && currentUrlPath.startsWith(`${path}/`));
+
+        return matchesPath && !hasMatchingQueryItem(moduleItems);
     };
 
     const toggleModule = (key) => {
@@ -156,7 +179,7 @@ export default function Sidebar({ user, currentPath, onNavigate = null }) {
         ));
     };
 
-    const activeModuleKey = modules.find((module) => module.items.some((item) => isActive(item.href)))?.key ?? null;
+    const activeModuleKey = modules.find((module) => module.items.some((item) => isActive(item.href, module.items)))?.key ?? null;
 
     const isOpen = (key) => openKeys.includes(key) || activeModuleKey === key;
 
@@ -217,7 +240,7 @@ export default function Sidebar({ user, currentPath, onNavigate = null }) {
                                         <SidebarItem
                                             key={`${module.key}-${item.href}-${item.label}`}
                                             item={item}
-                                            active={isActive(item.href)}
+                                            active={isActive(item.href, module.items)}
                                             onNavigate={onNavigate}
                                         />
                                     ))}
