@@ -38,7 +38,7 @@ const moduleConfig = {
     ],
     actions: [
         { label: 'Create Template', href: '/marketing/templates/create', variant: 'primary' },
-        { label: 'Back to Campaigns', href: '/marketing/campaigns', variant: 'secondary' },
+        { label: 'Back to Email Campaigns', href: '/marketing/campaigns', variant: 'secondary' },
         {
             label: 'Open Workflow Rules',
             href: '/workflow/rules',

@@ -76,6 +76,7 @@ class WorkspaceRoutesTest extends TestCase
             ->assertInertia(fn (Assert $page): Assert => $page->component('Commerce/Orders/Index'));
 
         $this->actingAs($marketing)->get('/marketing/campaigns')->assertOk();
+        $this->actingAs($marketing)->get('/social/campaigns')->assertRedirect('/social/posts');
         $this->actingAs($marketing)->get('/workflow/logs')->assertOk();
         $this->actingAs($workflow)->get('/workflow/logs')->assertOk();
     }

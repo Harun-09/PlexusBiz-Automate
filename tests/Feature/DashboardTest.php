@@ -235,7 +235,7 @@ class DashboardTest extends TestCase
             ->assertInertia(fn (Assert $page): Assert => $page
                 ->component('Dashboard')
                 ->where('dashboard.role.key', 'marketing_manager')
-                ->where('dashboard.cards.0.label', 'Campaigns')
+                ->where('dashboard.cards.0.label', 'Email Campaigns')
                 ->where('dashboard.cards.0.value', '1')
                 ->where('dashboard.cards.1.label', 'Scheduled Posts')
                 ->where('dashboard.cards.1.value', '1')

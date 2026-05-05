@@ -2,12 +2,12 @@ import ModuleWorkspacePage from '@/Components/ModuleWorkspacePage';
 
 const moduleConfig = {
     eyebrow: 'Social Media Automation',
-    tag: 'Social',
+    tag: 'Social Campaigns',
     theme: 'social',
-    heroTitle: 'Publishing console',
-    heroCopy: 'Queue Facebook and Instagram posts, review scheduled delivery, and keep lightweight engagement tracking close to the content timeline.',
+    heroTitle: 'Social campaign command center',
+    heroCopy: 'Queue Facebook and Instagram posts, manage the basic campaign link, and keep lightweight engagement tracking close to the content timeline.',
     panelTitle: 'What this page covers',
-    panelCopy: 'This page keeps publishing, platform coverage, and engagement placeholders in one focused view so the calendar can stay clean.',
+    panelCopy: 'This page keeps campaign links, publishing, platform coverage, and engagement placeholders in one focused view so the calendar can stay clean.',
     highlights: [
         {
             label: 'Scheduled posts',

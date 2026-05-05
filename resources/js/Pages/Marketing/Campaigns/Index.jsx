@@ -2,9 +2,9 @@ import ModuleWorkspacePage from '@/Components/ModuleWorkspacePage';
 
 const moduleConfig = {
     eyebrow: 'Marketing Automation',
-    tag: 'Campaigns',
+    tag: 'Email Campaigns',
     theme: 'marketing',
-    heroTitle: 'Campaign command center',
+    heroTitle: 'Email campaign command center',
     heroCopy: 'Keep email campaign status, templates, recipients, and delivery logs in one place so trigger-based marketing stays observable.',
     panelTitle: 'What this page covers',
     panelCopy: 'This module is for email campaign operations: template linkage, delivery bookkeeping, and enough visibility to manage basic automation safely.',

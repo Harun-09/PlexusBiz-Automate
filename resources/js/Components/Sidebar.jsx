@@ -71,6 +71,7 @@ const SIDEBAR_MODULES = [
         roles: ['marketing_manager', 'admin'],
         icon: MegaphoneIcon,
         items: [
+            { label: 'Social Campaigns', href: '/social/campaigns', icon: MegaphoneIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_posts'] },
             { label: 'Social Calendar', href: '/social/calendar', icon: CalendarDaysIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_posts'] },
             { label: 'Scheduled Posts', href: '/social/posts', icon: ClockIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_posts'] },
             { label: 'Social Accounts', href: '/social/accounts', icon: IdentificationIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_accounts'] },
@@ -82,7 +83,7 @@ const SIDEBAR_MODULES = [
         roles: ['marketing_manager', 'admin'],
         icon: SparklesIcon,
         items: [
-            { label: 'Campaigns', href: '/marketing/campaigns', icon: MegaphoneIcon, roles: ['marketing_manager', 'admin'] },
+            { label: 'Email Campaigns', href: '/marketing/campaigns', icon: MegaphoneIcon, roles: ['marketing_manager', 'admin'] },
             { label: 'Campaign Templates', href: '/marketing/templates', icon: DocumentTextIcon, roles: ['marketing_manager', 'admin'] },
         ],
     },

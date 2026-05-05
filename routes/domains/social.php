@@ -9,6 +9,7 @@ Route::prefix('social')->name('social.')->middleware('role:marketing_manager|adm
     Route::get('/', fn () => redirect()->route('social.calendar'))->name('index');
 
     Route::middleware('permission:manage_social_posts')->group(function (): void {
+        Route::get('/campaigns', fn () => redirect()->route('social.posts.index'))->name('campaigns.index');
         Route::get('/calendar', [WorkspaceController::class, 'socialCalendar'])->name('calendar');
         Route::get('/posts', [WorkspaceController::class, 'socialPosts'])->name('posts.index');
         Route::get('/posts/create', [SocialPostController::class, 'create'])->name('posts.create');

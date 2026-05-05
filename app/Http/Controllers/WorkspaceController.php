@@ -547,7 +547,7 @@ class WorkspaceController extends Controller
             ],
         ]);
 
-        return $this->page('Campaigns', 'Email marketing campaigns, recipient count, and delivery logs.', [
+        return $this->page('Email Campaigns', 'Email marketing campaigns, recipient count, and delivery logs.', [
             ['label' => 'Total Campaigns', 'value' => Campaign::count()],
             ['label' => 'Draft Campaigns', 'value' => Campaign::where('status', CampaignStatus::Draft->value)->count()],
             ['label' => 'Scheduled Campaigns', 'value' => Campaign::where('status', CampaignStatus::Scheduled->value)->count()],
@@ -636,7 +636,7 @@ class WorkspaceController extends Controller
                 ];
             });
 
-        return $this->page('Social Posts', 'Scheduled content across Facebook and Instagram with engagement tracking.', [
+        return $this->page('Social Campaigns', 'Scheduled content across Facebook and Instagram with engagement tracking.', [
             ['label' => 'Total Posts', 'value' => SocialPost::count()],
             ['label' => 'Scheduled', 'value' => SocialPost::where('status', SocialPostStatus::Scheduled->value)->count()],
             ['label' => 'Published', 'value' => SocialPost::where('status', SocialPostStatus::Published->value)->count()],
@@ -764,7 +764,7 @@ class WorkspaceController extends Controller
                 ];
             });
 
-        return $this->page('Campaign Templates', 'Template-based email marketing assets.', [
+        return $this->page('Email Campaign Templates', 'Template-based email marketing assets.', [
             ['label' => 'Total Templates', 'value' => CampaignTemplate::count()],
             ['label' => 'Email Templates', 'value' => CampaignTemplate::where('channel', MessageChannel::Email->value)->count()],
             ['label' => 'Linked Templates', 'value' => CampaignTemplate::whereNotNull('campaign_id')->count()],

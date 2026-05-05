@@ -47,7 +47,7 @@ class AutomationModulesTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page): Assert => $page
                 ->component('Social/Posts/Index')
-                ->where('workspace.title', 'Social Posts')
+                ->where('workspace.title', 'Social Campaigns')
                 ->has('workspace.rows', 2));
 
         $this->actingAs($marketing)
@@ -72,7 +72,7 @@ class AutomationModulesTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page): Assert => $page
                 ->component('Marketing/Campaigns/Index')
-                ->where('workspace.title', 'Campaigns')
+                ->where('workspace.title', 'Email Campaigns')
                 ->has('workspace.rows', 1));
 
         $this->actingAs($marketing)
@@ -80,7 +80,7 @@ class AutomationModulesTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page): Assert => $page
                 ->component('Marketing/Templates/Index')
-                ->where('workspace.title', 'Campaign Templates')
+                ->where('workspace.title', 'Email Campaign Templates')
                 ->has('workspace.rows', 5));
 
         $this->actingAs($marketing)

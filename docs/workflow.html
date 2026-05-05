@@ -240,7 +240,7 @@
             <tr>
                 <td>Marketing automation</td>
                 <td><span class="status done">Done</span></td>
-                <td>Implement campaigns, templates, recipients, email/SMS providers, triggers, dispatch jobs, and message logs.</td>
+                <td>Implement email/SMS campaigns, templates, recipients, triggers, dispatch jobs, and message logs.</td>
             </tr>
             <tr>
                 <td>Marketing campaign/template CRUD UI</td>
@@ -250,7 +250,7 @@
             <tr>
                 <td>Social automation</td>
                 <td><span class="status done">Done</span></td>
-                <td>Implement scheduled posts, calendar views, mock Facebook/Instagram providers, publish jobs, and engagement placeholders.</td>
+                <td>Implement social campaign management, scheduled posts, calendar views, mock Facebook/Instagram providers, publish jobs, and engagement placeholders.</td>
             </tr>
             <tr>
                 <td>Workflow automation engine</td>
@@ -306,7 +306,8 @@
         <h2>Assignment Requirement Proof Update</h2>
         <p>The detailed requirement list was checked against the current project. Missing demo-facing gaps have been closed so the evaluator can follow the requested output pages and prove each module step by step.</p>
         <ul>
-            <li>Added assignment-friendly aliases for supplier onboarding, supplier products, admin leads, social posts, campaigns, automation rules, modules, tickets, customer profile, and order lookup.</li>
+            <li>Added assignment-friendly aliases for supplier onboarding, supplier products, admin leads, social posts, email campaigns, automation rules, modules, tickets, customer profile, and order lookup.</li>
+            <li>Added a social campaign alias at <code>/social/campaigns</code> so the social module has a separate basic campaign-management proof surface from email campaigns.</li>
             <li>Seeded assignment-friendly login aliases: <code>admin@example.com</code>, <code>supplier@example.com</code>, <code>buyer@example.com</code>, and <code>marketing@example.com</code>, all using <code>password</code>.</li>
             <li>Added lead create/edit/delete UI for CRM proof at <code>/crm/leads/create</code> and alias <code>/admin/leads/create</code>.</li>
             <li>Added social account registry create/edit/delete UI for publishing identity management at <code>/social/accounts</code> and <code>/social/accounts/create</code>.</li>
@@ -337,7 +338,7 @@
             <li>CRM purchase history invoice actions now open and download correctly for marketing managers as well as buyers, suppliers, and admins.</li>
             <li>CRM interaction history now logs in-app messages and support ticket conversations alongside order and RFQ events, so the customer timeline is complete.</li>
             <li>Marketing automation now explicitly covers the three requested trigger rules: new customer welcome, abandoned cart reminder, and order confirmation campaigns, with scheduled campaign dispatch wired and local campaign datetimes normalized before storage.</li>
-            <li>Social media automation now includes a real account registry add/edit/delete flow, so the publishing identities can be created from the UI instead of only being seeded.</li>
+            <li>Social media automation now includes a dedicated campaign alias, a real account registry add/edit/delete flow, so the publishing identities and social campaign proof can be created from the UI instead of only being seeded.</li>
             <li>Missing or weakly specified in the PDFs: payment capture, shipping, tax, returns/refunds, and multi-company buyer tenancy.</li>
             <li>Not explicitly detailed in the PDFs: CSV import/export and bulk admin operations.</li>
             <li>Asset storage for product and social media files is now defined in code with original uploads, public delivery paths, naming conventions, generated thumbnail/preview variants, and lifecycle cleanup rules.</li>

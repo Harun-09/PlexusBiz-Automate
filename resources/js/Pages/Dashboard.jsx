@@ -47,7 +47,7 @@ const roleThemes = {
         badge: 'border-rose-200 bg-rose-50 text-rose-700',
         soft: 'bg-rose-50 text-rose-700',
         summary: 'Marketing command board',
-        overview: 'Keep campaigns, templates, social publishing, and workflow logs in a single performance view.',
+        overview: 'Keep email campaigns, social campaigns, templates, social publishing, and workflow logs in a single performance view.',
         focus: [
             'Campaign and template actions stay close to performance signals.',
             'Scheduled and published social posts remain easy to compare.',
@@ -91,7 +91,8 @@ const quickLinkCopy = {
     Orders: 'Track buyer orders and fulfillment progress.',
     'Supplier Orders': 'Handle supplier-side fulfillment work.',
     'Add Product': 'Create a new supplier catalog item.',
-    Campaigns: 'Manage email campaigns and schedules.',
+    'Email Campaigns': 'Manage email campaigns and schedules.',
+    'Social Campaigns': 'Manage social campaign groups and scheduled post timelines.',
     'Social Calendar': 'Plan and review future social posts.',
     'Workflow Logs': 'Audit automation runs and failures.',
     Marketplace: 'Browse the live product catalog.',

@@ -329,9 +329,9 @@ class DashboardController extends Controller
 
         return [
             $this->statCard(
-                'Campaigns',
+                'Email Campaigns',
                 $this->formatCount($campaigns),
-                'Marketing campaigns available in the workspace.',
+                'Email campaigns available in the workspace.',
                 'blue',
             ),
             $this->statCard(
@@ -441,7 +441,8 @@ class DashboardController extends Controller
                 ] : []),
             ],
             RoleName::MarketingManager => [
-                ['label' => 'Campaigns', 'href' => '/marketing/campaigns'],
+                ['label' => 'Email Campaigns', 'href' => '/marketing/campaigns'],
+                ['label' => 'Social Campaigns', 'href' => '/social/campaigns'],
                 ['label' => 'Social Calendar', 'href' => '/social/calendar'],
                 ['label' => 'Workflow Logs', 'href' => '/workflow/logs'],
             ],

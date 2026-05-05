@@ -279,15 +279,15 @@
             </tr>
             <tr>
                 <td>6</td>
-                <td>Marketing campaigns and templates</td>
+                <td>Email campaigns and templates</td>
                 <td><span class="route">/admin/campaigns</span>, <span class="route">/marketing/templates</span></td>
-                <td>Campaign create/edit forms and scheduled send proof</td>
+                <td>Email campaign create/edit forms and scheduled send proof</td>
             </tr>
             <tr>
                 <td>7</td>
-                <td>Social account registry and post scheduling</td>
-                <td><span class="route">/social/accounts</span>, <span class="route">/social/accounts/create</span>, <span class="route">/admin/social-posts</span>, <span class="route">/social/posts/create</span>, <span class="route">/social/calendar</span></td>
-                <td>Account metadata, post CRUD, calendar, and platform targeting</td>
+                <td>Social campaign management and post scheduling</td>
+                <td><span class="route">/social/campaigns</span>, <span class="route">/social/accounts</span>, <span class="route">/social/accounts/create</span>, <span class="route">/admin/social-posts</span>, <span class="route">/social/posts/create</span>, <span class="route">/social/calendar</span></td>
+                <td>Basic campaign management, account metadata, post CRUD, calendar, and platform targeting</td>
             </tr>
             <tr>
                 <td>8</td>
@@ -413,11 +413,12 @@
     <section>
         <h2>Step 7. Prove Social Automation</h2>
         <ol>
+            <li>Open <span class="route">/social/campaigns</span> or <span class="route">/social/posts</span> to show the basic social campaign list and the scheduled post workspace.</li>
             <li>Open <span class="route">/social/accounts</span> or <span class="route">/social/accounts/create</span> to show the publishing registry add/edit flow. Point out the Facebook Page ID, access token, and the separate account permission.</li>
             <li>Open <span class="route">/admin/social-posts</span> or <span class="route">/social/posts</span> to show the scheduled post list.</li>
             <li>Open <span class="route">/social/posts/create</span> and create a scheduled Facebook or Instagram post tied to a specific account.</li>
             <li>Save it, then open <span class="route">/social/calendar</span> to show the scheduled item on the calendar.</li>
-            <li>Edit the post and show that the target platform, account, caption, and schedule persist.</li>
+            <li>Edit the post and show that the target platform, account, caption, campaign, and schedule persist.</li>
             <li>Delete one post if CRUD proof is needed.</li>
             <li>Explain the publish command: <code>php artisan social-posts:publish-due</code>, and mention that the scheduler can invoke it automatically on the server.</li>
         </ol>
