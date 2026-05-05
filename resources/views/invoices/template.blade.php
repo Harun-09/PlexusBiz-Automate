@@ -7,7 +7,7 @@
     <style>
         @page {
             size: A4 portrait;
-            margin: 10mm 12mm 9mm;
+            margin: 8mm 10mm 8mm;
         }
 
         * {
@@ -25,8 +25,8 @@
 
         body {
             font-family: DejaVu Sans, Helvetica, Arial, sans-serif;
-            font-size: 10.5px;
-            line-height: 1.38;
+            font-size: 10px;
+            line-height: 1.34;
             color: #334155;
             background: #ffffff;
         }
@@ -37,9 +37,12 @@
 
         .header {
             width: 100%;
-            margin-bottom: 10px;
-            padding-bottom: 8px;
+            margin-bottom: 9px;
+            padding: 12px 14px;
+            border: 1px solid #dbeafe;
             border-bottom: 2px solid #2563eb;
+            border-radius: 12px;
+            background: #f8fbff;
         }
 
         .header-table {
@@ -53,21 +56,22 @@
 
         .brand {
             width: 58%;
-            padding-right: 10px;
+            padding-right: 12px;
         }
 
         .brand h1 {
-            margin-bottom: 2px;
+            margin-bottom: 3px;
             color: #2563eb;
-            font-size: 21px;
-            line-height: 1.1;
-            font-weight: 700;
+            font-size: 22px;
+            line-height: 1.05;
+            font-weight: 800;
+            letter-spacing: -0.02em;
         }
 
         .brand p {
             margin-bottom: 1px;
             color: #64748b;
-            font-size: 9.5px;
+            font-size: 9px;
         }
 
         .invoice-meta {
@@ -76,18 +80,18 @@
         }
 
         .invoice-meta h2 {
-            margin-bottom: 4px;
+            margin-bottom: 5px;
             color: #2563eb;
-            font-size: 20px;
+            font-size: 18px;
             line-height: 1.05;
-            font-weight: 700;
+            font-weight: 800;
             letter-spacing: 0.02em;
         }
 
         .meta-line {
             margin-bottom: 1px;
             color: #475569;
-            font-size: 9.5px;
+            font-size: 9px;
         }
 
         .status-badge {
@@ -97,30 +101,33 @@
             border-radius: 999px;
             font-size: 9px;
             font-weight: 700;
+            border: 1px solid transparent;
         }
 
         .status-issued {
-            background-color: #dbeafe;
-            color: #2563eb;
+            background-color: #eff6ff;
+            border-color: #bfdbfe;
+            color: #1d4ed8;
         }
 
         .status-paid {
-            background-color: #d1fae5;
-            color: #059669;
+            background-color: #ecfdf5;
+            border-color: #a7f3d0;
+            color: #047857;
         }
 
         .section {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             page-break-inside: avoid;
         }
 
         .section-title {
-            margin-bottom: 4px;
+            margin-bottom: 5px;
             color: #2563eb;
             font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.1em;
         }
 
         .info-table {
@@ -135,10 +142,11 @@
         }
 
         .info-card {
-            min-height: 68px;
-            padding: 6px 8px;
+            min-height: 72px;
+            padding: 8px 10px;
             border: 1px solid #dbeafe;
-            background: #f8fbff;
+            border-radius: 12px;
+            background: #ffffff;
         }
 
         .info-card p {
@@ -157,18 +165,18 @@
         }
 
         .items-table thead th {
-            padding: 6px 7px;
+            padding: 7px 8px;
             background: #2563eb;
             color: #ffffff;
-            font-size: 9.5px;
+            font-size: 9px;
             font-weight: 700;
             text-align: left;
         }
 
         .items-table td {
-            padding: 6px 7px;
+            padding: 7px 8px;
             border-bottom: 1px solid #e2e8f0;
-            font-size: 9.5px;
+            font-size: 9px;
             vertical-align: top;
             word-break: break-word;
         }
@@ -198,10 +206,17 @@
         }
 
         .summary {
-            width: 265px;
-            margin-top: 8px;
+            width: 280px;
+            margin-top: 10px;
             margin-left: auto;
             page-break-inside: avoid;
+        }
+
+        .summary-box {
+            padding: 8px 10px;
+            border: 1px solid #dbeafe;
+            border-radius: 12px;
+            background: #f8fbff;
         }
 
         .summary-table {
@@ -219,14 +234,14 @@
             border-top: 2px solid #2563eb;
             border-bottom: none;
             color: #2563eb;
-            font-size: 12px;
-            font-weight: 700;
+            font-size: 11.5px;
+            font-weight: 800;
         }
 
         .footer {
-            margin-top: 8px;
-            padding-top: 6px;
-            border-top: 1px solid #e2e8f0;
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid #dbeafe;
             color: #64748b;
             font-size: 9px;
             line-height: 1.3;
@@ -314,26 +329,28 @@
         </div>
 
         <div class="summary">
-            <table class="summary-table">
-                <tr>
-                    <td>Subtotal</td>
-                    <td class="text-right">{{ number_format($invoice->subtotal, 2) }} {{ $invoice->order->currency }}</td>
-                </tr>
-                <tr>
-                    <td>Tax</td>
-                    <td class="text-right">{{ number_format($invoice->tax_total, 2) }} {{ $invoice->order->currency }}</td>
-                </tr>
-                @if($invoice->order->discount_total > 0)
+            <div class="summary-box">
+                <table class="summary-table">
                     <tr>
-                        <td>Discount</td>
-                        <td class="text-right">-{{ number_format($invoice->order->discount_total, 2) }} {{ $invoice->order->currency }}</td>
+                        <td>Subtotal</td>
+                        <td class="text-right">{{ number_format($invoice->subtotal, 2) }} {{ $invoice->order->currency }}</td>
                     </tr>
-                @endif
-                <tr class="total">
-                    <td>Total Amount</td>
-                    <td class="text-right">{{ number_format($invoice->total, 2) }} {{ $invoice->order->currency }}</td>
-                </tr>
-            </table>
+                    <tr>
+                        <td>Tax</td>
+                        <td class="text-right">{{ number_format($invoice->tax_total, 2) }} {{ $invoice->order->currency }}</td>
+                    </tr>
+                    @if($invoice->order->discount_total > 0)
+                        <tr>
+                            <td>Discount</td>
+                            <td class="text-right">-{{ number_format($invoice->order->discount_total, 2) }} {{ $invoice->order->currency }}</td>
+                        </tr>
+                    @endif
+                    <tr class="total">
+                        <td>Total Amount</td>
+                        <td class="text-right">{{ number_format($invoice->total, 2) }} {{ $invoice->order->currency }}</td>
+                    </tr>
+                </table>
+            </div>
         </div>
 
         <div class="footer">

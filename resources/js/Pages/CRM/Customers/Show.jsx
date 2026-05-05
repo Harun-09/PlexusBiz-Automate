@@ -3,6 +3,7 @@ import KpiCard from '@/Components/KpiCard';
 import PageHeader from '@/Components/PageHeader';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
+import { actionButtonClasses } from '@/Utils/pillStyles';
 
 const toneClasses = {
     success: 'border-emerald-200 bg-emerald-50 text-emerald-700',
@@ -96,7 +97,7 @@ function ActionCell({ action }) {
         return (
             <Link
                 href={action.href}
-                className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:border-blue-200 hover:text-blue-800"
+                className={`inline-flex items-center justify-center rounded-lg border px-3 py-1.5 text-xs font-bold transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${actionButtonClasses('secondary')}`}
             >
                 {action.label}
             </Link>
@@ -138,13 +139,13 @@ export default function Show({ auth, customer, summary, recentOrders = [], recen
                         <>
                             <Link
                                 href={route('crm.customers.edit', customer.id)}
-                                className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-blue-200 hover:text-blue-800"
+                                className={`inline-flex items-center justify-center rounded-full border px-4 py-2 text-sm font-bold transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${actionButtonClasses('primary')}`}
                             >
                                 Edit profile
                             </Link>
                             <Link
                                 href={route('crm.customers.index')}
-                                className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-blue-200 hover:text-blue-800"
+                                className={`inline-flex items-center justify-center rounded-full border px-4 py-2 text-sm font-bold transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${actionButtonClasses('neutral')}`}
                             >
                                 Back to customers
                             </Link>

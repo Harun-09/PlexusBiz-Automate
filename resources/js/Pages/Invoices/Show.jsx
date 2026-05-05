@@ -1,6 +1,7 @@
 import { Head } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import { downloadPdf, fetchPdfObjectUrl } from '@/Utils/pdf';
+import { actionButtonClasses } from '@/Utils/pillStyles';
 
 export default function Show({ invoice }) {
     const [pdfUrl, setPdfUrl] = useState(null);
@@ -58,7 +59,7 @@ export default function Show({ invoice }) {
                         <button
                             type="button"
                             onClick={handleDownload}
-                            className="inline-flex items-center justify-center rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white transition hover:bg-slate-800"
+                            className={`inline-flex items-center justify-center rounded-xl border px-4 py-2 text-sm font-bold transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${actionButtonClasses('primary')}`}
                         >
                             Download PDF
                         </button>

@@ -1,6 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import FlashBanner from '@/Components/FlashBanner';
 import PageHeader from '@/Components/PageHeader';
+import { actionButtonClasses } from '@/Utils/pillStyles';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 function Field({ label, error, children, hint = null }) {
@@ -49,7 +50,7 @@ export default function Edit({ auth, flash, errors, template, campaigns = [], ch
                     actions={
                         <Link
                             href={route('marketing.templates.index')}
-                            className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-rose-200 hover:text-rose-800"
+                            className={`inline-flex items-center justify-center rounded-full border px-4 py-2 text-sm font-bold transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${actionButtonClasses('neutral')}`}
                         >
                             Back to templates
                         </Link>

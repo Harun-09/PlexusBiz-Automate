@@ -1,6 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import EmptyState from '@/Components/EmptyState';
 import PageHeader from '@/Components/PageHeader';
+import { actionButtonClasses } from '@/Utils/pillStyles';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import { downloadPdf } from '@/Utils/pdf';
 
@@ -260,14 +261,14 @@ export default function Index({ auth, invoices, filters, flash }) {
                                                 <div className="flex flex-wrap gap-2">
                                                     <Link
                                                         href={route('invoices.show', invoice.id)}
-                                                        className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:border-blue-200 hover:text-blue-800"
+                                                        className={`inline-flex items-center justify-center rounded-lg border px-3 py-1.5 text-xs font-bold transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${actionButtonClasses('secondary')}`}
                                                     >
                                                         Preview
                                                     </Link>
                                                     <button
                                                         type="button"
                                                         onClick={() => handleDownload(invoice)}
-                                                        className="inline-flex items-center justify-center rounded-lg bg-slate-950 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-slate-800"
+                                                        className={`inline-flex items-center justify-center rounded-lg border px-3 py-1.5 text-xs font-bold transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${actionButtonClasses('primary')}`}
                                                     >
                                                         Download
                                                     </button>
