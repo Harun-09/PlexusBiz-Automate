@@ -221,6 +221,25 @@ export default function Dashboard({ auth, dashboard }) {
                                     ))}
                                 </dl>
                             ) : null}
+
+                            {dashboard.role.key === 'buyer' ? (
+                                <div className="mt-6 rounded-lg border border-amber-200 bg-amber-50/80 p-4 text-sm leading-6 text-amber-900">
+                                    <p className="font-extrabold text-amber-950">Why Pending Payments appears</p>
+                                    <p className="mt-2">
+                                        Your order is already created at checkout. This card stays visible when the payment
+                                        gateway has not confirmed the transaction yet, or when a failed/cancelled payment needs
+                                        to be retried.
+                                    </p>
+                                    <div className="mt-3">
+                                        <Link
+                                            href="/orders"
+                                            className="inline-flex items-center rounded-md border border-amber-300 bg-white px-3 py-1.5 text-xs font-bold text-amber-800 transition hover:border-amber-400 hover:text-amber-900"
+                                        >
+                                            View orders and continue payment
+                                        </Link>
+                                    </div>
+                                </div>
+                            ) : null}
                         </div>
 
                         <aside className="border-t border-slate-200 bg-slate-50 p-6 sm:p-8 xl:border-l xl:border-t-0">

@@ -152,7 +152,7 @@ class DashboardController extends Controller
             $this->statCard(
                 'Pending Payments',
                 $this->formatCount($pendingPayments),
-                'Orders awaiting gateway confirmation or retry.',
+                'Order is created, but payment still needs gateway confirmation or retry.',
                 'amber',
             ),
             $this->statCard(
