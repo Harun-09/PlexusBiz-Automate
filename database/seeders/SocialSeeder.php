@@ -17,7 +17,11 @@ class SocialSeeder extends Seeder
             [
                 'name' => 'PlexusBiz Facebook',
                 'status' => 'active',
-                'credentials_json' => ['mode' => 'mock'],
+                'credentials_json' => [
+                    'mode' => 'live',
+                    'page_id' => '123456789012345',
+                    'access_token' => 'demo-facebook-access-token',
+                ],
             ],
         );
 

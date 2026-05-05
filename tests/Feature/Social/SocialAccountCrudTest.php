@@ -46,6 +46,8 @@ class SocialAccountCrudTest extends TestCase
                 'handle' => '@plexusbiz-intl',
                 'status' => 'inactive',
                 'mode' => 'mock',
+                'page_id' => '998877665544332',
+                'access_token' => 'unit-test-facebook-token',
             ])
             ->assertRedirect('/social/accounts');
 
@@ -53,6 +55,8 @@ class SocialAccountCrudTest extends TestCase
 
         $this->assertSame('PlexusBiz Instagram Intl', $account->name);
         $this->assertSame('mock', $account->credentials_json['mode']);
+        $this->assertSame('998877665544332', $account->credentials_json['page_id']);
+        $this->assertSame('unit-test-facebook-token', $account->credentials_json['access_token']);
 
         $this->actingAs($marketing)
             ->get("/social/accounts/{$account->id}/edit")
@@ -69,6 +73,8 @@ class SocialAccountCrudTest extends TestCase
                 'handle' => '@plexusbiz-global',
                 'status' => 'active',
                 'mode' => 'live',
+                'page_id' => '998877665544333',
+                'access_token' => 'unit-test-facebook-token-2',
             ])
             ->assertRedirect('/social/accounts');
 
@@ -79,6 +85,8 @@ class SocialAccountCrudTest extends TestCase
         $this->assertSame('@plexusbiz-global', $account->handle);
         $this->assertSame('active', $account->status);
         $this->assertSame('live', $account->credentials_json['mode']);
+        $this->assertSame('998877665544333', $account->credentials_json['page_id']);
+        $this->assertSame('unit-test-facebook-token-2', $account->credentials_json['access_token']);
 
         $this->actingAs($marketing)
             ->delete("/social/accounts/{$account->id}")

@@ -43,6 +43,7 @@ class RbacSeeder extends Seeder
             PermissionName::ViewDashboard->value,
             PermissionName::ManageCampaigns->value,
             PermissionName::ManageSocialPosts->value,
+            PermissionName::ManageSocialAccounts->value,
             PermissionName::ManageAutomationRules->value,
             PermissionName::ManageWorkflowLogs->value,
             PermissionName::ManageMarketing->value,

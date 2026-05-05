@@ -69,6 +69,20 @@ class SocialPublishingTest extends TestCase
         ]);
     }
 
+    public function test_artisan_publish_due_command_processes_due_posts_in_process(): void
+    {
+        $post = $this->socialPost(SocialPlatform::Facebook, now()->subMinute());
+
+        $this->artisan('social-posts:publish-due')
+            ->expectsOutput('Published 1 due social post.')
+            ->assertSuccessful();
+
+        $post->refresh();
+
+        $this->assertSame(SocialPostStatus::Published, $post->status);
+        $this->assertNotNull($post->published_at);
+    }
+
     private function socialPost(SocialPlatform $platform, $scheduledAt): SocialPost
     {
         $account = SocialAccount::create([
@@ -76,7 +90,11 @@ class SocialPublishingTest extends TestCase
             'name' => $platform->value.' account',
             'handle' => '@'.$platform->value,
             'status' => 'active',
-            'credentials_json' => ['mode' => 'mock'],
+            'credentials_json' => [
+                'mode' => 'mock',
+                'page_id' => $platform === SocialPlatform::Facebook ? '123456789012345' : null,
+                'access_token' => $platform === SocialPlatform::Facebook ? 'unit-test-facebook-token' : null,
+            ],
         ]);
 
         return SocialPost::create([

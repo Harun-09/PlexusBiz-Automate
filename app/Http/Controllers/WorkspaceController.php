@@ -583,36 +583,58 @@ class WorkspaceController extends Controller
             ->orderByDesc('scheduled_at')
             ->limit(50)
             ->get()
-            ->map(fn (SocialPost $post): array => [
-                'Post' => str($post->content)->limit(72)->toString(),
-                'Platform' => Str::headline($post->platform->value),
-                'Account' => $post->account?->name ?? 'n/a',
-                'Campaign' => $post->campaign?->name ?? 'n/a',
-                'Status' => $post->status->value,
-                'Scheduled' => $post->scheduled_at?->format('Y-m-d H:i') ?? 'n/a',
-                'Published' => $post->published_at?->format('Y-m-d H:i') ?? 'n/a',
-                'Likes' => $post->likes_count ?? 0,
-                'Comments' => $post->comments_count ?? 0,
-                'Shares' => $post->shares_count ?? 0,
-                'Reach' => $post->reach_count ?? 0,
-                'Clicks' => $post->clicks_count ?? 0,
-                'Action' => [
-                    [
-                        'kind' => 'link',
-                        'label' => 'Edit',
-                        'href' => route('social.posts.edit', $post),
-                        'variant' => 'secondary',
+            ->map(function (SocialPost $post): array {
+                $account = $post->account;
+                $credentials = $account?->credentials_json ?? [];
+                $pageId = is_array($credentials) ? (string) ($credentials['page_id'] ?? '') : '';
+
+                $accountLabel = $account?->name ?? 'n/a';
+
+                if ($account) {
+                    $parts = [$account->name];
+
+                    if (filled($account->handle)) {
+                        $parts[] = $account->handle;
+                    }
+
+                    if (filled($pageId)) {
+                        $parts[] = 'Page ID: '.$pageId;
+                    }
+
+                    $accountLabel = implode(' | ', $parts);
+                }
+
+                return [
+                    'Post' => str($post->content)->limit(72)->toString(),
+                    'Platform' => Str::headline($post->platform->value),
+                    'Account' => $accountLabel,
+                    'Campaign' => $post->campaign?->name ?? 'n/a',
+                    'Status' => $post->status->value,
+                    'Scheduled' => $post->scheduled_at?->format('Y-m-d H:i') ?? 'n/a',
+                    'Published' => $post->published_at?->format('Y-m-d H:i') ?? 'n/a',
+                    'Likes' => $post->likes_count ?? 0,
+                    'Comments' => $post->comments_count ?? 0,
+                    'Shares' => $post->shares_count ?? 0,
+                    'Reach' => $post->reach_count ?? 0,
+                    'Clicks' => $post->clicks_count ?? 0,
+                    'Action' => [
+                        [
+                            'kind' => 'link',
+                            'label' => 'Edit',
+                            'href' => route('social.posts.edit', $post),
+                            'variant' => 'secondary',
+                        ],
+                        [
+                            'kind' => 'link',
+                            'label' => 'Delete',
+                            'href' => route('social.posts.destroy', $post),
+                            'method' => 'delete',
+                            'variant' => 'danger',
+                            'confirm' => 'Delete this social post?',
+                        ],
                     ],
-                    [
-                        'kind' => 'link',
-                        'label' => 'Delete',
-                        'href' => route('social.posts.destroy', $post),
-                        'method' => 'delete',
-                        'variant' => 'danger',
-                        'confirm' => 'Delete this social post?',
-                    ],
-                ],
-            ]);
+                ];
+            });
 
         return $this->page('Social Posts', 'Scheduled content across Facebook and Instagram with engagement tracking.', [
             ['label' => 'Total Posts', 'value' => SocialPost::count()],
@@ -653,6 +675,9 @@ class WorkspaceController extends Controller
                     'Account' => $account->name,
                     'Platform' => Str::headline($account->platform->value),
                     'Handle' => $account->handle,
+                    'Page ID' => is_array($credentials) && filled($credentials['page_id'] ?? null)
+                        ? (string) $credentials['page_id']
+                        : 'n/a',
                     'Status' => Str::headline((string) $account->status),
                     'Posts' => $account->posts_count,
                     'Mode' => is_array($credentials) && isset($credentials['mode'])
@@ -681,7 +706,7 @@ class WorkspaceController extends Controller
             ['label' => 'Active Accounts', 'value' => SocialAccount::where('status', 'active')->count()],
             ['label' => 'Facebook', 'value' => SocialAccount::where('platform', SocialPlatform::Facebook->value)->count()],
             ['label' => 'Instagram', 'value' => SocialAccount::where('platform', SocialPlatform::Instagram->value)->count()],
-        ], ['Account', 'Platform', 'Handle', 'Status', 'Posts', 'Mode', 'Actions'], $rows, filters: $filters, component: 'Social/Accounts/Index');
+        ], ['Account', 'Platform', 'Handle', 'Page ID', 'Status', 'Posts', 'Mode', 'Actions'], $rows, filters: $filters, component: 'Social/Accounts/Index');
     }
 
     public function campaignTemplates(Request $request): Response

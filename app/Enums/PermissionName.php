@@ -12,6 +12,7 @@ enum PermissionName: string
     case ManageCustomers = 'manage_customers';
     case ManageCampaigns = 'manage_campaigns';
     case ManageSocialPosts = 'manage_social_posts';
+    case ManageSocialAccounts = 'manage_social_accounts';
     case ManageAutomationRules = 'manage_automation_rules';
     case ManageWorkflowLogs = 'manage_workflow_logs';
     case ManageTickets = 'manage_tickets';

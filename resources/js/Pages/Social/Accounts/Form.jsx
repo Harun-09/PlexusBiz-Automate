@@ -39,6 +39,8 @@ export default function Form({
         handle: account?.handle || '',
         status: account?.status || statuses[0] || 'active',
         mode: account?.credentials_mode || modes[0] || 'mock',
+        page_id: account?.page_id || '',
+        access_token: '',
     });
 
     const submit = (event) => {
@@ -69,7 +71,7 @@ export default function Form({
                 <PageHeader
                     eyebrow="Social Media Automation"
                     title={isEditing ? 'Edit social account' : 'Add social account'}
-                    description="Register the publishing identity used by the mock social adapters. This stores registry metadata only and does not connect to a real API."
+                    description="Register the publishing identity used by the social adapters. Store the Facebook Page ID and access token for live publishing, or keep mock mode for demo-only accounts."
                     actions={
                         <Link
                             href={route('social.accounts.index')}
@@ -92,7 +94,7 @@ export default function Form({
                                 {isEditing ? 'Update an existing account entry' : 'Create a new account entry'}
                             </h2>
                             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-                                Use this form to keep the platform, handle, status, and demo connection mode attached to each publishing identity.
+                                Use this form to keep the platform, handle, Facebook Page ID, access token, status, and demo connection mode attached to each publishing identity.
                             </p>
                         </div>
 
@@ -141,6 +143,34 @@ export default function Form({
                                             onChange={(event) => setData('handle', event.target.value)}
                                             className="input"
                                             placeholder="@plexusbiz"
+                                        />
+                                    </Field>
+                                </div>
+
+                                <div className="grid gap-5 sm:grid-cols-2">
+                                    <Field label="Facebook Page ID" error={errors.page_id} hint="Needed for live Facebook publishing. Leave blank to keep the current value while editing.">
+                                        <input
+                                            value={data.page_id}
+                                            onChange={(event) => setData('page_id', event.target.value)}
+                                            className="input"
+                                            placeholder="123456789012345"
+                                        />
+                                    </Field>
+
+                                    <Field
+                                        label="Access Token"
+                                        error={errors.access_token}
+                                        hint={isEditing && account?.has_access_token
+                                            ? 'Token is stored encrypted. Leave blank to keep the current token.'
+                                            : 'Store a page or app access token here for live publishing.'}
+                                    >
+                                        <input
+                                            type="password"
+                                            value={data.access_token}
+                                            onChange={(event) => setData('access_token', event.target.value)}
+                                            className="input"
+                                            placeholder={isEditing && account?.has_access_token ? 'stored token' : 'Page access token'}
+                                            autoComplete="off"
                                         />
                                     </Field>
                                 </div>

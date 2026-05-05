@@ -42,9 +42,9 @@ const SIDEBAR_MODULES = [
         roles: ['marketing_manager', 'admin'],
         icon: 'SM',
         items: [
-            { label: 'Social Calendar', href: '/social/calendar', icon: 'C', roles: ['marketing_manager', 'admin'] },
-            { label: 'Scheduled Posts', href: '/social/posts', icon: 'P', roles: ['marketing_manager', 'admin'] },
-            { label: 'Social Accounts', href: '/social/accounts', icon: 'A', roles: ['marketing_manager', 'admin'] },
+            { label: 'Social Calendar', href: '/social/calendar', icon: 'C', roles: ['marketing_manager', 'admin'], permissions: ['manage_social_posts'] },
+            { label: 'Scheduled Posts', href: '/social/posts', icon: 'P', roles: ['marketing_manager', 'admin'], permissions: ['manage_social_posts'] },
+            { label: 'Social Accounts', href: '/social/accounts', icon: 'A', roles: ['marketing_manager', 'admin'], permissions: ['manage_social_accounts'] },
         ],
     },
     {

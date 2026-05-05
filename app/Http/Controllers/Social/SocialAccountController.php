@@ -36,7 +36,7 @@ class SocialAccountController extends Controller
 
     public function update(Request $request, SocialAccount $socialAccount): RedirectResponse
     {
-        $socialAccount->forceFill($this->payload($this->validateAccount($request)))->save();
+        $socialAccount->forceFill($this->payload($this->validateAccount($request), $socialAccount))->save();
 
         return redirect()
             ->route('social.accounts.index')
@@ -77,6 +77,8 @@ class SocialAccountController extends Controller
             'name' => $account->name,
             'handle' => $account->handle,
             'status' => $account->status,
+            'page_id' => is_array($credentials) ? (string) ($credentials['page_id'] ?? '') : '',
+            'has_access_token' => is_array($credentials) && filled($credentials['access_token'] ?? null),
             'credentials_mode' => is_array($credentials) ? (string) ($credentials['mode'] ?? 'mock') : 'mock',
         ];
     }
@@ -92,6 +94,8 @@ class SocialAccountController extends Controller
             'handle' => ['nullable', 'string', 'max:255'],
             'status' => ['required', 'string', Rule::in($this->statuses())],
             'mode' => ['required', 'string', Rule::in($this->modes())],
+            'page_id' => ['nullable', 'string', 'max:255'],
+            'access_token' => ['nullable', 'string', 'max:5000'],
         ]);
     }
 
@@ -99,8 +103,10 @@ class SocialAccountController extends Controller
      * @param array<string, mixed> $validated
      * @return array<string, mixed>
      */
-    private function payload(array $validated): array
+    private function payload(array $validated, ?SocialAccount $account = null): array
     {
+        $existingCredentials = is_array($account?->credentials_json) ? $account->credentials_json : [];
+
         return [
             'platform' => SocialPlatform::from($validated['platform']),
             'name' => trim((string) $validated['name']),
@@ -108,6 +114,12 @@ class SocialAccountController extends Controller
             'status' => (string) $validated['status'],
             'credentials_json' => [
                 'mode' => (string) $validated['mode'],
+                'page_id' => filled($validated['page_id'] ?? null)
+                    ? trim((string) $validated['page_id'])
+                    : ($existingCredentials['page_id'] ?? null),
+                'access_token' => filled($validated['access_token'] ?? null)
+                    ? trim((string) $validated['access_token'])
+                    : ($existingCredentials['access_token'] ?? null),
             ],
         ];
     }

@@ -129,11 +129,26 @@ class SocialPostController extends Controller
                 ->orderBy('platform')
                 ->orderBy('name')
                 ->get()
-                ->map(fn (SocialAccount $account): array => [
-                    'id' => $account->id,
-                    'label' => sprintf('%s - %s', ucfirst($account->platform->value), $account->name),
-                    'platform' => $account->platform->value,
-                ])
+                ->map(function (SocialAccount $account): array {
+                    $credentials = $account->credentials_json ?? [];
+                    $pageId = is_array($credentials) ? (string) ($credentials['page_id'] ?? '') : '';
+                    $parts = [ucfirst($account->platform->value), $account->name];
+
+                    if (filled($account->handle)) {
+                        $parts[] = $account->handle;
+                    }
+
+                    if (filled($pageId)) {
+                        $parts[] = 'Page ID: '.$pageId;
+                    }
+
+                    return [
+                        'id' => $account->id,
+                        'label' => implode(' | ', $parts),
+                        'platform' => $account->platform->value,
+                        'page_id' => $pageId,
+                    ];
+                })
                 ->all(),
             'campaigns' => Campaign::query()
                 ->orderBy('name')

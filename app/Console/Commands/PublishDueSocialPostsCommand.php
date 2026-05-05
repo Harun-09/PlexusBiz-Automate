@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Domains\Social\Jobs\ProcessDueSocialPostsJob;
+use App\Domains\Social\Services\SocialScheduleService;
 use Illuminate\Console\Command;
 
 class PublishDueSocialPostsCommand extends Command
@@ -11,11 +11,11 @@ class PublishDueSocialPostsCommand extends Command
 
     protected $description = 'Publish due scheduled social posts through the configured mock adapters.';
 
-    public function handle(): int
+    public function handle(SocialScheduleService $scheduler): int
     {
-        ProcessDueSocialPostsJob::dispatch();
+        $count = $scheduler->dispatchDuePosts(queued: false);
 
-        $this->info('Due social post processing completed.');
+        $this->info("Published {$count} due social post".($count === 1 ? '' : 's').'.');
 
         return self::SUCCESS;
     }
