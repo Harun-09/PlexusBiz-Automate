@@ -6,9 +6,9 @@ use App\Domains\Marketing\Enums\CampaignStatus;
 use App\Domains\Marketing\Enums\CampaignType;
 use App\Domains\Marketing\Models\Campaign;
 use App\Http\Controllers\Controller;
+use App\Support\DateTimeInput;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -178,12 +178,6 @@ class CampaignController extends Controller
 
     private function parseDateTime(mixed $value): ?string
     {
-        $raw = trim((string) $value);
-
-        if ($raw === '') {
-            return null;
-        }
-
-        return Carbon::parse($raw)->toDateTimeString();
+        return DateTimeInput::toDatabase($value);
     }
 }

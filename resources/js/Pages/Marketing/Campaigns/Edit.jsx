@@ -148,7 +148,7 @@ export default function Edit({ auth, flash, errors, campaign, campaignTypes = ['
                                         />
                                     </Field>
 
-                                    <Field label="Scheduled At" error={errors.scheduled_at}>
+                                    <Field label="Scheduled At" error={errors.scheduled_at} hint="Use Bangladesh local time when adjusting the schedule.">
                                         <input
                                             type="datetime-local"
                                             value={data.scheduled_at}

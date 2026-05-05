@@ -8,9 +8,9 @@ use App\Domains\Social\Enums\SocialPostStatus;
 use App\Domains\Social\Models\SocialAccount;
 use App\Domains\Social\Models\SocialPost;
 use App\Http\Controllers\Controller;
+use App\Support\DateTimeInput;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -165,12 +165,6 @@ class SocialPostController extends Controller
 
     private function parseDateTime(mixed $value): ?string
     {
-        $raw = trim((string) $value);
-
-        if ($raw === '') {
-            return null;
-        }
-
-        return Carbon::parse($raw)->toDateTimeString();
+        return DateTimeInput::toDatabase($value);
     }
 }

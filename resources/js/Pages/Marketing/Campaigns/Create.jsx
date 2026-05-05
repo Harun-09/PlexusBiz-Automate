@@ -128,7 +128,7 @@ export default function Create({ auth, flash, errors, campaignTypes = ['email'],
                                         />
                                     </Field>
 
-                                    <Field label="Scheduled At" error={errors.scheduled_at} hint="Leave blank to keep it as a draft or schedule it later.">
+                                    <Field label="Scheduled At" error={errors.scheduled_at} hint="Use Bangladesh local time. Leave blank to keep it as a draft or schedule it later.">
                                         <input
                                             type="datetime-local"
                                             value={data.scheduled_at}

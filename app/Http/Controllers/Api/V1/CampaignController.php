@@ -9,9 +9,9 @@ use App\Http\Controllers\Api\V1\Concerns\AppliesApiFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\ApiIndexRequest;
 use App\Http\Resources\Api\CampaignResource;
+use App\Support\DateTimeInput;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -172,12 +172,6 @@ class CampaignController extends Controller
 
     private function parseDateTime(mixed $value): ?string
     {
-        $raw = trim((string) $value);
-
-        if ($raw === '') {
-            return null;
-        }
-
-        return Carbon::parse($raw)->toDateTimeString();
+        return DateTimeInput::toDatabase($value);
     }
 }

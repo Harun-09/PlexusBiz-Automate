@@ -7,9 +7,9 @@ use App\Domains\CRM\Models\Customer;
 use App\Domains\CRM\Models\Lead;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\DateTimeInput;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -165,12 +165,6 @@ class LeadController extends Controller
 
     private function parseDateTime(mixed $value): ?string
     {
-        $raw = trim((string) $value);
-
-        if ($raw === '') {
-            return null;
-        }
-
-        return Carbon::parse($raw)->toDateTimeString();
+        return DateTimeInput::toDatabase($value);
     }
 }

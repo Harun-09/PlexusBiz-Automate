@@ -6,6 +6,7 @@ use App\Domains\Marketing\Models\Campaign;
 use App\Domains\Marketing\Models\CampaignTemplate;
 use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 use Laravel\Sanctum\Sanctum;
@@ -144,6 +145,39 @@ class MarketingCrudTest extends TestCase
         $this->assertSoftDeleted('campaigns', [
             'id' => $campaign->id,
         ]);
+    }
+
+    public function test_marketing_campaign_schedule_round_trips_through_local_datetime_input(): void
+    {
+        $this->seed(DatabaseSeeder::class);
+
+        $marketing = User::where('email', 'marketing@plexus.test')->firstOrFail();
+        $campaignName = 'Timezone '.Str::upper(Str::random(6));
+        $scheduledAt = '2026-05-12T10:30';
+        $expectedStored = Carbon::createFromFormat('Y-m-d\TH:i', $scheduledAt, 'Asia/Dhaka')
+            ->setTimezone(config('app.timezone', 'UTC'))
+            ->toDateTimeString();
+
+        $this->actingAs($marketing)
+            ->post('/marketing/campaigns', [
+                'name' => $campaignName,
+                'type' => 'email',
+                'status' => 'scheduled',
+                'segment_tags' => 'wholesale',
+                'scheduled_at' => $scheduledAt,
+            ])
+            ->assertRedirect('/marketing/campaigns');
+
+        $campaign = Campaign::query()->where('name', $campaignName)->firstOrFail();
+
+        $this->assertSame($expectedStored, $campaign->scheduled_at?->setTimezone(config('app.timezone', 'UTC'))->toDateTimeString());
+
+        $this->actingAs($marketing)
+            ->get('/marketing/campaigns/'.$campaign->id.'/edit')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page
+                ->component('Marketing/Campaigns/Edit')
+                ->where('campaign.scheduled_at', Carbon::parse($expectedStored, config('app.timezone', 'UTC'))->toJSON()));
     }
 
     public function test_marketing_manager_can_manage_campaigns_and_templates_via_api(): void

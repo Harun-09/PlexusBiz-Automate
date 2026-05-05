@@ -16,6 +16,7 @@ use App\Domains\Marketing\Services\CampaignDispatchService;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
@@ -65,6 +66,44 @@ class CampaignDispatchTest extends TestCase
             'customer_id' => $customer->id,
             'status' => 'sent',
         ]);
+    }
+
+    public function test_scheduled_campaign_command_dispatches_due_campaigns(): void
+    {
+        Mail::fake();
+
+        $customer = $this->customer(tags: ['priority']);
+        $campaign = Campaign::create([
+            'name' => 'Scheduled Priority Follow Up',
+            'slug' => 'scheduled-priority-follow-up-'.Str::random(8),
+            'type' => CampaignType::Email,
+            'status' => CampaignStatus::Scheduled,
+            'segment_filters_json' => ['tags' => ['priority']],
+            'scheduled_at' => now()->subMinute(),
+        ]);
+
+        CampaignTemplate::create([
+            'campaign_id' => $campaign->id,
+            'channel' => MessageChannel::Email,
+            'name' => 'Scheduled Follow Up Email',
+            'subject' => 'Scheduled hello {{ customer_name }}',
+            'body' => 'Hi {{ customer_name }}, this campaign is due now.',
+            'variables' => ['customer_name'],
+            'status' => 'active',
+        ]);
+
+        Artisan::call('campaigns:send-scheduled');
+
+        $campaign->refresh();
+        $log = CampaignLog::query()->where('campaign_id', $campaign->id)->firstOrFail();
+
+        Mail::assertSent(MarketingCampaignMail::class, function (MarketingCampaignMail $mail): bool {
+            return $mail->subjectLine === 'Scheduled hello Acme Buyer';
+        });
+
+        $this->assertSame(CampaignStatus::Completed, $campaign->status);
+        $this->assertSame($customer->id, $log->customer_id);
+        $this->assertSame('sent', $log->status->value);
     }
 
     private function customer(array $tags): Customer
