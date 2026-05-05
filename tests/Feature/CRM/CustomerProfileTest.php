@@ -48,4 +48,23 @@ class CustomerProfileTest extends TestCase
         $this->assertSame('1250.00', $summary['total_spent']);
         $this->assertSame(1, Interaction::where('customer_id', $customer->id)->count());
     }
+
+    public function test_customer_profile_hydrates_existing_registration_details(): void
+    {
+        $user = User::factory()->create([
+            'company_name' => 'Plexus Trading',
+            'phone' => '+8801712345678',
+            'account_type' => 'buyer',
+        ]);
+
+        $customer = app(CustomerProfileService::class)->ensureForUser($user, [
+            'contact_name' => $user->name,
+            'email' => $user->email,
+        ]);
+
+        $this->assertSame('Plexus Trading', $customer->company_name);
+        $this->assertSame('+8801712345678', $customer->phone);
+        $this->assertSame('buyer', $customer->business_type);
+        $this->assertSame($user->email, $customer->email);
+    }
 }

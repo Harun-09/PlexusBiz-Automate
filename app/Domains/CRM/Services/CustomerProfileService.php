@@ -15,21 +15,42 @@ class CustomerProfileService
      */
     public function ensureForUser(User $user, array $attributes = []): Customer
     {
-        return Customer::firstOrCreate(
-            ['user_id' => $user->id],
-            [
-                'contact_name' => $attributes['contact_name'] ?? $user->name,
-                'company_name' => $attributes['company_name'] ?? null,
-                'email' => $attributes['email'] ?? $user->email,
-                'phone' => $attributes['phone'] ?? null,
-                'business_type' => $attributes['business_type'] ?? null,
-                'address' => $attributes['address'] ?? null,
-                'status' => CustomerStatus::Active,
-                'lifecycle_stage' => CustomerLifecycleStage::Customer,
-                'tags' => $attributes['tags'] ?? [],
-                'last_activity_at' => now(),
-            ],
-        );
+        $customer = Customer::firstOrNew(['user_id' => $user->id]);
+
+        $profileFields = [
+            'contact_name' => $attributes['contact_name'] ?? $user->name,
+            'company_name' => $attributes['company_name'] ?? $user->company_name,
+            'email' => $attributes['email'] ?? $user->email,
+            'phone' => $attributes['phone'] ?? $user->phone,
+            'business_type' => $attributes['business_type'] ?? $user->account_type,
+        ];
+
+        foreach ($profileFields as $field => $value) {
+            if ($value === null || $value === '') {
+                continue;
+            }
+
+            if ($customer->exists && filled($customer->{$field}) && ! array_key_exists($field, $attributes)) {
+                continue;
+            }
+
+            $customer->{$field} = $value;
+        }
+
+        if (array_key_exists('address', $attributes) && $attributes['address'] !== null) {
+            $customer->address = $attributes['address'];
+        }
+
+        if (array_key_exists('tags', $attributes) && $attributes['tags'] !== null) {
+            $customer->tags = $attributes['tags'];
+        }
+
+        $customer->status ??= CustomerStatus::Active;
+        $customer->lifecycle_stage ??= CustomerLifecycleStage::Customer;
+        $customer->last_activity_at = now();
+        $customer->save();
+
+        return $customer->refresh();
     }
 
     public function attachOrder(Customer $customer, Order $order): Order
