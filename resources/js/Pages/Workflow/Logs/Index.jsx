@@ -18,8 +18,8 @@ const moduleConfig = {
             detail: 'Each entry shows which rule produced the event.',
         },
         {
-            label: 'Error trace',
-            detail: 'Failures keep the error text visible for rapid debugging.',
+            label: 'Payload snapshot',
+            detail: 'The table keeps full payload and result JSON visible for proof and debugging.',
         },
     ],
     panelBullets: [
@@ -29,7 +29,7 @@ const moduleConfig = {
         },
         {
             label: 'Trigger payloads',
-            detail: 'Execution history should make it easy to trace the originating event.',
+            detail: 'Execution history makes the originating event, result, and error easy to trace.',
         },
         {
             label: 'Failure review',

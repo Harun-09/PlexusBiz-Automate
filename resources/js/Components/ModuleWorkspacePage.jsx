@@ -211,6 +211,18 @@ const renderWorkspaceCell = (_column, value) => {
             );
         }
 
+        if (value.kind === 'json') {
+            const jsonValue = typeof value.value === 'string'
+                ? value.value
+                : JSON.stringify(value.value ?? {}, null, 2);
+
+            return (
+                <pre className="max-h-64 overflow-auto whitespace-pre-wrap rounded-lg border border-slate-200 bg-slate-50 p-3 text-[11px] leading-5 text-slate-700">
+                    {jsonValue}
+                </pre>
+            );
+        }
+
         if (value.kind === 'post-action') {
             const buttonClassName = value.variant === 'secondary'
                 ? 'inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2'

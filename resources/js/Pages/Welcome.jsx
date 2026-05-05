@@ -501,7 +501,7 @@ function SupportIcon({ className = '' }) {
 const marketplaceShortcutItems = [
     { icon: ProductsIcon, label: 'Marketplace Catalog', href: '/products' },
     { icon: OrdersIcon, label: 'Bulk Orders', href: '/products/bulk-orders' },
-    { icon: InvoicesIcon, label: 'MOQ Pricing', href: '/products/moq-pricing' },
+    { icon: InvoicesIcon, label: 'MOQ Pricing', href: '/products/moq-pricing', featured: true },
     { icon: SupportIcon, label: 'Supplier Onboarding', href: route('supplier.apply') },
     { icon: ProductsIcon, label: 'Product CRUD', href: '/admin/products', access: { roles: ['admin'], permissions: ['manage_products'] } },
     { icon: OrdersIcon, label: 'Inventory & Stock', href: '/commerce/products', access: { roles: ['supplier', 'admin'], permissions: ['manage_own_products', 'manage_products'], requiresSupplierApproval: true } },
@@ -1615,7 +1615,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
 
                 <main className="relative z-10 w-full space-y-4 px-4 py-4 sm:px-6 xl:px-8">
                     <section className="grid items-stretch gap-3 grid-cols-1 xl:grid-cols-[420px_minmax(0,1fr)]">
-                        <aside className="order-2 h-[380px] overflow-hidden rounded-[16px] bg-[#0b2e71] text-white shadow-[0_18px_40px_-22px_rgba(7,18,46,0.85)] sm:h-[440px] lg:h-[520px] xl:order-1 xl:h-[580px] xl:sticky xl:top-4">
+                        <aside className="order-2 h-[380px] overflow-hidden rounded-[16px] bg-gradient-to-br from-[#0b2e71] via-[#1a4a8c] to-[#0d3d8c] text-white shadow-[0_18px_40px_-22px_rgba(7,18,46,0.85)] sm:h-[440px] lg:h-[520px] xl:order-1 xl:h-[580px] xl:sticky xl:top-4">
                             <div className="flex h-full flex-col">
                                 <div className="mb-3 flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
                                     <div>
@@ -1632,15 +1632,21 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                                         <Link
                                             key={item.label}
                                             href={item.href}
-                                            className="flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-left transition hover:bg-white/10"
+                                            className={`flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-left transition ${
+                                                item.featured
+                                                    ? 'bg-[#4ba8ff] text-white shadow-[0_12px_30px_-18px_rgba(75,168,255,0.95)] hover:bg-[#57b0ff]'
+                                                    : 'hover:bg-white/10'
+                                            }`}
                                         >
-                                            <span className="inline-flex shrink-0 items-center justify-center text-white/90">
+                                            <span className={`inline-flex shrink-0 items-center justify-center ${item.featured ? 'text-white' : 'text-white/90'}`}>
                                                 <item.icon className="h-6 w-6" />
                                             </span>
-                                            <span className="min-w-0 flex-1 text-sm font-semibold leading-5 text-white">
+                                            <span className={`min-w-0 flex-1 text-sm font-semibold leading-5 ${item.featured ? 'text-white' : 'text-white'}`}>
                                                 {item.label}
                                             </span>
-                                            <span className="text-lg font-black text-white/35">&gt;</span>
+                                            <span className={`text-lg font-black ${item.featured ? 'text-white/70' : 'text-white/35'}`}>
+                                                &gt;
+                                            </span>
                                         </Link>
                                     ))}
                                 </div>

@@ -81,7 +81,7 @@ export default function Edit({ auth, flash, errors, rule, triggers = [], actions
                                     <input value={data.name} onChange={(event) => setData('name', event.target.value)} className="input" required />
                                 </Field>
 
-                                <div className="grid gap-5 sm:grid-cols-3">
+                                <div className="space-y-5">
                                     <Field label="IF Event" error={errors.trigger_event}>
                                         <select value={data.trigger_event} onChange={(event) => setData('trigger_event', event.target.value)} className="input">
                                             {triggers.map((trigger) => <option key={trigger} value={trigger}>{label(trigger)}</option>)}

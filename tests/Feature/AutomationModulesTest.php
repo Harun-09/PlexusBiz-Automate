@@ -105,7 +105,8 @@ class AutomationModulesTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page): Assert => $page
                 ->component('Workflow/Logs/Index')
-                ->where('workspace.title', 'Workflow Logs'));
+                ->where('workspace.title', 'Workflow Logs')
+                ->where('workspace.columns', ['Rule', 'Trigger', 'Status', 'Executed', 'Payload', 'Result', 'Error']));
 
         $this->actingAs($buyer)
             ->get('/support')

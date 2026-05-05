@@ -942,7 +942,15 @@ class WorkspaceController extends Controller
             'Trigger' => $log->trigger_event,
             'Status' => $log->status->value,
             'Executed' => $log->executed_at?->format('Y-m-d H:i') ?? 'n/a',
-            'Error' => $log->error ? str($log->error)->limit(80)->toString() : '',
+            'Payload' => [
+                'kind' => 'json',
+                'value' => $log->payload ?? [],
+            ],
+            'Result' => [
+                'kind' => 'json',
+                'value' => $log->result ?? [],
+            ],
+            'Error' => $log->error ?? '',
         ]);
 
         return $this->page('Workflow Logs', 'Automation execution history with payload snapshots stored in the database.', [
@@ -950,7 +958,7 @@ class WorkspaceController extends Controller
             ['label' => 'Successful', 'value' => WorkflowLog::where('status', WorkflowLogStatus::Success->value)->count()],
             ['label' => 'Failed', 'value' => WorkflowLog::where('status', WorkflowLogStatus::Failed->value)->count()],
             ['label' => 'Running', 'value' => WorkflowLog::where('status', WorkflowLogStatus::Running->value)->count()],
-        ], ['Rule', 'Trigger', 'Status', 'Executed', 'Error'], $rows, filters: $filters, component: 'Workflow/Logs/Index');
+        ], ['Rule', 'Trigger', 'Status', 'Executed', 'Payload', 'Result', 'Error'], $rows, filters: $filters, component: 'Workflow/Logs/Index');
     }
 
     public function supportTickets(Request $request): Response
