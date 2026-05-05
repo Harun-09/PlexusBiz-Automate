@@ -214,6 +214,90 @@ php artisan test --testsuite=Feature</code></pre>
     </section>
 
     <section>
+        <h2>Server Deployment Steps</h2>
+        <p>If you are deploying to a production server, keep the app in Docker so the invoice preview and download PDFs are generated with the same A4 layout everywhere.</p>
+        <ol>
+            <li>
+                Prepare the production environment file.
+                <pre><code>cp .env.example .env
+php artisan key:generate --show</code></pre>
+            </li>
+            <li>
+                Set production values before you deploy.
+                <pre><code>APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://your-domain.com
+DB_CONNECTION=pgsql
+DATABASE_URL=&lt;your-production-database-connection-string&gt;
+LOG_CHANNEL=stderr
+RUN_MIGRATIONS=true</code></pre>
+            </li>
+            <li>
+                Build the Docker image from the repository root.
+                <pre><code>docker build -t plexusbiz-automate .</code></pre>
+            </li>
+            <li>
+                Run the container on the server and expose port <code>10000</code>.
+                <pre><code>docker run -d --name plexusbiz-automate -p 80:10000 --env-file .env plexusbiz-automate</code></pre>
+            </li>
+            <li>
+                Confirm the application is healthy after startup.
+                <pre><code>curl https://your-domain.com/healthz</code></pre>
+            </li>
+            <li>
+                Verify that invoice preview and download both open the same PDF.
+                <pre><code>/invoices
+/invoices/{invoiceId}/preview
+/invoices/{invoiceId}/download</code></pre>
+            </li>
+            <li>
+                After first boot, keep queue workers and scheduler running separately if your server uses background jobs.
+                <pre><code>php artisan queue:work --queue=default --sleep=3 --tries=3 --backoff=30 --max-time=3600
+php artisan schedule:work</code></pre>
+            </li>
+        </ol>
+    </section>
+
+    <section>
+        <h2>Docker Compose Run</h2>
+        <p>Use <code>docker-compose.yml</code> when you want a simple local Docker stack with the app and MySQL in one command.</p>
+        <ol>
+            <li>
+                Copy the environment file and generate an app key if you do not already have one.
+                <pre><code>cp .env.example .env
+php artisan key:generate --show</code></pre>
+            </li>
+            <li>
+                Make sure the application key and database credentials are available in <code>.env</code>.
+                <pre><code>APP_KEY=base64:...
+DB_CONNECTION=mysql
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=plexus_biz_automate
+DB_USERNAME=plexusbiz
+DB_PASSWORD=plexusbizpassword</code></pre>
+            </li>
+            <li>
+                Start the stack from the repository root.
+                <pre><code>docker compose up -d --build</code></pre>
+            </li>
+            <li>
+                Open the app in your browser.
+                <pre><code>http://localhost:8000</code></pre>
+            </li>
+            <li>
+                If you need to run a one-off command inside the container, use the app service.
+                <pre><code>docker compose exec app php artisan migrate --force
+docker compose exec app php artisan tinker</code></pre>
+            </li>
+            <li>
+                Stop the stack when you are done.
+                <pre><code>docker compose down</code></pre>
+            </li>
+        </ol>
+    </section>
+
+    <section>
         <h2>Render Docker Deployment</h2>
         <p>This repo can deploy to Render as a Docker web service. Render builds the <code>Dockerfile</code>, serves Apache/PHP from the container, and expects the app to bind to the <code>PORT</code> environment variable.</p>
         <p>Repository files:</p>

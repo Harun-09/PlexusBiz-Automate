@@ -79,6 +79,110 @@ php artisan route:list --path=api/v1 --except-vendor
 php artisan test --testsuite=Feature
 ```
 
+## Server Deployment Steps
+
+If you are deploying to a production server, keep the app in Docker so the invoice preview and download PDFs are generated with the same A4 layout everywhere.
+
+1. Prepare the production environment file.
+
+```bash
+cp .env.example .env
+php artisan key:generate --show
+```
+
+2. Set production values before you deploy.
+
+```env
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://your-domain.com
+DB_CONNECTION=pgsql
+DATABASE_URL=<your-production-database-connection-string>
+LOG_CHANNEL=stderr
+RUN_MIGRATIONS=true
+```
+
+3. Build the Docker image from the repository root.
+
+```bash
+docker build -t plexusbiz-automate .
+```
+
+4. Run the container on the server and expose port `10000`.
+
+```bash
+docker run -d --name plexusbiz-automate -p 80:10000 --env-file .env plexusbiz-automate
+```
+
+5. Confirm the application is healthy after startup.
+
+```bash
+curl https://your-domain.com/healthz
+```
+
+6. Verify that invoice preview and download both open the same PDF.
+
+```text
+/invoices
+/invoices/{invoiceId}/preview
+/invoices/{invoiceId}/download
+```
+
+7. After first boot, keep queue workers and scheduler running separately if your server uses background jobs.
+
+```bash
+php artisan queue:work --queue=default --sleep=3 --tries=3 --backoff=30 --max-time=3600
+php artisan schedule:work
+```
+
+## Docker Compose Run
+
+Use `docker-compose.yml` when you want a simple local Docker stack with the app and MySQL in one command.
+
+1. Copy the environment file and generate an app key if you do not already have one.
+
+```bash
+cp .env.example .env
+php artisan key:generate --show
+```
+
+2. Make sure the application key and database credentials are available in `.env`.
+
+```env
+APP_KEY=base64:...
+DB_CONNECTION=mysql
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=plexus_biz_automate
+DB_USERNAME=plexusbiz
+DB_PASSWORD=plexusbizpassword
+```
+
+3. Start the stack from the repository root.
+
+```bash
+docker compose up -d --build
+```
+
+4. Open the app in your browser.
+
+```text
+http://localhost:8000
+```
+
+5. If you need to run a one-off command inside the container, use the app service.
+
+```bash
+docker compose exec app php artisan migrate --force
+docker compose exec app php artisan tinker
+```
+
+6. Stop the stack when you are done.
+
+```bash
+docker compose down
+```
+
 ## Render Docker Deployment
 
 This repo can deploy to Render as a Docker web service. Render builds the `Dockerfile`, serves Apache/PHP from the container, and expects the app to bind to the `PORT` environment variable.

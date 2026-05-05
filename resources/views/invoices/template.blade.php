@@ -7,7 +7,7 @@
     <style>
         @page {
             size: A4 portrait;
-            margin: 7mm 8mm 8mm;
+            margin: 20px;
         }
 
         * {
@@ -25,21 +25,20 @@
 
         body {
             font-family: DejaVu Sans, Helvetica, Arial, sans-serif;
-            font-size: 9.6px;
-            line-height: 1.32;
+            font-size: 9.4px;
+            line-height: 1.3;
             color: #334155;
             background: #ffffff;
         }
 
         .page {
             width: 100%;
-            padding-bottom: 21mm;
         }
 
         .header {
             width: 100%;
-            margin-bottom: 8px;
-            padding: 9px 11px;
+            margin-bottom: 6px;
+            padding: 8px 10px;
             border: 1px solid #c7d2fe;
             border-top: 4px solid #1d4ed8;
             border-radius: 8px;
@@ -56,14 +55,14 @@
         }
 
         .brand {
-            width: 54%;
-            padding-right: 10px;
+            width: 52%;
+            padding-right: 8px;
         }
 
         .brand h1 {
-            margin-bottom: 2px;
+            margin-bottom: 3px;
             color: #2563eb;
-            font-size: 19px;
+            font-size: 18px;
             line-height: 1.05;
             font-weight: 800;
         }
@@ -71,37 +70,37 @@
         .brand p {
             margin-bottom: 1px;
             color: #64748b;
-            font-size: 9px;
+            font-size: 8.8px;
         }
 
         .invoice-meta {
-            width: 46%;
+            width: 48%;
             text-align: right;
             overflow-wrap: anywhere;
             word-break: break-word;
         }
 
         .invoice-meta h2 {
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             color: #2563eb;
-            font-size: 16px;
+            font-size: 15px;
             line-height: 1.05;
             font-weight: 800;
             letter-spacing: 0.02em;
         }
 
         .meta-line {
-            margin-bottom: 2px;
+            margin-bottom: 1.5px;
             color: #475569;
-            font-size: 8.6px;
+            font-size: 8.4px;
         }
 
         .status-badge {
             display: inline-block;
-            margin-top: 3px;
-            padding: 3px 10px;
+            margin-top: 2px;
+            padding: 3px 9px;
             border-radius: 999px;
-            font-size: 9px;
+            font-size: 8.6px;
             font-weight: 700;
             border: 1px solid transparent;
         }
@@ -119,14 +118,14 @@
         }
 
         .section {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             page-break-inside: avoid;
         }
 
         .section-title {
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             color: #2563eb;
-            font-size: 10px;
+            font-size: 9.5px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.1em;
@@ -152,15 +151,15 @@
         }
 
         .info-card {
-            min-height: 64px;
-            padding: 7px 9px;
+            min-height: 58px;
+            padding: 6px 8px;
             border: 1px solid #dbeafe;
             border-radius: 8px;
             background: #ffffff;
         }
 
         .info-card p {
-            margin-bottom: 2px;
+            margin-bottom: 1.5px;
         }
 
         .label {
@@ -181,18 +180,18 @@
         }
 
         .items-table thead th {
-            padding: 6px 8px;
+            padding: 6px 7px;
             background: #2563eb;
             color: #ffffff;
-            font-size: 9px;
+            font-size: 8.8px;
             font-weight: 700;
             text-align: left;
         }
 
         .items-table td {
-            padding: 6px 8px;
+            padding: 5px 7px;
             border-bottom: 1px solid #e2e8f0;
-            font-size: 9px;
+            font-size: 8.8px;
             vertical-align: top;
             word-break: break-word;
         }
@@ -214,7 +213,7 @@
         .item-sku {
             margin-top: 1px;
             color: #64748b;
-            font-size: 8.5px;
+            font-size: 8px;
         }
 
         .text-right {
@@ -222,14 +221,14 @@
         }
 
         .summary {
-            width: 270px;
-            margin-top: 8px;
+            width: 260px;
+            margin-top: 6px;
             margin-left: auto;
             page-break-inside: avoid;
         }
 
         .summary-box {
-            padding: 7px 10px;
+            padding: 6px 9px;
             border: 1px solid #dbeafe;
             border-radius: 8px;
             background: #f8fbff;
@@ -241,31 +240,27 @@
         }
 
         .summary-table td {
-            padding: 3.5px 0;
+            padding: 3px 0;
             border-bottom: 1px solid #e2e8f0;
         }
 
         .summary-table tr.total td {
-            padding-top: 6px;
+            padding-top: 5px;
             border-top: 2px solid #2563eb;
             border-bottom: none;
             color: #2563eb;
-            font-size: 11.5px;
+            font-size: 11px;
             font-weight: 800;
         }
 
         .footer {
-            position: fixed;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            padding-top: 7px;
+            margin-top: 8px;
+            padding-top: 6px;
             border-top: 1px solid #dbeafe;
             color: #64748b;
             font-size: 8.5px;
             line-height: 1.3;
             text-align: center;
-            page-break-inside: avoid;
         }
     </style>
 </head>
