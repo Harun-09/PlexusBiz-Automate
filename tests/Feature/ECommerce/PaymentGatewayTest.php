@@ -81,7 +81,10 @@ class PaymentGatewayTest extends TestCase
                 'payment_status' => 'paid',
                 'status' => 'complete',
                 'amount_total' => 89900,
-                'payment_intent' => 'pi_test_success',
+                'payment_intent' => [
+                    'id' => 'pi_test_success',
+                    'object' => 'payment_intent',
+                ],
                 'metadata' => [
                     'payment_id' => 1,
                 ],
@@ -190,7 +193,10 @@ class PaymentGatewayTest extends TestCase
                     'payment_status' => 'paid',
                     'status' => 'complete',
                     'amount_total' => 12345,
-                    'payment_intent' => 'pi_webhook_001',
+                    'payment_intent' => [
+                        'id' => 'pi_webhook_001',
+                        'object' => 'payment_intent',
+                    ],
                     'metadata' => [
                         'payment_id' => $payment->id,
                         'order_number' => $order->order_number,

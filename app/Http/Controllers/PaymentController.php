@@ -174,7 +174,7 @@ class PaymentController extends Controller
 
         if ($isPaid && $sessionAmount === $amountMinor) {
             $payment->markAsPaid(
-                (string) data_get($session, 'payment_intent') ?: $sessionId,
+                $this->stripeTransactionId(data_get($session, 'payment_intent'), $sessionId),
                 $this->buildStripeGatewayResponse($payment, 'success_redirect', $session)
             );
 
@@ -224,7 +224,7 @@ class PaymentController extends Controller
 
         if ($this->isStripeSuccessEvent($eventType) && $this->isStripeObjectPaid($eventType, $object) && $this->isStripeAmountValid($payment, $object)) {
             $payment->markAsPaid(
-                (string) data_get($object, 'payment_intent') ?: (string) data_get($object, 'id', ''),
+                $this->stripeTransactionId(data_get($object, 'payment_intent'), (string) data_get($object, 'id', '')),
                 $this->buildStripeGatewayResponse($payment, $eventType, $object)
             );
         }
@@ -450,7 +450,7 @@ class PaymentController extends Controller
             return Payment::with('order')->find($paymentId);
         }
 
-        $transactionId = (string) data_get($object, 'payment_intent', '');
+        $transactionId = $this->stripeTransactionId(data_get($object, 'payment_intent'));
         if ($transactionId !== '') {
             $payment = Payment::with('order')
                 ->where('gateway_transaction_id', $transactionId)
@@ -471,6 +471,27 @@ class PaymentController extends Controller
         }
 
         return null;
+    }
+
+    private function stripeTransactionId(mixed $value, string $fallback = ''): string
+    {
+        if (is_string($value) || is_numeric($value)) {
+            $value = trim((string) $value);
+
+            if ($value !== '') {
+                return $value;
+            }
+        }
+
+        if (is_array($value) || is_object($value)) {
+            $transactionId = trim((string) data_get($value, 'id', ''));
+
+            if ($transactionId !== '') {
+                return $transactionId;
+            }
+        }
+
+        return trim($fallback);
     }
 
     private function resolveSslPaymentFromIpn(array $data): ?Payment
