@@ -76,7 +76,7 @@ class DashboardTest extends TestCase
                 ->where('dashboard.cards.0.value', '2')
                 ->where('dashboard.cards.1.label', 'Total Spent')
                 ->where('dashboard.cards.1.value', 'BDT 150.50')
-                ->where('dashboard.cards.2.label', 'Pending Orders')
+                ->where('dashboard.cards.2.label', 'Pending Payments')
                 ->where('dashboard.cards.2.value', '1')
                 ->where('dashboard.cards.3.label', 'Open Support Tickets')
                 ->where('dashboard.cards.3.value', '1'));

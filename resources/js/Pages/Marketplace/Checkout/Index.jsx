@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import { useMemo, useState } from 'react';
 import FrontendLayout from '@/Layouts/FrontendLayout';
 import FlashBanner from '@/Components/FlashBanner';
 
@@ -22,7 +23,7 @@ function CheckoutLineItem({ item, currency }) {
     const product = item.product || {};
 
     return (
-        <div className="flex items-center gap-3 rounded-2xl bg-slate-50 p-3">
+        <div className="flex items-center gap-3 rounded-[22px] border border-slate-200 bg-slate-50 p-3.5">
             <img
                 src={product.primary_image_url || fallbackImage}
                 alt={product.name}
@@ -34,7 +35,7 @@ function CheckoutLineItem({ item, currency }) {
             <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-black text-slate-950">{product.name}</p>
                 <p className="text-xs text-slate-500">
-                    {product.supplier?.company_name || 'PlexusBiz supplier'} · Qty {item.quantity}
+                    {product.supplier?.company_name || 'PlexusBiz supplier'} - Qty {item.quantity}
                 </p>
             </div>
             <div className="text-right">
@@ -45,8 +46,8 @@ function CheckoutLineItem({ item, currency }) {
     );
 }
 
-function GatewayCard({ gateway, defaultGateway }) {
-    const checked = gateway.key === defaultGateway;
+function GatewayCard({ gateway, selectedGateway, onSelect }) {
+    const checked = gateway.key === selectedGateway;
 
     return (
         <label
@@ -58,7 +59,8 @@ function GatewayCard({ gateway, defaultGateway }) {
                 type="radio"
                 name="gateway"
                 value={gateway.key}
-                defaultChecked={checked}
+                checked={checked}
+                onChange={() => onSelect(gateway.key)}
                 className="mt-1 h-4 w-4 border-slate-300 text-[#0b2e71] focus:ring-[#0b2e71]"
                 required
             />
@@ -81,10 +83,25 @@ function GatewayCard({ gateway, defaultGateway }) {
     );
 }
 
+function SummaryRow({ label, value, emphasized = false }) {
+    return (
+        <div className={`flex items-center justify-between gap-4 rounded-2xl px-4 py-3 ${emphasized ? 'bg-[#0b2e71] text-white' : 'bg-slate-50 text-slate-700'}`}>
+            <span className={emphasized ? 'text-blue-100' : 'text-slate-500'}>{label}</span>
+            <span className={`font-black ${emphasized ? 'text-white' : 'text-slate-950'}`}>{value}</span>
+        </div>
+    );
+}
+
 export default function Index({ auth, flash, errors, cart, buyer, csrfToken, currency, defaultGateway, gateways }) {
     const summary = cart?.summary || {};
     const items = Array.isArray(cart?.items) ? cart.items : [];
     const validationMessage = Object.values(errors || {}).find(Boolean);
+    const [selectedGateway, setSelectedGateway] = useState(defaultGateway || 'stripe');
+
+    const selectedGatewayInfo = useMemo(
+        () => gateways.find((gateway) => gateway.key === selectedGateway) || gateways[0] || null,
+        [gateways, selectedGateway],
+    );
 
     return (
         <FrontendLayout auth={auth} canLogin={true} cartCount={cart?.summary?.items_count || 0}>
@@ -93,7 +110,7 @@ export default function Index({ auth, flash, errors, cart, buyer, csrfToken, cur
             <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(11,46,113,0.14),_transparent_30%),radial-gradient(circle_at_top_right,_rgba(255,138,0,0.16),_transparent_26%),linear-gradient(180deg,_#eef5ff_0%,_#f9fbff_46%,_#ffffff_100%)] text-slate-900">
                 <main className="mx-auto w-full max-w-[1500px] px-4 py-6 sm:px-6 lg:px-8">
                     <section className="overflow-hidden rounded-[32px] border border-[#d7e3f4] bg-[#0b2e71] shadow-[0_26px_80px_-40px_rgba(7,18,46,0.9)]">
-                        <div className="grid gap-8 px-5 py-6 lg:grid-cols-[1.1fr_.9fr] lg:px-8 lg:py-8">
+                        <div className="grid gap-8 px-5 py-6 lg:grid-cols-[1.08fr_.92fr] lg:px-8 lg:py-8">
                             <div className="space-y-5 text-white">
                                 <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#ffd59a]">
                                     Checkout
@@ -104,13 +121,13 @@ export default function Index({ auth, flash, errors, cart, buyer, csrfToken, cur
 
                                 <div className="space-y-3">
                                     <p className="text-sm font-semibold uppercase tracking-[0.24em] text-blue-200">
-                                        Select a gateway and hand off to the existing payment flow
+                                        Review the cart and choose a payment gateway
                                     </p>
                                     <h1 className="max-w-2xl text-4xl font-black tracking-[-0.06em] sm:text-5xl">
-                                        A clean gateway step that keeps the cart context intact.
+                                        A cleaner checkout that stays aligned with the existing gateway flow.
                                     </h1>
                                     <p className="max-w-2xl text-base leading-7 text-blue-100">
-                                        The form below creates the order, records the payment intent, and then redirects to Stripe or SSLCOMMERZ exactly as the backend already expects.
+                                        The order is created from the cart, the buyer-facing order is confirmed, and the selected payment gateway takes over the handoff exactly as the backend expects.
                                     </p>
                                 </div>
 
@@ -125,10 +142,12 @@ export default function Index({ auth, flash, errors, cart, buyer, csrfToken, cur
 
                                     <div className="rounded-[24px] border border-white/10 bg-white/10 p-4 backdrop-blur">
                                         <p className="text-[11px] font-black uppercase tracking-[0.24em] text-blue-100">
-                                            Payment gateway
+                                            Gateway
                                         </p>
-                                        <p className="mt-2 text-lg font-black capitalize">{defaultGateway || 'stripe'}</p>
-                                        <p className="text-sm text-blue-100">Default gateway from commerce settings.</p>
+                                        <p className="mt-2 text-lg font-black">{selectedGatewayInfo?.label || 'Stripe'}</p>
+                                        <p className="text-sm text-blue-100">
+                                            {selectedGatewayInfo?.description || 'Default gateway from commerce settings.'}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -142,7 +161,7 @@ export default function Index({ auth, flash, errors, cart, buyer, csrfToken, cur
                                         {formatMoney(summary.grand_total || summary.subtotal || 0, currency)}
                                     </p>
                                     <p className="mt-2 text-sm leading-6 text-blue-100">
-                                        The order total is pulled from the current active cart.
+                                        The total is calculated from the current cart and MOQ-aware pricing.
                                     </p>
                                 </div>
 
@@ -151,7 +170,7 @@ export default function Index({ auth, flash, errors, cart, buyer, csrfToken, cur
                                         Checkout ready
                                     </p>
                                     <p className="mt-3 text-sm leading-6 text-slate-600">
-                                        Clicking the button below submits a standard form so the external gateway redirect can complete normally.
+                                        Submit the form to continue into Stripe or SSLCOMMERZ. No extra step is needed for the buyer dashboard flow.
                                     </p>
                                 </div>
                             </div>
@@ -163,27 +182,32 @@ export default function Index({ auth, flash, errors, cart, buyer, csrfToken, cur
                     <FlashBanner message={validationMessage} type="error" className="mt-5" />
 
                     {items.length > 0 ? (
-                        <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_380px]">
-                            <form
-                                method="post"
-                                action={route('checkout.process')}
-                                className="space-y-6"
-                            >
+                        <section className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_390px]">
+                            <form method="post" action={route('checkout.process')} className="space-y-6">
                                 <input type="hidden" name="_token" value={csrfToken} />
 
                                 <div className="rounded-[30px] border border-[#d7e3f4] bg-white p-5 shadow-sm">
-                                    <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-500">
-                                        Payment method
-                                    </p>
-                                    <h2 className="mt-1 text-2xl font-black tracking-[-0.04em] text-slate-950">
-                                        Choose where the order should go
-                                    </h2>
+                                    <div className="flex items-start justify-between gap-4">
+                                        <div>
+                                            <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-500">
+                                                Payment method
+                                            </p>
+                                            <h2 className="mt-1 text-2xl font-black tracking-[-0.04em] text-slate-950">
+                                                Choose where the order should go
+                                            </h2>
+                                        </div>
+                                        <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-bold text-slate-600">
+                                            {gateways.length} options
+                                        </span>
+                                    </div>
+
                                     <div className="mt-5 grid gap-3">
                                         {gateways.map((gateway) => (
                                             <GatewayCard
                                                 key={gateway.key}
                                                 gateway={gateway}
-                                                defaultGateway={defaultGateway}
+                                                selectedGateway={selectedGateway}
+                                                onSelect={setSelectedGateway}
                                             />
                                         ))}
                                     </div>
@@ -226,30 +250,10 @@ export default function Index({ auth, flash, errors, cart, buyer, csrfToken, cur
                                     </p>
 
                                     <dl className="mt-4 space-y-3 text-sm">
-                                        <div className="flex items-center justify-between gap-4 rounded-2xl bg-slate-50 px-4 py-3">
-                                            <dt className="text-slate-500">Subtotal</dt>
-                                            <dd className="font-black text-slate-950">
-                                                {formatMoney(summary.subtotal || 0, currency)}
-                                            </dd>
-                                        </div>
-                                        <div className="flex items-center justify-between gap-4 rounded-2xl bg-slate-50 px-4 py-3">
-                                            <dt className="text-slate-500">Shipping</dt>
-                                            <dd className="font-black text-slate-950">
-                                                {formatMoney(summary.shipping_total || 0, currency)}
-                                            </dd>
-                                        </div>
-                                        <div className="flex items-center justify-between gap-4 rounded-2xl bg-slate-50 px-4 py-3">
-                                            <dt className="text-slate-500">Tax</dt>
-                                            <dd className="font-black text-slate-950">
-                                                {formatMoney(summary.tax_total || 0, currency)}
-                                            </dd>
-                                        </div>
-                                        <div className="flex items-center justify-between gap-4 rounded-2xl bg-slate-50 px-4 py-3">
-                                            <dt className="text-slate-500">Discount</dt>
-                                            <dd className="font-black text-slate-950">
-                                                {formatMoney(summary.discount_total || 0, currency)}
-                                            </dd>
-                                        </div>
+                                        <SummaryRow label="Subtotal" value={formatMoney(summary.subtotal || 0, currency)} />
+                                        <SummaryRow label="Shipping" value={formatMoney(summary.shipping_total || 0, currency)} />
+                                        <SummaryRow label="Tax" value={formatMoney(summary.tax_total || 0, currency)} />
+                                        <SummaryRow label="Discount" value={formatMoney(summary.discount_total || 0, currency)} />
                                     </dl>
 
                                     <div className="mt-5 rounded-[24px] bg-[#0b2e71] p-4 text-white">
@@ -260,14 +264,14 @@ export default function Index({ auth, flash, errors, cart, buyer, csrfToken, cur
                                             {formatMoney(summary.grand_total || 0, currency)}
                                         </p>
                                         <p className="mt-2 text-sm leading-6 text-blue-100">
-                                            The next redirect is handled by the payment controller, so the external gateway opens directly after this submit.
+                                            After submit, the payment controller redirects to the selected gateway and the checkout status stays synchronized.
                                         </p>
                                     </div>
 
                                     <div className="mt-5 rounded-[24px] border border-[#e8eef8] bg-[#f8fbff] p-4 text-sm leading-6 text-slate-600">
-                                        <p className="font-bold text-slate-900">Why a plain form</p>
+                                        <p className="font-bold text-slate-900">What happens next</p>
                                         <p className="mt-2">
-                                            The gateway redirect is external, so this step stays outside of the XHR flow and behaves like a normal checkout.
+                                            Buyer orders are confirmed at checkout, invoice creation happens automatically, and supplier fulfillment rows are generated behind the scenes.
                                         </p>
                                     </div>
                                 </div>
@@ -299,7 +303,7 @@ export default function Index({ auth, flash, errors, cart, buyer, csrfToken, cur
                                         Next step
                                     </p>
                                     <p className="mt-4 text-2xl font-black tracking-[-0.05em]">
-                                        Once the cart has items, this checkout screen will hand off to Stripe or SSLCOMMERZ in one click.
+                                        Once the cart has items, the checkout screen will hand off to the selected gateway in one click.
                                     </p>
                                 </div>
                             </div>

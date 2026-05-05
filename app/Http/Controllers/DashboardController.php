@@ -128,7 +128,10 @@ class DashboardController extends Controller
         $orders = Order::where('buyer_id', $user->id);
         $totalOrders = (clone $orders)->count();
         $spent = (clone $orders)->where('payment_status', PaymentStatus::Completed->value)->sum('grand_total');
-        $pendingOrders = (clone $orders)->where('status', OrderStatus::Pending->value)->count();
+        $pendingPayments = (clone $orders)->whereIn('payment_status', [
+            PaymentStatus::Pending->value,
+            PaymentStatus::Processing->value,
+        ])->count();
         $openTickets = SupportTicket::where('requester_id', $user->id)
             ->whereNotIn('status', [TicketStatus::Resolved->value, TicketStatus::Closed->value])
             ->count();
@@ -147,9 +150,9 @@ class DashboardController extends Controller
                 'emerald',
             ),
             $this->statCard(
-                'Pending Orders',
-                $this->formatCount($pendingOrders),
-                'Orders still waiting on action.',
+                'Pending Payments',
+                $this->formatCount($pendingPayments),
+                'Orders awaiting gateway confirmation or retry.',
                 'amber',
             ),
             $this->statCard(
