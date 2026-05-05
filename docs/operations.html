@@ -180,7 +180,7 @@ php artisan migrate</code></pre>
 
     <section>
         <h2>Scheduler</h2>
-        <p>Marketing and social automation use Laravel's scheduler through <code>app/Console/Kernel.php</code>.</p>
+        <p>Marketing, social, cart, and workflow maintenance automation use Laravel's scheduler through <code>app/Console/Kernel.php</code>.</p>
         <p>For a long-running server daemon, prefer <code>php artisan schedule:work</code> under Supervisor, systemd, or your platform process manager.</p>
         <p>Cron entry:</p>
         <pre><code>* * * * * cd /path/to/PlexusBiz-Automate && php artisan schedule:run &gt;&gt; /dev/null 2&gt;&amp;1</code></pre>
@@ -190,7 +190,8 @@ php artisan schedule:work
 php artisan schedule:run
 php artisan campaigns:send-scheduled
 php artisan carts:check-abandoned
-php artisan social-posts:publish-due</code></pre>
+php artisan social-posts:publish-due
+php artisan workflow:close-stale-runs</code></pre>
     </section>
 
     <section>

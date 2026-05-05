@@ -98,7 +98,12 @@ class AutomationModulesTest extends TestCase
         $this->actingAs($marketing)
             ->get('/workflow/rules/create')
             ->assertOk()
-            ->assertInertia(fn (Assert $page): Assert => $page->component('Workflow/Rules/Create'));
+            ->assertInertia(fn (Assert $page): Assert => $page
+                ->component('Workflow/Rules/Create')
+                ->where('actions.0', 'send_email')
+                ->where('actions.1', 'send_sms')
+                ->where('actions.2', 'create_notification')
+                ->where('actions.3', 'notify_supplier'));
 
         $this->actingAs($marketing)
             ->get('/workflow/logs')

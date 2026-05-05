@@ -312,13 +312,14 @@
             <li>Added social account registry create/edit/delete UI for publishing identity management at <code>/social/accounts</code> and <code>/social/accounts/create</code>.</li>
             <li>Added social post schedule create/edit/delete UI for Facebook and Instagram proof at <code>/social/posts/create</code> and alias <code>/admin/social-posts/create</code>.</li>
             <li>Added automation rule create/edit/delete UI for IF event THEN action proof at <code>/workflow/rules/create</code> and alias <code>/admin/automation-rules/create</code>.</li>
-            <li>Added named scheduler commands: <code>campaigns:send-scheduled</code>, <code>carts:check-abandoned</code>, and <code>social-posts:publish-due</code>.</li>
-            <li>Added RFQ-created supplier notification rule seed and payload support so RFQ demos can create supplier notifications.</li>
+            <li>Added named scheduler commands: <code>campaigns:send-scheduled</code>, <code>carts:check-abandoned</code>, <code>social-posts:publish-due</code>, and <code>workflow:close-stale-runs</code>.</li>
+            <li>Added order-placed email plus SMS action support for workflow rules and seeded the demo order confirmation rule with both actions.</li>
+            <li>Added RFQ-created event/listener workflow support and supplier notification rule seed so RFQ demos can create supplier notifications.</li>
             <li>Added the required <code>notifications</code> table migration while keeping the existing <code>messages</code> table as the active in-app notification log.</li>
             <li>Added product CRUD fields for MOQ and bulk price so supplier/admin product forms directly show the assignment's MOQ, regular price, and bulk price proof.</li>
             <li>Created <code>docs/requirement-proof-guide.html</code> with the exact demo sequence, credentials, routes, terminal commands, and database backup proof steps.</li>
             <li>Generated SQL backup at <code>database/backups/plexusbiz_assignment_backup.sql</code> after applying the current local migrations.</li>
-            <li>SMS is not required for this submission; the proof flow uses email providers, in-app messages, notifications, and workflow logs.</li>
+            <li>SMS is covered through the mock SMS provider and workflow <code>send_sms</code> action so the assignment's order placed SMS proof is visible without paid provider credentials.</li>
         </ul>
     </section>
 

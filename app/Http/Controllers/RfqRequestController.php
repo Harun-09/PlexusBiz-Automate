@@ -9,12 +9,11 @@ use App\Domains\CRM\Services\CustomerProfileService;
 use App\Domains\CRM\Services\InteractionLogger;
 use App\Domains\ECommerce\Enums\ProductStatus;
 use App\Domains\ECommerce\Enums\RfqStatus;
+use App\Domains\ECommerce\Events\RfqCreated;
 use App\Domains\ECommerce\Models\Product;
 use App\Domains\ECommerce\Models\Rfq;
 use App\Domains\ECommerce\Models\RfqItem;
 use App\Domains\ECommerce\Services\NumberSequenceService;
-use App\Domains\Workflow\Enums\WorkflowTriggerEvent;
-use App\Domains\Workflow\Services\WorkflowEngineService;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -31,7 +30,6 @@ class RfqRequestController extends Controller
         private readonly CustomerProfileService $customers,
         private readonly InteractionLogger $interactions,
         private readonly NumberSequenceService $numbers,
-        private readonly WorkflowEngineService $workflow,
     ) {
     }
 
@@ -187,7 +185,7 @@ class RfqRequestController extends Controller
         });
 
         if ($payload['rfq']) {
-            $this->workflow->handle(WorkflowTriggerEvent::RfqCreated->value, $this->rfqPayload(
+            RfqCreated::dispatch($this->rfqPayload(
                 lead: $payload['lead'],
                 rfq: $payload['rfq'],
                 product: $payload['product'],

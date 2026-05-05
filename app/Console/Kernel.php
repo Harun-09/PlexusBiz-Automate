@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('campaigns:send-scheduled')->everyMinute()->withoutOverlapping();
         $schedule->command('carts:check-abandoned')->hourly()->withoutOverlapping();
         $schedule->command('social-posts:publish-due')->everyMinute()->withoutOverlapping();
+        $schedule->command('workflow:close-stale-runs')->hourly()->withoutOverlapping();
     }
 
     /**

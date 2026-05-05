@@ -427,12 +427,13 @@
         <h2>Step 8. Prove Workflow Automation</h2>
         <ol>
             <li>Open <span class="route">/admin/automation-rules</span> or <span class="route">/workflow/rules</span>.</li>
-            <li>Open <span class="route">/workflow/rules/create</span> and create an IF / THEN rule.</li>
+            <li>Open <span class="route">/workflow/rules/create</span> and create an IF / THEN rule, such as <code>order.placed</code> with <code>send_email</code> and <code>send_sms</code>.</li>
             <li>Save the rule and reopen the rules list to show it is stored.</li>
-            <li>Trigger the relevant event, such as order placement, RFQ creation, or support ticket creation.</li>
+            <li>Trigger the relevant event, such as order placement, RFQ creation, or support ticket creation; RFQ creation is dispatched through the <code>RfqCreated</code> event listener.</li>
             <li>Open <span class="route">/workflow/logs</span> and show the execution record.</li>
             <li>Point out the full JSON payload and result columns, the status pill, the error text, and the executed timestamp.</li>
             <li>If the evaluator asks for queue support, explain the worker command: <code>php artisan queue:work</code>.</li>
+            <li>If the evaluator asks for cron support, run or explain <code>php artisan workflow:close-stale-runs</code> and show that <code>php artisan schedule:work</code> runs it automatically on the server.</li>
         </ol>
     </section>
 

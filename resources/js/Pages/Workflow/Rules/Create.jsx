@@ -26,7 +26,7 @@ export default function Create({ auth, flash, errors, triggers = [], actions = [
         condition_field: '',
         condition_operator: operators[0] || 'equals',
         condition_value: '',
-        action_types: ['send_email', 'create_notification'].filter((type) => actions.includes(type)),
+        action_types: ['send_email', 'send_sms'].filter((type) => actions.includes(type)),
         subject: 'Your PlexusBiz order is confirmed',
         message: 'Order confirmation automation executed successfully.',
     });
@@ -74,7 +74,7 @@ export default function Create({ auth, flash, errors, triggers = [], actions = [
                             <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">IF condition THEN action</p>
                             <h2 className="mt-1 text-2xl font-black tracking-tight text-slate-950">Create an automation rule</h2>
                             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-                                Example: IF event is order.placed THEN send email and create notification. SMS is intentionally not required for this submission.
+                                Example: IF event is order.placed THEN send email and send SMS, or IF event is rfq.created THEN notify supplier.
                             </p>
                         </div>
 

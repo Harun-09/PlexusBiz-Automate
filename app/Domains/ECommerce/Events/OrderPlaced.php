@@ -35,6 +35,7 @@ class OrderPlaced
                 'id' => $this->order->buyer?->id,
                 'name' => $this->order->buyer?->name,
                 'email' => $this->order->buyer?->email,
+                'phone' => $this->order->buyer?->phone,
             ],
             'items' => $this->order->items->map(fn ($item): array => [
                 'product_id' => $item->product_id,

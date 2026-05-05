@@ -143,6 +143,10 @@ class AutomationRuleController extends Controller
                         'subject' => $subject !== '' ? $subject : 'PlexusBiz automation email',
                         'body' => $message !== '' ? $message : 'Automation email action executed.',
                     ],
+                    WorkflowActionType::SendSms->value => [
+                        'to_path' => 'buyer.phone',
+                        'body' => $message !== '' ? $message : 'Automation SMS action executed.',
+                    ],
                     WorkflowActionType::CreateNotification->value => [
                         'subject' => $subject !== '' ? $subject : 'PlexusBiz notification',
                         'message' => $message !== '' ? $message : 'Automation notification created.',
@@ -193,8 +197,11 @@ class AutomationRuleController extends Controller
     {
         return [
             WorkflowActionType::SendEmail->value,
+            WorkflowActionType::SendSms->value,
             WorkflowActionType::CreateNotification->value,
             WorkflowActionType::NotifySupplier->value,
+            WorkflowActionType::AssignTask->value,
+            WorkflowActionType::CreateTicketAutoReply->value,
             WorkflowActionType::CallWebhookMock->value,
         ];
     }

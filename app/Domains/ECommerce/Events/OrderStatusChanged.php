@@ -50,6 +50,7 @@ class OrderStatusChanged
                 'id' => $order?->buyer?->id,
                 'name' => $order?->buyer?->name,
                 'email' => $order?->buyer?->email,
+                'phone' => $order?->buyer?->phone,
             ],
             'supplier' => [
                 'id' => $this->supplierOrder->supplier?->id,

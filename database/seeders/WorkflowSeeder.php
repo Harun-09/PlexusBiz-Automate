@@ -29,6 +29,13 @@ class WorkflowSeeder extends Seeder
                         ],
                     ],
                     [
+                        'type' => WorkflowActionType::SendSms->value,
+                        'config' => [
+                            'to_path' => 'buyer.phone',
+                            'body' => 'Your PlexusBiz order is confirmed.',
+                        ],
+                    ],
+                    [
                         'type' => WorkflowActionType::NotifySupplier->value,
                         'config' => [
                             'message' => 'Supplier notification prepared for order placement.',

@@ -29,7 +29,7 @@ php artisan queue:restart
 
 ## Scheduler
 
-Marketing and social automation use Laravel's scheduler through `app/Console/Kernel.php`.
+Marketing, social, cart, and workflow maintenance automation use Laravel's scheduler through `app/Console/Kernel.php`.
 
 For a long-running server daemon, prefer `schedule:work` under Supervisor, systemd, or your platform process manager:
 
@@ -52,6 +52,7 @@ php artisan schedule:run
 php artisan campaigns:send-scheduled
 php artisan carts:check-abandoned
 php artisan social-posts:publish-due
+php artisan workflow:close-stale-runs
 ```
 
 ## Deployment Checklist
