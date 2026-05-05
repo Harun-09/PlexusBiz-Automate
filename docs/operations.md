@@ -31,6 +31,12 @@ php artisan queue:restart
 
 Marketing and social automation use Laravel's scheduler through `app/Console/Kernel.php`.
 
+For a long-running server daemon, prefer `schedule:work` under Supervisor, systemd, or your platform process manager:
+
+```bash
+php artisan schedule:work
+```
+
 Cron entry:
 
 ```cron
@@ -41,6 +47,7 @@ Local/manual check:
 
 ```bash
 php artisan schedule:list
+php artisan schedule:work
 php artisan schedule:run
 php artisan campaigns:send-scheduled
 php artisan carts:check-abandoned

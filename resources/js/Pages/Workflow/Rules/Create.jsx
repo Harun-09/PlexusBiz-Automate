@@ -68,7 +68,7 @@ export default function Create({ auth, flash, errors, triggers = [], actions = [
             <Head title="Create Automation Rule" />
 
             <div className="py-8">
-                <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+                <div className="w-full">
                     <section className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm">
                         <div className="border-b border-slate-100 bg-slate-50 px-5 py-5 sm:px-8">
                             <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">IF condition THEN action</p>

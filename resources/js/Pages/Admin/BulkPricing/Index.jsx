@@ -358,18 +358,18 @@ export default function BulkPricingIndex({ auth, summary, products, selectedProd
             <Head title="Bulk Pricing & MOQ" />
 
             {flash?.success && (
-                <div className="mx-auto mt-4 max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mt-4">
                     <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-medium text-emerald-800">{flash.success}</div>
                 </div>
             )}
             {flash?.error && (
-                <div className="mx-auto mt-4 max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mt-4">
                     <div className="rounded-xl border border-rose-200 bg-rose-50 px-5 py-3 text-sm font-medium text-rose-800">{flash.error}</div>
                 </div>
             )}
 
             <div className="py-8">
-                <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
+                <div className="space-y-6">
                     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
                             <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">Products</p>

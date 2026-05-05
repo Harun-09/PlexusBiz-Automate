@@ -15,7 +15,7 @@ export default function CreateProduct({ auth, suppliers, statuses }) {
         >
             <Head title="Create Product" />
             <div className="py-8">
-                <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+                <div className="w-full">
                     <div className="rounded-2xl border border-gray-200/80 bg-white p-6 shadow-sm sm:p-8">
                         <ProductForm suppliers={suppliers} statuses={statuses} submitUrl="/admin/products" method="post" />
                     </div>

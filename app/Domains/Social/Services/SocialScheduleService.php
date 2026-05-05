@@ -14,7 +14,10 @@ class SocialScheduleService
 
         SocialPost::query()
             ->where('status', SocialPostStatus::Scheduled->value)
-            ->where('scheduled_at', '<=', now())
+            ->where(function ($query): void {
+                $query->whereNull('scheduled_at')
+                    ->orWhere('scheduled_at', '<=', now());
+            })
             ->each(function (SocialPost $post) use ($queued, &$count): void {
                 $queued
                     ? PublishSocialPostJob::dispatch($post->id)

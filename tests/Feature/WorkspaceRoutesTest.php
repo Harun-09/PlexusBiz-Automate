@@ -5,6 +5,9 @@ namespace Tests\Feature;
 use App\Domains\ECommerce\Enums\OrderStatus;
 use App\Domains\ECommerce\Enums\PaymentStatus;
 use App\Domains\ECommerce\Models\Order;
+use App\Domains\ECommerce\Models\Product;
+use App\Domains\ECommerce\Models\Supplier;
+use App\Domains\ECommerce\Enums\SupplierStatus;
 use App\Models\User;
 use Database\Seeders\RbacSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -75,6 +78,37 @@ class WorkspaceRoutesTest extends TestCase
         $this->actingAs($marketing)->get('/marketing/campaigns')->assertOk();
         $this->actingAs($marketing)->get('/workflow/logs')->assertOk();
         $this->actingAs($workflow)->get('/workflow/logs')->assertOk();
+    }
+
+    public function test_pending_suppliers_do_not_receive_product_action_columns(): void
+    {
+        $this->seed(RbacSeeder::class);
+
+        $supplierUser = User::factory()->create([
+            'name' => 'Pending Supplier',
+            'email' => 'pending.supplier@example.com',
+            'account_type' => 'supplier',
+        ]);
+
+        $supplierUser->assignRole('supplier');
+
+        $supplier = Supplier::factory()->create([
+            'user_id' => $supplierUser->id,
+            'status' => SupplierStatus::Pending,
+            'approved_at' => null,
+        ]);
+
+        Product::factory()->create([
+            'supplier_id' => $supplier->id,
+        ]);
+
+        $this->actingAs($supplierUser)
+            ->get('/commerce/products')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page
+                ->component('Commerce/Products/Index')
+                ->where('workspace.columns', ['SKU', 'Product', 'Supplier', 'Stock', 'MOQ', 'Status'])
+                ->has('workspace.rows', 1));
     }
 
     public function test_workspace_tables_support_search_and_status_filters(): void

@@ -14,12 +14,12 @@ export default function Edit({ auth, mustVerifyEmail, status, customer = null, c
             <Head title="Profile" />
 
             <div className="py-12">
-                <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
+                <div className="space-y-6">
                     <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                         <UpdateProfileInformationForm
                             mustVerifyEmail={mustVerifyEmail}
                             status={status}
-                            className="max-w-xl"
+                            className="w-full"
                         />
                     </div>
 
@@ -28,17 +28,17 @@ export default function Edit({ auth, mustVerifyEmail, status, customer = null, c
                             <UpdateCustomerProfileForm
                                 customer={customer}
                                 summary={customerSummary}
-                                className="max-w-4xl"
+                                className="w-full"
                             />
                         </div>
                     ) : null}
 
                     <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                        <UpdatePasswordForm className="max-w-xl" />
+                        <UpdatePasswordForm className="w-full" />
                     </div>
 
                     <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                        <DeleteUserForm className="max-w-xl" />
+                        <DeleteUserForm className="w-full" />
                     </div>
                 </div>
             </div>

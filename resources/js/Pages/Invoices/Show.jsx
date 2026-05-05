@@ -49,7 +49,7 @@ export default function Show({ invoice }) {
             <Head title={`Invoice ${invoice.invoice_number}`} />
 
             <div className="min-h-screen bg-slate-100 p-4">
-                <div className="mx-auto flex min-h-[calc(100vh-2rem)] max-w-[1600px] flex-col gap-4">
+                <div className="flex min-h-[calc(100vh-2rem)] w-full flex-col gap-4">
                     <div className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
                         <div className="min-w-0">
                             <h1 className="truncate text-xl font-black text-slate-950">{invoice.invoice_number}</h1>

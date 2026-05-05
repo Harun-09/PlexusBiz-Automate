@@ -58,7 +58,7 @@ export default function Create({ auth, flash, errors, platforms = [], statuses =
             <Head title="Schedule Social Post" />
 
             <div className="py-8">
-                <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+                <div className="w-full">
                     <section className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm">
                         <div className="border-b border-slate-100 bg-slate-50 px-5 py-5 sm:px-8">
                             <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">Mock publishing workflow</p>
@@ -113,7 +113,7 @@ export default function Create({ auth, flash, errors, platforms = [], statuses =
                                         <input value={data.media_url} onChange={(event) => setData('media_url', event.target.value)} className="input" placeholder="https://example.com/image.jpg" />
                                     </Field>
 
-                                    <Field label="Schedule Date/Time" error={errors.scheduled_at}>
+                                    <Field label="Schedule Date/Time" error={errors.scheduled_at} hint="Use Bangladesh local time. Leave blank and scheduled posts will be picked up on the next scheduler pass.">
                                         <input type="datetime-local" value={data.scheduled_at} onChange={(event) => setData('scheduled_at', event.target.value)} className="input" />
                                     </Field>
                                 </div>

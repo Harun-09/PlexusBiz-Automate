@@ -1,6 +1,7 @@
 import ModuleWorkspacePage from '@/Components/ModuleWorkspacePage';
+import { canAccess } from '@/Utils/access';
 
-const buildModuleConfig = (auth, supplierStatus = null) => ({
+const buildModuleConfig = (auth) => ({
     eyebrow: 'E-Commerce',
     tag: 'Inventory',
     theme: 'slate',
@@ -20,13 +21,13 @@ const buildModuleConfig = (auth, supplierStatus = null) => ({
         { label: 'Supplier flow', detail: 'The list supports supplier-owned product operations and admin oversight.' },
     ],
     actions: [
-        ...(auth?.user?.roles?.includes('admin')
+        ...(canAccess(auth?.user, { roles: ['admin'] })
             ? [
                 { label: 'Bulk Pricing & MOQ', href: '/admin/bulk-pricing', variant: 'primary' },
                 { label: 'Supplier Onboarding', href: '/admin/suppliers', variant: 'secondary' },
             ]
             : []),
-        ...(auth?.user?.roles?.includes('supplier') && supplierStatus === 'approved'
+        ...(canAccess(auth?.user, { roles: ['supplier'], requiresSupplierApproval: true })
             ? [
                 {
                     label: 'Add Product',
@@ -42,7 +43,5 @@ const buildModuleConfig = (auth, supplierStatus = null) => ({
 });
 
 export default function Index(props) {
-    const supplierStatus = props.auth?.user?.supplier?.status || null;
-
-    return <ModuleWorkspacePage {...props} module={buildModuleConfig(props.auth, supplierStatus)} />;
+    return <ModuleWorkspacePage {...props} module={buildModuleConfig(props.auth)} />;
 }

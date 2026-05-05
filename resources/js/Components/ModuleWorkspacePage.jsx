@@ -2,6 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import EmptyState from '@/Components/EmptyState';
 import KpiCard from '@/Components/KpiCard';
 import PageHeader from '@/Components/PageHeader';
+import { canAccess } from '@/Utils/access';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 
 const METRIC_TONES = ['blue', 'emerald', 'amber', 'rose'];
@@ -309,47 +310,6 @@ const renderWorkspaceCell = (_column, value) => {
 
 const themeFor = (key = 'slate') => MODULE_THEMES[key] || MODULE_THEMES.slate;
 
-const normalizeAccessList = (value) => {
-    if (!Array.isArray(value)) {
-        return [];
-    }
-
-    return value
-        .map((item) => String(item).trim().toLowerCase())
-        .filter(Boolean);
-};
-
-const actionIsVisible = (action, user) => {
-    if (!action) {
-        return false;
-    }
-
-    const userRoles = normalizeAccessList(user?.roles);
-    const userPermissions = normalizeAccessList(user?.permissions);
-    const requiredRoles = normalizeAccessList(action.roles);
-    const blockedRoles = normalizeAccessList(action.excludeRoles);
-    const requiredPermissions = normalizeAccessList(action.permissions);
-    const blockedPermissions = normalizeAccessList(action.excludePermissions);
-
-    if (requiredRoles.length > 0 && !requiredRoles.some((role) => userRoles.includes(role))) {
-        return false;
-    }
-
-    if (blockedRoles.some((role) => userRoles.includes(role))) {
-        return false;
-    }
-
-    if (requiredPermissions.length > 0 && !requiredPermissions.some((permission) => userPermissions.includes(permission))) {
-        return false;
-    }
-
-    if (blockedPermissions.some((permission) => userPermissions.includes(permission))) {
-        return false;
-    }
-
-    return true;
-};
-
 const ActionButton = ({ action, theme }) => {
     const isPrimary = action.variant !== 'secondary';
     const classes = isPrimary ? theme.actionPrimary : theme.actionSecondary;
@@ -370,7 +330,7 @@ export default function ModuleWorkspacePage({ auth, workspace, module = {} }) {
     const rows = workspace.rows || [];
     const metrics = workspace.metrics || [];
     const statusOptions = filters?.statuses || [];
-    const visibleActions = (module.actions || []).filter((action) => actionIsVisible(action, auth?.user));
+    const visibleActions = (module.actions || []).filter((action) => canAccess(auth?.user, action));
     const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
     const { data, setData } = useForm({
         search: filters?.search || '',

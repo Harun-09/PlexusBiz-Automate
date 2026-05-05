@@ -1,8 +1,7 @@
 import SidebarItem from '@/Components/SidebarItem';
+import { canAccess } from '@/Utils/access';
 import { Link } from '@inertiajs/react';
 import { useState } from 'react';
-
-const hasRole = (roles, allowed) => allowed.length === 0 || allowed.some((role) => roles.includes(role));
 
 const SIDEBAR_MODULES = [
     {
@@ -14,13 +13,13 @@ const SIDEBAR_MODULES = [
             { label: 'Marketplace Catalog', href: '/marketplace', icon: 'M', roles: ['buyer', 'supplier', 'admin'] },
             { label: 'Bulk Orders', href: '/products/bulk-orders', icon: 'BO', roles: ['buyer', 'supplier', 'admin'] },
             { label: 'MOQ Pricing', href: '/products/moq-pricing', icon: 'MQ', roles: ['buyer', 'supplier', 'admin'] },
-            { label: 'Cart', href: '/cart', icon: 'C', roles: ['buyer'] },
-            { label: 'Supplier Onboarding', href: '/admin/suppliers', icon: 'SO', roles: ['admin'] },
-            { label: 'Product CRUD', href: '/admin/products', icon: 'PR', roles: ['admin'] },
-            { label: 'Inventory & Stock', href: '/commerce/products', icon: 'IS', roles: ['supplier', 'admin'] },
-            { label: 'Add Product', href: '/commerce/products/create', icon: 'AP', roles: ['supplier'], requiresSupplierApproval: true },
+            { label: 'Cart', href: '/cart', icon: 'C', roles: ['buyer'], permissions: ['manage_cart'] },
+            { label: 'Supplier Onboarding', href: '/admin/suppliers', icon: 'SO', roles: ['admin'], permissions: ['manage_suppliers'] },
+            { label: 'Product CRUD', href: '/admin/products', icon: 'PR', roles: ['admin'], permissions: ['manage_products'] },
+            { label: 'Inventory & Stock', href: '/commerce/products', icon: 'IS', roles: ['supplier', 'admin'], permissions: ['manage_own_products', 'manage_products'], requiresSupplierApproval: true },
+            { label: 'Add Product', href: '/commerce/products/create', icon: 'AP', roles: ['supplier'], permissions: ['manage_own_products'], requiresSupplierApproval: true },
             { label: 'Orders', href: '/commerce/orders', icon: 'O', roles: ['buyer', 'supplier', 'admin'] },
-            { label: 'Supplier Orders', href: '/commerce/supplier-orders', icon: 'SO', roles: ['supplier', 'admin'], requiresSupplierApproval: true },
+            { label: 'Supplier Orders', href: '/commerce/supplier-orders', icon: 'SO', roles: ['supplier', 'admin'], permissions: ['manage_own_orders', 'manage_orders'], requiresSupplierApproval: true },
             { label: 'Invoices', href: '/invoices', icon: 'I', roles: ['buyer', 'supplier', 'admin'] },
         ],
     },
@@ -88,7 +87,7 @@ const SIDEBAR_MODULES = [
         roles: ['buyer', 'supplier', 'admin', 'marketing_manager'],
         icon: 'SP',
         items: [
-            { label: 'Support Tickets', href: '/support/tickets', icon: 'ST', roles: ['buyer', 'supplier', 'admin'] },
+            { label: 'Support Tickets', href: '/support/tickets', icon: 'ST', roles: ['buyer', 'supplier', 'admin'], permissions: ['manage_own_tickets', 'manage_tickets'] },
             { label: 'Support FAQ', href: '/support/faq', icon: 'Q', roles: ['buyer', 'supplier', 'admin', 'marketing_manager'] },
         ],
     },
@@ -102,25 +101,17 @@ function Chevron({ className = '' }) {
     );
 }
 
-function visibleModules(roles, supplierStatus = null) {
+function visibleModules(user) {
     return SIDEBAR_MODULES
         .map((module) => ({
             ...module,
-            items: module.items.filter((item) => (
-                hasRole(roles, item.roles) && (
-                    !item.requiresSupplierApproval
-                    || supplierStatus === 'approved'
-                    || roles.includes('admin')
-                )
-            )),
+            items: module.items.filter((item) => canAccess(user, item)),
         }))
-        .filter((module) => hasRole(roles, module.roles) && module.items.length > 0);
+        .filter((module) => canAccess(user, module) && module.items.length > 0);
 }
 
 export default function Sidebar({ user, currentPath, onNavigate = null }) {
-    const roles = user?.roles || [];
-    const supplierStatus = user?.supplier?.status || null;
-    const modules = visibleModules(roles, supplierStatus);
+    const modules = visibleModules(user);
     const [openKeys, setOpenKeys] = useState([]);
 
     const isActive = (href) => {

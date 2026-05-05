@@ -13,7 +13,7 @@ class CheckAbandonedCartsCommand extends Command
 
     public function handle(): int
     {
-        app()->call([new ProcessAbandonedCartRemindersJob(), 'handle']);
+        ProcessAbandonedCartRemindersJob::dispatch();
 
         $this->info('Abandoned cart reminder processing completed.');
 

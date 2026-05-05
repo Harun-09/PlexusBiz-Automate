@@ -106,6 +106,43 @@ class CampaignDispatchTest extends TestCase
         $this->assertSame('sent', $log->status->value);
     }
 
+    public function test_scheduled_campaign_command_also_picks_up_records_without_a_schedule_time(): void
+    {
+        Mail::fake();
+
+        $customer = $this->customer(tags: ['priority']);
+        $campaign = Campaign::create([
+            'name' => 'Immediate Scheduled Follow Up',
+            'slug' => 'immediate-scheduled-follow-up-'.Str::random(8),
+            'type' => CampaignType::Email,
+            'status' => CampaignStatus::Scheduled,
+            'segment_filters_json' => ['tags' => ['priority']],
+        ]);
+
+        CampaignTemplate::create([
+            'campaign_id' => $campaign->id,
+            'channel' => MessageChannel::Email,
+            'name' => 'Immediate Follow Up Email',
+            'subject' => 'Immediate hello {{ customer_name }}',
+            'body' => 'Hi {{ customer_name }}, this scheduled campaign had no date.',
+            'variables' => ['customer_name'],
+            'status' => 'active',
+        ]);
+
+        Artisan::call('campaigns:send-scheduled');
+
+        $campaign->refresh();
+        $log = CampaignLog::query()->where('campaign_id', $campaign->id)->firstOrFail();
+
+        Mail::assertSent(MarketingCampaignMail::class, function (MarketingCampaignMail $mail): bool {
+            return $mail->subjectLine === 'Immediate hello Acme Buyer';
+        });
+
+        $this->assertSame(CampaignStatus::Completed, $campaign->status);
+        $this->assertSame($customer->id, $log->customer_id);
+        $this->assertSame('sent', $log->status->value);
+    }
+
     private function customer(array $tags): Customer
     {
         $user = User::factory()->create([

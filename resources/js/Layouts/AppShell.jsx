@@ -51,8 +51,8 @@ export default function AppShell({ user, header, children, flash = null, showBre
                     showBreadcrumbs={showBreadcrumbs}
                 />
 
-                <main className="min-h-[calc(100vh-4rem)] px-4 py-6 sm:px-6 lg:px-8">
-                    <div className="mx-auto max-w-7xl space-y-6">
+                <main className="min-h-[calc(100vh-4rem)] px-3 py-5 sm:px-4 lg:px-6">
+                    <div className="w-full space-y-6">
                         {flash?.success || flash?.error ? <FlashBanner flash={flash} /> : null}
                         {children}
                     </div>

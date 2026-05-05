@@ -125,7 +125,7 @@ export default function ModuleSettingsIndex({ auth, modules, summary, flash }) {
             <Head title="Module Settings" />
 
             {flash?.success && (
-                <div className="mx-auto mt-4 max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mt-4">
                     <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-medium text-emerald-800">
                         {flash.success}
                     </div>

@@ -121,7 +121,7 @@ export default function SocialCalendar({ auth, posts, month, year, status, statu
             <Head title="Social Calendar" />
 
             <div className="py-8">
-                <div className="mx-auto max-w-7xl space-y-5 px-4 sm:px-6 lg:px-8">
+                <div className="space-y-5">
 
                     {/* Controls bar */}
                     <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-gray-200/80 bg-white p-4 shadow-sm">

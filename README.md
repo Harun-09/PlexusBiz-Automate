@@ -119,12 +119,15 @@ This applies to order placement and support ticket creation events.
 ## Scheduler Commands
 
 ```bash
+php artisan schedule:work
 php artisan schedule:run
 php artisan queue:work
 php artisan campaigns:send-scheduled
 php artisan carts:check-abandoned
 php artisan social-posts:publish-due
 ```
+
+Daemon examples are in `deploy/supervisor/laravel-scheduler.conf` and `deploy/systemd/laravel-scheduler.service`.
 
 ## Requirement Proof Guide
 

@@ -19,7 +19,10 @@ class ProcessScheduledCampaignsJob implements ShouldQueue
     {
         Campaign::query()
             ->where('status', CampaignStatus::Scheduled->value)
-            ->where('scheduled_at', '<=', now())
-            ->each(fn (Campaign $campaign): null => $dispatch->dispatch($campaign, queued: false) ?: null);
+            ->where(function ($query): void {
+                $query->whereNull('scheduled_at')
+                    ->orWhere('scheduled_at', '<=', now());
+            })
+            ->each(fn (Campaign $campaign): null => $dispatch->dispatch($campaign) ?: null);
     }
 }

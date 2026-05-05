@@ -234,7 +234,7 @@ export default function Show({
             <Head title={product.name} />
 
             <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(11,46,113,0.14),_transparent_30%),radial-gradient(circle_at_top_right,_rgba(255,138,0,0.16),_transparent_26%),linear-gradient(180deg,_#eef5ff_0%,_#f9fbff_46%,_#ffffff_100%)] text-slate-900">
-                <main className="mx-auto w-full max-w-[1500px] px-4 py-6 sm:px-6 lg:px-8">
+                <main className="w-full px-4 py-6 sm:px-6 lg:px-8">
                     <div className="mb-5 flex flex-wrap items-center gap-2 text-sm text-slate-500">
                         <Link href={route('products.index')} className="font-semibold text-[#0b2e71] transition hover:text-[#d75d00]">
                             Marketplace

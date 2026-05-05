@@ -13,7 +13,7 @@ class SendScheduledCampaignsCommand extends Command
 
     public function handle(): int
     {
-        app()->call([new ProcessScheduledCampaignsJob(), 'handle']);
+        ProcessScheduledCampaignsJob::dispatch();
 
         $this->info('Scheduled campaign processing completed.');
 

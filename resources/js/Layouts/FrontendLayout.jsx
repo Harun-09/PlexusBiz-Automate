@@ -481,7 +481,7 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
         <div className="min-h-screen overflow-x-hidden bg-[#eaf2ff] text-slate-900 antialiased" style={{ fontFamily: "'Segoe UI', Arial, sans-serif" }}>
             <header ref={headerRef} className="fixed inset-x-0 top-0 z-50">
                     <div className="border-b border-[#042e6f] bg-[#0b2e71] text-white shadow-[0_10px_24px_-18px_rgba(7,18,46,0.8)]">
-                        <div className="mx-auto grid w-full max-w-[1900px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 px-4 py-3 sm:grid-cols-[auto_auto_minmax(0,1fr)_auto] sm:gap-3 sm:px-6 xl:gap-4 xl:px-8">
+                        <div className="mx-auto grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 px-4 py-3 sm:grid-cols-[auto_auto_minmax(0,1fr)_auto] sm:gap-3 sm:px-6 xl:gap-4 xl:px-8">
                             <PlexusBizMark />
 
                             <AddressTile onClick={() => setIsAddressModalOpen(true)} />
@@ -590,7 +590,7 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                     </div>
 
                     <div className="border-b border-[#d8e4f5] bg-[#f8fbff] text-[#0b2e71]">
-                        <div className="mx-auto flex w-full max-w-[1900px] flex-wrap items-center gap-2 px-4 py-2 sm:px-6 xl:px-8">
+                        <div className="mx-auto flex w-full flex-wrap items-center gap-2 px-4 py-2 sm:px-6 xl:px-8">
                             <span className="hidden shrink-0 text-[10px] font-black uppercase tracking-[0.24em] text-[#0b2e71]/55 sm:inline-flex">
                                 Quick filters
                             </span>
@@ -619,7 +619,7 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                             background: 'linear-gradient(90deg, #0b2e71 0%, #1f68d9 100%)',
                         }}
                     >
-                        <div className="mx-auto w-full max-w-[1900px] px-6 sm:px-10 lg:px-16 xl:px-20">
+                        <div className="mx-auto w-full px-6 sm:px-10 lg:px-16 xl:px-20">
                             <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-2 md:gap-6 xl:gap-4">
                                 {footerSections.map((section) => (
                                     <FooterColumn key={section.title} section={section} />
@@ -635,7 +635,7 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                             background: 'linear-gradient(90deg, #eaf2ff 0%, #f8fbff 100%)',
                         }}
                     >
-                        <div className="mx-auto w-full max-w-[1900px] px-6 lg:px-16 xl:px-20 flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div className="mx-auto flex w-full flex-col items-center justify-between gap-6 px-6 md:flex-row md:items-center lg:px-16 xl:px-20">
                             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 text-xs sm:text-sm text-[#0b2e71]">
                                 <span>© 2000-{new Date().getFullYear()} PlexusBiz Inc. All rights reserved.</span>
                                 <div className="flex flex-wrap justify-center sm:justify-start items-center gap-3">

@@ -13,7 +13,7 @@ class PublishDueSocialPostsCommand extends Command
 
     public function handle(): int
     {
-        app()->call([new ProcessDueSocialPostsJob(), 'handle']);
+        ProcessDueSocialPostsJob::dispatch();
 
         $this->info('Due social post processing completed.');
 

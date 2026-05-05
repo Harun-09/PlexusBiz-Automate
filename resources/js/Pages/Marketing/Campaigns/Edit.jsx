@@ -57,7 +57,7 @@ export default function Edit({ auth, flash, errors, campaign, campaignTypes = ['
             <Head title={`Edit Campaign - ${campaign.name}`} />
 
             <div className="py-8">
-                <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+                <div className="w-full">
                     <section className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm">
                         <div className="border-b border-slate-100 bg-slate-50 px-5 py-5 sm:px-8">
                             <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">
@@ -132,7 +132,7 @@ export default function Edit({ auth, flash, errors, campaign, campaignTypes = ['
                                         />
                                     </Field>
 
-                                    <Field label="Scheduled At" error={errors.scheduled_at} hint="Use Bangladesh local time when adjusting the schedule.">
+                                    <Field label="Scheduled At" error={errors.scheduled_at} hint="Use Bangladesh local time when adjusting the schedule. Scheduled campaigns without a time are picked up on the next scheduler pass.">
                                         <input
                                             type="datetime-local"
                                             value={data.scheduled_at}

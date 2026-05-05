@@ -36,7 +36,7 @@ export default function CheckoutSuccess({
             <Head title={`Checkout ${orderNumber}`} />
 
             <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#dbeafe_0,_#eff6ff_38%,_#ffffff_100%)] text-slate-900">
-                <div className="mx-auto flex min-h-screen max-w-6xl items-center px-4 py-10 sm:px-6">
+                <div className="flex min-h-screen w-full items-center px-4 py-10 sm:px-6">
                     <div className="grid w-full gap-6 rounded-[2rem] border border-white/70 bg-white/90 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.12)] backdrop-blur md:p-8 lg:grid-cols-[1.2fr_0.8fr]">
                         <section className="space-y-6">
                             <div className="inline-flex items-center gap-3 rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700">

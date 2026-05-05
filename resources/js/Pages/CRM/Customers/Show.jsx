@@ -162,7 +162,7 @@ export default function Show({ auth, customer, summary, recentOrders = [], recen
             <Head title={displayName} />
 
             <div className="py-8">
-                <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
+                <div className="space-y-6">
                     <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                         <KpiCard
                             label="Orders"

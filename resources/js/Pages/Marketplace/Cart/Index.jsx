@@ -220,7 +220,7 @@ export default function Index({ auth, flash, errors, cart, suggestions, currency
                     `
                 }}
             >
-                <main className="mx-auto w-full max-w-[1500px] px-4 py-6 sm:px-6 lg:px-8">
+                <main className="w-full px-4 py-6 sm:px-6 lg:px-8">
                     <section className="overflow-hidden rounded-[32px] border border-[#d7e3f4] bg-[#0b2e71] shadow-[0_26px_80px_-40px_rgba(7,18,46,0.9)]">
                         <div className="grid gap-8 px-5 py-6 lg:grid-cols-[1.1fr_.9fr] lg:px-8 lg:py-8">
                             <div className="space-y-5 text-white">

@@ -3,6 +3,8 @@ import FrontendLayout from '@/Layouts/FrontendLayout';
 import LandingPromoStrip from '@/Components/LandingPromoStrip';
 import PromoArtwork from '@/Components/PromoArtwork';
 
+import { canAccess } from '@/Utils/access';
+
 const storeAsset = (path) => `/images/store/${path}`;
 const ecommerceAsset = (path) => `/images/ecommerce/${path}`;
 const productImage = (name) => storeAsset(`products/${name}.png`);
@@ -501,16 +503,16 @@ const marketplaceShortcutItems = [
     { icon: OrdersIcon, label: 'Bulk Orders', href: '/products/bulk-orders' },
     { icon: InvoicesIcon, label: 'MOQ Pricing', href: '/products/moq-pricing' },
     { icon: SupportIcon, label: 'Supplier Onboarding', href: route('supplier.apply') },
-    { icon: ProductsIcon, label: 'Product CRUD', href: '/admin/products' },
-    { icon: OrdersIcon, label: 'Inventory & Stock', href: '/commerce/products' },
-    { icon: OrdersIcon, label: 'Orders & Checkout', href: '/commerce/orders' },
-    { icon: InvoicesIcon, label: 'Invoices', href: '/invoices' },
-    { icon: ProductsIcon, label: 'CRM Customers', href: '/crm' },
-    { icon: OrdersIcon, label: 'Marketing Automation', href: '/marketing' },
-    { icon: SupportIcon, label: 'Workflow Automation', href: '/workflow' },
-    { icon: SupportIcon, label: 'Support Tickets', href: '/support' },
-    { icon: InvoicesIcon, label: 'Module Settings', href: '/settings/modules' },
-    { icon: ProductsIcon, label: 'Audit Logs', href: '/admin/audit-logs' },
+    { icon: ProductsIcon, label: 'Product CRUD', href: '/admin/products', access: { roles: ['admin'], permissions: ['manage_products'] } },
+    { icon: OrdersIcon, label: 'Inventory & Stock', href: '/commerce/products', access: { roles: ['supplier', 'admin'], permissions: ['manage_own_products', 'manage_products'], requiresSupplierApproval: true } },
+    { icon: OrdersIcon, label: 'Orders & Checkout', href: '/commerce/orders', access: { roles: ['buyer', 'supplier', 'admin'] } },
+    { icon: InvoicesIcon, label: 'Invoices', href: '/invoices', access: { roles: ['buyer', 'supplier', 'admin'] } },
+    { icon: ProductsIcon, label: 'CRM Customers', href: '/crm', access: { roles: ['admin', 'marketing_manager'] } },
+    { icon: OrdersIcon, label: 'Marketing Automation', href: '/marketing', access: { roles: ['marketing_manager', 'admin'] } },
+    { icon: SupportIcon, label: 'Workflow Automation', href: '/workflow', access: { roles: ['workflow_manager', 'marketing_manager', 'admin'] } },
+    { icon: SupportIcon, label: 'Support Tickets', href: '/support', access: { roles: ['buyer', 'supplier', 'admin'], permissions: ['manage_own_tickets', 'manage_tickets'] } },
+    { icon: InvoicesIcon, label: 'Module Settings', href: '/settings/modules', access: { roles: ['admin'] } },
+    { icon: ProductsIcon, label: 'Audit Logs', href: '/admin/audit-logs', access: { roles: ['admin'] } },
 ];
 
 const comboBundlesPrimary = [
@@ -1590,6 +1592,7 @@ function InsightCard({ insight }) {
 export default function Welcome({ auth = {}, canLogin, canRegister }) {
     const isAuthed = Boolean(auth?.user);
     const primaryHref = isAuthed ? route('dashboard') : route('register');
+    const visibleMarketplaceShortcutItems = marketplaceShortcutItems.filter((item) => ! item.access || canAccess(auth?.user, item.access));
 
     return (
         <FrontendLayout auth={auth} canLogin={canLogin}>
@@ -1610,7 +1613,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                 <div className="pointer-events-none absolute -left-24 top-28 h-72 w-72 rounded-full bg-[#2b74db]/12 blur-3xl" />
                 <div className="pointer-events-none absolute right-0 top-16 h-80 w-80 rounded-full bg-[#ff7b22]/10 blur-3xl" />
 
-                <main className="relative z-10 mx-auto w-full max-w-[1900px] space-y-4 px-4 py-4 sm:px-6 xl:px-8">
+                <main className="relative z-10 w-full space-y-4 px-4 py-4 sm:px-6 xl:px-8">
                     <section className="grid items-stretch gap-3 grid-cols-1 xl:grid-cols-[420px_minmax(0,1fr)]">
                         <aside className="order-2 h-[380px] overflow-hidden rounded-[16px] bg-[#0b2e71] text-white shadow-[0_18px_40px_-22px_rgba(7,18,46,0.85)] sm:h-[440px] lg:h-[520px] xl:order-1 xl:h-[580px] xl:sticky xl:top-4">
                             <div className="flex h-full flex-col">
@@ -1625,7 +1628,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                                     </span>
                                 </div>
                                 <div className="flex-1 overflow-y-auto px-2">
-                                    {marketplaceShortcutItems.map((item) => (
+                                    {visibleMarketplaceShortcutItems.map((item) => (
                                         <Link
                                             key={item.label}
                                             href={item.href}

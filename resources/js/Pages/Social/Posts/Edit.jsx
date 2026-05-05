@@ -54,7 +54,7 @@ export default function Edit({ auth, flash, errors, post: socialPost, platforms 
             <Head title="Edit Social Post" />
 
             <div className="py-8">
-                <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+                <div className="w-full">
                     <section className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm">
                         <div className="border-b border-slate-100 bg-slate-50 px-5 py-5 sm:px-8">
                             <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">Publishing editor</p>
@@ -103,7 +103,7 @@ export default function Edit({ auth, flash, errors, post: socialPost, platforms 
                                     <Field label="Image URL Optional" error={errors.media_url}>
                                         <input value={data.media_url} onChange={(event) => setData('media_url', event.target.value)} className="input" />
                                     </Field>
-                                    <Field label="Schedule Date/Time" error={errors.scheduled_at}>
+                                    <Field label="Schedule Date/Time" error={errors.scheduled_at} hint="Use Bangladesh local time. Leave blank and scheduled posts will be picked up on the next scheduler pass.">
                                         <input type="datetime-local" value={data.scheduled_at} onChange={(event) => setData('scheduled_at', event.target.value)} className="input" />
                                     </Field>
                                 </div>

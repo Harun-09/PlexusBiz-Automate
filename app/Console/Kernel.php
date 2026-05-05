@@ -12,9 +12,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('campaigns:send-scheduled')->everyMinute();
-        $schedule->command('carts:check-abandoned')->hourly();
-        $schedule->command('social-posts:publish-due')->everyMinute();
+        $schedule->command('campaigns:send-scheduled')->everyMinute()->withoutOverlapping();
+        $schedule->command('carts:check-abandoned')->hourly()->withoutOverlapping();
+        $schedule->command('social-posts:publish-due')->everyMinute()->withoutOverlapping();
     }
 
     /**

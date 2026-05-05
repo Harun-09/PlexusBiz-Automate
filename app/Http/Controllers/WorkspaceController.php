@@ -139,40 +139,52 @@ class WorkspaceController extends Controller
         }
 
         $canManageProducts = $request->user()->hasRole('admin') || $request->user()->supplier?->isApproved();
+        $columns = ['SKU', 'Product', 'Supplier', 'Stock', 'MOQ', 'Status'];
+
+        if ($canManageProducts) {
+            $columns[] = 'Actions';
+        }
 
         $rows = $this->applyListFilters($query, $filters, ['sku', 'name'])
             ->latest()
             ->limit(50)
             ->get()
-            ->map(fn (Product $product): array => [
-                'SKU' => $product->sku,
-                'Product' => $product->name,
-                'Supplier' => $product->supplier?->company_name,
-                'Stock' => [
-                    'kind' => 'stock',
-                    'value' => $product->availableStock(),
-                    'lowStock' => $product->isLowStock(),
-                ],
-                'MOQ' => $product->moq,
-                'Status' => $product->status->value,
-                'Actions' => $canManageProducts ? [
-                    [
-                        'kind' => 'link',
-                        'label' => 'Edit',
-                        'href' => route('commerce.products.edit', $product),
+            ->map(function (Product $product) use ($canManageProducts): array {
+                $row = [
+                    'SKU' => $product->sku,
+                    'Product' => $product->name,
+                    'Supplier' => $product->supplier?->company_name,
+                    'Stock' => [
+                        'kind' => 'stock',
+                        'value' => $product->availableStock(),
+                        'lowStock' => $product->isLowStock(),
                     ],
-                    [
-                        'kind' => 'link',
-                        'label' => 'Delete',
-                        'href' => route('commerce.products.destroy', $product),
-                        'method' => 'delete',
-                        'variant' => 'danger',
-                        'confirm' => 'Delete this product? This will remove it from the supplier catalog.',
-                    ],
-                ] : '-',
-            ]);
+                    'MOQ' => $product->moq,
+                    'Status' => $product->status->value,
+                ];
 
-        return $this->page('Product Operations', 'Supplier-owned catalog, stock, MOQ, status, and actions.', [], ['SKU', 'Product', 'Supplier', 'Stock', 'MOQ', 'Status', 'Actions'], $rows, filters: $filters, component: 'Commerce/Products/Index');
+                if ($canManageProducts) {
+                    $row['Actions'] = [
+                        [
+                            'kind' => 'link',
+                            'label' => 'Edit',
+                            'href' => route('commerce.products.edit', $product),
+                        ],
+                        [
+                            'kind' => 'link',
+                            'label' => 'Delete',
+                            'href' => route('commerce.products.destroy', $product),
+                            'method' => 'delete',
+                            'variant' => 'danger',
+                            'confirm' => 'Delete this product? This will remove it from the supplier catalog.',
+                        ],
+                    ];
+                }
+
+                return $row;
+            });
+
+        return $this->page('Product Operations', 'Supplier-owned catalog, stock, MOQ, status, and actions.', [], $columns, $rows, filters: $filters, component: 'Commerce/Products/Index');
     }
 
     public function supplierProductCreate(Request $request): Response

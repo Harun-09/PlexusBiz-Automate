@@ -39,7 +39,7 @@ export default function FooterSimple() {
             <div
                 className="border-t border-white/10 bg-gradient-to-r from-[#0b2e71] to-[#1f68d9] py-10"
             >
-                <div className="mx-auto w-full max-w-[1900px] px-4 sm:px-6 lg:px-8 xl:px-10">
+                <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 xl:px-10">
                     <div className="mb-8 flex flex-col gap-5 border-b border-white/20 pb-6 sm:flex-row sm:items-end sm:justify-between">
                         <Link href="/" className="group inline-flex items-center gap-4">
                             <span className="grid h-16 w-16 shrink-0 place-items-center rounded-[22px] border border-white/15 bg-white p-2 shadow-[0_18px_42px_-26px_rgba(0,0,0,0.45)] transition group-hover:scale-[1.02]">

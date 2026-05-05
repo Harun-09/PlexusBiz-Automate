@@ -241,6 +241,7 @@ export default function Index({
     const activeQuick = filters?.quick || (mode === 'bulk' ? 'bulk' : mode === 'moq' ? 'moq' : '');
     const activeMode = catalogModes[activeQuick || mode] ?? catalogModes.catalog;
     const catalogRouteName = activeMode.routeName;
+    const showHeroSidebar = activeMode.routeName !== 'products.bulk';
     const visibleCount = Number(products?.data?.length ?? 0);
     const totalCount = Number(products?.meta?.total ?? visibleCount);
     const totalProducts = Number(products?.meta?.total ?? products?.data?.length ?? 0);
@@ -275,9 +276,9 @@ export default function Index({
                             : 'bg-[radial-gradient(circle_at_top_left,_rgba(11,46,113,0.18),_transparent_35%),radial-gradient(circle_at_top_right,_rgba(255,138,0,0.18),_transparent_28%),linear-gradient(180deg,_#eef5ff_0%,_#f8fbff_46%,_#ffffff_100%)]'
                 }`}
             >
-                <main className="mx-auto w-full max-w-[1500px] px-4 py-6 sm:px-6 lg:px-8">
+                <main className="w-full px-4 py-6 sm:px-6 lg:px-8">
                     <section className="overflow-hidden rounded-[32px] border border-[#d7e3f4] bg-[#0b2e71] shadow-[0_26px_80px_-40px_rgba(7,18,46,0.9)]">
-                        <div className="grid gap-8 px-5 py-6 lg:grid-cols-[1.1fr_.9fr] lg:px-8 lg:py-8">
+                        <div className={`grid gap-8 px-5 py-6 lg:px-8 lg:py-8 ${showHeroSidebar ? 'lg:grid-cols-[1.1fr_.9fr]' : ''}`}>
                             <div className="space-y-5 text-white">
                                 <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#ffd59a]">
                                     {activeMode.badge}
@@ -379,50 +380,52 @@ export default function Index({
                                 </div>
                             </div>
 
-                            <div className="grid gap-4 sm:grid-cols-2">
-                                <div className="rounded-[28px] border border-white/10 bg-white/10 p-5 text-white backdrop-blur">
-                                    <p className="text-[11px] font-black uppercase tracking-[0.24em] text-blue-100">
-                                        {activeMode.cartTitle}
-                                    </p>
-                                    <p className="mt-3 text-4xl font-black tracking-[-0.06em]">{Number(cartCount || 0)}</p>
-                                    <p className="mt-2 text-sm leading-6 text-blue-100">
-                                        {activeMode.cartCopy}
-                                    </p>
-                                </div>
+                            {showHeroSidebar ? (
+                                <div className="grid gap-4 sm:grid-cols-2">
+                                    <div className="rounded-[28px] border border-white/10 bg-white/10 p-5 text-white backdrop-blur">
+                                        <p className="text-[11px] font-black uppercase tracking-[0.24em] text-blue-100">
+                                            {activeMode.cartTitle}
+                                        </p>
+                                        <p className="mt-3 text-4xl font-black tracking-[-0.06em]">{Number(cartCount || 0)}</p>
+                                        <p className="mt-2 text-sm leading-6 text-blue-100">
+                                            {activeMode.cartCopy}
+                                        </p>
+                                    </div>
 
-                                <div className="rounded-[28px] border border-white/10 bg-white p-5 shadow-[0_16px_42px_-28px_rgba(15,23,42,0.8)]">
-                                    <p className="text-[11px] font-black uppercase tracking-[0.24em] text-[#0b2e71]">
-                                        {activeMode.featuredTitle}
-                                    </p>
-                                    <p className="mt-2 text-sm leading-6 text-slate-500">
-                                        {activeMode.featuredCopy}
-                                    </p>
-                                    <div className="mt-4 space-y-3">
-                                        {featuredProducts.slice(0, 3).map((product) => (
-                                            <Link
-                                                key={product.id}
-                                                href={route('products.show', product.slug)}
-                                                className="flex items-center gap-3 rounded-2xl border border-slate-100 p-3 transition hover:border-[#ffb16d] hover:bg-[#fff9f3]"
-                                            >
-                                                <img
-                                                    src={product.primary_image_url || fallbackImage}
-                                                    alt={product.name}
-                                                    className="h-14 w-14 rounded-2xl object-cover"
-                                                    onError={(event) => {
-                                                        event.currentTarget.src = fallbackImage;
-                                                    }}
-                                                />
-                                                <div className="min-w-0 flex-1">
-                                                    <p className="truncate text-sm font-black text-slate-950">{product.name}</p>
-                                                    <p className="text-xs text-slate-500">
-                                                        {formatMoney(product.base_price, currency)} · MOQ {product.moq}
-                                                    </p>
-                                                </div>
-                                            </Link>
-                                        ))}
+                                    <div className="rounded-[28px] border border-white/10 bg-white p-5 shadow-[0_16px_42px_-28px_rgba(15,23,42,0.8)]">
+                                        <p className="text-[11px] font-black uppercase tracking-[0.24em] text-[#0b2e71]">
+                                            {activeMode.featuredTitle}
+                                        </p>
+                                        <p className="mt-2 text-sm leading-6 text-slate-500">
+                                            {activeMode.featuredCopy}
+                                        </p>
+                                        <div className="mt-4 space-y-3">
+                                            {featuredProducts.slice(0, 3).map((product) => (
+                                                <Link
+                                                    key={product.id}
+                                                    href={route('products.show', product.slug)}
+                                                    className="flex items-center gap-3 rounded-2xl border border-slate-100 p-3 transition hover:border-[#ffb16d] hover:bg-[#fff9f3]"
+                                                >
+                                                    <img
+                                                        src={product.primary_image_url || fallbackImage}
+                                                        alt={product.name}
+                                                        className="h-14 w-14 rounded-2xl object-cover"
+                                                        onError={(event) => {
+                                                            event.currentTarget.src = fallbackImage;
+                                                        }}
+                                                    />
+                                                    <div className="min-w-0 flex-1">
+                                                        <p className="truncate text-sm font-black text-slate-950">{product.name}</p>
+                                                        <p className="text-xs text-slate-500">
+                                                            {formatMoney(product.base_price, currency)} · MOQ {product.moq}
+                                                        </p>
+                                                    </div>
+                                                </Link>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            ) : null}
                         </div>
                     </section>
 
@@ -465,19 +468,21 @@ export default function Index({
                                 </div>
                             </div>
 
-                            <div className="rounded-[28px] border border-[#d7e3f4] bg-gradient-to-br from-[#0b2e71] via-[#103a87] to-[#0f4fa8] p-5 text-white shadow-sm">
-                                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-blue-200">{activeMode.cartTitle}</p>
-                                <p className="mt-3 text-3xl font-black tracking-[-0.05em]">{Number(cartCount || 0)}</p>
-                                <p className="mt-2 text-sm leading-6 text-blue-100">
-                                    {activeMode.cartCopy}
-                                </p>
-                                <Link
-                                    href={route('cart.index')}
-                                    className="mt-4 inline-flex rounded-full bg-white px-4 py-2.5 text-sm font-black uppercase tracking-[0.14em] text-[#0b2e71] transition hover:bg-blue-50"
-                                >
-                                    View cart
-                                </Link>
-                            </div>
+                            {showHeroSidebar ? (
+                                <div className="rounded-[28px] border border-[#d7e3f4] bg-gradient-to-br from-[#0b2e71] via-[#103a87] to-[#0f4fa8] p-5 text-white shadow-sm">
+                                    <p className="text-[11px] font-black uppercase tracking-[0.24em] text-blue-200">{activeMode.cartTitle}</p>
+                                    <p className="mt-3 text-3xl font-black tracking-[-0.05em]">{Number(cartCount || 0)}</p>
+                                    <p className="mt-2 text-sm leading-6 text-blue-100">
+                                        {activeMode.cartCopy}
+                                    </p>
+                                    <Link
+                                        href={route('cart.index')}
+                                        className="mt-4 inline-flex rounded-full bg-white px-4 py-2.5 text-sm font-black uppercase tracking-[0.14em] text-[#0b2e71] transition hover:bg-blue-50"
+                                    >
+                                        View cart
+                                    </Link>
+                                </div>
+                            ) : null}
                         </aside>
                     </section>
                 </main>

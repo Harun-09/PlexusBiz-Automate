@@ -16,8 +16,8 @@ export default function Page({ page, title, slug }) {
             <div className="min-h-screen bg-[#f8fafc]">
                 {/* Dynamic Gradient Header Box */}
                 <div className={`${headerBg} pt-16 pb-32 text-white`}>
-                    <div className="mx-auto max-w-[1500px] px-6 sm:px-10 lg:px-16">
-                        <div className="max-w-5xl">
+                    <div className="w-full px-6 sm:px-10 lg:px-16">
+                        <div className="w-full">
                             <h2 className={`text-sm font-bold uppercase tracking-[0.3em] ${kickerColor} mb-3`}>
                                 {kickerText}
                             </h2>
@@ -43,11 +43,11 @@ export default function Page({ page, title, slug }) {
                     </div>
                 </div>
 
-                <main className="mx-auto max-w-[1500px] px-6 sm:px-10 lg:px-16 -mt-16 pb-24 relative z-10">
+                <main className="w-full px-6 sm:px-10 lg:px-16 -mt-16 pb-24 relative z-10">
                     
                     {/* Dynamic Content Article Section */}
                     <div className="bg-white rounded-[32px] shadow-[0_20px_70px_-15px_rgba(0,0,0,0.12)] border border-gray-100 p-10 md:p-16 mb-12">
-                        <div className="max-w-6xl mx-auto">
+                        <div className="w-full">
                             <div 
                                 className="prose prose-xl prose-slate max-w-none text-gray-700 prose-headings:text-[#0b192c] prose-headings:font-black prose-a:text-[#FF8B00] hover:prose-a:text-[#E67D00] prose-p:leading-relaxed prose-p:text-xl"
                                 dangerouslySetInnerHTML={{ __html: page.content }}

@@ -153,7 +153,7 @@
         </div>
         <div>
             <span class="label">Scheduler</span>
-            <span class="value">Laravel schedule:run</span>
+            <span class="value">Laravel schedule:work</span>
         </div>
         <div>
             <span class="label">Deployment Flow</span>
@@ -181,10 +181,12 @@ php artisan migrate</code></pre>
     <section>
         <h2>Scheduler</h2>
         <p>Marketing and social automation use Laravel's scheduler through <code>app/Console/Kernel.php</code>.</p>
+        <p>For a long-running server daemon, prefer <code>php artisan schedule:work</code> under Supervisor, systemd, or your platform process manager.</p>
         <p>Cron entry:</p>
         <pre><code>* * * * * cd /path/to/PlexusBiz-Automate && php artisan schedule:run &gt;&gt; /dev/null 2&gt;&amp;1</code></pre>
         <p>Local or manual check:</p>
         <pre><code>php artisan schedule:list
+php artisan schedule:work
 php artisan schedule:run
 php artisan campaigns:send-scheduled
 php artisan carts:check-abandoned
