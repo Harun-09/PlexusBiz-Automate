@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PlexusBiz Requirement Proof Guide</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f6f7f9;
+            --panel: #ffffff;
+            --text: #172033;
+            --muted: #667085;
+            --border: #d9dee8;
+            --blue: #175cd3;
+            --green: #057a55;
+            --amber: #8a5200;
+            --code-bg: #eef2f6;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.6;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 20px 56px;
+        }
+
+        h1, h2, h3 {
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: 32px;
+        }
+
+        h2 {
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+
+        h3 {
+            font-size: 17px;
+            margin-bottom: 8px;
+        }
+
+        p {
+            margin: 8px 0 0;
+            color: var(--muted);
+        }
+
+        section {
+            margin-top: 18px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--panel);
+        }
+
+        table {
+            width: 100%;
+            margin-top: 10px;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f9fafb;
+            color: #344054;
+            font-weight: 700;
+        }
+
+        ol, ul {
+            margin: 10px 0 0;
+            padding-left: 22px;
+        }
+
+        li {
+            margin: 7px 0;
+        }
+
+        pre {
+            margin: 10px 0 0;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #fbfcfe;
+            overflow-x: auto;
+            font-size: 13px;
+        }
+
+        code {
+            padding: 2px 5px;
+            border-radius: 5px;
+            background: var(--code-bg);
+            color: #101828;
+        }
+
+        pre code {
+            padding: 0;
+            background: transparent;
+            color: inherit;
+        }
+
+        a {
+            color: var(--blue);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .meta div {
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--panel);
+        }
+
+        .label {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+        }
+
+        .value {
+            display: block;
+            margin-top: 5px;
+            font-weight: 700;
+        }
+
+        .badge {
+            display: inline-block;
+            margin-right: 6px;
+            margin-top: 6px;
+            padding: 3px 9px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .done {
+            color: var(--green);
+            background: #dcfae6;
+        }
+
+        .note {
+            color: var(--amber);
+            background: #fef0c7;
+        }
+
+        .route {
+            color: var(--blue);
+            font-weight: 700;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 14px;
+            margin-top: 12px;
+        }
+
+        .card {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            background: #fff;
+        }
+
+        .card p {
+            margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <header>
+        <h1>PlexusBiz Requirement Proof Guide</h1>
+        <p>Use this HTML guide in a viva or demo to prove each assignment requirement in a fixed order, with visible page evidence, saved data, and log output.</p>
+    </header>
+
+    <div class="meta">
+        <div>
+            <span class="label">Demo URL</span>
+            <span class="value"><code>http://127.0.0.1:8001</code></span>
+        </div>
+        <div>
+            <span class="label">Admin / Manager Accounts</span>
+            <span class="value"><code>admin@example.com</code> / <code>password</code><br><code>admin@plexus.test</code> / <code>password</code><br><code>marketing@example.com</code> / <code>password</code></span>
+        </div>
+        <div>
+            <span class="label">Supplier / Buyer Accounts</span>
+            <span class="value"><code>supplier@example.com</code> / <code>password</code><br><code>supplier@plexus.test</code> / <code>password</code><br><code>buyer@example.com</code> / <code>password</code></span>
+        </div>
+        <div>
+            <span class="label">Build and Seed</span>
+            <span class="value"><code>php artisan migrate --seed</code><br><code>npm run build</code><br><code>php artisan serve --host=127.0.0.1 --port=8001</code></span>
+        </div>
+    </div>
+
+    <section>
+        <h2>How To Present The Demo</h2>
+        <ul>
+            <li>Follow the order in this guide. Do not jump to the next module before the current one shows a visible result.</li>
+            <li>For every requirement, show three things: the page, the action, and the saved result.</li>
+            <li>When a feature writes data, open the list view, detail view, log view, or notification row right after saving.</li>
+            <li>When the evaluator asks for proof, show the exact URL, the form submission, and the stored record or log entry.</li>
+            <li>Use the alias routes in this guide if you want the shortest demo path.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Demo Roadmap</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Step</th>
+                <th>What To Prove</th>
+                <th>Route Or Action</th>
+                <th>What The Evaluator Should See</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>1</td>
+                <td>App boots, login works, and role-based shell loads</td>
+                <td><span class="route">/login</span>, then <span class="route">/dashboard</span></td>
+                <td>Different dashboard/menu for admin, supplier, buyer, and marketing manager</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>E-commerce marketplace, bulk order, and MOQ pricing</td>
+                <td><span class="route">/products</span>, <span class="route">/products/bulk-orders</span>, <span class="route">/products/moq-pricing</span></td>
+                <td>Marketplace cards, bulk pricing labels, and MOQ rules</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Supplier product management</td>
+                <td><span class="route">/supplier/products</span> or <span class="route">/commerce/products</span></td>
+                <td>Product list, create form, edit form, stock, MOQ, and bulk price fields</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Supplier onboarding</td>
+                <td><span class="route">/register-supplier</span></td>
+                <td>Supplier request form and admin approval path</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>CRM leads, customers, purchases, and interactions</td>
+                <td><span class="route">/admin/leads</span>, <span class="route">/crm/customers</span>, <span class="route">/crm/purchases</span></td>
+                <td>Lead CRUD and customer history evidence</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>Marketing campaigns and templates</td>
+                <td><span class="route">/admin/campaigns</span>, <span class="route">/marketing/templates</span></td>
+                <td>Campaign create/edit forms and scheduled send proof</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>Social post scheduling</td>
+                <td><span class="route">/admin/social-posts</span>, <span class="route">/social/calendar</span></td>
+                <td>Post CRUD, calendar, and platform targeting</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>Workflow automation and execution logs</td>
+                <td><span class="route">/admin/automation-rules</span>, <span class="route">/workflow/logs</span></td>
+                <td>Rule create/edit page and full JSON workflow log row</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td>Support tickets and notifications</td>
+                <td><span class="route">/buyer/tickets</span>, <span class="route">/support/tickets</span></td>
+                <td>Ticket create, reply, status update, and notification entry</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td>Admin, settings, RBAC, and audit visibility</td>
+                <td><span class="route">/admin/users</span>, <span class="route">/admin/modules</span>, <span class="route">/settings/modules</span></td>
+                <td>Role management, locked modules, and module toggle controls</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td>API, scheduler, queue, and backup proof</td>
+                <td><span class="route">php artisan route:list --path=api/v1</span>, <span class="route">php artisan schedule:run</span>, <span class="route">database/backups/plexusbiz_assignment_backup.sql</span></td>
+                <td>Working API routes, background jobs, and generated backup file</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Step 1. Show The App Is Ready</h2>
+        <ol>
+            <li>Open the project in terminal and confirm the app is seeded: <code>php artisan migrate --seed</code>.</li>
+            <li>Build the frontend once: <code>npm run build</code>.</li>
+            <li>Start the server: <code>php artisan serve --host=127.0.0.1 --port=8001</code>.</li>
+            <li>Open <code>http://127.0.0.1:8001</code> in the browser and show the login page.</li>
+            <li>Explain that the demo uses seeded roles and alias accounts for proof.</li>
+        </ol>
+    </section>
+
+    <section>
+        <h2>Step 2. Prove Authentication And Role-Based Access</h2>
+        <div class="grid-2">
+            <div class="card">
+                <h3>Admin</h3>
+                <p>Log in as <code>admin@example.com</code> or <code>admin@plexus.test</code>.</p>
+                <p>Open <span class="route">/dashboard</span> and <span class="route">/admin</span>.</p>
+                <p>Show the admin dashboard, menu, monitoring cards, and the admin-only pages.</p>
+            </div>
+            <div class="card">
+                <h3>Supplier</h3>
+                <p>Log in as <code>supplier@example.com</code> or <code>supplier@plexus.test</code>.</p>
+                <p>Open <span class="route">/supplier/products</span> or <span class="route">/commerce/products</span>.</p>
+                <p>Show supplier-only product management and order-related screens.</p>
+            </div>
+            <div class="card">
+                <h3>Buyer</h3>
+                <p>Log in as <code>buyer@example.com</code> or <code>buyer@plexus.test</code>.</p>
+                <p>Open <span class="route">/products</span>, <span class="route">/cart</span>, and <span class="route">/buyer/tickets</span>.</p>
+                <p>Show the buyer path for shopping and support.</p>
+            </div>
+            <div class="card">
+                <h3>Marketing Manager</h3>
+                <p>Log in as <code>marketing@example.com</code> or <code>marketing@plexus.test</code>.</p>
+                <p>Open <span class="route">/marketing/campaigns</span>, <span class="route">/social/posts</span>, and <span class="route">/workflow/rules</span>.</p>
+                <p>Show marketing, social, and workflow permissions.</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Step 3. Prove E-Commerce</h2>
+        <ol>
+            <li>As a buyer, open <span class="route">/products</span> and show at least one product card.</li>
+            <li>Open <span class="route">/products/bulk-orders</span> and <span class="route">/products/moq-pricing</span> to show bulk and MOQ visibility.</li>
+            <li>As a supplier or admin, open <span class="route">/supplier/products</span> or <span class="route">/commerce/products</span>.</li>
+            <li>Create or edit a product and point out MOQ, regular price, bulk price, inventory, and category fields.</li>
+            <li>Save the product and immediately reopen the list view so the stored data is visible.</li>
+            <li>Add the product to cart, go to <span class="route">/cart</span>, and continue to checkout.</li>
+            <li>Complete checkout and show the success page at <span class="route">/checkout/success/{orderNumber}</span>.</li>
+            <li>Open the order view or invoice page and show invoice generation and order totals.</li>
+            <li>If needed, narrate that stock changes and order records are persisted, not mocked.</li>
+        </ol>
+    </section>
+
+    <section>
+        <h2>Step 4. Prove Supplier Onboarding</h2>
+        <ol>
+            <li>Open <span class="route">/register-supplier</span> while logged out.</li>
+            <li>Fill in the supplier form and submit it.</li>
+            <li>Show the saved submission, then log in as admin.</li>
+            <li>Open <span class="route">/admin/suppliers</span> or the admin supplier review path and show the pending request.</li>
+            <li>Approve or reject the supplier request and show the status change.</li>
+        </ol>
+    </section>
+
+    <section>
+        <h2>Step 5. Prove CRM</h2>
+        <ol>
+            <li>Log in as admin or marketing manager.</li>
+            <li>Open <span class="route">/crm/customers</span>, <span class="route">/crm/purchases</span>, <span class="route">/crm/segments</span>, and <span class="route">/crm/interactions</span>.</li>
+            <li>Open <span class="route">/admin/leads</span> and then <span class="route">/admin/leads/create</span>.</li>
+            <li>Create a lead, save it, then open the lead list to show the new row.</li>
+            <li>Edit the lead and show the updated data on the edit page and list page.</li>
+            <li>Delete a lead if the evaluator wants CRUD proof, and show that the row disappears.</li>
+            <li>Show a customer detail page with purchase history to prove the CRM is connected to commerce data.</li>
+        </ol>
+    </section>
+
+    <section>
+        <h2>Step 6. Prove Marketing</h2>
+        <ol>
+            <li>Open <span class="route">/admin/campaigns</span> or <span class="route">/marketing/campaigns</span>.</li>
+            <li>Open <span class="route">/marketing/campaigns/create</span> and create a campaign.</li>
+            <li>Open <span class="route">/marketing/templates</span> and show template CRUD or selection.</li>
+            <li>Save the campaign and return to the list page so the stored row is visible.</li>
+            <li>Explain or demonstrate the scheduled send command: <code>php artisan campaigns:send-scheduled</code>.</li>
+            <li>If there is a sent log, message log, or recipient log, show that as the proof artifact.</li>
+        </ol>
+    </section>
+
+    <section>
+        <h2>Step 7. Prove Social Automation</h2>
+        <ol>
+            <li>Open <span class="route">/admin/social-posts</span> or <span class="route">/social/posts</span>.</li>
+            <li>Open <span class="route">/social/posts/create</span> and create a scheduled Facebook or Instagram post.</li>
+            <li>Save it, then open <span class="route">/social/calendar</span> to show the scheduled item on the calendar.</li>
+            <li>Edit the post and show that the target platform, caption, and schedule persist.</li>
+            <li>Delete one post if CRUD proof is needed.</li>
+            <li>Explain the publish command: <code>php artisan social-posts:publish-due</code>.</li>
+        </ol>
+    </section>
+
+    <section>
+        <h2>Step 8. Prove Workflow Automation</h2>
+        <ol>
+            <li>Open <span class="route">/admin/automation-rules</span> or <span class="route">/workflow/rules</span>.</li>
+            <li>Open <span class="route">/workflow/rules/create</span> and create an IF / THEN rule.</li>
+            <li>Save the rule and reopen the rules list to show it is stored.</li>
+            <li>Trigger the relevant event, such as order placement, RFQ creation, or support ticket creation.</li>
+            <li>Open <span class="route">/workflow/logs</span> and show the execution record.</li>
+            <li>Point out the full JSON payload, status, result, error, and executed timestamp.</li>
+            <li>If the evaluator asks for queue support, explain the worker command: <code>php artisan queue:work</code>.</li>
+        </ol>
+    </section>
+
+    <section>
+        <h2>Step 9. Prove Support And Notifications</h2>
+        <ol>
+            <li>Open <span class="route">/buyer/tickets</span> or <span class="route">/support/tickets</span>.</li>
+            <li>Create a support ticket, then show the ticket detail page.</li>
+            <li>Reply to the ticket and show the reply thread.</li>
+            <li>Update the ticket status or assignment if the role allows it.</li>
+            <li>Show the notification entry or in-app message that was produced by the support flow.</li>
+            <li>Explain that the system also supports supplier notifications and FAQ matching.</li>
+        </ol>
+    </section>
+
+    <section>
+        <h2>Step 10. Prove Admin, Settings, And RBAC</h2>
+        <ol>
+            <li>Open <span class="route">/admin/users</span> and show user management.</li>
+            <li>Open <span class="route">/admin/modules</span> and <span class="route">/settings/modules</span> to prove module control.</li>
+            <li>Show that locked modules such as admin and settings cannot be disabled.</li>
+            <li>Open <span class="route">/admin/audit-logs</span> if you need proof of admin-level changes.</li>
+            <li>Demonstrate that different roles do not see the same menus or routes.</li>
+            <li>If the evaluator asks for the customer profile alias, open <span class="route">/customer/profile</span>.</li>
+        </ol>
+    </section>
+
+    <section>
+        <h2>Step 11. Prove API, Scheduler, Queue, And Backup</h2>
+        <ol>
+            <li>Run <code>php artisan route:list --path=api/v1</code> and show the API surface.</li>
+            <li>Point out the key endpoints for products, orders, customers, campaigns, social posts, workflow logs, and support tickets.</li>
+            <li>Run <code>php artisan schedule:list</code> and <code>php artisan schedule:run</code> if needed.</li>
+            <li>Show the queue worker command: <code>php artisan queue:work</code>.</li>
+            <li>Show the operational commands from <a href="operations.html">docs/operations.html</a>.</li>
+            <li>Open <code>database/backups/plexusbiz_assignment_backup.sql</code> and mention that the database backup already exists for proof.</li>
+        </ol>
+    </section>
+
+    <section>
+        <h2>Short Viva Script</h2>
+        <div class="grid-2">
+            <div class="card">
+                <h3>Opening</h3>
+                <p>"I will prove the full assignment flow in order: login, e-commerce, CRM, marketing, social, workflow, support, admin settings, API, scheduler, and backup."</p>
+            </div>
+            <div class="card">
+                <h3>Evidence Rule</h3>
+                <p>"For every feature, I will show the page, perform the action, and then open the saved record or log row."</p>
+            </div>
+            <div class="card">
+                <h3>Automation Rule</h3>
+                <p>"For every automation, I will show the trigger, the execution result, and the workflow log with the full JSON payload."</p>
+            </div>
+            <div class="card">
+                <h3>Closeout</h3>
+                <p>"The app is not placeholder-only. The required flows are saved, linked, and backed by logs, routes, and backup output."</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>What Counts As Final Proof</h2>
+        <ul>
+            <li>A visible page or route that matches the requirement.</li>
+            <li>A save action that creates or updates real data.</li>
+            <li>A list page, detail page, log row, or notification that shows the saved result.</li>
+            <li>A scheduler or queue command when the requirement depends on background work.</li>
+            <li>A backup file or operations document when the evaluator asks for deployment proof.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Source Docs</h2>
+        <ul>
+            <li><a href="workflow.html">docs/workflow.html</a> for the current implementation tracker.</li>
+            <li><a href="operations.html">docs/operations.html</a> for deployment, queue, scheduler, and backup steps.</li>
+            <li><a href="../README.md">README.md</a> for the assignment coverage summary.</li>
+        </ul>
+    </section>
+</main>
+</body>
+</html>

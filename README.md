@@ -128,7 +128,7 @@ php artisan social-posts:publish-due
 
 ## Requirement Proof Guide
 
-Open `requirement-proof-guide.html` for the full step-by-step viva/demo sequence.
+Open `docs/requirement-proof-guide.html` for the full step-by-step viva/demo sequence.
 
 ## Operations
 
