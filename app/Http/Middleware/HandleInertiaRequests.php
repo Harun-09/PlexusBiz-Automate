@@ -31,6 +31,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user = $request->user();
+        $supplier = $user?->supplier;
 
         return [
             ...parent::share($request),
@@ -42,6 +43,11 @@ class HandleInertiaRequests extends Middleware
                     'status' => $user->status?->value ?? UserStatus::Active->value,
                     'roles' => $user->getRoleNames()->values(),
                     'permissions' => $user->getAllPermissions()->pluck('name')->values(),
+                    'supplier' => $supplier ? [
+                        'id' => $supplier->id,
+                        'company_name' => $supplier->company_name,
+                        'status' => $supplier->status->value,
+                    ] : null,
                 ] : null,
             ],
             'flash' => [

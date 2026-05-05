@@ -39,6 +39,19 @@ const formatDate = (value) => {
     }).format(date);
 };
 
+const formatAddress = (address) => {
+    if (!address || typeof address !== 'object') {
+        return 'n/a';
+    }
+
+    const parts = [address.line_1, address.line_2, address.city, address.state, address.postal_code, address.country]
+        .filter(Boolean)
+        .map((part) => String(part).trim())
+        .filter(Boolean);
+
+    return parts.length > 0 ? parts.join(', ') : 'n/a';
+};
+
 const statusTone = (value) => {
     const normalized = String(value || '').toLowerCase();
 
@@ -203,6 +216,8 @@ export default function Show({ auth, customer, summary, recentOrders = [], recen
                                         <dl className="rounded-2xl border border-slate-200 px-4">
                                             <DetailRow label="Email" value={customer.email} />
                                             <DetailRow label="Phone" value={customer.phone} />
+                                            <DetailRow label="Business type" value={customer.business_type} />
+                                            <DetailRow label="Address" value={formatAddress(customer.address)} />
                                             <DetailRow label="Linked user" value={customer.user ? `${customer.user.name} (${customer.user.email})` : 'n/a'} />
                                             <DetailRow label="Last activity" value={formatDate(customer.last_activity_at)} />
                                             <DetailRow label="Created" value={formatDate(customer.created_at)} />

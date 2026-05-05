@@ -50,6 +50,8 @@ class CartService
             ],
         );
 
+        $cart->touch();
+
         return $cart->fresh(['items.product']);
     }
 
@@ -71,6 +73,8 @@ class CartService
             'unit_price' => $unitPrice,
         ])->save();
 
+        $item->cart()->first()?->touch();
+
         return $item->cart()->with(['items.product', 'items.supplier'])->firstOrFail();
     }
 
@@ -78,6 +82,7 @@ class CartService
     {
         $cart = $item->cart;
         $item->delete();
+        $cart->touch();
 
         return $cart->fresh(['items.product', 'items.supplier']);
     }

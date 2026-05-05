@@ -8,6 +8,10 @@ use App\Domains\Social\Models\SocialAccount;
 use App\Domains\Social\Models\SocialPost;
 use App\Domains\Social\Services\ContentCalendarService;
 use App\Domains\Social\Services\SocialScheduleService;
+use App\Domains\Workflow\Enums\AutomationRuleStatus;
+use App\Domains\Workflow\Enums\WorkflowTriggerEvent;
+use App\Domains\Workflow\Models\AutomationRule;
+use App\Domains\Workflow\Models\WorkflowLog;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -37,6 +41,32 @@ class SocialPublishingTest extends TestCase
         $posts = app(ContentCalendarService::class)->between(now(), now()->addWeek());
 
         $this->assertSame([$included->id], $posts->pluck('id')->all());
+    }
+
+    public function test_due_social_posts_trigger_workflow_rules(): void
+    {
+        AutomationRule::create([
+            'name' => 'Social post due alert',
+            'trigger_event' => WorkflowTriggerEvent::SocialPostDue->value,
+            'conditions_json' => [],
+            'actions_json' => [],
+            'status' => AutomationRuleStatus::Active,
+            'priority' => 1,
+            'run_async' => false,
+        ]);
+
+        $post = $this->socialPost(SocialPlatform::Facebook, now()->subMinute());
+
+        $count = app(SocialScheduleService::class)->dispatchDuePosts(queued: false);
+
+        $post->refresh();
+
+        $this->assertSame(1, $count);
+        $this->assertSame(SocialPostStatus::Published, $post->status);
+        $this->assertSame(1, WorkflowLog::where('trigger_event', WorkflowTriggerEvent::SocialPostDue->value)->count());
+        $this->assertDatabaseHas('workflow_logs', [
+            'trigger_event' => WorkflowTriggerEvent::SocialPostDue->value,
+        ]);
     }
 
     private function socialPost(SocialPlatform $platform, $scheduledAt): SocialPost

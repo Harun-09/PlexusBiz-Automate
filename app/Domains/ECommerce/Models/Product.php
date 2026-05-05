@@ -65,6 +65,16 @@ class Product extends Model
         return max(0, $this->stock_quantity - $this->reserved_quantity);
     }
 
+    public function lowStockThreshold(): int
+    {
+        return max(10, (int) $this->moq);
+    }
+
+    public function isLowStock(): bool
+    {
+        return $this->availableStock() <= $this->lowStockThreshold();
+    }
+
     public function primaryImage(): ?ProductImage
     {
         $images = $this->relationLoaded('images') ? $this->images : $this->images()->get();

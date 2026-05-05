@@ -54,6 +54,7 @@ class CrmController extends Controller
             $query->where(function (Builder $builder) use ($search): void {
                 $builder->where('contact_name', 'like', "%{$search}%")
                     ->orWhere('company_name', 'like', "%{$search}%")
+                    ->orWhere('business_type', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
                     ->orWhere('phone', 'like', "%{$search}%")
                     ->orWhere('tags', 'like', "%{$search}%");
@@ -74,6 +75,7 @@ class CrmController extends Controller
                 return [
                     'Customer' => $customer->contact_name,
                     'Company' => $customer->company_name,
+                    'Business Type' => $customer->business_type ?: '-',
                     'Email' => $customer->email,
                     'Phone' => $customer->phone ?: '-',
                     'Stage' => $customer->lifecycle_stage->value,
@@ -98,7 +100,7 @@ class CrmController extends Controller
                 ['label' => 'Repeat Customers', 'value' => Customer::where('lifecycle_stage', CustomerLifecycleStage::RepeatCustomer->value)->count()],
                 ['label' => 'Profiles With Orders', 'value' => Customer::has('orders')->count()],
             ],
-            ['Customer', 'Company', 'Email', 'Phone', 'Stage', 'Status', 'Orders', 'Total Spent', 'Last Order', 'Action'],
+            ['Customer', 'Company', 'Business Type', 'Email', 'Phone', 'Stage', 'Status', 'Orders', 'Total Spent', 'Last Order', 'Action'],
             $rows,
             'No customer profiles found.',
             $filters,
@@ -127,6 +129,8 @@ class CrmController extends Controller
                 'company_name' => $customer->company_name,
                 'email' => $customer->email,
                 'phone' => $customer->phone,
+                'business_type' => $customer->business_type,
+                'address' => $customer->address ?? [],
                 'status' => $customer->status->value,
                 'lifecycle_stage' => $customer->lifecycle_stage->value,
                 'tags' => $customer->tags ?? [],

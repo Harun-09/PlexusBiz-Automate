@@ -17,6 +17,18 @@ class MarketingSeeder extends Seeder
         $marketingUser = User::where('email', 'marketing@plexus.test')->firstOrFail();
 
         CampaignTemplate::updateOrCreate(
+            ['template_key' => 'email_default'],
+            [
+                'channel' => MessageChannel::Email,
+                'name' => 'Default Email Template',
+                'subject' => 'New message from PlexusBiz',
+                'body' => 'Hello {{ customer_name }}, we have an update from PlexusBiz.',
+                'variables' => ['customer_name', 'company_name'],
+                'status' => 'active',
+            ],
+        );
+
+        CampaignTemplate::updateOrCreate(
             ['template_key' => 'new_customer_welcome'],
             [
                 'channel' => MessageChannel::Email,

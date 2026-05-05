@@ -22,6 +22,8 @@ class CustomerProfileService
                 'company_name' => $attributes['company_name'] ?? null,
                 'email' => $attributes['email'] ?? $user->email,
                 'phone' => $attributes['phone'] ?? null,
+                'business_type' => $attributes['business_type'] ?? null,
+                'address' => $attributes['address'] ?? null,
                 'status' => CustomerStatus::Active,
                 'lifecycle_stage' => CustomerLifecycleStage::Customer,
                 'tags' => $attributes['tags'] ?? [],

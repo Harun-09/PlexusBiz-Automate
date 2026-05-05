@@ -67,5 +67,86 @@ class WorkflowSeeder extends Seeder
                 'run_async' => false,
             ],
         );
+
+        $this->seedOrderStatusRules();
+    }
+
+    private function seedOrderStatusRules(): void
+    {
+        $rules = [
+            [
+                'name' => 'Order status confirmed automation',
+                'status' => 'confirmed',
+                'subject' => 'Your PlexusBiz order has been confirmed',
+                'body' => 'Your order has been confirmed. We are preparing it for the next fulfillment step.',
+                'priority' => 30,
+            ],
+            [
+                'name' => 'Order status shipped automation',
+                'status' => 'shipped',
+                'subject' => 'Your PlexusBiz order has shipped',
+                'body' => 'Your order has been shipped and is on the way.',
+                'priority' => 31,
+            ],
+            [
+                'name' => 'Order status completed automation',
+                'status' => 'completed',
+                'subject' => 'Your PlexusBiz order has been completed',
+                'body' => 'Your order has been completed successfully.',
+                'priority' => 32,
+            ],
+            [
+                'name' => 'Order status cancelled automation',
+                'status' => 'cancelled',
+                'subject' => 'Your PlexusBiz order has been cancelled',
+                'body' => 'Your order has been cancelled. Please contact support if you need help.',
+                'priority' => 33,
+                'notify_supplier' => true,
+            ],
+        ];
+
+        foreach ($rules as $rule) {
+            $actions = [
+                [
+                    'type' => WorkflowActionType::SendEmail->value,
+                    'config' => [
+                        'to_path' => 'buyer.email',
+                        'subject' => $rule['subject'],
+                        'body' => $rule['body'],
+                    ],
+                ],
+                [
+                    'type' => WorkflowActionType::CreateNotification->value,
+                    'config' => [
+                        'subject' => $rule['subject'],
+                        'message' => $rule['body'],
+                    ],
+                ],
+            ];
+
+            if (($rule['notify_supplier'] ?? false) === true) {
+                $actions[] = [
+                    'type' => WorkflowActionType::NotifySupplier->value,
+                    'config' => [
+                        'subject' => 'Supplier order cancellation notice',
+                        'message' => 'The buyer cancelled the order.',
+                    ],
+                ];
+            }
+
+            AutomationRule::updateOrCreate(
+                ['name' => $rule['name']],
+                [
+                    'trigger_event' => WorkflowTriggerEvent::OrderStatusChanged->value,
+                    'conditions_json' => [
+                        ['field' => 'order.status', 'operator' => 'equals', 'value' => $rule['status']],
+                    ],
+                    'actions_json' => $actions,
+                    'status' => AutomationRuleStatus::Active,
+                    'priority' => $rule['priority'],
+                    'run_async' => false,
+                ],
+            );
+        }
     }
 }

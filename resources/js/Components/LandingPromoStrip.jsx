@@ -43,26 +43,7 @@ export default function LandingPromoStrip() {
 
     return (
         <section className="rounded-[28px] border border-[#d7e3f4] bg-gradient-to-b from-white to-[#f4f8ff] p-5 shadow-sm sm:p-7">
-            <div className="flex flex-col gap-3 border-b border-[#d7e3f4] pb-5 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                    <p className="text-[11px] font-black uppercase tracking-[0.22em] text-[#0b3d91]">
-                        Stay connected
-                    </p>
-                    <h2 className="mt-2 text-2xl font-black tracking-[-0.05em] text-slate-900">
-                        Deals and app access before the footer.
-                    </h2>
-                    <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-                        Keep the promo strip on the landing page where it belongs. Auth screens stay focused,
-                        while the homepage keeps the marketing utilities.
-                    </p>
-                </div>
-
-                <span className="inline-flex w-fit rounded-full border border-[#d7e3f4] bg-[#f4f8ff] px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-[#0b3d91]">
-                    Homepage only
-                </span>
-            </div>
-
-            <div className="mt-6 grid gap-5 lg:grid-cols-2">
+            <div className="grid gap-5 lg:grid-cols-2">
                 <article className="overflow-hidden rounded-[24px] border border-[#d7e3f4] bg-[#f8fbff] p-5 shadow-[0_14px_30px_-24px_rgba(15,23,42,0.45)]">
                     <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_240px] lg:items-center">
                         <div className="min-w-0">

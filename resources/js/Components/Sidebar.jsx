@@ -18,7 +18,9 @@ const SIDEBAR_MODULES = [
             { label: 'Supplier Onboarding', href: '/admin/suppliers', icon: 'SO', roles: ['admin'] },
             { label: 'Product CRUD', href: '/admin/products', icon: 'PR', roles: ['admin'] },
             { label: 'Inventory & Stock', href: '/commerce/products', icon: 'IS', roles: ['supplier', 'admin'] },
+            { label: 'Add Product', href: '/commerce/products/create', icon: 'AP', roles: ['supplier'], requiresSupplierApproval: true },
             { label: 'Orders', href: '/commerce/orders', icon: 'O', roles: ['buyer', 'supplier', 'admin'] },
+            { label: 'Supplier Orders', href: '/commerce/supplier-orders', icon: 'SO', roles: ['supplier', 'admin'], requiresSupplierApproval: true },
             { label: 'Invoices', href: '/invoices', icon: 'I', roles: ['buyer', 'supplier', 'admin'] },
         ],
     },
@@ -100,18 +102,25 @@ function Chevron({ className = '' }) {
     );
 }
 
-function visibleModules(roles) {
+function visibleModules(roles, supplierStatus = null) {
     return SIDEBAR_MODULES
         .map((module) => ({
             ...module,
-            items: module.items.filter((item) => hasRole(roles, item.roles)),
+            items: module.items.filter((item) => (
+                hasRole(roles, item.roles) && (
+                    !item.requiresSupplierApproval
+                    || supplierStatus === 'approved'
+                    || roles.includes('admin')
+                )
+            )),
         }))
         .filter((module) => hasRole(roles, module.roles) && module.items.length > 0);
 }
 
 export default function Sidebar({ user, currentPath, onNavigate = null }) {
     const roles = user?.roles || [];
-    const modules = visibleModules(roles);
+    const supplierStatus = user?.supplier?.status || null;
+    const modules = visibleModules(roles, supplierStatus);
     const [openKeys, setOpenKeys] = useState([]);
 
     const isActive = (href) => {

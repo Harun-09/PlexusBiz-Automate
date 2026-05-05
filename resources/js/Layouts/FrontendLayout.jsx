@@ -4,6 +4,8 @@ import { Link, Head } from '@inertiajs/react';
 const quickNavLinks = [
     { label: 'Bulk Orders', href: route('products.bulk') },
     { label: 'MOQ Pricing', href: route('products.moq') },
+    { label: 'Request a Quote', href: route('rfq.create') },
+    { label: 'Become a Supplier', href: route('supplier.apply') },
 ];
 
 const footerSections = [
@@ -54,8 +56,8 @@ const footerSections = [
     {
         title: 'Tools & Resources',
         links: [
-            { label: 'Become a supplier', href: '#footer' },
-            { label: 'Sell on PlexusBiz', href: '#footer' },
+            { label: 'Become a supplier', href: route('supplier.apply') },
+            { label: 'Sell on PlexusBiz', href: route('supplier.apply') },
             { label: 'For Your Business', href: '#footer' },
             { label: 'PlexusBiz Partner Services', href: '#footer' },
             { label: 'Become an Affiliate', href: '#footer' },

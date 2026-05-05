@@ -23,6 +23,12 @@ class CustomerFactory extends Factory
             'contact_name' => fake()->name(),
             'email' => fake()->unique()->companyEmail(),
             'phone' => fake()->phoneNumber(),
+            'business_type' => fake()->randomElement(['Wholesale distributor', 'Retailer', 'Manufacturer', 'Importer']),
+            'address' => [
+                'line_1' => fake()->streetAddress(),
+                'city' => fake()->city(),
+                'country' => fake()->country(),
+            ],
             'status' => CustomerStatus::Active,
             'lifecycle_stage' => CustomerLifecycleStage::Customer,
             'tags' => ['factory'],

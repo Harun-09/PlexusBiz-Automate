@@ -5,13 +5,13 @@ const moduleConfig = {
     tag: 'Templates',
     theme: 'marketing',
     heroTitle: 'Template library',
-    heroCopy: 'Maintain email, SMS, and system templates that can be reused by triggered campaigns and scheduled sends.',
+    heroCopy: 'Maintain reusable email templates that can be reused by triggered campaigns and scheduled sends.',
     panelTitle: 'What this page covers',
-    panelCopy: 'Templates are the reusable content layer for marketing automation, so the page keeps subject, body, variables, and channel visible together.',
+    panelCopy: 'Templates are the reusable content layer for marketing automation, so the page keeps subject, body, variables, and email channel visible together.',
     highlights: [
         {
-            label: 'Channel coverage',
-            detail: 'Email, SMS, and system templates stay in the same view for easy comparison.',
+            label: 'Email coverage',
+            detail: 'Email templates stay in the same view for easy comparison.',
         },
         {
             label: 'Variables',

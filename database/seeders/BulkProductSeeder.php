@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Domains\ECommerce\Enums\ProductStatus;
+use App\Domains\ECommerce\Enums\SupplierStatus;
 use App\Domains\ECommerce\Models\Category;
 use App\Domains\ECommerce\Models\PricingTier;
 use App\Domains\ECommerce\Models\Product;
@@ -180,10 +181,14 @@ class BulkProductSeeder extends Seeder
 
     public function run(): void
     {
-        $supplier = Supplier::first();
-        
-        if (! $supplier) {
-            $this->command->warn('No supplier found. Please run RbacSeeder first.');
+        $suppliers = Supplier::query()
+            ->where('status', SupplierStatus::Approved->value)
+            ->with('user')
+            ->orderBy('id')
+            ->get();
+
+        if ($suppliers->isEmpty()) {
+            $this->command->warn('No approved suppliers found. Please run the supplier seeders first.');
             return;
         }
 
@@ -204,9 +209,10 @@ class BulkProductSeeder extends Seeder
             );
 
             foreach ($categoryData['products'] as $productData) {
+                $supplier = $suppliers[$productCount % $suppliers->count()];
                 $sku = $this->generateSku($categoryData['slug'], $productCount);
                 
-                $product = Product::firstOrCreate(
+                $product = Product::updateOrCreate(
                     ['sku' => $sku],
                     [
                         'supplier_id' => $supplier->id,

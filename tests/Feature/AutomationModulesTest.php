@@ -75,7 +75,7 @@ class AutomationModulesTest extends TestCase
             ->assertInertia(fn (Assert $page): Assert => $page
                 ->component('Marketing/Templates/Index')
                 ->where('workspace.title', 'Campaign Templates')
-                ->has('workspace.rows', 4));
+                ->has('workspace.rows', 5));
 
         $this->actingAs($marketing)
             ->get('/workflow')
@@ -87,7 +87,7 @@ class AutomationModulesTest extends TestCase
             ->assertInertia(fn (Assert $page): Assert => $page
                 ->component('Workflow/Rules/Index')
                 ->where('workspace.title', 'Automation Rules')
-                ->has('workspace.rows', 2));
+                ->has('workspace.rows', 6));
 
         $this->actingAs($marketing)
             ->get('/workflow/logs')

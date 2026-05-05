@@ -37,6 +37,7 @@ const moduleConfig = {
         },
     ],
     actions: [
+        { label: 'Create Ticket', href: route('support.tickets.create'), variant: 'primary' },
         { label: 'Open FAQ', href: '/support/faq', variant: 'primary' },
         { label: 'Check CRM Customers', href: '/crm/customers', variant: 'secondary' },
     ],

@@ -23,6 +23,8 @@ class Customer extends Model
         'contact_name',
         'email',
         'phone',
+        'business_type',
+        'address',
         'status',
         'lifecycle_stage',
         'tags',
@@ -32,6 +34,7 @@ class Customer extends Model
 
     protected $casts = [
         'tags' => 'array',
+        'address' => 'array',
         'last_activity_at' => 'datetime',
         'status' => CustomerStatus::class,
         'lifecycle_stage' => CustomerLifecycleStage::class,

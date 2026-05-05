@@ -3,8 +3,12 @@
 namespace App\Providers;
 
 use App\Domains\ECommerce\Events\OrderPlaced;
+use App\Domains\ECommerce\Events\OrderStatusChanged;
 use App\Domains\Support\Events\SupportTicketCreated;
+use App\Listeners\Marketing\SendMarketingWelcomeEmail;
+use App\Listeners\Marketing\SendOrderConfirmationEmail;
 use App\Domains\Workflow\Listeners\RunWorkflowForOrderPlaced;
+use App\Domains\Workflow\Listeners\RunWorkflowForOrderStatusChanged;
 use App\Domains\Workflow\Listeners\RunWorkflowForTicketCreated;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -21,9 +25,14 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+            SendMarketingWelcomeEmail::class,
         ],
         OrderPlaced::class => [
             RunWorkflowForOrderPlaced::class,
+            SendOrderConfirmationEmail::class,
+        ],
+        OrderStatusChanged::class => [
+            RunWorkflowForOrderStatusChanged::class,
         ],
         SupportTicketCreated::class => [
             RunWorkflowForTicketCreated::class,

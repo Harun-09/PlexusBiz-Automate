@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Domains\CRM\Models\Customer;
 use App\Domains\ECommerce\Enums\OrderStatus;
 use App\Domains\ECommerce\Enums\PaymentStatus;
 use App\Domains\ECommerce\Enums\ProductStatus;
+use App\Domains\ECommerce\Enums\SupplierStatus;
 use App\Domains\ECommerce\Models\Order;
+use App\Domains\ECommerce\Models\OrderItem;
 use App\Domains\ECommerce\Models\Product;
+use App\Domains\ECommerce\Models\SupplierOrder;
 use App\Domains\Marketing\Models\Campaign;
 use App\Domains\Social\Enums\SocialPostStatus;
 use App\Domains\Social\Models\SocialPost;
@@ -38,7 +42,7 @@ class DashboardController extends Controller
                 'status' => $user->status?->value ?? 'active',
                 'permissions' => $user->getAllPermissions()->pluck('name')->values(),
                 'cards' => $this->cardsFor($role, $user),
-                'quickLinks' => $this->quickLinksFor($role),
+                'quickLinks' => $this->quickLinksFor($role, $user),
             ],
         ]);
     }
@@ -66,6 +70,7 @@ class DashboardController extends Controller
         $revenue = Order::where('payment_status', PaymentStatus::Completed->value)->sum('grand_total');
         $pendingOrders = Order::where('status', OrderStatus::Pending->value)->count();
         $pendingPayments = Order::where('payment_status', PaymentStatus::Pending->value)->count();
+        $customers = Customer::count();
 
         return [
             $this->statCard(
@@ -91,6 +96,12 @@ class DashboardController extends Controller
                 $this->formatCount($pendingPayments),
                 'Orders that still need payment completion.',
                 'rose',
+            ),
+            $this->statCard(
+                'Customers',
+                $this->formatCount($customers),
+                'CRM customer profiles available across the platform.',
+                'blue',
             ),
             $this->statCard(
                 'Audit Logs',
@@ -147,31 +158,101 @@ class DashboardController extends Controller
      */
     private function supplierCards(User $user): array
     {
-        $supplierId = $user->supplier?->id;
+        $supplier = $user->supplier;
+        $supplierId = $supplier?->id;
 
         if (! $supplierId) {
             return [
                 $this->statCard('My Products', '0', 'No supplier profile is linked to this user.', 'blue'),
                 $this->statCard('Active Listings', '0', 'No active catalog items yet.', 'emerald'),
+                $this->statCard('Total Sales', 'BDT 0.00', 'No completed sales are linked to this supplier.', 'amber'),
+                $this->statCard('Stock On Hand', '0', 'No inventory is linked to this supplier yet.', 'slate'),
+                $this->statCard('Customers Served', '0', 'No buyer accounts have ordered from this supplier yet.', 'rose'),
                 $this->statCard('Pending Fulfillment', '0', 'No supplier orders waiting right now.', 'amber'),
                 $this->statCard('Open Tickets', '0', 'No support tickets are attached to this supplier.', 'rose'),
             ];
         }
 
         $products = Product::where('supplier_id', $supplierId);
-        $supplierOrders = Order::query()->whereHas('items', fn ($items) => $items->where('supplier_id', $supplierId));
+        $lowStockProducts = (clone $products)->get()->filter(fn (Product $product): bool => $product->isLowStock())->count();
+        $completedSales = OrderItem::query()
+            ->where('supplier_id', $supplierId)
+            ->whereHas('order', fn ($order) => $order->where('payment_status', PaymentStatus::Completed->value))
+            ->sum('total');
+        $stockOnHand = (int) Product::query()
+            ->where('supplier_id', $supplierId)
+            ->get()
+            ->sum(fn (Product $product): int => $product->availableStock());
+        $customersServed = Order::query()
+            ->where('payment_status', PaymentStatus::Completed->value)
+            ->whereHas('items', fn ($items) => $items->where('supplier_id', $supplierId))
+            ->distinct('buyer_id')
+            ->count('buyer_id');
         $openTickets = SupportTicket::where('supplier_id', $supplierId)
             ->whereNotIn('status', [TicketStatus::Resolved->value, TicketStatus::Closed->value])
             ->count();
 
-        $pendingFulfillment = Order::query()
+        $pendingFulfillment = SupplierOrder::query()
+            ->where('supplier_id', $supplierId)
             ->whereIn('status', [
                 OrderStatus::Pending->value,
                 OrderStatus::Confirmed->value,
                 OrderStatus::Processing->value,
             ])
-            ->whereHas('items', fn ($items) => $items->where('supplier_id', $supplierId))
             ->count();
+
+        if (! $supplier->isApproved()) {
+            $applicationStatus = match ($supplier->status) {
+                SupplierStatus::Rejected => 'Rejected',
+                SupplierStatus::Suspended => 'Suspended',
+                default => 'Pending Review',
+            };
+
+            return [
+                $this->statCard(
+                    'Application Status',
+                    $applicationStatus,
+                    'Your supplier profile is not approved yet.',
+                    'amber',
+                ),
+                $this->statCard(
+                    'My Products',
+                    $this->formatCount((clone $products)->count()),
+                    'Products submitted under this pending supplier profile.',
+                    'blue',
+                ),
+                $this->statCard(
+                    'Low Stock Alerts',
+                    $this->formatCount($lowStockProducts),
+                    'Products at or below the warning threshold.',
+                    'rose',
+                ),
+                $this->statCard(
+                    'Total Sales',
+                    $this->formatMoney($completedSales),
+                    'Completed order value from this supplier\'s sold items.',
+                    'amber',
+                ),
+                $this->statCard(
+                    'Customers Served',
+                    $this->formatCount($customersServed),
+                    'Unique buyer accounts linked to this supplier.',
+                    'rose',
+                ),
+                $this->statCard(
+                    'Pending Fulfillment',
+                    $this->formatCount($pendingFulfillment),
+                    'Supplier orders waiting on action.',
+                    'amber',
+                ),
+                $this->statCard(
+                    'Open Tickets',
+                    $this->formatCount($openTickets),
+                    'Supplier support requests needing attention.',
+                    'rose',
+                ),
+            ];
+        }
 
         return [
             $this->statCard(
@@ -185,6 +266,30 @@ class DashboardController extends Controller
                 $this->formatCount((clone $products)->where('status', ProductStatus::Active->value)->count()),
                 'Products currently available for buyers.',
                 'emerald',
+            ),
+            $this->statCard(
+                'Low Stock Alerts',
+                $this->formatCount($lowStockProducts),
+                'Products at or below the warning threshold.',
+                'rose',
+            ),
+            $this->statCard(
+                'Total Sales',
+                $this->formatMoney($completedSales),
+                'Completed order value from this supplier\'s sold items.',
+                'amber',
+            ),
+            $this->statCard(
+                'Stock On Hand',
+                $this->formatCount($stockOnHand),
+                'Available inventory across this supplier catalog.',
+                'slate',
+            ),
+            $this->statCard(
+                'Customers Served',
+                $this->formatCount($customersServed),
+                'Unique buyer accounts that purchased from this supplier.',
+                'rose',
             ),
             $this->statCard(
                 'Pending Fulfillment',
@@ -303,12 +408,14 @@ class DashboardController extends Controller
     /**
      * @return array<int, array<string, string>>
      */
-    private function quickLinksFor(RoleName $role): array
+    private function quickLinksFor(RoleName $role, User $user): array
     {
         return match ($role) {
             RoleName::Admin => [
                 ['label' => 'Users', 'href' => '/admin/users'],
+                ['label' => 'Customers', 'href' => '/crm/customers'],
                 ['label' => 'Suppliers', 'href' => '/admin/suppliers'],
+                ['label' => 'Supplier Orders', 'href' => '/commerce/supplier-orders'],
                 ['label' => 'Module Settings', 'href' => '/settings/modules'],
                 ['label' => 'Audit Logs', 'href' => '/admin/audit-logs'],
                 ['label' => 'Workflow Logs', 'href' => '/workflow/logs'],
@@ -317,6 +424,10 @@ class DashboardController extends Controller
                 ['label' => 'Products', 'href' => '/commerce/products'],
                 ['label' => 'Inventory', 'href' => '/commerce/products'],
                 ['label' => 'Orders', 'href' => '/commerce/orders'],
+                ['label' => 'Supplier Orders', 'href' => '/commerce/supplier-orders'],
+                ...($user->supplier?->status === SupplierStatus::Approved ? [
+                    ['label' => 'Add Product', 'href' => '/commerce/products/create'],
+                ] : []),
             ],
             RoleName::MarketingManager => [
                 ['label' => 'Campaigns', 'href' => '/marketing/campaigns'],

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Domains\ECommerce\Enums\SupplierStatus;
 use App\Domains\ECommerce\Models\Supplier;
+use App\Domains\Notifications\Services\MessageService;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Support\Audit\AuditLogger;
@@ -80,7 +81,7 @@ class AdminSupplierController extends Controller
         ]);
     }
 
-    public function store(Request $request, AuditLogger $auditLogger): RedirectResponse
+    public function store(Request $request, AuditLogger $auditLogger, MessageService $messages): RedirectResponse
     {
         $validated = $request->validate([
             'user_id' => ['required', 'integer', 'exists:users,id', Rule::unique('suppliers', 'user_id')],
@@ -103,6 +104,8 @@ class AdminSupplierController extends Controller
         if ($user && ! $user->hasRole('supplier')) {
             $user->assignRole('supplier');
         }
+
+        $this->notifySupplierOfDecision($supplier->fresh(['user']), $messages, $request->user());
 
         $auditLogger->record(
             actor: $request->user(),
@@ -143,7 +146,7 @@ class AdminSupplierController extends Controller
         ]);
     }
 
-    public function update(Request $request, Supplier $supplier, AuditLogger $auditLogger): RedirectResponse
+    public function update(Request $request, Supplier $supplier, AuditLogger $auditLogger, MessageService $messages): RedirectResponse
     {
         $validated = $request->validate([
             'company_name' => ['required', 'string', 'max:255'],
@@ -168,6 +171,8 @@ class AdminSupplierController extends Controller
 
         $supplier->refresh()->loadMissing('user');
         $after = $this->supplierAuditSnapshot($supplier);
+
+        $this->notifySupplierOfDecision($supplier, $messages, $request->user(), $before['status'] !== $after['status']);
 
         if ($before !== $after) {
             $auditLogger->record(
@@ -230,5 +235,45 @@ class AdminSupplierController extends Controller
             'approved_at' => $supplier->approved_at?->toDateTimeString(),
             'approved_by' => $supplier->approved_by,
         ];
+    }
+
+    private function notifySupplierOfDecision(
+        Supplier $supplier,
+        MessageService $messages,
+        ?User $sender = null,
+        bool $statusChanged = true,
+    ): void {
+        if (! $statusChanged || ! $supplier->user || ! in_array($supplier->status, [SupplierStatus::Approved, SupplierStatus::Rejected], true)) {
+            return;
+        }
+
+        [$subject, $body] = match ($supplier->status) {
+            SupplierStatus::Approved => [
+                'Supplier application approved',
+                sprintf(
+                    'Your supplier application for %s has been approved. You can now access the supplier dashboard and product tools.',
+                    $supplier->company_name,
+                ),
+            ],
+            SupplierStatus::Rejected => [
+                'Supplier application rejected',
+                sprintf(
+                    'Your supplier application for %s was rejected. Please contact the admin team if you would like to discuss next steps.',
+                    $supplier->company_name,
+                ),
+            ],
+            default => [null, null],
+        };
+
+        if (! $subject || ! $body) {
+            return;
+        }
+
+        $messages->sendToUser(
+            receiver: $supplier->user,
+            subject: $subject,
+            body: $body,
+            sender: $sender,
+        );
     }
 }

@@ -1,6 +1,6 @@
 import ModuleWorkspacePage from '@/Components/ModuleWorkspacePage';
 
-const moduleConfig = {
+const buildModuleConfig = (auth, supplierStatus = null) => ({
     eyebrow: 'E-Commerce',
     tag: 'Inventory',
     theme: 'slate',
@@ -19,14 +19,29 @@ const moduleConfig = {
         { label: 'Supplier flow', detail: 'The list supports supplier-owned product operations and admin oversight.' },
     ],
     actions: [
-        { label: 'Bulk Pricing & MOQ', href: '/admin/bulk-pricing', variant: 'primary' },
-        { label: 'Supplier Onboarding', href: '/admin/suppliers', variant: 'secondary' },
+        ...(auth?.user?.roles?.includes('admin')
+            ? [
+                { label: 'Bulk Pricing & MOQ', href: '/admin/bulk-pricing', variant: 'primary' },
+                { label: 'Supplier Onboarding', href: '/admin/suppliers', variant: 'secondary' },
+            ]
+            : []),
+        ...(auth?.user?.roles?.includes('supplier') && supplierStatus === 'approved'
+            ? [
+                {
+                    label: 'Add Product',
+                    href: route('commerce.products.create'),
+                    variant: 'primary',
+                },
+            ]
+            : []),
     ],
     tableTitle: 'Inventory records',
     searchPlaceholder: 'Search SKU or product',
     emptyTitle: 'No products found',
-};
+});
 
 export default function Index(props) {
-    return <ModuleWorkspacePage {...props} module={moduleConfig} />;
+    const supplierStatus = props.auth?.user?.supplier?.status || null;
+
+    return <ModuleWorkspacePage {...props} module={buildModuleConfig(props.auth, supplierStatus)} />;
 }

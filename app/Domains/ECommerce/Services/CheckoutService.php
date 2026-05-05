@@ -13,6 +13,7 @@ use App\Domains\ECommerce\Events\OrderPlaced;
 use App\Domains\ECommerce\Models\Cart;
 use App\Domains\ECommerce\Models\Order;
 use App\Domains\ECommerce\Models\Product;
+use App\Domains\ECommerce\Models\SupplierOrder;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -94,6 +95,8 @@ class CheckoutService
                 $this->inventory->deductForOrder($product, $prepared['cart_item']->quantity, $order, $buyer);
             }
 
+            $this->createSupplierOrders($order, $preparedItems);
+
             $invoice = $order->invoice()->create([
                 'invoice_number' => $this->numbers->invoiceNumber(),
                 'status' => InvoiceStatus::Issued,
@@ -147,5 +150,28 @@ class CheckoutService
         }
 
         return $lockedCart;
+    }
+
+    /**
+     * @param array<int, array{cart_item:mixed,product:Product,unit_price:string,total:string}> $preparedItems
+     */
+    private function createSupplierOrders(Order $order, array $preparedItems): void
+    {
+        collect($preparedItems)
+            ->groupBy(fn (array $prepared): int => (int) $prepared['product']->supplier_id)
+            ->each(function ($supplierItems, int $supplierId) use ($order): void {
+                $subtotal = $supplierItems->sum(fn (array $prepared): float => (float) $prepared['total']);
+
+                SupplierOrder::create([
+                    'order_id' => $order->id,
+                    'supplier_id' => $supplierId,
+                    'supplier_order_number' => $this->numbers->supplierOrderNumber(),
+                    'status' => OrderStatus::Pending->value,
+                    'subtotal' => number_format($subtotal, 2, '.', ''),
+                    'grand_total' => number_format($subtotal, 2, '.', ''),
+                    'currency' => $order->currency,
+                    'placed_at' => now(),
+                ]);
+            });
     }
 }

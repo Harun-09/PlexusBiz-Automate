@@ -3,6 +3,7 @@
 namespace App\Domains\ECommerce\Models;
 
 use App\Domains\ECommerce\Enums\SupplierStatus;
+use App\Domains\ECommerce\Models\SupplierOrder;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -47,5 +48,20 @@ class Supplier extends Model
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function supplierOrders(): HasMany
+    {
+        return $this->hasMany(SupplierOrder::class);
+    }
+
+    public function isApproved(): bool
+    {
+        return $this->status === SupplierStatus::Approved;
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === SupplierStatus::Pending;
     }
 }

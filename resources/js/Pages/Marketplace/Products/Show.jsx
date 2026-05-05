@@ -460,14 +460,28 @@ export default function Show({
                                             >
                                                 Buy now
                                             </button>
+                                            <Link
+                                                href={route('rfq.product', product.slug)}
+                                                className="inline-flex items-center justify-center rounded-full border border-[#0b2e71]/20 bg-white px-5 py-3 text-sm font-black uppercase tracking-[0.14em] text-[#0b2e71] transition hover:border-[#ff8a00] hover:text-[#d75d00]"
+                                            >
+                                                Request a quote
+                                            </Link>
                                         </>
                                     ) : (
-                                        <Link
-                                            href={route('login')}
-                                            className="inline-flex items-center justify-center rounded-full bg-[#ff8a00] px-5 py-3 text-sm font-black uppercase tracking-[0.14em] text-white transition hover:bg-[#ef7400]"
-                                        >
-                                            Sign in to buy
-                                        </Link>
+                                        <>
+                                            <Link
+                                                href={route('login')}
+                                                className="inline-flex items-center justify-center rounded-full bg-[#ff8a00] px-5 py-3 text-sm font-black uppercase tracking-[0.14em] text-white transition hover:bg-[#ef7400]"
+                                            >
+                                                Sign in to buy
+                                            </Link>
+                                            <Link
+                                                href={route('rfq.product', product.slug)}
+                                                className="inline-flex items-center justify-center rounded-full border border-[#0b2e71]/20 bg-white px-5 py-3 text-sm font-black uppercase tracking-[0.14em] text-[#0b2e71] transition hover:border-[#ff8a00] hover:text-[#d75d00]"
+                                            >
+                                                Request a quote
+                                            </Link>
+                                        </>
                                     )}
                                 </div>
 
@@ -476,7 +490,7 @@ export default function Show({
                                     <ul className="mt-2 space-y-1">
                                         <li>1. Add the selected quantity to your cart.</li>
                                         <li>2. Review the cart summary.</li>
-                                        <li>3. Continue to checkout and choose the payment gateway.</li>
+                                        <li>3. Continue to checkout and choose the payment gateway, or submit an RFQ for custom pricing.</li>
                                     </ul>
                                 </div>
                             </div>

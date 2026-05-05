@@ -263,6 +263,16 @@
                 <td>Implement tickets, messages, auto responses, supplier notifications, FAQ/template matching, and chatbot-ready REST endpoint.</td>
             </tr>
             <tr>
+                <td>Order status automation</td>
+                <td><span class="status done">Done</span></td>
+                <td>Dispatch supplier order status change events, send buyer notifications through workflow rules, notify suppliers on cancellation, and store execution logs.</td>
+            </tr>
+            <tr>
+                <td>Support ticket workspace and API</td>
+                <td><span class="status done">Done</span></td>
+                <td>Implement ticket create, detail, reply, status update, assignment, auto reply, supplier notification, and notification read-all alias routes.</td>
+            </tr>
+            <tr>
                 <td>REST API resources</td>
                 <td><span class="status done">Done</span></td>
                 <td>Implement consistent API routes, requests, resources, policies, pagination, filtering, and rate limits for all modules.</td>
@@ -293,6 +303,8 @@
         <ul>
             <li>Implemented in code: a dedicated <code>audit_logs</code> table, audit writer, and list view for critical admin and workflow actions.</li>
             <li>Implemented in UI: shared authenticated <code>AppShell.jsx</code> with no footer, role-aware sidebar, mobile drawer, top header, global search, notification shortcut, quick actions, user menu, and reusable dashboard components.</li>
+            <li>Implemented in workflow: order status change events now notify buyers through rule-based automation, keep workflow logs, and also support supplier notifications on cancellation.</li>
+            <li>Implemented in support: ticket create, reply, status, assignment, detail view, auto response, and notification read-all flows are wired through web and API routes.</li>
             <li>Missing or weakly specified in the PDFs: payment capture, shipping, tax, returns/refunds, and multi-company buyer tenancy.</li>
             <li>Not explicitly detailed in the PDFs: CSV import/export and bulk admin operations.</li>
             <li>Asset storage for product and social media files is now defined in code with original uploads, public delivery paths, naming conventions, generated thumbnail/preview variants, and lifecycle cleanup rules.</li>

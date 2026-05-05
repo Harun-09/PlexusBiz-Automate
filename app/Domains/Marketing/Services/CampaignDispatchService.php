@@ -4,9 +4,7 @@ namespace App\Domains\Marketing\Services;
 
 use App\Domains\CRM\Models\Customer;
 use App\Domains\Marketing\Contracts\EmailProvider;
-use App\Domains\Marketing\Contracts\SmsProvider;
 use App\Domains\Marketing\Enums\CampaignStatus;
-use App\Domains\Marketing\Enums\CampaignType;
 use App\Domains\Marketing\Enums\MessageChannel;
 use App\Domains\Marketing\Enums\MessageStatus;
 use App\Domains\Marketing\Jobs\SendCampaignMessageJob;
@@ -22,7 +20,6 @@ class CampaignDispatchService
         private readonly CampaignRecipientBuilder $recipients,
         private readonly TemplateRenderer $renderer,
         private readonly EmailProvider $email,
-        private readonly SmsProvider $sms,
     ) {
     }
 
@@ -56,15 +53,13 @@ class CampaignDispatchService
         $campaign = $recipient->campaign;
 
         try {
-            foreach ($this->channelsFor($campaign) as $channel) {
-                $template = $this->templateFor($campaign, $channel);
-                $this->sendChannel($recipient, $template, $channel);
-            }
+            $template = $this->templateFor($campaign);
+            $log = $this->sendEmail($recipient, $template);
 
             $recipient->forceFill([
-                'status' => MessageStatus::Sent,
-                'sent_at' => now(),
-                'error' => null,
+                'status' => $log->status,
+                'sent_at' => $log->status === MessageStatus::Sent ? now() : null,
+                'error' => $log->error,
             ])->save();
         } catch (Throwable $exception) {
             $recipient->forceFill([
@@ -85,27 +80,24 @@ class CampaignDispatchService
         $this->completeIfFinished($campaign->refresh());
     }
 
-    private function sendChannel(CampaignRecipient $recipient, CampaignTemplate $template, MessageChannel $channel): CampaignLog
+    private function sendEmail(CampaignRecipient $recipient, CampaignTemplate $template): CampaignLog
     {
         $customer = $recipient->customer;
         $variables = $this->variablesFor($customer);
         $body = $this->renderer->render($template->body, $variables);
         $subject = $template->subject ? $this->renderer->render($template->subject, $variables) : null;
 
-        $result = match ($channel) {
-            MessageChannel::Email => $this->email->send($recipient->email ?? $customer->email, $subject ?? $template->name, $body, $variables),
-            MessageChannel::Sms => $this->sms->send($recipient->phone ?? $customer->phone ?? '', $body, $variables),
-        };
+        $result = $this->email->send($recipient->email ?? $customer->email, $subject ?? $template->name, $body, $variables);
 
         return CampaignLog::create([
             'campaign_id' => $recipient->campaign_id,
             'campaign_recipient_id' => $recipient->id,
             'customer_id' => $customer->id,
-            'channel' => $channel,
+            'channel' => MessageChannel::Email,
             'status' => $result->successful ? MessageStatus::Sent : MessageStatus::Failed,
             'provider' => $result->provider,
             'payload' => [
-                'to' => $channel === MessageChannel::Email ? ($recipient->email ?? $customer->email) : ($recipient->phone ?? $customer->phone),
+                'to' => $recipient->email ?? $customer->email,
                 'subject' => $subject,
                 'body' => $body,
             ],
@@ -115,22 +107,13 @@ class CampaignDispatchService
         ]);
     }
 
-    /**
-     * @return array<int, MessageChannel>
-     */
-    private function channelsFor(Campaign $campaign): array
+    private function templateFor(Campaign $campaign): CampaignTemplate
     {
-        return match ($campaign->type) {
-            CampaignType::Email => [MessageChannel::Email],
-            CampaignType::Sms => [MessageChannel::Sms],
-            CampaignType::Mixed => [MessageChannel::Email, MessageChannel::Sms],
-        };
-    }
-
-    private function templateFor(Campaign $campaign, MessageChannel $channel): CampaignTemplate
-    {
-        return $campaign->templates->firstWhere('channel', $channel)
-            ?? CampaignTemplate::whereNull('campaign_id')->where('template_key', $channel->value.'_default')->firstOrFail();
+        return $campaign->templates->firstWhere('channel', MessageChannel::Email)
+            ?? CampaignTemplate::whereNull('campaign_id')
+                ->where('template_key', 'email_default')
+                ->where('channel', MessageChannel::Email->value)
+                ->firstOrFail();
     }
 
     /**

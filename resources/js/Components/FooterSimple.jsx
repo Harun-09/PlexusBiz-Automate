@@ -5,6 +5,7 @@ const footerSections = [
         title: 'Quick Links',
         links: [
             { label: 'Marketplace', href: '/marketplace' },
+            { label: 'Become a supplier', href: route('supplier.apply') },
             { label: 'About Us', href: '/about' },
             { label: 'Contact', href: '/contact' },
         ],

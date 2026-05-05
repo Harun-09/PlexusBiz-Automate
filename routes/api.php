@@ -36,12 +36,23 @@ Route::middleware('auth:sanctum')->prefix('v1')->name('v1.')->group(function ():
     Route::apiResource('campaigns', CampaignController::class)->only(['index', 'show']);
     Route::apiResource('social-posts', SocialPostController::class)->only(['index', 'show']);
     Route::apiResource('workflow-logs', WorkflowLogController::class)->only(['index', 'show']);
-    Route::apiResource('support-tickets', SupportTicketController::class)->only(['index', 'show']);
     Route::post('/support/chatbot/message', SupportChatbotController::class)->name('support.chatbot.message');
+    Route::apiResource('support-tickets', SupportTicketController::class)->only(['index', 'show', 'store']);
+    Route::post('/support-tickets/{supportTicket}/reply', [SupportTicketController::class, 'reply'])->name('support-tickets.reply');
+    Route::put('/support-tickets/{supportTicket}/status', [SupportTicketController::class, 'updateStatus'])->name('support-tickets.status');
+    Route::put('/support-tickets/{supportTicket}/assign', [SupportTicketController::class, 'assign'])->name('support-tickets.assign');
 
     // Messages API
     Route::get('/messages/unread-count', [MessageController::class, 'unreadCount'])->name('messages.unread-count');
     Route::get('/messages/recent', [MessageController::class, 'recent'])->name('messages.recent');
     Route::apiResource('messages', MessageController::class)->only(['index', 'store', 'show']);
     Route::post('/messages/{message}/read', [MessageController::class, 'markAsRead'])->name('messages.mark-as-read');
+
+    Route::prefix('notifications')->name('notifications.')->group(function (): void {
+        Route::get('/', [MessageController::class, 'index'])->name('index');
+        Route::get('/unread-count', [MessageController::class, 'unreadCount'])->name('unread-count');
+        Route::get('/recent', [MessageController::class, 'recent'])->name('recent');
+        Route::put('/{message}/read', [MessageController::class, 'markAsRead'])->name('mark-as-read');
+        Route::put('/read-all', [MessageController::class, 'markAllAsRead'])->name('read-all');
+    });
 });

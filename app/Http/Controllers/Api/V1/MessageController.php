@@ -79,6 +79,16 @@ class MessageController extends Controller
         ]);
     }
 
+    public function markAllAsRead(Request $request): JsonResponse
+    {
+        $count = $this->messageService->markAllAsRead($request->user()->id);
+
+        return response()->json([
+            'message' => 'All notifications marked as read',
+            'updated_count' => $count,
+        ]);
+    }
+
     public function recent(Request $request): JsonResponse
     {
         $messages = $this->messageService->getRecentForUser(

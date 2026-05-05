@@ -74,6 +74,16 @@ class MessageService
         return $message;
     }
 
+    public function markAllAsRead(int $userId): int
+    {
+        return Message::forUser($userId)
+            ->unread()
+            ->update([
+                'status' => MessageStatus::Read->value,
+                'read_at' => now(),
+            ]);
+    }
+
     public function getUnreadCount(int $userId): int
     {
         return Message::forUser($userId)->unread()->count();

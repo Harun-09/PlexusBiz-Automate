@@ -20,6 +20,12 @@ class CRMSeeder extends Seeder
 
         $customer = app(CustomerProfileService::class)->ensureForUser($buyer, [
             'company_name' => 'Plexus Buyer Company',
+            'business_type' => 'Wholesale distributor',
+            'address' => [
+                'line_1' => 'House 12, Road 5',
+                'city' => 'Dhaka',
+                'country' => 'Bangladesh',
+            ],
             'tags' => ['wholesale', 'priority'],
         ]);
 

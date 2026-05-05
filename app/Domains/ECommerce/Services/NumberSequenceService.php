@@ -5,6 +5,7 @@ namespace App\Domains\ECommerce\Services;
 use App\Domains\ECommerce\Models\Invoice;
 use App\Domains\ECommerce\Models\Order;
 use App\Domains\ECommerce\Models\Rfq;
+use App\Domains\ECommerce\Models\SupplierOrder;
 use Illuminate\Support\Str;
 
 class NumberSequenceService
@@ -17,6 +18,11 @@ class NumberSequenceService
     public function invoiceNumber(): string
     {
         return $this->unique('INV', Invoice::class, 'invoice_number');
+    }
+
+    public function supplierOrderNumber(): string
+    {
+        return $this->unique('SO', SupplierOrder::class, 'supplier_order_number');
     }
 
     public function rfqNumber(): string

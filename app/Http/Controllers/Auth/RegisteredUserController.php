@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Enums\RoleName;
+use App\Domains\CRM\Services\CustomerProfileService;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
@@ -19,6 +20,10 @@ use Spatie\Permission\Models\Role;
 
 class RegisteredUserController extends Controller
 {
+    public function __construct(private readonly CustomerProfileService $customers)
+    {
+    }
+
     /**
      * Display the registration view.
      */
@@ -48,6 +53,10 @@ class RegisteredUserController extends Controller
             ]);
 
             $user->assignRole(Role::findOrCreate(RoleName::Buyer->value));
+            $this->customers->ensureForUser($user, [
+                'contact_name' => $request->name,
+                'email' => $request->email,
+            ]);
 
             return $user;
         });

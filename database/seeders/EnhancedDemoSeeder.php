@@ -272,7 +272,15 @@ class EnhancedDemoSeeder extends Seeder
     {
         $buyer = User::where('email', 'buyer@plexus.test')->first();
         $products = Product::where('status', ProductStatus::Active)->take(3)->get();
-        $customer = app(CustomerProfileService::class)->ensureForUser($buyer);
+        $customer = app(CustomerProfileService::class)->ensureForUser($buyer, [
+            'company_name' => 'Plexus Demo Trading',
+            'business_type' => 'Wholesale buyer',
+            'address' => [
+                'line_1' => 'House 44, Road 12',
+                'city' => 'Dhaka',
+                'country' => 'Bangladesh',
+            ],
+        ]);
 
         // Create 3 sample completed orders
         for ($i = 1; $i <= 3; $i++) {
@@ -428,7 +436,7 @@ class EnhancedDemoSeeder extends Seeder
             [
                 'slug' => 'loyalty-reward',
                 'name' => 'Loyalty Reward Program',
-                'type' => CampaignType::Sms,
+                'type' => CampaignType::Email,
                 'status' => CampaignStatus::Completed,
             ],
         ];

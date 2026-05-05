@@ -47,31 +47,33 @@ export default function Header({ user, header, currentPath, onOpenSidebar }) {
                     <div className={showBreadcrumbs ? 'mt-1 min-w-0' : 'min-w-0'}>{header}</div>
                 </div>
 
-                <NotificationBell />
+                <div className="flex items-center gap-5">
+                    <NotificationBell />
 
-                <Dropdown>
-                    <Dropdown.Trigger>
-                        <button
-                            type="button"
-                            className="flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-2.5 text-left text-sm transition hover:border-blue-200"
-                        >
-                            <span className="grid h-7 w-7 place-items-center rounded-md bg-slate-950 text-xs font-black text-white">
-                                {user?.name?.slice(0, 1) || 'U'}
-                            </span>
-                            <span className="hidden leading-tight md:block">
-                                <span className="block max-w-32 truncate font-bold text-slate-900">{user?.name}</span>
-                                <span className="block max-w-32 truncate text-xs text-slate-500">{roleLabel}</span>
-                            </span>
-                        </button>
-                    </Dropdown.Trigger>
+                    <Dropdown>
+                        <Dropdown.Trigger>
+                            <button
+                                type="button"
+                                className="flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-2.5 text-left text-sm transition hover:border-blue-200"
+                            >
+                                <span className="grid h-7 w-7 place-items-center rounded-md bg-slate-950 text-xs font-black text-white">
+                                    {user?.name?.slice(0, 1) || 'U'}
+                                </span>
+                                <span className="hidden leading-tight md:block">
+                                    <span className="block max-w-32 truncate font-bold text-slate-900">{user?.name}</span>
+                                    <span className="block max-w-32 truncate text-xs text-slate-500">{roleLabel}</span>
+                                </span>
+                            </button>
+                        </Dropdown.Trigger>
 
-                    <Dropdown.Content align="right" width="48">
-                        <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
-                        <Dropdown.Link href={route('logout')} method="post" as="button">
-                            Log Out
-                        </Dropdown.Link>
-                    </Dropdown.Content>
-                </Dropdown>
+                        <Dropdown.Content align="right" width="48">
+                            <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
+                            <Dropdown.Link href={route('logout')} method="post" as="button">
+                                Log Out
+                            </Dropdown.Link>
+                        </Dropdown.Content>
+                    </Dropdown>
+                </div>
             </div>
         </header>
     );

@@ -7,9 +7,11 @@ use App\Domains\CRM\Models\Customer;
 use App\Domains\ECommerce\Enums\OrderStatus;
 use App\Domains\ECommerce\Enums\PaymentStatus;
 use App\Domains\ECommerce\Enums\ProductStatus;
+use App\Domains\ECommerce\Events\OrderStatusChanged;
 use App\Domains\ECommerce\Models\Order;
 use App\Domains\ECommerce\Models\Product;
 use App\Domains\ECommerce\Models\Supplier;
+use App\Domains\ECommerce\Models\SupplierOrder;
 use App\Domains\Marketing\Enums\CampaignStatus;
 use App\Domains\Marketing\Enums\MessageChannel;
 use App\Domains\Marketing\Models\Campaign;
@@ -23,7 +25,9 @@ use App\Domains\Support\Enums\SupportFaqStatus;
 use App\Domains\Support\Models\SupportFaq;
 use App\Domains\Workflow\Enums\AutomationRuleStatus;
 use App\Domains\Support\Enums\TicketStatus;
+use App\Domains\Support\Enums\TicketPriority;
 use App\Domains\Support\Models\SupportTicket;
+use App\Domains\Support\Services\SupportTicketService;
 use App\Domains\Workflow\Enums\WorkflowLogStatus;
 use App\Domains\Workflow\Models\AutomationRule;
 use App\Domains\Workflow\Models\WorkflowLog;
@@ -32,8 +36,10 @@ use App\Models\User;
 use App\Support\Audit\Models\AuditLog;
 use BackedEnum;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -131,20 +137,146 @@ class WorkspaceController extends Controller
             $query->whereHas('supplier', fn ($supplier) => $supplier->where('user_id', $request->user()->id));
         }
 
+        $canManageProducts = $request->user()->hasRole('admin') || $request->user()->supplier?->isApproved();
+
         $rows = $this->applyListFilters($query, $filters, ['sku', 'name'])
             ->latest()
             ->limit(50)
             ->get()
             ->map(fn (Product $product): array => [
-            'SKU' => $product->sku,
-            'Product' => $product->name,
-            'Supplier' => $product->supplier?->company_name,
-            'Stock' => $product->availableStock(),
-            'MOQ' => $product->moq,
-            'Status' => $product->status->value,
+                'SKU' => $product->sku,
+                'Product' => $product->name,
+                'Supplier' => $product->supplier?->company_name,
+                'Stock' => [
+                    'kind' => 'stock',
+                    'value' => $product->availableStock(),
+                    'lowStock' => $product->isLowStock(),
+                ],
+                'MOQ' => $product->moq,
+                'Status' => $product->status->value,
+                'Actions' => $canManageProducts ? [
+                    [
+                        'kind' => 'link',
+                        'label' => 'Edit',
+                        'href' => route('commerce.products.edit', $product),
+                    ],
+                    [
+                        'kind' => 'link',
+                        'label' => 'Delete',
+                        'href' => route('commerce.products.destroy', $product),
+                        'method' => 'delete',
+                        'variant' => 'danger',
+                        'confirm' => 'Delete this product? This will remove it from the supplier catalog.',
+                    ],
+                ] : '-',
+            ]);
+
+        return $this->page('Product Operations', 'Supplier-owned catalog, stock, MOQ, status, and actions.', [], ['SKU', 'Product', 'Supplier', 'Stock', 'MOQ', 'Status', 'Actions'], $rows, filters: $filters, component: 'Commerce/Products/Index');
+    }
+
+    public function supplierProductCreate(Request $request): Response
+    {
+        $supplier = $this->currentSupplier($request);
+
+        return Inertia::render('Commerce/Products/Create', [
+            'supplier' => [
+                'id' => $supplier->id,
+                'company_name' => $supplier->company_name,
+                'slug' => $supplier->slug,
+            ],
+            'statuses' => $this->enumValues(ProductStatus::class),
+        ]);
+    }
+
+    public function supplierProductStore(Request $request): RedirectResponse
+    {
+        $supplier = $this->currentSupplier($request);
+
+        $validated = $request->validate([
+            'sku' => ['required', 'string', 'max:100', 'unique:products,sku'],
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:5000'],
+            'base_price' => ['required', 'numeric', 'min:0'],
+            'stock_quantity' => ['required', 'integer', 'min:0'],
+            'status' => ['required', 'string', Rule::in($this->enumValues(ProductStatus::class))],
         ]);
 
-        return $this->page('Product Operations', 'Supplier-owned catalog, stock, MOQ, and status.', [], ['SKU', 'Product', 'Supplier', 'Stock', 'MOQ', 'Status'], $rows, filters: $filters, component: 'Commerce/Products/Index');
+        Product::create([
+            'supplier_id' => $supplier->id,
+            'sku' => $validated['sku'],
+            'name' => $validated['name'],
+            'slug' => $this->uniqueProductSlug($validated['name']),
+            'description' => $validated['description'] ?? null,
+            'base_price' => $validated['base_price'],
+            'moq' => 1,
+            'stock_quantity' => $validated['stock_quantity'],
+            'reserved_quantity' => 0,
+            'status' => $validated['status'],
+            'published_at' => $validated['status'] === ProductStatus::Active->value ? now() : null,
+        ]);
+
+        return redirect()->route('commerce.products.index')->with('success', 'Product created successfully.');
+    }
+
+    public function supplierProductEdit(Request $request, Product $product): Response
+    {
+        $supplier = $this->currentSupplier($request);
+        $this->ensureSupplierOwnsProduct($product, $supplier);
+
+        return Inertia::render('Commerce/Products/Edit', [
+            'supplier' => [
+                'id' => $supplier->id,
+                'company_name' => $supplier->company_name,
+                'slug' => $supplier->slug,
+            ],
+            'product' => [
+                'id' => $product->id,
+                'supplier_id' => $product->supplier_id,
+                'sku' => $product->sku,
+                'name' => $product->name,
+                'description' => $product->description ?? '',
+                'base_price' => $product->base_price,
+                'stock_quantity' => $product->stock_quantity,
+                'status' => $product->status->value,
+            ],
+            'statuses' => $this->enumValues(ProductStatus::class),
+        ]);
+    }
+
+    public function supplierProductUpdate(Request $request, Product $product): RedirectResponse
+    {
+        $supplier = $this->currentSupplier($request);
+        $this->ensureSupplierOwnsProduct($product, $supplier);
+
+        $validated = $request->validate([
+            'sku' => ['required', 'string', 'max:100', Rule::unique('products', 'sku')->ignore($product->id)],
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:5000'],
+            'base_price' => ['required', 'numeric', 'min:0'],
+            'stock_quantity' => ['required', 'integer', 'min:0'],
+            'status' => ['required', 'string', Rule::in($this->enumValues(ProductStatus::class))],
+        ]);
+
+        $wasActive = $product->status === ProductStatus::Active;
+        $isNowActive = $validated['status'] === ProductStatus::Active->value;
+
+        $product->update([
+            ...$validated,
+            'slug' => $this->uniqueProductSlug($validated['name'], $product),
+            ...($isNowActive && ! $wasActive ? ['published_at' => now()] : []),
+        ]);
+
+        return redirect()->route('commerce.products.index')->with('success', 'Product updated successfully.');
+    }
+
+    public function supplierProductDestroy(Request $request, Product $product): RedirectResponse
+    {
+        $supplier = $this->currentSupplier($request);
+        $this->ensureSupplierOwnsProduct($product, $supplier);
+
+        $product->delete();
+
+        return redirect()->route('commerce.products.index')->with('success', 'Product deleted successfully.');
     }
 
     public function commerceOrders(Request $request): Response
@@ -179,6 +311,128 @@ class WorkspaceController extends Controller
             });
 
         return $this->page('Orders', 'Buyer, supplier, and admin order visibility is scoped by role.', [], ['Order', 'Buyer', 'Status', 'Payment', 'Total', 'Placed', 'Action'], $rows, filters: $filters, component: 'Commerce/Orders/Index');
+    }
+
+    public function supplierOrders(Request $request): Response
+    {
+        $filters = $this->filters($request, $this->enumValues(OrderStatus::class));
+        $baseQuery = SupplierOrder::query();
+        $user = $request->user();
+
+        if ($user->hasRole('supplier') && ! $user->hasRole('admin')) {
+            $supplier = $this->currentSupplier($request);
+            $baseQuery->where('supplier_id', $supplier->id);
+        }
+
+        $query = (clone $baseQuery)->with(['order.buyer', 'supplier']);
+
+        if ($filters['search'] !== '') {
+            $search = $filters['search'];
+
+            $query->where(function (Builder $builder) use ($search): void {
+                $builder->where('supplier_order_number', 'like', "%{$search}%")
+                    ->orWhereHas('order', fn (Builder $order) => $order
+                        ->where('order_number', 'like', "%{$search}%")
+                        ->orWhereHas('buyer', fn (Builder $buyer) => $buyer
+                            ->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%")))
+                    ->orWhereHas('supplier', fn (Builder $supplier) => $supplier
+                        ->where('company_name', 'like', "%{$search}%"));
+            });
+        }
+
+        if ($filters['status'] !== '') {
+            $query->where('status', $filters['status']);
+        }
+
+        $rows = $query
+            ->orderByDesc('placed_at')
+            ->limit(50)
+            ->get()
+            ->map(fn (SupplierOrder $supplierOrder): array => [
+                'Supplier Order' => $supplierOrder->supplier_order_number,
+                'Order' => $supplierOrder->order?->order_number ?? '-',
+                'Supplier' => $supplierOrder->supplier?->company_name ?? '-',
+                'Buyer' => $supplierOrder->order?->buyer?->name ?? '-',
+                'Status' => $supplierOrder->status->value,
+                'Subtotal' => $this->formatMoney($supplierOrder->subtotal),
+                'Placed' => $supplierOrder->placed_at?->format('Y-m-d H:i') ?? 'n/a',
+                'Confirmed' => $supplierOrder->confirmed_at?->format('Y-m-d H:i') ?? 'n/a',
+                'Shipped' => $supplierOrder->shipped_at?->format('Y-m-d H:i') ?? 'n/a',
+                'Completed' => $supplierOrder->completed_at?->format('Y-m-d H:i') ?? 'n/a',
+                'Action' => $this->supplierOrderAction($supplierOrder),
+            ]);
+
+        return $this->page(
+            'Supplier Orders',
+            'Approved suppliers can move their fulfillment queue from pending to confirmed, shipped, and completed.',
+            [
+                ['label' => 'Total Supplier Orders', 'value' => (clone $baseQuery)->count()],
+                ['label' => 'Pending Fulfillment', 'value' => (clone $baseQuery)->where('status', OrderStatus::Pending->value)->count()],
+                ['label' => 'Confirmed', 'value' => (clone $baseQuery)->where('status', OrderStatus::Confirmed->value)->count()],
+                ['label' => 'Shipped', 'value' => (clone $baseQuery)->where('status', OrderStatus::Shipped->value)->count()],
+            ],
+            ['Supplier Order', 'Order', 'Supplier', 'Buyer', 'Status', 'Subtotal', 'Placed', 'Confirmed', 'Shipped', 'Completed', 'Action'],
+            $rows,
+            'No supplier orders found.',
+            $filters,
+            component: 'Commerce/SupplierOrders/Index',
+        );
+    }
+
+    public function supplierOrderStatusUpdate(Request $request, SupplierOrder $supplierOrder, string $status): RedirectResponse
+    {
+        $user = $request->user();
+        $currentSupplier = null;
+        $previousStatus = $supplierOrder->status;
+
+        if ($user->hasRole('supplier') && ! $user->hasRole('admin')) {
+            $currentSupplier = $this->currentSupplier($request);
+            abort_unless((int) $supplierOrder->supplier_id === (int) $currentSupplier->id, 403);
+        }
+
+        $allowedStatus = $this->nextSupplierOrderStatus($supplierOrder);
+
+        if (! $allowedStatus) {
+            return redirect()
+                ->route('commerce.supplier-orders.index')
+                ->with('error', 'No further status transition is available for this supplier order.');
+        }
+
+        $nextStatus = OrderStatus::tryFrom($status);
+
+        if (! $nextStatus || $nextStatus !== $allowedStatus) {
+            abort(422, 'Invalid supplier order status transition.');
+        }
+
+        $updates = ['status' => $nextStatus->value];
+
+        if ($nextStatus === OrderStatus::Confirmed) {
+            $updates['confirmed_at'] = $supplierOrder->confirmed_at ?? now();
+        }
+
+        if ($nextStatus === OrderStatus::Shipped) {
+            $updates['confirmed_at'] = $supplierOrder->confirmed_at ?? now();
+            $updates['shipped_at'] = now();
+        }
+
+        if ($nextStatus === OrderStatus::Completed) {
+            $updates['confirmed_at'] = $supplierOrder->confirmed_at ?? now();
+            $updates['shipped_at'] = $supplierOrder->shipped_at ?? now();
+            $updates['completed_at'] = now();
+        }
+
+        $supplierOrder->forceFill($updates)->save();
+
+        event(new OrderStatusChanged(
+            $supplierOrder->refresh(),
+            $previousStatus->value,
+            $nextStatus->value,
+        ));
+
+        return redirect()
+            ->route('commerce.supplier-orders.index')
+            ->with('success', 'Supplier order moved to '.Str::headline($nextStatus->value).'.');
     }
 
     public function marketplace(Request $request): Response
@@ -239,7 +493,7 @@ class WorkspaceController extends Controller
             'Logs' => $campaign->logs_count,
         ]);
 
-        return $this->page('Campaigns', 'Marketing campaigns, recipient count, and delivery logs.', [
+        return $this->page('Campaigns', 'Email marketing campaigns, recipient count, and delivery logs.', [
             ['label' => 'Total Campaigns', 'value' => Campaign::count()],
             ['label' => 'Draft Campaigns', 'value' => Campaign::where('status', CampaignStatus::Draft->value)->count()],
             ['label' => 'Scheduled Campaigns', 'value' => Campaign::where('status', CampaignStatus::Scheduled->value)->count()],
@@ -382,11 +636,10 @@ class WorkspaceController extends Controller
                 ];
             });
 
-        return $this->page('Campaign Templates', 'Template-based email and SMS marketing assets.', [
+        return $this->page('Campaign Templates', 'Template-based email marketing assets.', [
             ['label' => 'Total Templates', 'value' => CampaignTemplate::count()],
             ['label' => 'Email Templates', 'value' => CampaignTemplate::where('channel', MessageChannel::Email->value)->count()],
-            ['label' => 'SMS Templates', 'value' => CampaignTemplate::where('channel', MessageChannel::Sms->value)->count()],
-            ['label' => 'System Templates', 'value' => CampaignTemplate::where('channel', MessageChannel::System->value)->count()],
+            ['label' => 'Linked Templates', 'value' => CampaignTemplate::whereNotNull('campaign_id')->count()],
         ], ['Template', 'Key', 'Channel', 'Campaign', 'Subject', 'Variables', 'Status'], $rows, filters: $filters, component: 'Marketing/Templates/Index');
     }
 
@@ -581,6 +834,11 @@ class WorkspaceController extends Controller
                 'Priority' => $ticket->priority->value,
                 'Status' => $ticket->status->value,
                 'Updated' => $ticket->last_message_at?->format('Y-m-d H:i') ?? 'n/a',
+                'Action' => [
+                    'kind' => 'link',
+                    'label' => 'View',
+                    'href' => route('support.tickets.show', $ticket),
+                ],
             ]);
 
         return $this->page('Support Tickets', 'Buyer and supplier support tickets with automated replies and supplier notifications.', [
@@ -588,7 +846,7 @@ class WorkspaceController extends Controller
             ['label' => 'Open', 'value' => SupportTicket::where('status', TicketStatus::Open->value)->count()],
             ['label' => 'Waiting Supplier', 'value' => SupportTicket::where('status', TicketStatus::WaitingSupplier->value)->count()],
             ['label' => 'Resolved', 'value' => SupportTicket::where('status', TicketStatus::Resolved->value)->count()],
-        ], ['Ticket', 'Subject', 'Requester', 'Supplier', 'Priority', 'Status', 'Updated'], $rows, filters: $filters, component: 'Support/Tickets/Index');
+        ], ['Ticket', 'Subject', 'Requester', 'Supplier', 'Priority', 'Status', 'Updated', 'Action'], $rows, filters: $filters, component: 'Support/Tickets/Index');
     }
 
     public function notifications(Request $request): Response
@@ -628,6 +886,160 @@ class WorkspaceController extends Controller
         );
     }
 
+    public function supportTicketCreate(Request $request): Response
+    {
+        return Inertia::render('Support/Tickets/Create', [
+            'priorities' => $this->enumValues(TicketPriority::class),
+        ]);
+    }
+
+    public function supportTicketStore(Request $request, SupportTicketService $tickets): RedirectResponse
+    {
+        $validated = $request->validate([
+            'subject' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string', 'max:5000'],
+            'priority' => ['nullable', 'string', Rule::in($this->enumValues(TicketPriority::class))],
+            'supplier_id' => ['nullable', 'integer', 'exists:suppliers,id'],
+            'order_id' => ['nullable', 'integer', 'exists:orders,id'],
+            'customer_id' => ['nullable', 'integer', 'exists:customers,id'],
+            'tags' => ['nullable', 'array'],
+            'metadata' => ['nullable', 'array'],
+        ]);
+
+        $ticket = $tickets->createTicket($request->user(), $validated);
+
+        return redirect()
+            ->route('support.tickets.show', $ticket)
+            ->with('success', 'Support ticket created successfully.');
+    }
+
+    public function supportTicketShow(Request $request, SupportTicket $supportTicket): Response
+    {
+        $this->authorize('view', $supportTicket);
+
+        $supportTicket->loadMissing(['requester', 'supplier.user', 'order', 'customer', 'assignee', 'messages.sender', 'supplierNotifications']);
+
+        return Inertia::render('Support/Tickets/Show', [
+            'ticket' => [
+                'id' => $supportTicket->id,
+                'ticket_number' => $supportTicket->ticket_number,
+                'subject' => $supportTicket->subject,
+                'description' => $supportTicket->description,
+                'priority' => $supportTicket->priority->value,
+                'status' => $supportTicket->status->value,
+                'channel' => $supportTicket->channel->value,
+                'last_message_at' => $supportTicket->last_message_at?->toJSON(),
+                'resolved_at' => $supportTicket->resolved_at?->toJSON(),
+                'requester' => $supportTicket->requester ? [
+                    'id' => $supportTicket->requester->id,
+                    'name' => $supportTicket->requester->name,
+                    'email' => $supportTicket->requester->email,
+                ] : null,
+                'supplier' => $supportTicket->supplier ? [
+                    'id' => $supportTicket->supplier->id,
+                    'company_name' => $supportTicket->supplier->company_name,
+                ] : null,
+                'order' => $supportTicket->order ? [
+                    'id' => $supportTicket->order->id,
+                    'order_number' => $supportTicket->order->order_number,
+                ] : null,
+                'customer' => $supportTicket->customer ? [
+                    'id' => $supportTicket->customer->id,
+                    'company_name' => $supportTicket->customer->company_name,
+                    'contact_name' => $supportTicket->customer->contact_name,
+                    'email' => $supportTicket->customer->email,
+                ] : null,
+                'assignee' => $supportTicket->assignee ? [
+                    'id' => $supportTicket->assignee->id,
+                    'name' => $supportTicket->assignee->name,
+                    'email' => $supportTicket->assignee->email,
+                ] : null,
+                'messages' => $supportTicket->messages
+                    ->sortBy('created_at')
+                    ->map(fn ($message): array => [
+                        'id' => $message->id,
+                        'sender_type' => $message->sender_type->value,
+                        'visibility' => $message->visibility->value,
+                        'message' => $message->message,
+                        'sender' => $message->sender ? [
+                            'id' => $message->sender->id,
+                            'name' => $message->sender->name,
+                            'email' => $message->sender->email,
+                        ] : null,
+                        'created_at' => $message->created_at?->toJSON(),
+                    ])
+                    ->values()
+                    ->all(),
+                'supplier_notifications' => $supportTicket->supplierNotifications
+                    ->map(fn ($notification): array => [
+                        'id' => $notification->id,
+                        'title' => $notification->title,
+                        'type' => $notification->type,
+                        'read_at' => $notification->read_at?->toJSON(),
+                    ])
+                    ->values()
+                    ->all(),
+            ],
+            'priorities' => $this->enumValues(TicketPriority::class),
+            'statuses' => $this->enumValues(TicketStatus::class),
+            'assignees' => User::query()
+                ->whereHas('roles', fn (Builder $query) => $query->whereIn('name', ['admin', 'marketing_manager']))
+                ->orderBy('name')
+                ->get(['id', 'name', 'email'])
+                ->map(fn (User $user): array => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                ])
+                ->all(),
+            'can_manage_status' => $request->user()->hasRole('admin') || $request->user()->hasRole('supplier'),
+            'can_assign' => $request->user()->hasRole('admin'),
+        ]);
+    }
+
+    public function supportTicketReply(Request $request, SupportTicket $supportTicket, SupportTicketService $tickets): RedirectResponse
+    {
+        $this->authorize('reply', $supportTicket);
+
+        $validated = $request->validate([
+            'message' => ['required', 'string', 'max:5000'],
+        ]);
+
+        $tickets->replyTicket($supportTicket, $request->user(), $validated);
+
+        return back()->with('success', 'Reply sent successfully.');
+    }
+
+    public function supportTicketStatus(Request $request, SupportTicket $supportTicket, SupportTicketService $tickets): RedirectResponse
+    {
+        $this->authorize('changeStatus', $supportTicket);
+
+        $validated = $request->validate([
+            'status' => ['required', 'string', Rule::in($this->enumValues(TicketStatus::class))],
+        ]);
+
+        $tickets->updateStatus($supportTicket, TicketStatus::from($validated['status']));
+
+        return back()->with('success', 'Ticket status updated successfully.');
+    }
+
+    public function supportTicketAssign(Request $request, SupportTicket $supportTicket, SupportTicketService $tickets): RedirectResponse
+    {
+        $this->authorize('assign', $supportTicket);
+
+        $validated = $request->validate([
+            'assigned_to' => ['nullable', 'integer', 'exists:users,id'],
+        ]);
+
+        $assignee = ! empty($validated['assigned_to'])
+            ? User::query()->findOrFail((int) $validated['assigned_to'])
+            : null;
+
+        $tickets->assignTicket($supportTicket, $assignee);
+
+        return back()->with('success', 'Ticket assignment updated successfully.');
+    }
+
     private function page(string $title, string $description, array $metrics, array $columns, iterable $rows, string $emptyState = 'No records found.', ?array $filters = null, string $component = 'Workspace/Index'): Response
     {
         return Inertia::render($component, [
@@ -641,6 +1053,37 @@ class WorkspaceController extends Controller
                 'filters' => $filters,
             ],
         ]);
+    }
+
+    private function currentSupplier(Request $request): Supplier
+    {
+        $supplier = $request->user()?->supplier;
+
+        abort_unless($request->user()?->hasRole('supplier') && $supplier?->isApproved(), 403);
+
+        return $supplier;
+    }
+
+    private function ensureSupplierOwnsProduct(Product $product, Supplier $supplier): void
+    {
+        abort_unless((int) $product->supplier_id === (int) $supplier->id, 403);
+    }
+
+    private function uniqueProductSlug(string $name, ?Product $ignoreProduct = null): string
+    {
+        $baseSlug = Str::slug($name);
+        $slug = $baseSlug;
+        $suffix = 2;
+
+        while (Product::query()
+            ->when($ignoreProduct, fn ($query) => $query->whereKeyNot($ignoreProduct->id))
+            ->where('slug', $slug)
+            ->exists()) {
+            $slug = $baseSlug.'-'.$suffix;
+            $suffix++;
+        }
+
+        return $slug;
     }
 
     /**
@@ -743,6 +1186,11 @@ class WorkspaceController extends Controller
         ];
     }
 
+    private function formatMoney(mixed $amount, string $currency = 'BDT'): string
+    {
+        return number_format((float) $amount, 2, '.', '').' '.$currency;
+    }
+
     private function formatPaymentGateway(?string $gateway): string
     {
         $gateway = strtolower(trim((string) $gateway));
@@ -752,6 +1200,51 @@ class WorkspaceController extends Controller
             'sslcommerz' => 'SSLCOMMERZ',
             '' => 'Stripe',
             default => ucwords(str_replace(['_', '-'], ' ', $gateway)),
+        };
+    }
+
+    private function supplierOrderAction(SupplierOrder $supplierOrder): array
+    {
+        $nextStatus = match ($supplierOrder->status) {
+            OrderStatus::Pending => OrderStatus::Confirmed,
+            OrderStatus::Confirmed, OrderStatus::Processing => OrderStatus::Shipped,
+            OrderStatus::Shipped => OrderStatus::Completed,
+            default => null,
+        };
+
+        if (! $nextStatus) {
+            return [
+                'kind' => 'status',
+                'label' => ucfirst($supplierOrder->status->value),
+                'status' => $supplierOrder->status->value,
+            ];
+        }
+
+        $label = match ($nextStatus) {
+            OrderStatus::Confirmed => 'Confirm order',
+            OrderStatus::Shipped => 'Mark shipped',
+            OrderStatus::Completed => 'Mark completed',
+            default => 'Update status',
+        };
+
+        return [
+            'kind' => 'post-action',
+            'label' => $label,
+            'href' => route('commerce.supplier-orders.status', [
+                'supplierOrder' => $supplierOrder->id,
+                'status' => $nextStatus->value,
+            ]),
+            'variant' => 'primary',
+        ];
+    }
+
+    private function nextSupplierOrderStatus(SupplierOrder $supplierOrder): ?OrderStatus
+    {
+        return match ($supplierOrder->status) {
+            OrderStatus::Pending => OrderStatus::Confirmed,
+            OrderStatus::Confirmed, OrderStatus::Processing => OrderStatus::Shipped,
+            OrderStatus::Shipped => OrderStatus::Completed,
+            default => null,
         };
     }
 

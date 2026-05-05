@@ -8,6 +8,7 @@ use App\Domains\CRM\Models\Customer;
 use App\Domains\Marketing\Enums\CampaignStatus;
 use App\Domains\Marketing\Enums\CampaignType;
 use App\Domains\Marketing\Enums\MessageChannel;
+use App\Domains\Marketing\Mail\MarketingCampaignMail;
 use App\Domains\Marketing\Models\Campaign;
 use App\Domains\Marketing\Models\CampaignLog;
 use App\Domains\Marketing\Models\CampaignTemplate;
@@ -15,6 +16,7 @@ use App\Domains\Marketing\Services\CampaignDispatchService;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class CampaignDispatchTest extends TestCase
@@ -23,6 +25,8 @@ class CampaignDispatchTest extends TestCase
 
     public function test_campaign_dispatch_builds_recipients_sends_message_and_logs_delivery(): void
     {
+        Mail::fake();
+
         $customer = $this->customer(tags: ['priority', 'wholesale']);
         $campaign = Campaign::create([
             'name' => 'Wholesale Follow Up',
@@ -47,9 +51,14 @@ class CampaignDispatchTest extends TestCase
         $campaign->refresh();
         $log = CampaignLog::firstOrFail();
 
+        Mail::assertSent(MarketingCampaignMail::class, function (MarketingCampaignMail $mail) use ($customer): bool {
+            return $mail->subjectLine === 'Hello Acme Buyer'
+                && str_contains($mail->body, 'Hi Acme Buyer, pricing is ready for Acme Wholesale.');
+        });
+
         $this->assertSame(CampaignStatus::Completed, $campaign->status);
         $this->assertSame($customer->id, $log->customer_id);
-        $this->assertSame('mock_email', $log->provider);
+        $this->assertSame(config('mail.default'), $log->provider);
         $this->assertStringContainsString('pricing is ready', $log->payload['body']);
         $this->assertDatabaseHas('campaign_recipients', [
             'campaign_id' => $campaign->id,

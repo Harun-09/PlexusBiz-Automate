@@ -204,11 +204,73 @@ const renderWorkspaceCell = (_column, value) => {
             );
         }
 
+        if (value.kind === 'post-action') {
+            const buttonClassName = value.variant === 'secondary'
+                ? 'inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2'
+                : 'inline-flex items-center justify-center rounded-full bg-blue-700 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2';
+
+            return (
+                <div className="flex flex-col gap-1">
+                    <Link
+                        href={value.href}
+                        method="post"
+                        as="button"
+                        preserveScroll
+                        className={buttonClassName}
+                    >
+                        {value.label}
+                    </Link>
+                    {value.note ? <span className="text-xs text-gray-500">{value.note}</span> : null}
+                </div>
+            );
+        }
+
+        if (value.kind === 'stock') {
+            return (
+                <div className="flex flex-wrap items-center gap-2">
+                    <span className={`text-sm font-semibold ${value.lowStock ? 'text-rose-600' : 'text-slate-700'}`}>
+                        {value.value}
+                    </span>
+                    {value.lowStock ? (
+                        <span className="inline-flex rounded-full border border-rose-200 bg-rose-50 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-rose-600">
+                            Low stock
+                        </span>
+                    ) : null}
+                </div>
+            );
+        }
+
         if (value.kind === 'link') {
+            const isDelete = value.method === 'delete' || value.variant === 'danger';
+            const linkClassName = value.className || (isDelete
+                ? 'inline-flex items-center justify-center rounded-full border border-rose-200 bg-rose-50 px-3.5 py-1.5 text-xs font-semibold text-rose-700 shadow-sm transition hover:border-rose-300 hover:bg-rose-100 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2'
+                : 'inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-3.5 py-1.5 text-xs font-semibold text-gray-700 shadow-sm transition hover:border-gray-400 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2');
+
+            if (isDelete) {
+                return (
+                    <button
+                        type="button"
+                        onClick={() => {
+                            if (value.confirm && !window.confirm(value.confirm)) {
+                                return;
+                            }
+
+                            router.delete(value.href, {
+                                preserveScroll: value.preserveScroll ?? true,
+                            });
+                        }}
+                        className={linkClassName}
+                    >
+                        {value.label}
+                    </button>
+                );
+            }
+
             return (
                 <Link
                     href={value.href}
-                    className="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-3.5 py-1.5 text-xs font-semibold text-gray-700 shadow-sm transition hover:border-gray-400 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                    preserveScroll={value.preserveScroll ?? true}
+                    className={linkClassName}
                 >
                     {value.label}
                 </Link>
@@ -221,6 +283,18 @@ const renderWorkspaceCell = (_column, value) => {
     }
 
     if (Array.isArray(value)) {
+        if (value.every((item) => item && typeof item === 'object' && !Array.isArray(item))) {
+            return (
+                <div className="flex flex-wrap gap-2">
+                    {value.map((item, index) => (
+                        <span key={item.label || item.href || index}>
+                            {renderWorkspaceCell(null, item)}
+                        </span>
+                    ))}
+                </div>
+            );
+        }
+
         return value.join(', ');
     }
 

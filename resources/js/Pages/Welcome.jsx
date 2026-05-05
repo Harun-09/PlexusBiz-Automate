@@ -496,31 +496,22 @@ function SupportIcon({ className = '' }) {
     );
 }
 
-const sidebarCategoryTitles = [
-    'Components & Storage',
-    'Computer Systems',
-    'Computer Peripherals',
-    'Server & Components',
-    'Appliances',
-    'Electronics',
-    'Gaming & VR',
-    'Networking',
-    'Smart Home & Security',
-    'Office Solutions',
-    'Software & Services',
-    'Automotive & Tools',
-    'Home & Outdoors',
-    'Health & Sports',
-    'Toys, Drones & Maker',
+const marketplaceShortcutItems = [
+    { icon: ProductsIcon, label: 'Marketplace Catalog', href: '/products' },
+    { icon: OrdersIcon, label: 'Bulk Orders', href: '/products/bulk-orders' },
+    { icon: InvoicesIcon, label: 'MOQ Pricing', href: '/products/moq-pricing' },
+    { icon: SupportIcon, label: 'Supplier Onboarding', href: route('supplier.apply') },
+    { icon: ProductsIcon, label: 'Product CRUD', href: '/admin/products' },
+    { icon: OrdersIcon, label: 'Inventory & Stock', href: '/commerce/products' },
+    { icon: OrdersIcon, label: 'Orders & Checkout', href: '/commerce/orders' },
+    { icon: InvoicesIcon, label: 'Invoices', href: '/invoices' },
+    { icon: ProductsIcon, label: 'CRM Customers', href: '/crm' },
+    { icon: OrdersIcon, label: 'Marketing Automation', href: '/marketing' },
+    { icon: SupportIcon, label: 'Workflow Automation', href: '/workflow' },
+    { icon: SupportIcon, label: 'Support Tickets', href: '/support' },
+    { icon: InvoicesIcon, label: 'Module Settings', href: '/settings/modules' },
+    { icon: ProductsIcon, label: 'Audit Logs', href: '/admin/audit-logs' },
 ];
-
-const sidebarCategoryIcons = [ProductsIcon, OrdersIcon, InvoicesIcon, SupportIcon];
-
-const marketplaceShortcutItems = sidebarCategoryTitles.map((title, index) => ({
-    icon: sidebarCategoryIcons[index % sidebarCategoryIcons.length],
-    title,
-    href: '#deals',
-}));
 
 const comboBundlesPrimary = [
     {
@@ -1636,7 +1627,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                                 <div className="flex-1 overflow-y-auto px-2">
                                     {marketplaceShortcutItems.map((item) => (
                                         <Link
-                                            key={item.title}
+                                            key={item.label}
                                             href={item.href}
                                             className="flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-left transition hover:bg-white/10"
                                         >
@@ -1644,7 +1635,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                                                 <item.icon className="h-6 w-6" />
                                             </span>
                                             <span className="min-w-0 flex-1 text-sm font-semibold leading-5 text-white">
-                                                {item.title}
+                                                {item.label}
                                             </span>
                                             <span className="text-lg font-black text-white/35">&gt;</span>
                                         </Link>

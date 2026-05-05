@@ -5,13 +5,13 @@ const moduleConfig = {
     tag: 'Campaigns',
     theme: 'marketing',
     heroTitle: 'Campaign command center',
-    heroCopy: 'Keep campaign status, templates, recipients, and delivery logs in one place so trigger-based marketing stays observable.',
+    heroCopy: 'Keep email campaign status, templates, recipients, and delivery logs in one place so trigger-based marketing stays observable.',
     panelTitle: 'What this page covers',
-    panelCopy: 'This module is for campaign operations: template linkage, delivery bookkeeping, and enough visibility to manage basic automation safely.',
+    panelCopy: 'This module is for email campaign operations: template linkage, delivery bookkeeping, and enough visibility to manage basic automation safely.',
     highlights: [
         {
             label: 'Template linkage',
-            detail: 'Each campaign shows how many templates are attached to it.',
+            detail: 'Each campaign shows how many email templates are attached to it.',
         },
         {
             label: 'Recipient scope',
@@ -25,7 +25,7 @@ const moduleConfig = {
     panelBullets: [
         {
             label: 'Trigger campaigns',
-            detail: 'Use campaign records as the backbone for welcome, reminder, and confirmation flows.',
+            detail: 'Use campaign records as the backbone for welcome, reminder, and confirmation email flows.',
         },
         {
             label: 'Delivery logs',

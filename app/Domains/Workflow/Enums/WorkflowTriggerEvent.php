@@ -11,4 +11,5 @@ enum WorkflowTriggerEvent: string
     case CampaignScheduled = 'campaign.scheduled';
     case TicketCreated = 'ticket.created';
     case SocialPostDue = 'social.post.due';
+    case OrderStatusChanged = 'order.status_changed';
 }

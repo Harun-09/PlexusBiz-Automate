@@ -6,10 +6,12 @@ use App\Domains\CRM\Enums\CustomerLifecycleStage;
 use App\Domains\CRM\Enums\CustomerStatus;
 use App\Domains\CRM\Models\Customer;
 use App\Domains\Marketing\Enums\MessageChannel;
+use App\Domains\Marketing\Mail\MarketingCampaignMail;
 use App\Domains\Marketing\Models\CampaignTemplate;
 use App\Domains\Marketing\Services\MarketingTriggerService;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class MarketingTriggerTest extends TestCase
@@ -18,6 +20,8 @@ class MarketingTriggerTest extends TestCase
 
     public function test_new_customer_welcome_trigger_sends_from_template(): void
     {
+        Mail::fake();
+
         $customer = $this->customer();
 
         CampaignTemplate::create([
@@ -32,7 +36,12 @@ class MarketingTriggerTest extends TestCase
 
         $log = app(MarketingTriggerService::class)->welcomeCustomer($customer);
 
-        $this->assertSame('mock_email', $log->provider);
+        Mail::assertSent(MarketingCampaignMail::class, function (MarketingCampaignMail $mail) use ($customer): bool {
+            return $mail->subjectLine === 'Welcome Trigger Buyer'
+                && str_contains($mail->body, 'Hello Trigger Buyer, your account is ready.');
+        });
+
+        $this->assertSame(config('mail.default'), $log->provider);
         $this->assertSame($customer->id, $log->customer_id);
         $this->assertSame('Hello Trigger Buyer, your account is ready.', $log->payload['body']);
     }

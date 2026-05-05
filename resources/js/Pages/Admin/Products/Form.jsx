@@ -1,11 +1,21 @@
 import { useForm } from '@inertiajs/react';
 
-export default function ProductForm({ product = null, suppliers = [], statuses, submitUrl, method = 'post' }) {
+export default function ProductForm({
+    product = null,
+    suppliers = [],
+    statuses,
+    submitUrl,
+    method = 'post',
+    defaultSupplierId = '',
+    hideSupplier = false,
+    cancelUrl = '/admin/products',
+    supplierLabel = '',
+}) {
     const isEditing = !!product;
-    const pricingUrl = product?.id ? `/admin/bulk-pricing?product=${product.id}` : '/admin/bulk-pricing';
+    const pricingUrl = !hideSupplier && (product?.id ? `/admin/bulk-pricing?product=${product.id}` : '/admin/bulk-pricing');
 
     const { data, setData, post, put, processing, errors } = useForm({
-        supplier_id: product?.supplier_id || '',
+        supplier_id: product?.supplier_id || defaultSupplierId || '',
         sku: product?.sku || '',
         name: product?.name || '',
         description: product?.description || '',
@@ -26,25 +36,33 @@ export default function ProductForm({ product = null, suppliers = [], statuses, 
     return (
         <form onSubmit={submit} className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2">
-                {/* Supplier */}
-                <div className="md:col-span-2">
-                    <label htmlFor="product-supplier" className="block text-xs font-bold uppercase tracking-wider text-gray-500">
-                        Supplier <span className="text-rose-500">*</span>
-                    </label>
-                    <select
-                        id="product-supplier"
-                        value={data.supplier_id}
-                        onChange={(e) => setData('supplier_id', e.target.value)}
-                        className="mt-1.5 block w-full rounded-xl border-gray-200 bg-gray-50/50 text-sm shadow-sm transition focus:border-blue-500 focus:ring-blue-500"
-                        required
-                    >
-                        <option value="">Select a supplier…</option>
-                        {suppliers.map((s) => (
-                            <option key={s.id} value={s.id}>{s.label}</option>
-                        ))}
-                    </select>
-                    {errors.supplier_id && <p className="mt-1.5 text-sm text-rose-600">{errors.supplier_id}</p>}
-                </div>
+                {hideSupplier ? (
+                    <div className="md:col-span-2 rounded-2xl border border-blue-200 bg-blue-50/80 p-4 text-sm text-blue-900">
+                        <p className="font-semibold">Supplier</p>
+                        <p className="mt-1 text-blue-800/90">
+                            {supplierLabel || 'This product will be saved under your supplier account.'}
+                        </p>
+                    </div>
+                ) : (
+                    <div className="md:col-span-2">
+                        <label htmlFor="product-supplier" className="block text-xs font-bold uppercase tracking-wider text-gray-500">
+                            Supplier <span className="text-rose-500">*</span>
+                        </label>
+                        <select
+                            id="product-supplier"
+                            value={data.supplier_id}
+                            onChange={(e) => setData('supplier_id', e.target.value)}
+                            className="mt-1.5 block w-full rounded-xl border-gray-200 bg-gray-50/50 text-sm shadow-sm transition focus:border-blue-500 focus:ring-blue-500"
+                            required
+                        >
+                            <option value="">Select a supplier...</option>
+                            {suppliers.map((s) => (
+                                <option key={s.id} value={s.id}>{s.label}</option>
+                            ))}
+                        </select>
+                        {errors.supplier_id && <p className="mt-1.5 text-sm text-rose-600">{errors.supplier_id}</p>}
+                    </div>
+                )}
 
                 {/* SKU */}
                 <div>
@@ -89,7 +107,7 @@ export default function ProductForm({ product = null, suppliers = [], statuses, 
                         onChange={(e) => setData('description', e.target.value)}
                         rows={4}
                         className="mt-1.5 block w-full rounded-xl border-gray-200 bg-gray-50/50 text-sm shadow-sm transition focus:border-blue-500 focus:bg-white focus:ring-blue-500"
-                        placeholder="Product description, specifications, and key features…"
+                        placeholder="Product description, specifications, and key features..."
                     />
                     {errors.description && <p className="mt-1.5 text-sm text-rose-600">{errors.description}</p>}
                 </div>
@@ -113,21 +131,27 @@ export default function ProductForm({ product = null, suppliers = [], statuses, 
                     {errors.base_price && <p className="mt-1.5 text-sm text-rose-600">{errors.base_price}</p>}
                 </div>
 
-                <div className="md:col-span-2 rounded-2xl border border-blue-200 bg-blue-50/80 p-4 text-sm text-blue-900">
-                    <p className="font-semibold">MOQ and bulk pricing tiers are managed separately.</p>
-                    <p className="mt-1 text-blue-800/90">
-                        Use the dedicated management page to change the minimum order quantity and control tier-based discounts without duplicating those rules inside product CRUD.
-                    </p>
-                    <a
-                        href={pricingUrl}
-                        className="mt-3 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-blue-700"
-                    >
-                        Open Bulk Pricing & MOQ
-                        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 19.5 10.5m0 0L13.5 16.5m6-6H4.5" />
-                        </svg>
-                    </a>
-                </div>
+                {!hideSupplier ? (
+                    <div className="md:col-span-2 rounded-2xl border border-blue-200 bg-blue-50/80 p-4 text-sm text-blue-900">
+                        <p className="font-semibold">MOQ and bulk pricing tiers are managed separately.</p>
+                        <p className="mt-1 text-blue-800/90">
+                            Use the dedicated management page to change the minimum order quantity and control tier-based discounts without duplicating those rules inside product CRUD.
+                        </p>
+                        <a
+                            href={pricingUrl}
+                            className="mt-3 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-blue-700"
+                        >
+                            Open Bulk Pricing & MOQ
+                            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 19.5 10.5m0 0L13.5 16.5m6-6H4.5" />
+                            </svg>
+                        </a>
+                    </div>
+                ) : (
+                    <div className="md:col-span-2 rounded-2xl border border-slate-200 bg-slate-50/80 p-4 text-sm text-slate-600">
+                        MOQ and tier pricing are controlled by the admin bulk pricing workspace.
+                    </div>
+                )}
 
                 {/* Stock Quantity */}
                 <div>
@@ -177,7 +201,7 @@ export default function ProductForm({ product = null, suppliers = [], statuses, 
                     ) : null}
                     {isEditing ? 'Update Product' : 'Create Product'}
                 </button>
-                <a href="/admin/products" className="inline-flex w-full items-center justify-center rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-600 shadow-sm transition hover:bg-gray-50 sm:w-auto">
+                <a href={cancelUrl} className="inline-flex w-full items-center justify-center rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-600 shadow-sm transition hover:bg-gray-50 sm:w-auto">
                     Cancel
                 </a>
             </div>
