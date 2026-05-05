@@ -2,17 +2,17 @@
 
 namespace App\Policies;
 
-use App\Domains\Marketing\Models\Campaign;
+use App\Domains\Marketing\Models\CampaignTemplate;
 use App\Models\User;
 
-class CampaignPolicy
+class CampaignTemplatePolicy
 {
     public function viewAny(User $user): bool
     {
         return $user->hasAnyRole(['admin', 'marketing_manager']);
     }
 
-    public function view(User $user, Campaign $campaign): bool
+    public function view(User $user, CampaignTemplate $campaignTemplate): bool
     {
         return $user->hasAnyRole(['admin', 'marketing_manager']);
     }
@@ -22,12 +22,12 @@ class CampaignPolicy
         return $user->hasAnyRole(['admin', 'marketing_manager']);
     }
 
-    public function update(User $user, Campaign $campaign): bool
+    public function update(User $user, CampaignTemplate $campaignTemplate): bool
     {
         return $user->hasAnyRole(['admin', 'marketing_manager']);
     }
 
-    public function delete(User $user, Campaign $campaign): bool
+    public function delete(User $user, CampaignTemplate $campaignTemplate): bool
     {
         return $user->hasAnyRole(['admin', 'marketing_manager']);
     }

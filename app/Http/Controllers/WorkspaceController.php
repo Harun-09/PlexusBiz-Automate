@@ -491,6 +491,22 @@ class WorkspaceController extends Controller
             'Templates' => $campaign->templates_count,
             'Recipients' => $campaign->recipients_count,
             'Logs' => $campaign->logs_count,
+            'Action' => [
+                [
+                    'kind' => 'link',
+                    'label' => 'Edit',
+                    'href' => route('marketing.campaigns.edit', $campaign),
+                    'variant' => 'secondary',
+                ],
+                [
+                    'kind' => 'link',
+                    'label' => 'Delete',
+                    'href' => route('marketing.campaigns.destroy', $campaign),
+                    'method' => 'delete',
+                    'variant' => 'danger',
+                    'confirm' => 'Delete this campaign?',
+                ],
+            ],
         ]);
 
         return $this->page('Campaigns', 'Email marketing campaigns, recipient count, and delivery logs.', [
@@ -498,7 +514,7 @@ class WorkspaceController extends Controller
             ['label' => 'Draft Campaigns', 'value' => Campaign::where('status', CampaignStatus::Draft->value)->count()],
             ['label' => 'Scheduled Campaigns', 'value' => Campaign::where('status', CampaignStatus::Scheduled->value)->count()],
             ['label' => 'Templates', 'value' => CampaignTemplate::count()],
-        ], ['Campaign', 'Type', 'Status', 'Templates', 'Recipients', 'Logs'], $rows, filters: $filters, component: 'Marketing/Campaigns/Index');
+        ], ['Campaign', 'Type', 'Status', 'Templates', 'Recipients', 'Logs', 'Action'], $rows, filters: $filters, component: 'Marketing/Campaigns/Index');
     }
 
     public function socialPosts(Request $request): Response
@@ -633,6 +649,22 @@ class WorkspaceController extends Controller
                     'Subject' => $template->subject ?? '',
                     'Variables' => is_array($template->variables) ? implode(', ', $template->variables) : '',
                     'Status' => (string) $template->status,
+                    'Action' => [
+                        [
+                            'kind' => 'link',
+                            'label' => 'Edit',
+                            'href' => route('marketing.templates.edit', $template),
+                            'variant' => 'secondary',
+                        ],
+                        [
+                            'kind' => 'link',
+                            'label' => 'Delete',
+                            'href' => route('marketing.templates.destroy', $template),
+                            'method' => 'delete',
+                            'variant' => 'danger',
+                            'confirm' => 'Delete this template?',
+                        ],
+                    ],
                 ];
             });
 
@@ -640,7 +672,7 @@ class WorkspaceController extends Controller
             ['label' => 'Total Templates', 'value' => CampaignTemplate::count()],
             ['label' => 'Email Templates', 'value' => CampaignTemplate::where('channel', MessageChannel::Email->value)->count()],
             ['label' => 'Linked Templates', 'value' => CampaignTemplate::whereNotNull('campaign_id')->count()],
-        ], ['Template', 'Key', 'Channel', 'Campaign', 'Subject', 'Variables', 'Status'], $rows, filters: $filters, component: 'Marketing/Templates/Index');
+        ], ['Template', 'Key', 'Channel', 'Campaign', 'Subject', 'Variables', 'Status', 'Action'], $rows, filters: $filters, component: 'Marketing/Templates/Index');
     }
 
     public function workflowRules(Request $request): Response

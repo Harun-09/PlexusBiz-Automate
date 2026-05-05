@@ -37,7 +37,8 @@ const moduleConfig = {
         },
     ],
     actions: [
-        { label: 'View Templates', href: '/marketing/templates', variant: 'primary' },
+        { label: 'Create Campaign', href: '/marketing/campaigns/create', variant: 'primary' },
+        { label: 'View Templates', href: '/marketing/templates', variant: 'secondary' },
         { label: 'Inspect Workflow Rules', href: '/workflow/rules', variant: 'secondary' },
     ],
 };

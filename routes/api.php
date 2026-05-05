@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\SupportChatbotController;
 use App\Http\Controllers\Api\UserProfileController;
 use App\Http\Controllers\Api\V1\CampaignController;
+use App\Http\Controllers\Api\V1\CampaignTemplateController;
 use App\Http\Controllers\Api\V1\MessageController;
 use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\OrderController;
@@ -33,7 +34,8 @@ Route::middleware('auth:sanctum')->prefix('v1')->name('v1.')->group(function ():
     Route::apiResource('products', ProductController::class)->only(['index', 'show']);
     Route::apiResource('orders', OrderController::class)->only(['index', 'show']);
     Route::apiResource('customers', CustomerController::class)->only(['index', 'show']);
-    Route::apiResource('campaigns', CampaignController::class)->only(['index', 'show']);
+    Route::apiResource('campaigns', CampaignController::class);
+    Route::apiResource('campaign-templates', CampaignTemplateController::class);
     Route::apiResource('social-posts', SocialPostController::class)->only(['index', 'show']);
     Route::apiResource('workflow-logs', WorkflowLogController::class)->only(['index', 'show']);
     Route::post('/support/chatbot/message', SupportChatbotController::class)->name('support.chatbot.message');

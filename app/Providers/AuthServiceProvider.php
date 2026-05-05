@@ -7,10 +7,12 @@ use App\Domains\ECommerce\Models\Invoice;
 use App\Domains\ECommerce\Models\Order;
 use App\Domains\ECommerce\Models\Product;
 use App\Domains\Marketing\Models\Campaign;
+use App\Domains\Marketing\Models\CampaignTemplate;
 use App\Domains\Social\Models\SocialPost;
 use App\Domains\Support\Models\SupportTicket;
 use App\Domains\Workflow\Models\WorkflowLog;
 use App\Policies\CampaignPolicy;
+use App\Policies\CampaignTemplatePolicy;
 use App\Policies\CustomerPolicy;
 use App\Policies\InvoicePolicy;
 use App\Policies\OrderPolicy;
@@ -29,6 +31,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Campaign::class => CampaignPolicy::class,
+        CampaignTemplate::class => CampaignTemplatePolicy::class,
         Customer::class => CustomerPolicy::class,
         Invoice::class => InvoicePolicy::class,
         Order::class => OrderPolicy::class,

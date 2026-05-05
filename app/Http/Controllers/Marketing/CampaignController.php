@@ -1,67 +1,74 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Marketing;
 
 use App\Domains\Marketing\Enums\CampaignStatus;
 use App\Domains\Marketing\Enums\CampaignType;
 use App\Domains\Marketing\Models\Campaign;
-use App\Http\Controllers\Api\V1\Concerns\AppliesApiFilters;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\ApiIndexRequest;
-use App\Http\Resources\Api\CampaignResource;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class CampaignController extends Controller
 {
-    use AppliesApiFilters;
-
-    public function index(ApiIndexRequest $request)
+    public function create(): Response
     {
-        $this->authorize('viewAny', Campaign::class);
+        $this->authorize('create', Campaign::class);
 
-        $query = Campaign::query()->with('creator')->withCount(['recipients', 'logs', 'templates']);
-
-        $this->applySearch($query, $request, ['name', 'slug']);
-        $this->applyStatus($query, $request);
-        $this->applySort($query, $request, ['created_at', 'updated_at', 'scheduled_at', 'name']);
-
-        return CampaignResource::collection($query->paginate($request->perPage())->withQueryString());
+        return Inertia::render('Marketing/Campaigns/Create', [
+            'campaignTypes' => $this->campaignTypes(),
+            'statuses' => $this->campaignStatuses(),
+        ]);
     }
 
-    public function show(Campaign $campaign): CampaignResource
-    {
-        $this->authorize('view', $campaign);
-
-        return CampaignResource::make($campaign->load('creator')->loadCount(['recipients', 'logs', 'templates']));
-    }
-
-    public function store(Request $request): JsonResponse
+    public function store(Request $request): RedirectResponse
     {
         $this->authorize('create', Campaign::class);
 
         $validated = $this->validateCampaign($request);
 
-        $campaign = Campaign::create([
+        Campaign::create([
             'created_by' => $request->user()->id,
             'name' => trim($validated['name']),
             'slug' => $this->uniqueSlug(trim($validated['name'])),
             'type' => $validated['type'],
             'status' => $validated['status'],
-            'segment_filters_json' => $this->normalizeSegmentFilters($validated['segment_tags'] ?? null),
+            'segment_filters_json' => $this->normalizeSegmentTags($validated['segment_tags'] ?? null),
             'scheduled_at' => $this->parseDateTime($validated['scheduled_at'] ?? null),
         ]);
 
-        return response()->json([
-            'message' => 'Campaign created successfully',
-            'data' => CampaignResource::make($campaign->load('creator')->loadCount(['recipients', 'logs', 'templates'])),
-        ], 201);
+        return redirect()
+            ->route('marketing.campaigns.index')
+            ->with('success', 'Campaign created successfully.');
     }
 
-    public function update(Request $request, Campaign $campaign): JsonResponse
+    public function edit(Campaign $campaign): Response
+    {
+        $this->authorize('update', $campaign);
+
+        $segmentFilters = $campaign->segment_filters_json ?? [];
+
+        return Inertia::render('Marketing/Campaigns/Edit', [
+            'campaign' => [
+                'id' => $campaign->id,
+                'name' => $campaign->name,
+                'slug' => $campaign->slug,
+                'type' => $campaign->type->value,
+                'status' => $campaign->status->value,
+                'segment_tags' => implode(', ', $segmentFilters['tags'] ?? []),
+                'scheduled_at' => $campaign->scheduled_at?->toJSON(),
+            ],
+            'campaignTypes' => $this->campaignTypes(),
+            'statuses' => $this->campaignStatuses(),
+        ]);
+    }
+
+    public function update(Request $request, Campaign $campaign): RedirectResponse
     {
         $this->authorize('update', $campaign);
 
@@ -72,25 +79,24 @@ class CampaignController extends Controller
             'slug' => $this->uniqueSlug(trim($validated['name']), $campaign),
             'type' => $validated['type'],
             'status' => $validated['status'],
-            'segment_filters_json' => $this->normalizeSegmentFilters($validated['segment_tags'] ?? null),
+            'segment_filters_json' => $this->normalizeSegmentTags($validated['segment_tags'] ?? null),
             'scheduled_at' => $this->parseDateTime($validated['scheduled_at'] ?? null),
         ])->save();
 
-        return response()->json([
-            'message' => 'Campaign updated successfully',
-            'data' => CampaignResource::make($campaign->refresh()->load('creator')->loadCount(['recipients', 'logs', 'templates'])),
-        ]);
+        return redirect()
+            ->route('marketing.campaigns.index')
+            ->with('success', 'Campaign updated successfully.');
     }
 
-    public function destroy(Campaign $campaign): JsonResponse
+    public function destroy(Campaign $campaign): RedirectResponse
     {
         $this->authorize('delete', $campaign);
 
         $campaign->delete();
 
-        return response()->json([
-            'message' => 'Campaign deleted successfully',
-        ]);
+        return redirect()
+            ->route('marketing.campaigns.index')
+            ->with('success', 'Campaign deleted successfully.');
     }
 
     /**
@@ -145,7 +151,7 @@ class CampaignController extends Controller
      * @param  mixed  $value
      * @return array<string, array<int, string>>|null
      */
-    private function normalizeSegmentFilters(mixed $value): ?array
+    private function normalizeSegmentTags(mixed $value): ?array
     {
         if (is_array($value)) {
             if (isset($value['tags']) && is_array($value['tags'])) {
