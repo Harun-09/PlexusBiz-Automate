@@ -33,13 +33,16 @@ class InvoicePreviewTest extends TestCase
         $preview = $this->actingAs($buyer)->get("/invoices/{$invoice->id}/preview");
 
         $preview->assertOk();
-        $this->assertStringStartsWith('application/pdf', (string) $preview->headers->get('content-type'));
+        $this->assertStringContainsString('text/html', (string) $preview->headers->get('content-type'));
+        $preview->assertSee('Invoice preview', false);
+        $preview->assertSee('iframe id="viewer"', false);
 
         $download = $this->actingAs($buyer)->get("/invoices/{$invoice->id}/download");
 
         $download->assertOk();
-        $this->assertStringStartsWith('application/pdf', (string) $download->headers->get('content-type'));
-        $this->assertStringContainsString('attachment', (string) $download->headers->get('content-disposition'));
+        $this->assertStringContainsString('text/html', (string) $download->headers->get('content-type'));
+        $download->assertSee('Preparing invoice download', false);
+        $download->assertSee('manual-download', false);
     }
 
     /**
