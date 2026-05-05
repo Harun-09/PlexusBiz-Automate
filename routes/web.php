@@ -1,11 +1,13 @@
 <?php
 
+use App\Domains\ECommerce\Models\Order;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\RfqRequestController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SupplierOnboardingController;
+use App\Http\Controllers\WorkspaceController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -40,6 +42,12 @@ Route::middleware('guest')->group(function (): void {
 
     Route::post('/supplier/apply', [SupplierOnboardingController::class, 'store'])
         ->name('supplier.apply.store');
+
+    Route::get('/register-supplier', [SupplierOnboardingController::class, 'create'])
+        ->name('supplier.register');
+
+    Route::post('/register-supplier', [SupplierOnboardingController::class, 'store'])
+        ->name('supplier.register.store');
 });
 
 Route::get('/checkout/success/{orderNumber}', [PaymentController::class, 'checkoutSuccess'])
@@ -86,9 +94,23 @@ Route::get('/dashboard', DashboardController::class)->middleware(['auth', 'verif
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::redirect('/customer/profile', '/profile')->name('customer.profile.alias');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::patch('/profile/customer', [ProfileController::class, 'updateCustomer'])->name('profile.customer.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::prefix('supplier')->name('supplier.')->middleware('role:supplier|admin')->group(function (): void {
+        Route::get('/products', [WorkspaceController::class, 'supplierProducts'])->name('products.index');
+        Route::get('/products/create', [WorkspaceController::class, 'supplierProductCreate'])->middleware('role:supplier')->name('products.create');
+        Route::get('/products/{product}/edit', [WorkspaceController::class, 'supplierProductEdit'])->middleware('role:supplier')->name('products.edit');
+    });
+
+    Route::redirect('/buyer/tickets', '/support/tickets')->name('buyer.tickets.alias');
+
+    Route::redirect('/orders', '/commerce/orders')->name('orders.index.alias');
+    Route::get('/orders/{order}', function (Order $order) {
+        return redirect()->route('commerce.orders.index', ['search' => $order->order_number]);
+    })->middleware('role:buyer|supplier|admin')->name('orders.show.alias');
 
     // Invoice Routes
     Route::prefix('invoices')->name('invoices.')->group(function (): void {

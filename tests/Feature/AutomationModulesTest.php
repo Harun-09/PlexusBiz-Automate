@@ -27,6 +27,7 @@ class AutomationModulesTest extends TestCase
         ]);
 
         $marketing = User::where('email', 'marketing@plexus.test')->firstOrFail();
+        $admin = User::where('email', 'admin@plexus.test')->firstOrFail();
         $buyer = User::where('email', 'buyer@plexus.test')->firstOrFail();
 
         $this->actingAs($marketing)
@@ -48,6 +49,11 @@ class AutomationModulesTest extends TestCase
                 ->component('Social/Posts/Index')
                 ->where('workspace.title', 'Social Posts')
                 ->has('workspace.rows', 2));
+
+        $this->actingAs($marketing)
+            ->get('/social/posts/create')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page->component('Social/Posts/Create'));
 
         $this->actingAs($marketing)
             ->get('/social/accounts')
@@ -87,7 +93,12 @@ class AutomationModulesTest extends TestCase
             ->assertInertia(fn (Assert $page): Assert => $page
                 ->component('Workflow/Rules/Index')
                 ->where('workspace.title', 'Automation Rules')
-                ->has('workspace.rows', 6));
+                ->has('workspace.rows', 7));
+
+        $this->actingAs($marketing)
+            ->get('/workflow/rules/create')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page->component('Workflow/Rules/Create'));
 
         $this->actingAs($marketing)
             ->get('/workflow/logs')
@@ -115,5 +126,15 @@ class AutomationModulesTest extends TestCase
                 ->component('Support/Faq/Index')
                 ->where('workspace.title', 'Support FAQ')
                 ->has('workspace.rows', 2));
+
+        $this->actingAs($marketing)
+            ->get('/crm/leads/create')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page->component('CRM/Leads/Create'));
+
+        $this->actingAs($admin)->get('/admin/leads/create')->assertRedirect('/crm/leads/create');
+        $this->actingAs($admin)->get('/admin/social-posts/create')->assertRedirect('/social/posts/create');
+        $this->actingAs($admin)->get('/admin/automation-rules/create')->assertRedirect('/workflow/rules/create');
+        $this->actingAs($admin)->get('/admin/modules')->assertOk();
     }
 }

@@ -8,7 +8,7 @@ The application keeps business logic grouped by domain under `app/Domains`:
 
 - `ECommerce`: suppliers, catalog, pricing tiers, inventory, cart, checkout, orders, invoices, RFQs.
 - `CRM`: customer profiles, lifecycle tracking, leads, interactions, segmentation.
-- `Marketing`: campaigns, templates, recipients, mockable email/SMS providers, dispatch jobs.
+- `Marketing`: campaigns, templates, recipients, mockable email providers, dispatch jobs.
 - `Social`: social accounts, scheduled posts, mock Facebook/Instagram publishing, engagement placeholders.
 - `Workflow`: automation rules, event listeners, queued/sync action execution, full payload snapshots in `workflow_logs`.
 - `Support`: support tickets, messages, FAQ matching, auto replies, supplier notifications, chatbot API.
@@ -23,7 +23,7 @@ The assignment modules are implemented as live, data-backed flows:
 - E-Commerce: multi-vendor marketplace, supplier onboarding, product CRUD, inventory tracking, bulk pricing and MOQ, cart to checkout to confirmation, and invoices.
 - CRM: customer registration and profiling, purchase history, basic segmentation, lead management, and interaction history.
 - Social Media Automation: scheduled Facebook and Instagram posts, content calendar, rule-based publishing, campaign management, and engagement placeholders.
-- Marketing Automation: template-based email and SMS campaigns, trigger-based rules, and scheduling.
+- Marketing Automation: template-based email campaigns, trigger-based rules, and scheduling. SMS is adapter-ready but not required for the assignment demo.
 - Workflow Automation: IF/THEN automation rules, queued and sync execution, scheduler support, and execution logs.
 - Admin Panel: RBAC, platform monitoring, user management, and module enable/disable control.
 - Order & Support Automation: auto confirmations, support tickets, auto replies, supplier notifications, and chatbot-ready API structure.
@@ -57,6 +57,17 @@ Seeded accounts:
 | Supplier | `supplier@plexus.test` | `password` |
 | Buyer | `buyer@plexus.test` | `password` |
 | Marketing Manager | `marketing@plexus.test` | `password` |
+
+Assignment aliases are seeded with the same password:
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Admin | `admin@example.com` | `password` |
+| Supplier | `supplier@example.com` | `password` |
+| Buyer | `buyer@example.com` | `password` |
+| Marketing Manager | `marketing@example.com` | `password` |
+
+Assignment-friendly route aliases are also available for the demo, including `/register-supplier`, `/supplier/products`, `/admin/leads`, `/admin/social-posts`, `/admin/campaigns`, `/admin/automation-rules`, `/admin/modules`, `/buyer/tickets`, and `/customer/profile`.
 
 ## Testing
 
@@ -104,6 +115,20 @@ Automation execution must preserve trigger context. `WorkflowEngineService` writ
 - `executed_at`
 
 This applies to order placement and support ticket creation events.
+
+## Scheduler Commands
+
+```bash
+php artisan schedule:run
+php artisan queue:work
+php artisan campaigns:send-scheduled
+php artisan carts:check-abandoned
+php artisan social-posts:publish-due
+```
+
+## Requirement Proof Guide
+
+Open `requirement-proof-guide.html` for the full step-by-step viva/demo sequence.
 
 ## Operations
 

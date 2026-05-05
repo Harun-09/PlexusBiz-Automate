@@ -42,6 +42,9 @@ Local/manual check:
 ```bash
 php artisan schedule:list
 php artisan schedule:run
+php artisan campaigns:send-scheduled
+php artisan carts:check-abandoned
+php artisan social-posts:publish-due
 ```
 
 ## Deployment Checklist

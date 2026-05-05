@@ -48,7 +48,7 @@ class SupplierOnboardingController extends Controller
             'country' => ['nullable', 'string', 'max:120'],
         ]);
 
-        $user = DB::transaction(function () use ($validated): User {
+        $user = DB::transaction(function () use ($validated, $messages): User {
             $address = array_filter([
                 'line1' => $validated['address_line1'] ?? null,
                 'line2' => $validated['address_line2'] ?? null,

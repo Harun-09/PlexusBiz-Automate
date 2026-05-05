@@ -303,6 +303,25 @@
     </section>
 
     <section>
+        <h2>Assignment Requirement Proof Update</h2>
+        <p>The detailed requirement list was checked against the current project. Missing demo-facing gaps have been closed so the evaluator can follow the requested output pages and prove each module step by step.</p>
+        <ul>
+            <li>Added assignment-friendly aliases for supplier onboarding, supplier products, admin leads, social posts, campaigns, automation rules, modules, tickets, customer profile, and order lookup.</li>
+            <li>Seeded assignment-friendly login aliases: <code>admin@example.com</code>, <code>supplier@example.com</code>, <code>buyer@example.com</code>, and <code>marketing@example.com</code>, all using <code>password</code>.</li>
+            <li>Added lead create/edit/delete UI for CRM proof at <code>/crm/leads/create</code> and alias <code>/admin/leads/create</code>.</li>
+            <li>Added social post schedule create/edit/delete UI for Facebook and Instagram proof at <code>/social/posts/create</code> and alias <code>/admin/social-posts/create</code>.</li>
+            <li>Added automation rule create/edit/delete UI for IF event THEN action proof at <code>/workflow/rules/create</code> and alias <code>/admin/automation-rules/create</code>.</li>
+            <li>Added named scheduler commands: <code>campaigns:send-scheduled</code>, <code>carts:check-abandoned</code>, and <code>social-posts:publish-due</code>.</li>
+            <li>Added RFQ-created supplier notification rule seed and payload support so RFQ demos can create supplier notifications.</li>
+            <li>Added the required <code>notifications</code> table migration while keeping the existing <code>messages</code> table as the active in-app notification log.</li>
+            <li>Added product CRUD fields for MOQ and bulk price so supplier/admin product forms directly show the assignment's MOQ, regular price, and bulk price proof.</li>
+            <li>Created <code>requirement-proof-guide.html</code> with the exact demo sequence, credentials, routes, terminal commands, and database backup proof steps.</li>
+            <li>Generated SQL backup at <code>database/backups/plexusbiz_assignment_backup.sql</code> after applying the current local migrations.</li>
+            <li>SMS is not required for this submission; the proof flow uses email providers, in-app messages, notifications, and workflow logs.</li>
+        </ul>
+    </section>
+
+    <section>
         <h2>Prompt Review Update</h2>
         <p>The attached master prompt was reviewed end to end. The core platform modules are covered, and the dedicated audit log trail for admin settings, module enable/disable changes, supplier approval, role changes, and critical workflow changes is now implemented in code.</p>
         <ul>

@@ -178,6 +178,16 @@ class WorkflowActionExecutor
             $ids[] = (int) $ticketSupplier;
         }
 
+        $rfqSupplier = data_get($payload, 'rfq.supplier_id');
+        if (is_numeric($rfqSupplier)) {
+            $ids[] = (int) $rfqSupplier;
+        }
+
+        $productSupplier = data_get($payload, 'product.supplier_id');
+        if (is_numeric($productSupplier)) {
+            $ids[] = (int) $productSupplier;
+        }
+
         $items = data_get($payload, 'items', []);
         if (is_array($items)) {
             foreach ($items as $item) {

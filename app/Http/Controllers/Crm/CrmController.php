@@ -359,6 +359,22 @@ class CrmController extends Controller
                     'Value' => $this->formatMoney($lead->value),
                     'Status' => $lead->status->value,
                     'Follow Up' => $this->formatDate($lead->next_follow_up_at),
+                    'Action' => [
+                        [
+                            'kind' => 'link',
+                            'label' => 'Edit',
+                            'href' => route('crm.leads.edit', $lead),
+                            'variant' => 'secondary',
+                        ],
+                        [
+                            'kind' => 'link',
+                            'label' => 'Delete',
+                            'href' => route('crm.leads.destroy', $lead),
+                            'method' => 'delete',
+                            'variant' => 'danger',
+                            'confirm' => 'Delete this lead?',
+                        ],
+                    ],
                 ];
             });
 
@@ -371,7 +387,7 @@ class CrmController extends Controller
                 ['label' => 'Converted', 'value' => Lead::where('status', LeadStatus::Converted->value)->count()],
                 ['label' => 'Pipeline Value', 'value' => $this->formatMoney(Lead::sum('value'))],
             ],
-            ['Lead', 'Company', 'Email', 'Phone', 'Source', 'Assigned', 'Value', 'Status', 'Follow Up'],
+            ['Lead', 'Company', 'Email', 'Phone', 'Source', 'Assigned', 'Value', 'Status', 'Follow Up', 'Action'],
             $rows,
             'No leads found.',
             $filters,

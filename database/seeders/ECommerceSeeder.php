@@ -30,6 +30,17 @@ class ECommerceSeeder extends Seeder
                 ],
             ],
             [
+                'name' => 'Demo Supplier',
+                'email' => 'supplier@example.com',
+                'company' => 'Assignment Demo Supplier',
+                'phone' => '+8801700000099',
+                'address' => [
+                    'line_1' => 'Demo Supplier Office',
+                    'city' => 'Dhaka',
+                    'country' => 'Bangladesh',
+                ],
+            ],
+            [
                 'name' => 'Dhaka Tools Ltd',
                 'email' => 'supplier2@dhakatools.test',
                 'company' => 'Dhaka Tools & Equipment',

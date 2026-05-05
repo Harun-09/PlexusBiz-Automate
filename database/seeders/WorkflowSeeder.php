@@ -68,6 +68,28 @@ class WorkflowSeeder extends Seeder
             ],
         );
 
+        AutomationRule::updateOrCreate(
+            ['name' => 'RFQ supplier notification automation'],
+            [
+                'trigger_event' => WorkflowTriggerEvent::RfqCreated->value,
+                'conditions_json' => [
+                    ['field' => 'rfq.status', 'operator' => 'equals', 'value' => 'open'],
+                ],
+                'actions_json' => [
+                    [
+                        'type' => WorkflowActionType::NotifySupplier->value,
+                        'config' => [
+                            'subject' => 'New RFQ received',
+                            'message' => 'New RFQ received for the requested product.',
+                        ],
+                    ],
+                ],
+                'status' => AutomationRuleStatus::Active,
+                'priority' => 15,
+                'run_async' => false,
+            ],
+        );
+
         $this->seedOrderStatusRules();
     }
 

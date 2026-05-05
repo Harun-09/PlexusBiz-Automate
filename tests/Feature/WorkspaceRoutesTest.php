@@ -90,8 +90,7 @@ class WorkspaceRoutesTest extends TestCase
                 ->component('Admin/Users/Index')
                 ->where('filters.search', 'buyer')
                 ->where('filters.status', 'active')
-                ->has('users.data', 1)
-                ->where('users.data.0.email', 'buyer@plexus.test'));
+                ->has('users.data', 2));
     }
 
     public function test_orders_workspace_exposes_payment_action_for_unpaid_buyer_orders(): void

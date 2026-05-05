@@ -2,9 +2,6 @@
 
 namespace App\Console;
 
-use App\Domains\Marketing\Jobs\ProcessAbandonedCartRemindersJob;
-use App\Domains\Marketing\Jobs\ProcessScheduledCampaignsJob;
-use App\Domains\Social\Jobs\ProcessDueSocialPostsJob;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -15,9 +12,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->job(new ProcessScheduledCampaignsJob())->everyMinute();
-        $schedule->job(new ProcessAbandonedCartRemindersJob())->hourly();
-        $schedule->job(new ProcessDueSocialPostsJob())->everyMinute();
+        $schedule->command('campaigns:send-scheduled')->everyMinute();
+        $schedule->command('carts:check-abandoned')->hourly();
+        $schedule->command('social-posts:publish-due')->everyMinute();
     }
 
     /**

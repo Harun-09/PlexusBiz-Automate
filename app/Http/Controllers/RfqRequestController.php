@@ -227,6 +227,7 @@ class RfqRequestController extends Controller
             'rfq' => [
                 'id' => $rfq->id,
                 'rfq_number' => $rfq->rfq_number,
+                'supplier_id' => $rfq->supplier_id,
                 'status' => $rfq->status->value,
                 'message' => $rfq->message,
                 'needed_by' => $rfq->needed_by?->toIso8601String(),

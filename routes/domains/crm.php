@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Crm\CrmController;
+use App\Http\Controllers\Crm\LeadController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('crm')
@@ -15,5 +16,10 @@ Route::prefix('crm')
         Route::get('/purchases', [CrmController::class, 'purchases'])->name('purchases.index');
         Route::get('/segments', [CrmController::class, 'segments'])->name('segments.index');
         Route::get('/leads', [CrmController::class, 'leads'])->name('leads.index');
+        Route::get('/leads/create', [LeadController::class, 'create'])->name('leads.create');
+        Route::post('/leads', [LeadController::class, 'store'])->name('leads.store');
+        Route::get('/leads/{lead}/edit', [LeadController::class, 'edit'])->name('leads.edit');
+        Route::put('/leads/{lead}', [LeadController::class, 'update'])->name('leads.update');
+        Route::delete('/leads/{lead}', [LeadController::class, 'destroy'])->name('leads.destroy');
         Route::get('/interactions', [CrmController::class, 'interactions'])->name('interactions.index');
     });

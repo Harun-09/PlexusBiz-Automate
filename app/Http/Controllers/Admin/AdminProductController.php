@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Domains\ECommerce\Enums\ProductStatus;
+use App\Domains\ECommerce\Models\PricingTier;
 use App\Domains\ECommerce\Models\Product;
 use App\Domains\ECommerce\Models\Supplier;
 use App\Http\Controllers\Controller;
@@ -105,24 +106,30 @@ class AdminProductController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
             'base_price' => ['required', 'numeric', 'min:0'],
+            'moq' => ['required', 'integer', 'min:1'],
+            'bulk_price' => ['nullable', 'numeric', 'min:0'],
             'stock_quantity' => ['required', 'integer', 'min:0'],
             'status' => ['required', 'string', Rule::in(array_map(fn (ProductStatus $s): string => $s->value, ProductStatus::cases()))],
         ]);
 
-        Product::create([
+        $bulkPrice = $validated['bulk_price'] ?? null;
+        unset($validated['bulk_price']);
+
+        $product = Product::create([
             ...$validated,
-            'moq' => 1,
             'slug' => Str::slug($validated['name']),
             'reserved_quantity' => 0,
             'published_at' => $validated['status'] === 'active' ? now() : null,
         ]);
+
+        $this->syncBulkTier($product, $bulkPrice);
 
         return redirect()->route('admin.products.index')->with('success', 'Product created successfully.');
     }
 
     public function edit(Product $product): Response
     {
-        $product->load('supplier');
+        $product->load(['supplier', 'pricingTiers']);
 
         $suppliers = Supplier::query()
             ->where('status', 'approved')
@@ -143,6 +150,7 @@ class AdminProductController extends Controller
                 'description' => $product->description ?? '',
                 'base_price' => $product->base_price,
                 'moq' => $product->moq,
+                'bulk_price' => $product->pricingTiers->sortBy('min_quantity')->first()?->unit_price,
                 'stock_quantity' => $product->stock_quantity,
                 'status' => $product->status->value,
             ],
@@ -159,10 +167,16 @@ class AdminProductController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
             'base_price' => ['required', 'numeric', 'min:0'],
+            'moq' => ['required', 'integer', 'min:1'],
+            'bulk_price' => ['nullable', 'numeric', 'min:0'],
             'stock_quantity' => ['required', 'integer', 'min:0'],
             'status' => ['required', 'string', Rule::in(array_map(fn (ProductStatus $s): string => $s->value, ProductStatus::cases()))],
         ]);
 
+        $bulkPrice = $validated['bulk_price'] ?? null;
+        unset($validated['bulk_price']);
+
+        $oldMoq = (int) $product->moq;
         $wasActive = $product->status === ProductStatus::Active;
         $isNowActive = $validated['status'] === 'active';
 
@@ -172,6 +186,15 @@ class AdminProductController extends Controller
             ...($isNowActive && ! $wasActive ? ['published_at' => now()] : []),
         ]);
 
+        if ($oldMoq !== (int) $product->moq) {
+            PricingTier::query()
+                ->where('product_id', $product->id)
+                ->where('min_quantity', $oldMoq)
+                ->delete();
+        }
+
+        $this->syncBulkTier($product, $bulkPrice);
+
         return redirect()->route('admin.products.index')->with('success', 'Product updated successfully.');
     }
 
@@ -180,5 +203,29 @@ class AdminProductController extends Controller
         $product->delete();
 
         return redirect()->route('admin.products.index')->with('success', 'Product deleted successfully.');
+    }
+
+    private function syncBulkTier(Product $product, mixed $bulkPrice): void
+    {
+        $raw = trim((string) $bulkPrice);
+
+        if ($raw === '') {
+            PricingTier::query()
+                ->where('product_id', $product->id)
+                ->where('min_quantity', (int) $product->moq)
+                ->delete();
+
+            return;
+        }
+
+        PricingTier::updateOrCreate(
+            [
+                'product_id' => $product->id,
+                'min_quantity' => (int) $product->moq,
+            ],
+            [
+                'unit_price' => $raw,
+            ],
+        );
     }
 }

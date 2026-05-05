@@ -16,4 +16,19 @@ class SocialPostPolicy
     {
         return $user->hasAnyRole(['admin', 'marketing_manager']);
     }
+
+    public function create(User $user): bool
+    {
+        return $user->hasAnyRole(['admin', 'marketing_manager']);
+    }
+
+    public function update(User $user, SocialPost $socialPost): bool
+    {
+        return $user->hasAnyRole(['admin', 'marketing_manager']);
+    }
+
+    public function delete(User $user, SocialPost $socialPost): bool
+    {
+        return $user->hasAnyRole(['admin', 'marketing_manager']);
+    }
 }

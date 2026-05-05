@@ -59,6 +59,11 @@ class RbacSeeder extends Seeder
         $this->seedRoleUser('Buyer User', 'buyer@plexus.test', RoleName::Buyer);
         $this->seedRoleUser('Marketing Manager', 'marketing@plexus.test', RoleName::MarketingManager);
         $this->seedRoleUser('Workflow Manager', 'workflow@plexus.test', RoleName::WorkflowManager);
+
+        $this->seedRoleUser('Demo Admin', 'admin@example.com', RoleName::Admin);
+        $this->seedRoleUser('Demo Supplier', 'supplier@example.com', RoleName::Supplier);
+        $this->seedRoleUser('Demo Buyer', 'buyer@example.com', RoleName::Buyer);
+        $this->seedRoleUser('Demo Marketing Manager', 'marketing@example.com', RoleName::MarketingManager);
     }
 
     private function seedRoleUser(string $name, string $email, RoleName $role): void
