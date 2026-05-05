@@ -19,13 +19,14 @@ class SocialPostPublisherService
     public function publish(SocialPost $post): SocialPost
     {
         $post->refresh();
+        $post->loadMissing(['account']);
 
         if (! in_array($post->status, [SocialPostStatus::Scheduled, SocialPostStatus::Draft], true)) {
             return $post;
         }
 
         try {
-            $result = $this->publishers->for($post->platform)->publish($post);
+            $result = $this->publishers->forPost($post)->publish($post);
 
             $post->forceFill([
                 'status' => $result->successful ? SocialPostStatus::Published : SocialPostStatus::Failed,

@@ -9,7 +9,7 @@ class PublishDueSocialPostsCommand extends Command
 {
     protected $signature = 'social-posts:publish-due';
 
-    protected $description = 'Publish due scheduled social posts through the configured mock adapters.';
+    protected $description = 'Publish due scheduled social posts through the configured social adapters.';
 
     public function handle(SocialScheduleService $scheduler): int
     {

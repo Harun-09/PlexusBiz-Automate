@@ -18,7 +18,8 @@ class SocialSeeder extends Seeder
                 'name' => 'PlexusBiz Facebook',
                 'status' => 'active',
                 'credentials_json' => [
-                    'mode' => 'live',
+                    // Demo seeds stay in mock mode so local publishes never hit Meta by accident.
+                    'mode' => 'mock',
                     'page_id' => '123456789012345',
                     'access_token' => 'demo-facebook-access-token',
                 ],

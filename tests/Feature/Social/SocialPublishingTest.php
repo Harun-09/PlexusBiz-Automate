@@ -13,6 +13,8 @@ use App\Domains\Workflow\Enums\WorkflowTriggerEvent;
 use App\Domains\Workflow\Models\AutomationRule;
 use App\Domains\Workflow\Models\WorkflowLog;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class SocialPublishingTest extends TestCase
@@ -21,6 +23,8 @@ class SocialPublishingTest extends TestCase
 
     public function test_due_social_posts_publish_through_mock_provider(): void
     {
+        Http::fake();
+
         $post = $this->socialPost(SocialPlatform::Facebook, now()->subMinute());
 
         $count = app(SocialScheduleService::class)->dispatchDuePosts(queued: false);
@@ -31,6 +35,41 @@ class SocialPublishingTest extends TestCase
         $this->assertSame(SocialPostStatus::Published, $post->status);
         $this->assertNotNull($post->external_post_id);
         $this->assertNotNull($post->published_at);
+        Http::assertNothingSent();
+    }
+
+    public function test_due_social_posts_publish_through_live_facebook_graph_api(): void
+    {
+        Http::fake([
+            'graph.facebook.com/*' => Http::response([
+                'id' => '123456789012345_987654321098765',
+            ], 200),
+        ]);
+
+        $post = $this->socialPost(
+            SocialPlatform::Facebook,
+            now()->subMinute(),
+            mode: 'live',
+            pageId: '123456789012345',
+            accessToken: 'live-page-access-token',
+        );
+
+        $count = app(SocialScheduleService::class)->dispatchDuePosts(queued: false);
+
+        $post->refresh();
+
+        $this->assertSame(1, $count);
+        $this->assertSame(SocialPostStatus::Published, $post->status);
+        $this->assertSame('123456789012345_987654321098765', $post->external_post_id);
+        $this->assertNotNull($post->published_at);
+
+        Http::assertSent(function (Request $request) use ($post): bool {
+            return $request->method() === 'POST'
+                && $request->url() === 'https://graph.facebook.com/v24.0/123456789012345/feed'
+                && $request->isForm()
+                && $request['message'] === $post->content
+                && $request['access_token'] === 'live-page-access-token';
+        });
     }
 
     public function test_content_calendar_returns_posts_in_date_range(): void
@@ -83,7 +122,13 @@ class SocialPublishingTest extends TestCase
         $this->assertNotNull($post->published_at);
     }
 
-    private function socialPost(SocialPlatform $platform, $scheduledAt): SocialPost
+    private function socialPost(
+        SocialPlatform $platform,
+        $scheduledAt,
+        string $mode = 'mock',
+        ?string $pageId = null,
+        ?string $accessToken = null,
+    ): SocialPost
     {
         $account = SocialAccount::create([
             'platform' => $platform,
@@ -91,9 +136,9 @@ class SocialPublishingTest extends TestCase
             'handle' => '@'.$platform->value,
             'status' => 'active',
             'credentials_json' => [
-                'mode' => 'mock',
-                'page_id' => $platform === SocialPlatform::Facebook ? '123456789012345' : null,
-                'access_token' => $platform === SocialPlatform::Facebook ? 'unit-test-facebook-token' : null,
+                'mode' => $mode,
+                'page_id' => $pageId ?? ($platform === SocialPlatform::Facebook ? '123456789012345' : null),
+                'access_token' => $accessToken ?? ($platform === SocialPlatform::Facebook ? 'unit-test-facebook-token' : null),
             ],
         ]);
 
