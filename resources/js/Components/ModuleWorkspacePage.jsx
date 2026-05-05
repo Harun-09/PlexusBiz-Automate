@@ -3,6 +3,7 @@ import EmptyState from '@/Components/EmptyState';
 import KpiCard from '@/Components/KpiCard';
 import PageHeader from '@/Components/PageHeader';
 import { canAccess } from '@/Utils/access';
+import { actionButtonClasses, statusBadgeClasses, statusFilterChipClasses } from '@/Utils/pillStyles';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 
 const METRIC_TONES = ['blue', 'emerald', 'amber', 'rose'];
@@ -151,30 +152,8 @@ const formatGatewayLabel = (value) => {
         .join(' ');
 };
 
-const statusTone = (value) => {
-    const normalized = String(value || '').toLowerCase();
-
-    if (['active', 'approved', 'confirmed', 'completed', 'sent', 'success', 'published', 'resolved', 'closed'].includes(normalized)) {
-        return 'border-emerald-200 bg-emerald-50 text-emerald-700';
-    }
-
-    if (['failed', 'cancelled', 'rejected', 'suspended'].includes(normalized)) {
-        return 'border-rose-200 bg-rose-50 text-rose-700';
-    }
-
-    if (['pending', 'processing', 'scheduled', 'running', 'draft', 'waiting_supplier', 'open'].includes(normalized)) {
-        return 'border-amber-200 bg-amber-50 text-amber-700';
-    }
-
-    if (['inactive', 'skipped'].includes(normalized)) {
-        return 'border-slate-200 bg-slate-50 text-slate-600';
-    }
-
-    return 'border-slate-200 bg-slate-50 text-slate-700';
-};
-
 const renderStatusPill = (status, label) => (
-    <span className={`inline-flex rounded-md border px-2.5 py-1 text-xs font-semibold ${statusTone(status)}`}>
+    <span className={`inline-flex rounded-md border px-2.5 py-1 text-xs font-semibold ${statusBadgeClasses(status)}`}>
         {label || status || '-'}
     </span>
 );
@@ -202,7 +181,7 @@ const renderWorkspaceCell = (_column, value) => {
                         method="post"
                         as="button"
                         preserveScroll
-                        className="inline-flex items-center justify-center rounded-lg bg-blue-700 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        className={`inline-flex items-center justify-center rounded-lg border px-3.5 py-1.5 text-xs font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${actionButtonClasses('primary')}`}
                     >
                         {value.label}
                     </Link>
@@ -224,9 +203,8 @@ const renderWorkspaceCell = (_column, value) => {
         }
 
         if (value.kind === 'post-action') {
-            const buttonClassName = value.variant === 'secondary'
-                ? 'inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2'
-                : 'inline-flex items-center justify-center rounded-lg bg-blue-700 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2';
+            const buttonVariant = value.variant === 'secondary' ? 'secondary' : value.variant === 'danger' ? 'danger' : 'primary';
+            const buttonClassName = `inline-flex items-center justify-center rounded-lg border px-3.5 py-1.5 text-xs font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${actionButtonClasses(buttonVariant)}`;
 
             return (
                 <div className="flex flex-col gap-1">
@@ -261,9 +239,13 @@ const renderWorkspaceCell = (_column, value) => {
 
         if (value.kind === 'link') {
             const isDelete = value.method === 'delete' || value.variant === 'danger';
-            const linkClassName = value.className || (isDelete
-                ? 'inline-flex items-center justify-center rounded-lg border border-rose-200 bg-rose-50 px-3.5 py-1.5 text-xs font-semibold text-rose-700 shadow-sm transition hover:border-rose-300 hover:bg-rose-100 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2'
-                : 'inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-400 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2');
+            const normalizedLabel = String(value.label || '').toLowerCase();
+            const inferredVariant = value.variant
+                || (isDelete ? 'danger'
+                    : normalizedLabel.includes('edit') ? 'secondary'
+                        : normalizedLabel.includes('view') || normalizedLabel.includes('open') || normalizedLabel.includes('profile') || normalizedLabel.includes('manage') ? 'primary'
+                            : 'neutral');
+            const linkClassName = value.className || `inline-flex items-center justify-center rounded-lg border px-3.5 py-1.5 text-xs font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${actionButtonClasses(inferredVariant)}`;
 
             if (isDelete) {
                 return (
@@ -546,8 +528,8 @@ export default function ModuleWorkspacePage({ auth, workspace, module = {} }) {
                                     <button
                                         type="button"
                                         onClick={() => selectStatus('')}
-                                        className={`rounded-md border px-3 py-1 text-xs font-semibold transition ${
-                                            !data.status ? theme.chipActive : theme.chipInactive
+                                        className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
+                                            statusFilterChipClasses('', !data.status)
                                         }`}
                                     >
                                         All
@@ -560,8 +542,8 @@ export default function ModuleWorkspacePage({ auth, workspace, module = {} }) {
                                                 key={status}
                                                 type="button"
                                                 onClick={() => selectStatus(status)}
-                                                className={`rounded-md border px-3 py-1 text-xs font-semibold capitalize transition ${
-                                                    active ? theme.chipActive : theme.chipInactive
+                                                className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold capitalize transition ${
+                                                    statusFilterChipClasses(status, active)
                                                 }`}
                                             >
                                                 {formatStatusLabel(status)}

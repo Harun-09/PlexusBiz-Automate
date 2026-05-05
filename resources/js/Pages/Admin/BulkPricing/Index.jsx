@@ -1,6 +1,7 @@
 import KpiCard from '@/Components/KpiCard';
 import PageHeader from '@/Components/PageHeader';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { actionButtonClasses, statusBadgeClasses } from '@/Utils/pillStyles';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 
@@ -15,16 +16,8 @@ const pricingColumns = [
     { label: 'Action', className: 'w-[110px]' },
 ];
 
-const statusTone = (value) => {
-    const n = String(value || '').toLowerCase();
-    if (['active'].includes(n)) return 'border-emerald-400/30 bg-emerald-500/10 text-emerald-400';
-    if (['inactive', 'archived'].includes(n)) return 'border-rose-400/30 bg-rose-500/10 text-rose-400';
-    if (['draft'].includes(n)) return 'border-amber-400/30 bg-amber-500/10 text-amber-400';
-    return 'border-slate-400/30 bg-slate-500/10 text-slate-400';
-};
-
 const StatusPill = ({ status }) => (
-    <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold capitalize ${statusTone(status)}`}>
+    <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold capitalize ${statusBadgeClasses(status)}`}>
         {status}
     </span>
 );
@@ -125,13 +118,13 @@ function ManagementPanel({ product }) {
                     <div className="flex flex-wrap gap-2">
                         <Link
                             href="/admin/products"
-                            className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-white/15"
+                            className={`inline-flex items-center justify-center rounded-xl border px-4 py-2 text-xs font-semibold uppercase tracking-wider transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${actionButtonClasses('secondary')}`}
                         >
                             Product CRUD
                         </Link>
                         <Link
                             href={`/admin/products/${product.id}/edit`}
-                            className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-white/15"
+                            className={`inline-flex items-center justify-center rounded-xl border px-4 py-2 text-xs font-semibold uppercase tracking-wider transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${actionButtonClasses('primary')}`}
                         >
                             Edit Product
                         </Link>
@@ -283,14 +276,14 @@ function ManagementPanel({ product }) {
                                             <button
                                                 type="button"
                                                 onClick={() => beginEditTier(tier)}
-                                                className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-blue-300 hover:text-blue-700"
+                                                className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${actionButtonClasses('secondary')}`}
                                             >
                                                 Edit
                                             </button>
                                             <button
                                                 type="button"
                                                 onClick={() => deleteTier(tier.id, `${tier.min_quantity}+ units`)}
-                                                className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-rose-300 hover:text-rose-600"
+                                                className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${actionButtonClasses('danger')}`}
                                             >
                                                 Delete
                                             </button>

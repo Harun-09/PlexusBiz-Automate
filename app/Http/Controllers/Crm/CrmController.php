@@ -92,11 +92,13 @@ class CrmController extends Controller
                             'kind' => 'link',
                             'label' => 'View profile',
                             'href' => route('crm.customers.show', $customer),
+                            'variant' => 'primary',
                         ],
                         [
                             'kind' => 'link',
                             'label' => 'Edit',
                             'href' => route('crm.customers.edit', $customer),
+                            'variant' => 'secondary',
                         ],
                     ],
                 ];
@@ -720,6 +722,7 @@ class CrmController extends Controller
                 'kind' => 'link',
                 'label' => 'Open invoice',
                 'href' => route('invoices.show', $order->invoice),
+                'variant' => 'primary',
             ];
         }
 
@@ -733,6 +736,7 @@ class CrmController extends Controller
                     'orderNumber' => $order->order_number,
                     'access_token' => $checkoutToken,
                 ]),
+                'variant' => 'secondary',
             ];
         }
 

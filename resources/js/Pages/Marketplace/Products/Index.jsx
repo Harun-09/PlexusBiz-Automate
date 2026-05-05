@@ -2,6 +2,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 import FrontendLayout from '@/Layouts/FrontendLayout';
 import FlashBanner from '@/Components/FlashBanner';
+import { selectionPillClasses } from '@/Utils/pillStyles';
 
 const fallbackImage = '/images/landing/deal-imac.jpg';
 
@@ -334,11 +335,10 @@ export default function Index({
                                                 key={item.key}
                                                 href={route(item.routeName, nextQuery(activeCategory))}
                                                 preserveScroll
-                                                className={`rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.16em] transition ${
-                                                    isActive
-                                                        ? 'border-white bg-white text-[#0b2e71]'
-                                                        : 'border-white/20 bg-white/10 text-white hover:bg-white/15'
-                                                }`}
+                                                className={`rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.16em] transition ${selectionPillClasses(isActive, {
+                                                    active: 'border-white bg-white text-[#0b2e71]',
+                                                    inactive: 'border-white/20 bg-white/10 text-white hover:bg-white/15',
+                                                })}`}
                                             >
                                                 {item.label}
                                             </Link>
@@ -353,11 +353,10 @@ export default function Index({
                                             setCategory('');
                                             runSearch('');
                                         }}
-                                        className={`rounded-full px-4 py-2 text-xs font-black uppercase tracking-[0.16em] transition ${
-                                            activeCategory === ''
-                                                ? 'bg-white text-[#0b2e71]'
-                                                : 'border border-white/20 bg-white/10 text-white hover:bg-white/15'
-                                        }`}
+                                        className={`rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.16em] transition ${selectionPillClasses(activeCategory === '', {
+                                            active: 'border-white bg-white text-[#0b2e71]',
+                                            inactive: 'border-white/20 bg-white/10 text-white hover:bg-white/15',
+                                        })}`}
                                     >
                                         All
                                     </button>
@@ -369,11 +368,10 @@ export default function Index({
                                                 setCategory(item.slug);
                                                 runSearch(item.slug);
                                             }}
-                                            className={`rounded-full px-4 py-2 text-xs font-black uppercase tracking-[0.16em] transition ${
-                                                activeCategory === item.slug
-                                                    ? 'bg-[#ff8a00] text-white'
-                                                    : 'border border-white/20 bg-white/10 text-white hover:bg-white/15'
-                                            }`}
+                                            className={`rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.16em] transition ${selectionPillClasses(activeCategory === item.slug, {
+                                                active: 'border-[#ff8a00] bg-[#ff8a00] text-white',
+                                                inactive: 'border-white/20 bg-white/10 text-white hover:bg-white/15',
+                                            })}`}
                                         >
                                             {item.name} <span className="opacity-75">({item.active_products_count})</span>
                                         </button>
@@ -467,11 +465,10 @@ export default function Index({
                                                 key={item.key}
                                                 href={route(item.routeName, nextQuery(activeCategory))}
                                                 preserveScroll
-                                                className={`rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.16em] transition ${
-                                                    isActive
-                                                        ? 'border-[#0b2e71] bg-[#0b2e71] text-white'
-                                                        : 'border-[#d7e3f4] bg-white text-[#0b2e71] hover:border-[#ffb16d] hover:text-[#d75d00]'
-                                                }`}
+                                                className={`rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.16em] transition ${selectionPillClasses(isActive, {
+                                                    active: 'border-[#0b2e71] bg-[#0b2e71] text-white',
+                                                    inactive: 'border-[#d7e3f4] bg-white text-[#0b2e71] hover:border-[#ffb16d] hover:text-[#d75d00]',
+                                                })}`}
                                             >
                                                 {item.label}
                                             </Link>
@@ -493,11 +490,10 @@ export default function Index({
                                         setCategory('');
                                         runSearch('');
                                     }}
-                                    className={`rounded-full px-4 py-2 text-xs font-black uppercase tracking-[0.16em] transition ${
-                                        activeCategory === ''
-                                            ? 'bg-[#0b2e71] text-white'
-                                            : 'border border-[#d7e3f4] bg-white text-slate-700 hover:border-[#4f7fe0] hover:text-[#0b2e71]'
-                                    }`}
+                                    className={`rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.16em] transition ${selectionPillClasses(activeCategory === '', {
+                                        active: 'border-[#0b2e71] bg-[#0b2e71] text-white',
+                                        inactive: 'border-[#d7e3f4] bg-white text-slate-700 hover:border-[#4f7fe0] hover:text-[#0b2e71]',
+                                    })}`}
                                 >
                                     All
                                 </button>
@@ -509,11 +505,10 @@ export default function Index({
                                             setCategory(item.slug);
                                             runSearch(item.slug);
                                         }}
-                                        className={`rounded-full px-4 py-2 text-xs font-black uppercase tracking-[0.16em] transition ${
-                                            activeCategory === item.slug
-                                                ? 'bg-[#ff8a00] text-white'
-                                                : 'border border-[#d7e3f4] bg-white text-slate-700 hover:border-[#ffb16d] hover:text-[#d75d00]'
-                                        }`}
+                                        className={`rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.16em] transition ${selectionPillClasses(activeCategory === item.slug, {
+                                            active: 'border-[#ff8a00] bg-[#ff8a00] text-white',
+                                            inactive: 'border-[#d7e3f4] bg-white text-slate-700 hover:border-[#ffb16d] hover:text-[#d75d00]',
+                                        })}`}
                                     >
                                         {item.name} <span className="opacity-75">({item.active_products_count})</span>
                                     </button>

@@ -196,6 +196,47 @@
         .card p {
             margin-top: 6px;
         }
+
+        .intro-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 14px;
+            margin-top: 12px;
+        }
+
+        .toc {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .toc a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 7px 12px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: #f8fbff;
+            color: var(--text);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .toc a:hover {
+            border-color: #b8c9e6;
+            background: #eef5ff;
+            text-decoration: none;
+        }
+
+        .callout {
+            border-left: 4px solid var(--blue);
+            background: #f8fbff;
+            padding: 14px 16px;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
@@ -220,11 +261,49 @@
         </div>
         <div>
             <span class="label">Build and Seed</span>
-            <span class="value"><code>php artisan migrate --seed</code><br><code>npm run build</code><br><code>php artisan serve --host=127.0.0.1 --port=8001</code></span>
+            <span class="value"><code>php artisan migrate --seed</code><br><code>npm run build</code><br><code>php artisan serve --host=127.0.0.1 --port=8000</code></span>
         </div>
     </div>
 
-    <section>
+    <section id="fast-path">
+        <h2>Fast Demo Path</h2>
+        <div class="intro-grid">
+            <div class="card">
+                <h3>Start Here</h3>
+                <p>Seed the app, build the frontend, and open <code>http://127.0.0.1:8000</code>.</p>
+                <p>Log in with the role account that matches the feature you want to prove.</p>
+            </div>
+            <div class="card">
+                <h3>Follow This Order</h3>
+                <p>Use the roadmap below in order: login, e-commerce, CRM, marketing, social, workflow, support, admin, API.</p>
+                <p>Do not jump ahead until the current page shows a saved row, detail view, or log entry.</p>
+            </div>
+            <div class="card">
+                <h3>Always Show Evidence</h3>
+                <p>For each save, open the list page, detail page, notification row, or workflow log immediately after the action.</p>
+                <p>That keeps the proof visible and avoids vague claims.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="jump-to">
+        <h2>Jump To A Step</h2>
+        <div class="toc">
+            <a href="#step-1">1. App Ready</a>
+            <a href="#step-2">2. Auth</a>
+            <a href="#step-3">3. E-Commerce</a>
+            <a href="#step-4">4. Supplier</a>
+            <a href="#step-5">5. CRM</a>
+            <a href="#step-6">6. Marketing</a>
+            <a href="#step-7">7. Social</a>
+            <a href="#step-8">8. Workflow</a>
+            <a href="#step-9">9. Support</a>
+            <a href="#step-10">10. Admin</a>
+            <a href="#step-11">11. API</a>
+        </div>
+    </section>
+
+    <section id="step-1">
         <h2>How To Present The Demo</h2>
         <ul>
             <li>Follow the order in this guide. Do not jump to the next module before the current one shows a visible result.</li>
@@ -235,7 +314,7 @@
         </ul>
     </section>
 
-    <section>
+    <section id="step-2">
         <h2>Demo Roadmap</h2>
         <table>
             <thead>
@@ -317,7 +396,7 @@
         </table>
     </section>
 
-    <section>
+    <section id="step-3">
         <h2>Step 1. Show The App Is Ready</h2>
         <ol>
             <li>Open the project in terminal and confirm the app is seeded: <code>php artisan migrate --seed</code>.</li>
@@ -328,7 +407,7 @@
         </ol>
     </section>
 
-    <section>
+    <section id="step-4">
         <h2>Step 2. Prove Authentication And Role-Based Access</h2>
         <div class="grid-2">
             <div class="card">
@@ -358,7 +437,7 @@
         </div>
     </section>
 
-    <section>
+    <section id="step-5">
         <h2>Step 3. Prove E-Commerce</h2>
         <ol>
             <li>As a buyer, open the <strong>Marketplace Catalog</strong> entry in the sidebar or go directly to <span class="route">/products</span>, then show at least one seeded product card, for example <strong>Commercial Water Pump 100L</strong>, <strong>Industrial Dock Plate 1500lb</strong>, or <strong>Wholesale Filing Cabinet Pro</strong>.</li>
@@ -374,7 +453,7 @@
         </ol>
     </section>
 
-    <section>
+    <section id="step-6">
         <h2>Step 4. Prove Supplier Onboarding</h2>
         <ol>
             <li>Open <span class="route">/register-supplier</span> while logged out.</li>
@@ -385,7 +464,7 @@
         </ol>
     </section>
 
-    <section>
+    <section id="step-7">
         <h2>Step 5. Prove CRM</h2>
         <ol>
             <li>Log in as admin or marketing manager.</li>
@@ -398,7 +477,7 @@
         </ol>
     </section>
 
-    <section>
+    <section id="step-8">
         <h2>Step 6. Prove Marketing</h2>
         <ol>
             <li>Open <span class="route">/admin/campaigns</span> or <span class="route">/marketing/campaigns</span>.</li>
@@ -410,7 +489,7 @@
         </ol>
     </section>
 
-    <section>
+    <section id="step-9">
         <h2>Step 7. Prove Social Automation</h2>
         <ol>
             <li>Open <span class="route">/social/campaigns</span> or <span class="route">/social/posts</span> to show the basic social campaign list and the scheduled post workspace.</li>
@@ -424,7 +503,7 @@
         </ol>
     </section>
 
-    <section>
+    <section id="step-10">
         <h2>Step 8. Prove Workflow Automation</h2>
         <ol>
             <li>Open <span class="route">/admin/automation-rules</span> or <span class="route">/workflow/rules</span>.</li>
@@ -439,7 +518,7 @@
         </ol>
     </section>
 
-    <section>
+    <section id="step-11">
         <h2>Step 9. Prove Support And Notifications</h2>
         <ol>
             <li>Open <span class="route">/buyer/tickets</span> or <span class="route">/support/tickets</span>.</li>

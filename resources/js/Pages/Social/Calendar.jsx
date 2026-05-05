@@ -1,4 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { statusBadgeClasses, statusFilterChipClasses } from '@/Utils/pillStyles';
 import { Head, router } from '@inertiajs/react';
 import { useState, useMemo } from 'react';
 
@@ -31,7 +32,7 @@ const StatusDot = ({ status }) => {
 const StatusPill = ({ status }) => {
     const c = statusColor[status] || statusColor.draft;
     return (
-        <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold capitalize ${c.bg} ${c.text} ${c.border}`}>
+        <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold capitalize ${statusBadgeClasses(status)}`}>
             <StatusDot status={status} /> {status}
         </span>
     );
@@ -141,15 +142,14 @@ export default function SocialCalendar({ auth, posts, month, year, status, statu
                         {/* Status filter pills */}
                         <div className="flex flex-wrap items-center gap-2">
                             <button onClick={() => filterStatus('')}
-                                className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${!status ? 'border-blue-600 bg-blue-600 text-white shadow-sm' : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'}`}>
+                                className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${statusFilterChipClasses('', !status)}`}>
                                 All
                             </button>
                             {statuses.map((s) => {
-                                const c = statusColor[s] || statusColor.draft;
                                 const active = status === s;
                                 return (
                                     <button key={s} onClick={() => filterStatus(s)}
-                                        className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold capitalize transition ${active ? `${c.border} ${c.bg} ${c.text} shadow-sm` : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'}`}>
+                                        className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold capitalize transition ${statusFilterChipClasses(s, active)}`}>
                                         <StatusDot status={s} /> {s}
                                     </button>
                                 );
