@@ -530,8 +530,7 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                                     >
                                         <UserIcon className="h-6 w-6 shrink-0 text-white" />
                                         <span className="min-w-0 leading-none">
-                                            <span className="block text-[10px] font-semibold text-white/75">Welcome</span>
-                                            <span className="block whitespace-nowrap text-[13px] font-black tracking-[-0.02em]">
+                                            <span className="block whitespace-nowrap text-[13px] font-black tracking-[-0.02em] text-white">
                                                 Sign In / Register
                                             </span>
                                         </span>
@@ -544,8 +543,8 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                                     >
                                         <UserIcon className="h-6 w-6 shrink-0 text-white" />
                                         <span className="min-w-0 leading-none">
-                                            <span className="block whitespace-nowrap text-[11px] font-black tracking-[-0.02em]">
-                                                Dashboard
+                                            <span className="block whitespace-nowrap text-[11px] font-black tracking-[-0.02em] text-white">
+                                                Sign In / Register
                                             </span>
                                         </span>
                                     </Link>
@@ -557,9 +556,8 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                                     >
                                         <UserIcon className="h-6 w-6 shrink-0 text-white" />
                                         <span className="min-w-0 leading-none">
-                                            <span className="block text-[10px] font-semibold text-white/75">Welcome</span>
-                                            <span className="block whitespace-nowrap text-[13px] font-black tracking-[-0.02em]">
-                                                Dashboard
+                                            <span className="block whitespace-nowrap text-[13px] font-black tracking-[-0.02em] text-white">
+                                                Sign In / Register
                                             </span>
                                         </span>
                                     </Link>
