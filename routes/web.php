@@ -1,6 +1,7 @@
 <?php
 
 use App\Domains\ECommerce\Models\Order;
+use App\Http\Controllers\HealthCheckController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\RfqRequestController;
 use App\Http\Controllers\PaymentController;
@@ -22,6 +23,8 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/healthz', HealthCheckController::class)->name('healthz');
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [

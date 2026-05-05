@@ -79,6 +79,50 @@ php artisan route:list --path=api/v1 --except-vendor
 php artisan test --testsuite=Feature
 ```
 
+## Render Docker Deployment
+
+This repo can deploy to Render as a Docker web service. Render builds the `Dockerfile`, serves Apache/PHP from the container, and expects the app to bind to the `PORT` environment variable.
+
+Repository files:
+
+```text
+Dockerfile
+render.yaml
+docker/apache-vhost.conf
+docker/entrypoint.sh
+docker/php.ini
+```
+
+Render setup:
+
+```bash
+php artisan key:generate --show
+```
+
+Set these Render environment variables:
+
+```env
+APP_KEY=base64:...
+APP_URL=https://your-service.onrender.com
+APP_ENV=production
+APP_DEBUG=false
+DB_CONNECTION=pgsql
+DATABASE_URL=<Render Postgres internal connection string>
+LOG_CHANNEL=stderr
+RUN_MIGRATIONS=true
+```
+
+The Docker entrypoint caches config, routes, views, and events at container start. It also runs migrations only when `RUN_MIGRATIONS=true`.
+
+Render Blueprint notes:
+
+- Use `render.yaml` from the repo root.
+- The web service uses `runtime: docker`.
+- The health check path is `/healthz`.
+- The bundled database is named `plexusbiz-db`.
+- Uploaded public media is mounted at `/var/www/html/storage/app/public` through the `plexusbiz-storage` persistent disk.
+- After the first deploy, update `APP_URL` to the assigned Render URL.
+
 ## Backups
 
 MySQL dump:

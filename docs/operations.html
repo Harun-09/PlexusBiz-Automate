@@ -214,6 +214,37 @@ php artisan test --testsuite=Feature</code></pre>
     </section>
 
     <section>
+        <h2>Render Docker Deployment</h2>
+        <p>This repo can deploy to Render as a Docker web service. Render builds the <code>Dockerfile</code>, serves Apache/PHP from the container, and expects the app to bind to the <code>PORT</code> environment variable.</p>
+        <p>Repository files:</p>
+        <pre><code>Dockerfile
+render.yaml
+docker/apache-vhost.conf
+docker/entrypoint.sh
+docker/php.ini</code></pre>
+        <p>Render setup:</p>
+        <pre><code>php artisan key:generate --show</code></pre>
+        <p>Set these Render environment variables:</p>
+        <pre><code>APP_KEY=base64:...
+APP_URL=https://your-service.onrender.com
+APP_ENV=production
+APP_DEBUG=false
+DB_CONNECTION=pgsql
+DATABASE_URL=&lt;Render Postgres internal connection string&gt;
+LOG_CHANNEL=stderr
+RUN_MIGRATIONS=true</code></pre>
+        <p>The Docker entrypoint caches config, routes, views, and events at container start. It also runs migrations only when <code>RUN_MIGRATIONS=true</code>.</p>
+        <ul>
+            <li>Use <code>render.yaml</code> from the repo root.</li>
+            <li>The web service uses <code>runtime: docker</code>.</li>
+            <li>The health check path is <code>/healthz</code>.</li>
+            <li>The bundled database is named <code>plexusbiz-db</code>.</li>
+            <li>Uploaded public media is mounted at <code>/var/www/html/storage/app/public</code> through the <code>plexusbiz-storage</code> persistent disk.</li>
+            <li>After the first deploy, update <code>APP_URL</code> to the assigned Render URL.</li>
+        </ul>
+    </section>
+
+    <section>
         <h2>Backups</h2>
         <p>MySQL dump:</p>
         <pre><code>mysqldump -u "$DB_USERNAME" -p "$DB_DATABASE" &gt; backups/plexusbiz-$(date +%Y%m%d-%H%M%S).sql</code></pre>

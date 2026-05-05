@@ -136,3 +136,16 @@ Open `docs/requirement-proof-guide.html` for the full step-by-step viva/demo seq
 ## Operations
 
 See [docs/operations.md](docs/operations.md) for queue workers, scheduler setup, deployment checklist, and backup/restore commands.
+
+## Docker And Render
+
+The repo includes a production Docker image and `render.yaml` for Render web service deploys from GitHub. The image builds Vite assets, installs PHP dependencies without dev packages, enables OPcache, serves Laravel through Apache, and binds to Render's `PORT`.
+
+Required Render secrets:
+
+- `APP_KEY`: generate locally with `php artisan key:generate --show`.
+- `APP_URL`: set this to the final Render URL after the service is created.
+
+Render Postgres is wired through `DATABASE_URL` in `render.yaml`, with `DB_CONNECTION=pgsql`. Keep provider secrets such as Stripe, SMS, Facebook, and Instagram in Render environment variables, not in code.
+
+Uploaded public media is mounted to `/var/www/html/storage/app/public` through the `plexusbiz-storage` persistent disk defined in `render.yaml`.

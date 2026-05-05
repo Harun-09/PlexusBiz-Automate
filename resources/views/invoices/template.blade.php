@@ -7,7 +7,7 @@
     <style>
         @page {
             size: A4 portrait;
-            margin: 8mm 10mm 8mm;
+            margin: 7mm 8mm 8mm;
         }
 
         * {
@@ -25,24 +25,25 @@
 
         body {
             font-family: DejaVu Sans, Helvetica, Arial, sans-serif;
-            font-size: 10px;
-            line-height: 1.34;
+            font-size: 9.6px;
+            line-height: 1.32;
             color: #334155;
             background: #ffffff;
         }
 
         .page {
             width: 100%;
+            padding-bottom: 21mm;
         }
 
         .header {
             width: 100%;
-            margin-bottom: 9px;
-            padding: 12px 14px;
-            border: 1px solid #dbeafe;
-            border-bottom: 2px solid #2563eb;
-            border-radius: 12px;
-            background: #f8fbff;
+            margin-bottom: 8px;
+            padding: 9px 11px;
+            border: 1px solid #c7d2fe;
+            border-top: 4px solid #1d4ed8;
+            border-radius: 8px;
+            background: #f9fbff;
         }
 
         .header-table {
@@ -55,17 +56,16 @@
         }
 
         .brand {
-            width: 58%;
-            padding-right: 12px;
+            width: 54%;
+            padding-right: 10px;
         }
 
         .brand h1 {
-            margin-bottom: 3px;
+            margin-bottom: 2px;
             color: #2563eb;
-            font-size: 22px;
+            font-size: 19px;
             line-height: 1.05;
             font-weight: 800;
-            letter-spacing: -0.02em;
         }
 
         .brand p {
@@ -75,23 +75,25 @@
         }
 
         .invoice-meta {
-            width: 42%;
+            width: 46%;
             text-align: right;
+            overflow-wrap: anywhere;
+            word-break: break-word;
         }
 
         .invoice-meta h2 {
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             color: #2563eb;
-            font-size: 18px;
+            font-size: 16px;
             line-height: 1.05;
             font-weight: 800;
             letter-spacing: 0.02em;
         }
 
         .meta-line {
-            margin-bottom: 1px;
+            margin-bottom: 2px;
             color: #475569;
-            font-size: 9px;
+            font-size: 8.6px;
         }
 
         .status-badge {
@@ -117,7 +119,7 @@
         }
 
         .section {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             page-break-inside: avoid;
         }
 
@@ -141,11 +143,19 @@
             vertical-align: top;
         }
 
+        .info-table td:first-child {
+            padding-right: 4px;
+        }
+
+        .info-table td:last-child {
+            padding-left: 4px;
+        }
+
         .info-card {
-            min-height: 72px;
-            padding: 8px 10px;
+            min-height: 64px;
+            padding: 7px 9px;
             border: 1px solid #dbeafe;
-            border-radius: 12px;
+            border-radius: 8px;
             background: #ffffff;
         }
 
@@ -164,8 +174,14 @@
             table-layout: fixed;
         }
 
+        .items-box {
+            overflow: hidden;
+            border: 1px solid #dbeafe;
+            border-radius: 8px;
+        }
+
         .items-table thead th {
-            padding: 7px 8px;
+            padding: 6px 8px;
             background: #2563eb;
             color: #ffffff;
             font-size: 9px;
@@ -174,7 +190,7 @@
         }
 
         .items-table td {
-            padding: 7px 8px;
+            padding: 6px 8px;
             border-bottom: 1px solid #e2e8f0;
             font-size: 9px;
             vertical-align: top;
@@ -206,16 +222,16 @@
         }
 
         .summary {
-            width: 280px;
-            margin-top: 10px;
+            width: 270px;
+            margin-top: 8px;
             margin-left: auto;
             page-break-inside: avoid;
         }
 
         .summary-box {
-            padding: 8px 10px;
+            padding: 7px 10px;
             border: 1px solid #dbeafe;
-            border-radius: 12px;
+            border-radius: 8px;
             background: #f8fbff;
         }
 
@@ -225,7 +241,7 @@
         }
 
         .summary-table td {
-            padding: 4px 0;
+            padding: 3.5px 0;
             border-bottom: 1px solid #e2e8f0;
         }
 
@@ -239,11 +255,14 @@
         }
 
         .footer {
-            margin-top: 10px;
-            padding-top: 8px;
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            padding-top: 7px;
             border-top: 1px solid #dbeafe;
             color: #64748b;
-            font-size: 9px;
+            font-size: 8.5px;
             line-height: 1.3;
             text-align: center;
             page-break-inside: avoid;
@@ -301,31 +320,33 @@
 
         <div class="section">
             <div class="section-title">Order Items</div>
-            <table class="items-table">
-                <thead>
-                    <tr>
-                        <th style="width: 40%;">Product</th>
-                        <th style="width: 20%;">Supplier</th>
-                        <th style="width: 10%;">Qty</th>
-                        <th class="text-right" style="width: 15%;">Unit Price</th>
-                        <th class="text-right" style="width: 15%;">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($invoice->order->items as $item)
+            <div class="items-box">
+                <table class="items-table">
+                    <thead>
                         <tr>
-                            <td>
-                                <div class="item-name">{{ $item->product_name }}</div>
-                                <div class="item-sku">SKU: {{ $item->sku }}</div>
-                            </td>
-                            <td>{{ $item->supplier->company_name ?? $item->supplier->user->name ?? 'N/A' }}</td>
-                            <td>{{ $item->quantity }}</td>
-                            <td class="text-right">{{ number_format($item->unit_price, 2) }} {{ $invoice->order->currency }}</td>
-                            <td class="text-right">{{ number_format($item->total, 2) }} {{ $invoice->order->currency }}</td>
+                            <th style="width: 40%;">Product</th>
+                            <th style="width: 20%;">Supplier</th>
+                            <th style="width: 10%;">Qty</th>
+                            <th class="text-right" style="width: 15%;">Unit Price</th>
+                            <th class="text-right" style="width: 15%;">Total</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach($invoice->order->items as $item)
+                            <tr>
+                                <td>
+                                    <div class="item-name">{{ $item->product_name }}</div>
+                                    <div class="item-sku">SKU: {{ $item->sku }}</div>
+                                </td>
+                                <td>{{ $item->supplier->company_name ?? $item->supplier->user->name ?? 'N/A' }}</td>
+                                <td>{{ $item->quantity }}</td>
+                                <td class="text-right">{{ number_format($item->unit_price, 2) }} {{ $invoice->order->currency }}</td>
+                                <td class="text-right">{{ number_format($item->total, 2) }} {{ $invoice->order->currency }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <div class="summary">

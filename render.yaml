@@ -1,0 +1,58 @@
+services:
+  - type: web
+    name: plexusbiz-automate
+    runtime: docker
+    repo: https://github.com/Harun-09/PlexusBiz-Automate
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    autoDeployTrigger: commit
+    healthCheckPath: /healthz
+    disk:
+      name: plexusbiz-storage
+      mountPath: /var/www/html/storage/app/public
+      sizeGB: 1
+    envVars:
+      - key: APP_NAME
+        value: PlexusBiz Automate
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        sync: false
+      - key: APP_URL
+        sync: false
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: info
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DATABASE_URL
+        fromDatabase:
+          name: plexusbiz-db
+          property: connectionString
+      - key: CACHE_DRIVER
+        value: file
+      - key: SESSION_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: FILESYSTEM_DISK
+        value: public
+      - key: RUN_MIGRATIONS
+        value: true
+      - key: MARKETING_EMAIL_PROVIDER
+        value: mock
+      - key: MARKETING_SMS_PROVIDER
+        value: mock
+      - key: SOCIAL_FACEBOOK_PROVIDER
+        value: mock
+      - key: SOCIAL_INSTAGRAM_PROVIDER
+        value: mock
+
+databases:
+  - name: plexusbiz-db
+    databaseName: plexusbiz
+    user: plexusbiz
