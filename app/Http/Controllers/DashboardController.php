@@ -72,7 +72,7 @@ class DashboardController extends Controller
         $pendingOrders = Order::where('status', OrderStatus::Pending->value)->count();
         $pendingPayments = Order::where('payment_status', PaymentStatus::Pending->value)->count();
         $pendingApplications = User::where('status', UserStatus::Pending->value)->count();
-        $customers = Customer::count();
+        $customers = Customer::buyerAccounts()->count();
 
         return [
             $this->statCard(

@@ -6,6 +6,7 @@ enum InteractionType: string
 {
     case Note = 'note';
     case Email = 'email';
+    case Message = 'message';
     case Sms = 'sms';
     case Order = 'order';
     case Rfq = 'rfq';

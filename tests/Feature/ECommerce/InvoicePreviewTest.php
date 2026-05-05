@@ -43,6 +43,26 @@ class InvoicePreviewTest extends TestCase
         $this->assertStringContainsString('attachment', (string) $download->headers->get('content-disposition'));
     }
 
+    public function test_marketing_manager_can_preview_and_download_invoice_pdf(): void
+    {
+        $marketingManager = User::factory()->create();
+        $marketingManager->assignRole(Role::findOrCreate(RoleName::MarketingManager->value));
+
+        [$invoice] = $this->createInvoiceFixture(User::factory()->create());
+
+        $preview = $this->actingAs($marketingManager)->get("/invoices/{$invoice->id}/preview");
+
+        $preview->assertOk();
+        $this->assertStringContainsString('application/pdf', (string) $preview->headers->get('content-type'));
+        $this->assertStringContainsString('inline', (string) $preview->headers->get('content-disposition'));
+
+        $download = $this->actingAs($marketingManager)->get("/invoices/{$invoice->id}/download");
+
+        $download->assertOk();
+        $this->assertStringContainsString('application/pdf', (string) $download->headers->get('content-type'));
+        $this->assertStringContainsString('attachment', (string) $download->headers->get('content-disposition'));
+    }
+
     /**
      * @return array{0: Invoice, 1: Order, 2: Product, 3: Supplier}
      */

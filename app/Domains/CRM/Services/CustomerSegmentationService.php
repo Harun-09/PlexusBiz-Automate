@@ -13,7 +13,7 @@ class CustomerSegmentationService
      */
     public function query(array $filters): Builder
     {
-        $query = Customer::query()->withCount('orders')->withSum('orders', 'grand_total');
+        $query = Customer::buyerAccounts()->withCount('orders')->withSum('orders', 'grand_total');
 
         if ($status = $filters['status'] ?? null) {
             $query->where('status', $status);

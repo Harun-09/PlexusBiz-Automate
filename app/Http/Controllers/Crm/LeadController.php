@@ -136,7 +136,7 @@ class LeadController extends Controller
      */
     private function customerOptions(): array
     {
-        return Customer::query()
+        return Customer::buyerAccounts()
             ->orderBy('contact_name')
             ->limit(100)
             ->get()

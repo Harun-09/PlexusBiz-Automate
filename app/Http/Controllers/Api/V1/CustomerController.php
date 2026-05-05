@@ -16,7 +16,7 @@ class CustomerController extends Controller
     {
         $this->authorize('viewAny', Customer::class);
 
-        $query = Customer::query();
+        $query = Customer::buyerAccounts();
 
         $this->applySearch($query, $request, ['company_name', 'contact_name', 'email', 'phone']);
         $this->applyStatus($query, $request);

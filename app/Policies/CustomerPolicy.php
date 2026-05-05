@@ -16,4 +16,9 @@ class CustomerPolicy
     {
         return $user->hasAnyRole(['admin', 'marketing_manager']) || $customer->user_id === $user->id;
     }
+
+    public function update(User $user, Customer $customer): bool
+    {
+        return $user->hasAnyRole(['admin', 'marketing_manager']) || $customer->user_id === $user->id;
+    }
 }

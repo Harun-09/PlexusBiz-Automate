@@ -329,6 +329,11 @@
             <li>Implemented in UI: shared authenticated <code>AppShell.jsx</code> with no footer, role-aware sidebar, mobile drawer, top header, global search, notification shortcut, quick actions, user menu, and reusable dashboard components.</li>
             <li>Implemented in workflow: order status change events now notify buyers through rule-based automation, keep workflow logs, and also support supplier notifications on cancellation.</li>
             <li>Implemented in support: ticket create, reply, status, assignment, detail view, auto response, and notification read-all flows are wired through web and API routes.</li>
+            <li>Customer records are now buyer-scoped in CRM and profile flows, so supplier accounts no longer leak into customer lists or customer profile screens.</li>
+            <li>Buyer self-edit remains available at <code>/profile</code>, and CRM admins now have a dedicated customer edit route for backfilling missing profile data.</li>
+            <li>CRM customer index rows now include a direct <code>Edit</code> action beside <code>View profile</code> for faster profile cleanup from the table view.</li>
+            <li>CRM purchase history invoice actions now open and download correctly for marketing managers as well as buyers, suppliers, and admins.</li>
+            <li>CRM interaction history now logs in-app messages and support ticket conversations alongside order and RFQ events, so the customer timeline is complete.</li>
             <li>Missing or weakly specified in the PDFs: payment capture, shipping, tax, returns/refunds, and multi-company buyer tenancy.</li>
             <li>Not explicitly detailed in the PDFs: CSV import/export and bulk admin operations.</li>
             <li>Asset storage for product and social media files is now defined in code with original uploads, public delivery paths, naming conventions, generated thumbnail/preview variants, and lifecycle cleanup rules.</li>

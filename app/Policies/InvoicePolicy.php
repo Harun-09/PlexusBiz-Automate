@@ -19,6 +19,10 @@ class InvoicePolicy
             return $invoice->order->buyer_id === $user->id;
         }
 
+        if ($user->hasRole('marketing_manager')) {
+            return true;
+        }
+
         // Supplier can view invoices for their products in the order
         if ($user->hasRole('supplier')) {
             return $invoice->order->items()

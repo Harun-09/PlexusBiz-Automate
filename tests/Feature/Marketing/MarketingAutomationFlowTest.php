@@ -19,11 +19,13 @@ use App\Domains\Marketing\Mail\MarketingCampaignMail;
 use App\Domains\Marketing\Enums\MessageChannel;
 use App\Domains\Marketing\Models\CampaignTemplate;
 use App\Domains\Marketing\Models\CampaignLog;
+use App\Enums\RoleName;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class MarketingAutomationFlowTest extends TestCase
@@ -37,6 +39,7 @@ class MarketingAutomationFlowTest extends TestCase
         $user = User::factory()->create([
             'name' => 'New Buyer',
             'email' => 'buyer@example.test',
+            'account_type' => 'buyer',
         ]);
 
         CampaignTemplate::create([
@@ -59,6 +62,26 @@ class MarketingAutomationFlowTest extends TestCase
             'channel' => 'email',
             'status' => 'sent',
         ]);
+    }
+
+    public function test_registered_supplier_does_not_get_customer_profile_created(): void
+    {
+        Mail::fake();
+
+        $user = User::factory()->create([
+            'name' => 'New Supplier',
+            'email' => 'supplier@example.test',
+            'account_type' => 'supplier',
+        ]);
+        $user->assignRole(Role::findOrCreate(RoleName::Supplier->value));
+
+        event(new Registered($user));
+
+        $this->assertDatabaseMissing('customers', [
+            'user_id' => $user->id,
+        ]);
+
+        Mail::assertNothingSent();
     }
 
     public function test_order_checkout_triggers_confirmation_email(): void

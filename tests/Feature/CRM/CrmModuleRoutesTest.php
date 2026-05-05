@@ -10,6 +10,7 @@ use App\Domains\ECommerce\Enums\OrderStatus;
 use App\Domains\ECommerce\Enums\PaymentStatus;
 use App\Domains\ECommerce\Models\Invoice;
 use App\Domains\ECommerce\Models\Order;
+use App\Enums\RoleName;
 use App\Models\User;
 use Database\Seeders\CRMSeeder;
 use Database\Seeders\RbacSeeder;
@@ -30,6 +31,22 @@ class CrmModuleRoutesTest extends TestCase
         $marketing = User::where('email', 'marketing@plexus.test')->firstOrFail();
         $buyer = User::where('email', 'buyer@plexus.test')->firstOrFail();
         $customer = Customer::where('user_id', $buyer->id)->firstOrFail();
+        $supplierUser = User::factory()->create([
+            'name' => 'Supplier Linked User',
+            'email' => 'supplier-linked@example.test',
+        ]);
+        $supplierUser->assignRole(RoleName::Supplier->value);
+
+        Customer::create([
+            'user_id' => $supplierUser->id,
+            'company_name' => 'Supplier Linked Company',
+            'contact_name' => 'Supplier Linked User',
+            'email' => 'supplier-linked@example.test',
+            'status' => 'active',
+            'lifecycle_stage' => 'customer',
+            'tags' => [],
+            'last_activity_at' => now(),
+        ]);
 
         $order = Order::create([
             'buyer_id' => $buyer->id,
@@ -90,7 +107,10 @@ class CrmModuleRoutesTest extends TestCase
                 ->where('workspace.title', 'CRM Customers')
                 ->has('workspace.rows', 1)
                 ->where('workspace.rows.0.Customer', $customer->contact_name)
-                ->where('workspace.rows.0.Action.kind', 'link'));
+                ->where('workspace.rows.0.Action.0.kind', 'link')
+                ->where('workspace.rows.0.Action.0.label', 'View profile')
+                ->where('workspace.rows.0.Action.1.kind', 'link')
+                ->where('workspace.rows.0.Action.1.label', 'Edit'));
 
         $this->actingAs($admin)
             ->get("/crm/customers/{$customer->id}")
@@ -108,6 +128,44 @@ class CrmModuleRoutesTest extends TestCase
                 ->where('recentLeads.0.status', 'qualified')
                 ->has('recentInteractions', 2)
                 ->where('recentInteractions.0.type', 'order'));
+
+        $this->actingAs($admin)
+            ->get("/crm/customers/{$customer->id}/edit")
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page
+                ->component('CRM/Customers/Edit')
+                ->where('customer.contact_name', $customer->contact_name)
+                ->where('summary.orders_count', 1));
+
+        $this->actingAs($admin)
+            ->put("/crm/customers/{$customer->id}", [
+                'contact_name' => 'Buyer CRM Updated',
+                'company_name' => 'CRM Updated Company',
+                'email' => 'buyer.crm.updated@example.test',
+                'phone' => '+8801800000000',
+                'business_type' => 'Wholesale distributor',
+                'status' => 'active',
+                'lifecycle_stage' => 'repeat_customer',
+                'tags' => 'priority, key-account',
+                'notes' => 'Updated from CRM edit screen.',
+                'address_line1' => 'House 22',
+                'address_line2' => 'Road 8',
+                'city' => 'Dhaka',
+                'state' => 'Dhaka',
+                'postal_code' => '1207',
+                'country' => 'Bangladesh',
+            ])
+            ->assertRedirect("/crm/customers/{$customer->id}");
+
+        $customer->refresh();
+        $buyer->refresh();
+
+        $this->assertSame('Buyer CRM Updated', $customer->contact_name);
+        $this->assertSame('CRM Updated Company', $customer->company_name);
+        $this->assertSame('buyer.crm.updated@example.test', $customer->email);
+        $this->assertSame(['priority', 'key-account'], $customer->tags);
+        $this->assertSame('House 22', $customer->address['line_1']);
+        $this->assertSame('buyer.crm.updated@example.test', $buyer->email);
 
         $this->actingAs($admin)
             ->get('/crm/purchases')
@@ -143,6 +201,13 @@ class CrmModuleRoutesTest extends TestCase
             ->assertInertia(fn (Assert $page): Assert => $page
                 ->component('CRM/Interactions/Index')
                 ->where('workspace.title', 'Interaction History')
+                ->has('workspace.metrics', 6)
+                ->where('workspace.metrics.0.label', 'Total Interactions')
+                ->where('workspace.metrics.1.label', 'Order Events')
+                ->where('workspace.metrics.2.label', 'RFQ Events')
+                ->where('workspace.metrics.3.label', 'Message Events')
+                ->where('workspace.metrics.4.label', 'Support Ticket Events')
+                ->where('workspace.metrics.5.label', 'Inbounds')
                 ->has('workspace.rows', 2)
                 ->where('workspace.rows.0.Type', 'order'));
     }

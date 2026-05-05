@@ -5,11 +5,11 @@ const moduleConfig = {
     tag: 'Interactions',
     theme: 'crm',
     heroTitle: 'Interaction timeline',
-    heroCopy: 'Bring messages, orders, RFQ events, and internal notes together so every customer touchpoint is traceable.',
+    heroCopy: 'Bring messages, support tickets, orders, RFQ events, and internal notes together so every customer touchpoint is traceable.',
     panelTitle: 'What this page covers',
     panelCopy: 'This is the CRM activity stream for the current account base, designed to help support, sales, and marketing read the same history.',
     highlights: [
-        { label: 'Activity types', detail: 'Order, RFQ, note, and message events remain in one timeline.' },
+        { label: 'Activity types', detail: 'Message, support ticket, order, RFQ, and note events remain in one timeline.' },
         { label: 'Actor tracking', detail: 'The user or system actor for each event is preserved.' },
         { label: 'Related record', detail: 'Interactions can still be traced back to the related commerce item.' },
     ],

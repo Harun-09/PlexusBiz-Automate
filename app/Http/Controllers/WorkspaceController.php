@@ -487,7 +487,7 @@ class WorkspaceController extends Controller
     {
         $filters = $this->filters($request, $this->enumValues(CustomerStatus::class));
 
-        $rows = $this->applyListFilters(Customer::query(), $filters, ['contact_name', 'company_name', 'email'])
+        $rows = $this->applyListFilters(Customer::buyerAccounts(), $filters, ['contact_name', 'company_name', 'email'])
             ->latest()
             ->limit(50)
             ->get()

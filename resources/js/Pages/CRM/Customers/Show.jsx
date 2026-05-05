@@ -137,6 +137,12 @@ export default function Show({ auth, customer, summary, recentOrders = [], recen
                     actions={
                         <>
                             <Link
+                                href={route('crm.customers.edit', customer.id)}
+                                className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-blue-200 hover:text-blue-800"
+                            >
+                                Edit profile
+                            </Link>
+                            <Link
                                 href={route('crm.customers.index')}
                                 className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-blue-200 hover:text-blue-800"
                             >
@@ -179,7 +185,7 @@ export default function Show({ auth, customer, summary, recentOrders = [], recen
                         <KpiCard
                             label="Interactions"
                             value={summary.interactions_count}
-                            description="Messages, orders, RFQ events, and internal notes."
+                            description="Messages, support tickets, orders, RFQ events, and internal notes."
                             tone="rose"
                         />
                     </section>
@@ -369,7 +375,7 @@ export default function Show({ auth, customer, summary, recentOrders = [], recen
                             <SectionCard
                                 eyebrow="Timeline"
                                 title="Interaction history"
-                                description="Messages, orders, RFQ events, and internal notes in chronological order."
+                                description="Messages, support tickets, orders, RFQ events, and internal notes in chronological order."
                             >
                                 {recentInteractions.length === 0 ? (
                                     <EmptyState

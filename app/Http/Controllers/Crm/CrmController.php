@@ -16,12 +16,16 @@ use App\Domains\ECommerce\Enums\OrderStatus;
 use App\Domains\ECommerce\Enums\PaymentStatus;
 use App\Domains\ECommerce\Models\Order;
 use App\Domains\ECommerce\Models\Rfq;
+use App\Domains\Notifications\Models\Message;
+use App\Domains\Support\Models\SupportTicket;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use BackedEnum;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -42,7 +46,7 @@ class CrmController extends Controller
     {
         $filters = $this->filters($request, $this->enumValues(CustomerStatus::class));
 
-        $query = Customer::query()
+        $query = Customer::buyerAccounts()
             ->with(['user'])
             ->withCount('orders')
             ->withSum('orders', 'grand_total')
@@ -84,9 +88,16 @@ class CrmController extends Controller
                     'Total Spent' => $this->formatMoney($summary['total_spent']),
                     'Last Order' => $this->formatDate($summary['last_order_at']),
                     'Action' => [
-                        'kind' => 'link',
-                        'label' => 'View profile',
-                        'href' => route('crm.customers.show', $customer),
+                        [
+                            'kind' => 'link',
+                            'label' => 'View profile',
+                            'href' => route('crm.customers.show', $customer),
+                        ],
+                        [
+                            'kind' => 'link',
+                            'label' => 'Edit',
+                            'href' => route('crm.customers.edit', $customer),
+                        ],
                     ],
                 ];
             });
@@ -95,10 +106,10 @@ class CrmController extends Controller
             'CRM Customers',
             'Customer registration and profiling with purchase history context.',
             [
-                ['label' => 'Total Customers', 'value' => Customer::count()],
-                ['label' => 'Active Profiles', 'value' => Customer::where('status', CustomerStatus::Active->value)->count()],
-                ['label' => 'Repeat Customers', 'value' => Customer::where('lifecycle_stage', CustomerLifecycleStage::RepeatCustomer->value)->count()],
-                ['label' => 'Profiles With Orders', 'value' => Customer::has('orders')->count()],
+                ['label' => 'Total Customers', 'value' => Customer::buyerAccounts()->count()],
+                ['label' => 'Active Profiles', 'value' => Customer::buyerAccounts()->where('status', CustomerStatus::Active->value)->count()],
+                ['label' => 'Repeat Customers', 'value' => Customer::buyerAccounts()->where('lifecycle_stage', CustomerLifecycleStage::RepeatCustomer->value)->count()],
+                ['label' => 'Profiles With Orders', 'value' => Customer::buyerAccounts()->has('orders')->count()],
             ],
             ['Customer', 'Company', 'Business Type', 'Email', 'Phone', 'Stage', 'Status', 'Orders', 'Total Spent', 'Last Order', 'Action'],
             $rows,
@@ -206,6 +217,112 @@ class CrmController extends Controller
         ]);
     }
 
+    public function edit(Request $request, Customer $customer): Response
+    {
+        $this->authorize('update', $customer);
+
+        $customer->loadMissing([
+            'user',
+            'orders.invoice',
+        ]);
+
+        $summary = $this->profiles->purchaseSummary($customer);
+
+        return Inertia::render('CRM/Customers/Edit', [
+            'customer' => [
+                'id' => $customer->id,
+                'contact_name' => $customer->contact_name,
+                'company_name' => $customer->company_name,
+                'email' => $customer->email,
+                'phone' => $customer->phone,
+                'business_type' => $customer->business_type,
+                'address' => $customer->address ?? [],
+                'status' => $customer->status->value,
+                'lifecycle_stage' => $customer->lifecycle_stage->value,
+                'tags' => $customer->tags ?? [],
+                'notes' => $customer->notes,
+                'last_activity_at' => $customer->last_activity_at?->toIso8601String(),
+                'user' => $customer->user ? [
+                    'id' => $customer->user->id,
+                    'name' => $customer->user->name,
+                    'email' => $customer->user->email,
+                ] : null,
+            ],
+            'summary' => [
+                'orders_count' => $summary['orders_count'],
+                'total_spent' => $this->formatMoney($summary['total_spent']),
+                'last_order_at' => $this->formatDate($summary['last_order_at']),
+            ],
+            'statuses' => $this->enumValues(CustomerStatus::class),
+            'stages' => $this->enumValues(CustomerLifecycleStage::class),
+            'countries' => [
+                'Bangladesh',
+                'India',
+                'Singapore',
+                'Malaysia',
+                'United Arab Emirates',
+                'United States',
+            ],
+        ]);
+    }
+
+    public function update(Request $request, Customer $customer): RedirectResponse
+    {
+        $this->authorize('update', $customer);
+
+        $validated = $request->validate([
+            'contact_name' => ['required', 'string', 'max:255'],
+            'company_name' => ['nullable', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:50'],
+            'business_type' => ['nullable', 'string', 'max:255'],
+            'status' => ['required', 'string', Rule::in($this->enumValues(CustomerStatus::class))],
+            'lifecycle_stage' => ['required', 'string', Rule::in($this->enumValues(CustomerLifecycleStage::class))],
+            'tags' => ['nullable', 'string', 'max:2000'],
+            'notes' => ['nullable', 'string', 'max:5000'],
+            'address_line1' => ['nullable', 'string', 'max:255'],
+            'address_line2' => ['nullable', 'string', 'max:255'],
+            'city' => ['nullable', 'string', 'max:255'],
+            'state' => ['nullable', 'string', 'max:255'],
+            'postal_code' => ['nullable', 'string', 'max:50'],
+            'country' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $address = array_filter([
+            'line_1' => $validated['address_line1'] ?? null,
+            'line_2' => $validated['address_line2'] ?? null,
+            'city' => $validated['city'] ?? null,
+            'state' => $validated['state'] ?? null,
+            'postal_code' => $validated['postal_code'] ?? null,
+            'country' => $validated['country'] ?? null,
+        ], fn (mixed $value): bool => ! blank($value));
+
+        $customer->forceFill([
+            'contact_name' => trim($validated['contact_name']),
+            'company_name' => $validated['company_name'] ?: null,
+            'email' => strtolower(trim($validated['email'])),
+            'phone' => $validated['phone'] ?: null,
+            'business_type' => $validated['business_type'] ?: null,
+            'status' => CustomerStatus::from($validated['status']),
+            'lifecycle_stage' => CustomerLifecycleStage::from($validated['lifecycle_stage']),
+            'tags' => $this->parseTags($validated['tags'] ?? null),
+            'notes' => $validated['notes'] ?: null,
+            'address' => $address !== [] ? $address : null,
+            'last_activity_at' => now(),
+        ])->save();
+
+        if ($customer->user && $customer->user->email !== $customer->email) {
+            $customer->user->forceFill([
+                'email' => $customer->email,
+                'email_verified_at' => null,
+            ])->save();
+        }
+
+        return redirect()
+            ->route('crm.customers.show', $customer)
+            ->with('success', 'Customer profile updated.');
+    }
+
     public function purchases(Request $request): Response
     {
         $filters = $this->filters($request, $this->enumValues(OrderStatus::class));
@@ -311,7 +428,7 @@ class CrmController extends Controller
                 ['label' => 'Saved Segments', 'value' => CustomerSegment::count()],
                 ['label' => 'Active Segments', 'value' => CustomerSegment::where('status', 'active')->count()],
                 ['label' => 'Segmented Audience', 'value' => number_format((int) $segments->sum(fn (CustomerSegment $segment) => $this->segments->query(is_array($segment->filters_json) ? $segment->filters_json : [])->count()))],
-                ['label' => 'Customers', 'value' => Customer::count()],
+                ['label' => 'Customers', 'value' => Customer::buyerAccounts()->count()],
             ],
             ['Segment', 'Slug', 'Status', 'Audience', 'Criteria', 'Description', 'Updated'],
             $rows,
@@ -436,11 +553,13 @@ class CrmController extends Controller
 
         return $this->page(
             'Interaction History',
-            'Messages, orders, RFQ events, notes, and other CRM activity in one timeline.',
+            'Messages, support tickets, orders, RFQ events, notes, and other CRM activity in one timeline.',
             [
                 ['label' => 'Total Interactions', 'value' => Interaction::count()],
                 ['label' => 'Order Events', 'value' => Interaction::where('type', InteractionType::Order->value)->count()],
                 ['label' => 'RFQ Events', 'value' => Interaction::where('type', InteractionType::Rfq->value)->count()],
+                ['label' => 'Message Events', 'value' => Interaction::where('type', InteractionType::Message->value)->count()],
+                ['label' => 'Support Ticket Events', 'value' => Interaction::where('type', InteractionType::SupportTicket->value)->count()],
                 ['label' => 'Inbounds', 'value' => Interaction::where('direction', 'inbound')->count()],
             ],
             ['Customer', 'Type', 'Direction', 'Actor', 'Summary', 'Related', 'Occurred'],
@@ -565,7 +684,33 @@ class CrmController extends Controller
             return 'RFQ '.$interaction->related->rfq_number;
         }
 
+        if ($interaction->related instanceof Message) {
+            $subject = trim((string) $interaction->related->subject);
+
+            return $subject !== '' ? 'Message: '.$subject : 'Message #'.$interaction->related->getKey();
+        }
+
+        if ($interaction->related instanceof SupportTicket) {
+            return 'Ticket '.$interaction->related->ticket_number;
+        }
+
         return $interaction->related_type ? class_basename($interaction->related_type) : 'n/a';
+    }
+
+    /**
+     * @return array<int, string>|null
+     */
+    private function parseTags(null|string|array $tags): ?array
+    {
+        if (is_array($tags)) {
+            $values = $tags;
+        } else {
+            $values = array_filter(array_map('trim', explode(',', (string) $tags)));
+        }
+
+        $values = array_values(array_unique(array_filter(array_map('strval', $values), fn (string $value): bool => $value !== '')));
+
+        return $values !== [] ? $values : null;
     }
 
     private function invoiceAction(Order $order): array

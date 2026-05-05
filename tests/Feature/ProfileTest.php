@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Domains\CRM\Models\Customer;
 use App\Domains\CRM\Services\CustomerProfileService;
 use App\Enums\RoleName;
 use App\Models\User;
@@ -37,6 +38,30 @@ class ProfileTest extends TestCase
                 ->component('Profile/Edit')
                 ->where('customer.contact_name', $user->name)
                 ->where('customerSummary.orders_count', 0));
+    }
+
+    public function test_supplier_profile_page_does_not_show_customer_profile_data(): void
+    {
+        $user = User::factory()->create();
+        $user->assignRole(Role::findOrCreate(RoleName::Supplier->value));
+
+        Customer::create([
+            'user_id' => $user->id,
+            'company_name' => 'Supplier Company',
+            'contact_name' => $user->name,
+            'email' => $user->email,
+            'status' => 'active',
+            'lifecycle_stage' => 'customer',
+            'tags' => [],
+            'last_activity_at' => now(),
+        ]);
+
+        $this->actingAs($user)
+            ->get('/profile')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page
+                ->component('Profile/Edit')
+                ->where('customer', null));
     }
 
     public function test_profile_information_can_be_updated(): void

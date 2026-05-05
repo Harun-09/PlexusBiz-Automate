@@ -5,7 +5,9 @@ namespace App\Domains\CRM\Models;
 use App\Domains\CRM\Enums\CustomerLifecycleStage;
 use App\Domains\CRM\Enums\CustomerStatus;
 use App\Domains\ECommerce\Models\Order;
+use App\Enums\RoleName;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -43,6 +45,22 @@ class Customer extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Scope customer records to buyer-linked accounts only.
+     */
+    public function scopeBuyerAccounts(Builder $query): Builder
+    {
+        return $query->where(function (Builder $query): void {
+            $query->whereHas('user', function (Builder $user): void {
+                $user->where('account_type', RoleName::Buyer->value);
+            })->orWhereHas('user', function (Builder $user): void {
+                $user->whereHas('roles', function (Builder $roles): void {
+                    $roles->where('name', RoleName::Buyer->value);
+                });
+            });
+        });
     }
 
     public function orders(): HasMany

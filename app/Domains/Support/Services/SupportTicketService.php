@@ -2,16 +2,21 @@
 
 namespace App\Domains\Support\Services;
 
+use App\Domains\CRM\Enums\InteractionType;
+use App\Domains\CRM\Models\Customer;
+use App\Domains\CRM\Services\InteractionLogger;
 use App\Domains\Support\Enums\SupportChannel;
 use App\Domains\Support\Enums\SupportMessageSenderType;
 use App\Domains\Support\Enums\SupportMessageVisibility;
 use App\Domains\Support\Enums\TicketPriority;
 use App\Domains\Support\Enums\TicketStatus;
 use App\Domains\Support\Events\SupportTicketCreated;
+use App\Domains\ECommerce\Models\Order;
 use App\Domains\Support\Models\SupportMessage;
 use App\Domains\Support\Models\SupportTicket;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class SupportTicketService
 {
@@ -19,6 +24,7 @@ class SupportTicketService
         private readonly SupportTicketNumberService $numbers,
         private readonly FaqMatcher $faqs,
         private readonly SupplierNotificationService $supplierNotifications,
+        private readonly InteractionLogger $interactions,
     ) {
     }
 
@@ -27,7 +33,9 @@ class SupportTicketService
      */
     public function createTicket(User $requester, array $data, SupportChannel $channel = SupportChannel::Web): SupportTicket
     {
-        $ticket = DB::transaction(function () use ($requester, $data, $channel): SupportTicket {
+        $customerId = $this->resolveCustomerId($requester, $data);
+
+        $ticket = DB::transaction(function () use ($requester, $data, $channel, $customerId): SupportTicket {
             $priority = TicketPriority::tryFrom((string) ($data['priority'] ?? TicketPriority::Normal->value)) ?? TicketPriority::Normal;
 
             $ticket = SupportTicket::create([
@@ -35,7 +43,7 @@ class SupportTicketService
                 'requester_id' => $requester->id,
                 'supplier_id' => $data['supplier_id'] ?? null,
                 'order_id' => $data['order_id'] ?? null,
-                'customer_id' => $data['customer_id'] ?? null,
+                'customer_id' => $customerId,
                 'channel' => $channel,
                 'subject' => $data['subject'],
                 'description' => $data['description'],
@@ -139,6 +147,30 @@ class SupportTicketService
 
         $ticket->forceFill(['last_message_at' => now()])->save();
 
+        $customer = $this->resolveCustomerForTicket($ticket, $sender);
+
+        if ($customer) {
+            $this->interactions->record(
+                customer: $customer,
+                type: InteractionType::SupportTicket,
+                summary: $this->supportSummary($ticket, $message, $senderType),
+                related: $ticket,
+                payload: [
+                    'support_ticket_id' => $ticket->id,
+                    'ticket_number' => $ticket->ticket_number,
+                    'support_message_id' => $supportMessage->id,
+                    'sender_type' => $senderType->value,
+                    'visibility' => $visibility->value,
+                    'message_excerpt' => Str::limit(trim(strip_tags($message)), 200),
+                    'supplier_id' => $ticket->supplier_id,
+                    'order_id' => $ticket->order_id,
+                    'customer_id' => $customer->id,
+                ],
+                actor: $sender,
+                direction: $this->directionForSenderType($senderType),
+            );
+        }
+
         return $supportMessage;
     }
 
@@ -179,5 +211,82 @@ class SupportTicketService
         }
 
         return SupportMessageSenderType::Buyer;
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function resolveCustomerId(User $requester, array $data): ?int
+    {
+        $customerId = (int) ($data['customer_id'] ?? 0);
+
+        if ($customerId > 0 && Customer::buyerAccounts()->whereKey($customerId)->exists()) {
+            return $customerId;
+        }
+
+        $orderId = (int) ($data['order_id'] ?? 0);
+
+        if ($orderId > 0) {
+            $orderCustomerId = Order::query()->whereKey($orderId)->value('customer_id');
+
+            if (is_numeric($orderCustomerId) && (int) $orderCustomerId > 0 && Customer::buyerAccounts()->whereKey((int) $orderCustomerId)->exists()) {
+                return (int) $orderCustomerId;
+            }
+        }
+
+        return Customer::buyerAccounts()->where('user_id', $requester->id)->value('id') ?: null;
+    }
+
+    private function resolveCustomerForTicket(SupportTicket $ticket, ?User $sender = null): ?Customer
+    {
+        $ticket->loadMissing(['customer', 'order.customer', 'requester']);
+
+        if ($ticket->customer && Customer::buyerAccounts()->whereKey($ticket->customer->getKey())->exists()) {
+            return $ticket->customer;
+        }
+
+        if ($ticket->order?->customer && Customer::buyerAccounts()->whereKey($ticket->order->customer->getKey())->exists()) {
+            return $ticket->order->customer;
+        }
+
+        if ($sender) {
+            $customer = Customer::buyerAccounts()->where('user_id', $sender->id)->first();
+
+            if ($customer) {
+                return $customer;
+            }
+        }
+
+        if ($ticket->requester) {
+            return Customer::buyerAccounts()->where('user_id', $ticket->requester->id)->first();
+        }
+
+        return null;
+    }
+
+    private function directionForSenderType(SupportMessageSenderType $senderType): string
+    {
+        return match ($senderType) {
+            SupportMessageSenderType::Buyer,
+            SupportMessageSenderType::Customer => 'inbound',
+            SupportMessageSenderType::Chatbot,
+            SupportMessageSenderType::Automation => 'internal',
+            default => 'outbound',
+        };
+    }
+
+    private function supportSummary(SupportTicket $ticket, string $message, SupportMessageSenderType $senderType): string
+    {
+        $label = match ($senderType) {
+            SupportMessageSenderType::Buyer,
+            SupportMessageSenderType::Customer => 'Support request',
+            SupportMessageSenderType::Supplier => 'Supplier support reply',
+            SupportMessageSenderType::Chatbot => 'Automated support reply',
+            default => 'Support message',
+        };
+
+        $snippet = Str::limit(trim(strip_tags($message)), 120);
+
+        return sprintf('%s on %s: %s', $label, $ticket->ticket_number, $snippet !== '' ? $snippet : 'No message');
     }
 }

@@ -12,6 +12,8 @@ Route::prefix('crm')
 
         Route::get('/customers', [CrmController::class, 'customers'])->name('customers.index');
         Route::get('/customers/{customer}', [CrmController::class, 'show'])->name('customers.show');
+        Route::get('/customers/{customer}/edit', [CrmController::class, 'edit'])->name('customers.edit');
+        Route::put('/customers/{customer}', [CrmController::class, 'update'])->name('customers.update');
 
         Route::get('/purchases', [CrmController::class, 'purchases'])->name('purchases.index');
         Route::get('/segments', [CrmController::class, 'segments'])->name('segments.index');

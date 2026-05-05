@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Domains\CRM\Services\CustomerProfileService;
+use App\Enums\RoleName;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
@@ -25,7 +26,7 @@ class ProfileController extends Controller
     {
         $customer = null;
 
-        if ($request->user()?->hasRole('buyer') || $request->user()?->customer) {
+        if ($request->user()?->hasRole(RoleName::Buyer->value) || $request->user()?->account_type === RoleName::Buyer->value) {
             $customer = $this->profiles->ensureForUser($request->user());
         }
 
@@ -64,7 +65,7 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        if ($request->user()->hasRole('buyer')) {
+        if ($request->user()->hasRole(RoleName::Buyer->value) || $request->user()->account_type === RoleName::Buyer->value) {
             $customer = $this->profiles->ensureForUser($request->user());
             $customer->forceFill([
                 'email' => $request->user()->email,
@@ -77,7 +78,7 @@ class ProfileController extends Controller
 
     public function updateCustomer(Request $request): RedirectResponse
     {
-        abort_unless($request->user()?->hasRole('buyer'), 403);
+        abort_unless($request->user()?->hasRole(RoleName::Buyer->value) || $request->user()?->account_type === RoleName::Buyer->value, 403);
 
         $validated = $request->validate([
             'contact_name' => ['required', 'string', 'max:255'],
@@ -93,6 +94,7 @@ class ProfileController extends Controller
         ]);
 
         $customer = $this->profiles->ensureForUser($request->user());
+        $this->authorize('update', $customer);
 
         $address = array_filter([
             'line_1' => $validated['address_line1'] ?? null,
