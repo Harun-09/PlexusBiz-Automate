@@ -140,41 +140,41 @@ function ManagementPanel({ product }) {
                 </div>
             </div>
 
-            <div className="grid gap-5 xl:grid-cols-[1fr_1.3fr]">
-                <form onSubmit={submitMoq} className="rounded-2xl border border-slate-200 bg-slate-50/80 p-5">
-                    <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">MOQ control</p>
-                    <h4 className="mt-2 text-lg font-bold text-slate-950">Update minimum order quantity</h4>
-                    <p className="mt-1 text-sm text-slate-500">
-                        Keep the minimum order rule here so product CRUD stays focused on catalog content only.
-                    </p>
+                <div className="grid gap-5 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+                    <form onSubmit={submitMoq} className="min-w-0 rounded-2xl border border-slate-200 bg-slate-50/80 p-5">
+                        <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">MOQ control</p>
+                        <h4 className="mt-2 text-lg font-bold text-slate-950">Update minimum order quantity</h4>
+                        <p className="mt-1 text-sm text-slate-500">
+                            Keep the minimum order rule here so product CRUD stays focused on catalog content only.
+                        </p>
 
-                    <label htmlFor={`moq-${product.id}`} className="mt-4 block text-xs font-bold uppercase tracking-wider text-slate-500">
-                        Minimum order quantity
-                    </label>
-                    <input
-                        id={`moq-${product.id}`}
-                        type="number"
-                        min="1"
-                        value={moqForm.data.moq}
-                        onChange={(e) => moqForm.setData('moq', e.target.value)}
-                        className="mt-1.5 block w-full rounded-xl border-slate-200 bg-white text-sm shadow-sm transition focus:border-blue-500 focus:ring-blue-500"
-                    />
-                    {moqForm.errors.moq && <p className="mt-1.5 text-sm text-rose-600">{moqForm.errors.moq}</p>}
+                        <label htmlFor={`moq-${product.id}`} className="mt-4 block text-xs font-bold uppercase tracking-wider text-slate-500">
+                            Minimum order quantity
+                        </label>
+                        <input
+                            id={`moq-${product.id}`}
+                            type="number"
+                            min="1"
+                            value={moqForm.data.moq}
+                            onChange={(e) => moqForm.setData('moq', e.target.value)}
+                            className="mt-1.5 block w-full rounded-xl border-slate-200 bg-white text-sm shadow-sm transition focus:border-blue-500 focus:ring-blue-500"
+                        />
+                        {moqForm.errors.moq && <p className="mt-1.5 text-sm text-rose-600">{moqForm.errors.moq}</p>}
 
-                    <button
-                        type="submit"
-                        disabled={moqForm.processing}
-                        className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                        {moqForm.processing ? 'Saving...' : 'Save MOQ'}
-                    </button>
+                        <button
+                            type="submit"
+                            disabled={moqForm.processing}
+                            className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            {moqForm.processing ? 'Saving...' : 'Save MOQ'}
+                        </button>
 
-                    <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
-                        Tiers cannot start below MOQ. When you increase MOQ, revisit existing tiers to keep checkout rules valid.
-                    </div>
-                </form>
+                        <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
+                            Tiers cannot start below MOQ. When you increase MOQ, revisit existing tiers to keep checkout rules valid.
+                        </div>
+                    </form>
 
-                <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5">
+                <div className="min-w-0 space-y-4 rounded-2xl border border-slate-200 bg-white p-5">
                     <div>
                         <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-400">
                             {editingTierId ? 'Edit tier' : 'Add tier'}
@@ -393,8 +393,8 @@ export default function BulkPricingIndex({ auth, summary, products, selectedProd
                         </div>
                     </div>
 
-                    <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-                        <section className="space-y-5">
+                    <div className="grid gap-6 xl:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)]">
+                        <section className="min-w-0 space-y-5">
                             <form onSubmit={submitFilters} className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
                                 <div className="grid gap-4 md:grid-cols-[1fr_180px_180px_auto] md:items-end">
                                     <div>
@@ -544,7 +544,7 @@ export default function BulkPricingIndex({ auth, summary, products, selectedProd
                             </section>
                         </section>
 
-                        <div className="xl:sticky xl:top-6">
+                        <div className="min-w-0 xl:sticky xl:top-6">
                             <ManagementPanel key={selectedProduct ? `${selectedProduct.id}-${selectedProduct.moq}` : 'empty'} product={selectedProduct} />
                         </div>
                     </div>
