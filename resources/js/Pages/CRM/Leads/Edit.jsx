@@ -14,13 +14,6 @@ function Field({ label, error, children, hint = null }) {
     );
 }
 
-const toDateTimeLocal = (value) => {
-    if (!value) return '';
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return '';
-    return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-};
-
 export default function Edit({ auth, flash, errors, lead, statuses = [], customers = [], assignees = [] }) {
     const { data, setData, put, processing } = useForm({
         customer_id: lead.customer_id || '',
@@ -33,7 +26,7 @@ export default function Edit({ auth, flash, errors, lead, statuses = [], custome
         phone: lead.phone || '',
         value: lead.value || '',
         notes: lead.notes || '',
-        next_follow_up_at: toDateTimeLocal(lead.next_follow_up_at),
+        next_follow_up_at: lead.next_follow_up_at || '',
     });
 
     const submit = (event) => {

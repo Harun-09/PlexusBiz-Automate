@@ -47,7 +47,7 @@ class SocialPostController extends Controller
                 'platform' => $socialPost->platform->value,
                 'content' => $socialPost->content,
                 'media_url' => $socialPost->media_url,
-                'scheduled_at' => $socialPost->scheduled_at?->toJSON(),
+                'scheduled_at' => DateTimeInput::toInputValue($socialPost->scheduled_at),
                 'status' => $socialPost->status->value,
                 'likes_count' => $socialPost->likes_count,
                 'comments_count' => $socialPost->comments_count,

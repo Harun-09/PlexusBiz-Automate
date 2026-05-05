@@ -51,7 +51,7 @@ class LeadController extends Controller
                 'phone' => $lead->phone,
                 'value' => $lead->value,
                 'notes' => $lead->notes,
-                'next_follow_up_at' => $lead->next_follow_up_at?->toJSON(),
+                'next_follow_up_at' => DateTimeInput::toInputValue($lead->next_follow_up_at),
             ],
             'statuses' => $this->statuses(),
             'customers' => $this->customerOptions(),

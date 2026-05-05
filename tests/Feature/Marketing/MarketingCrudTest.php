@@ -177,7 +177,7 @@ class MarketingCrudTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page): Assert => $page
                 ->component('Marketing/Campaigns/Edit')
-                ->where('campaign.scheduled_at', Carbon::parse($expectedStored, config('app.timezone', 'UTC'))->toJSON()));
+                ->where('campaign.scheduled_at', $scheduledAt));
     }
 
     public function test_marketing_manager_can_manage_campaigns_and_templates_via_api(): void

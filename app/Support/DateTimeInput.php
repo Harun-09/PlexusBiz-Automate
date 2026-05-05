@@ -25,4 +25,21 @@ final class DateTimeInput
             ->setTimezone(config('app.timezone', 'UTC'))
             ->toDateTimeString();
     }
+
+    /**
+     * Format a stored datetime for a datetime-local input.
+     */
+    public static function toInputValue(mixed $value, ?string $targetTimezone = null): ?string
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        $targetTimezone ??= self::DEFAULT_TIMEZONE;
+        $date = $value instanceof Carbon ? $value->copy() : Carbon::parse((string) $value);
+
+        return $date
+            ->setTimezone($targetTimezone)
+            ->format('Y-m-d\TH:i');
+    }
 }

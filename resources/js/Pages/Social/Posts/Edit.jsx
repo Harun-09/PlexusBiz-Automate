@@ -14,13 +14,6 @@ function Field({ label, error, children, hint = null }) {
     );
 }
 
-const toDateTimeLocal = (value) => {
-    if (!value) return '';
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return '';
-    return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-};
-
 export default function Edit({ auth, flash, errors, post: socialPost, platforms = [], statuses = [], accounts = [], campaigns = [] }) {
     const { data, setData, put, processing } = useForm({
         campaign_id: socialPost.campaign_id || '',
@@ -28,7 +21,7 @@ export default function Edit({ auth, flash, errors, post: socialPost, platforms 
         platform: socialPost.platform || platforms[0] || 'facebook',
         content: socialPost.content || '',
         media_url: socialPost.media_url || '',
-        scheduled_at: toDateTimeLocal(socialPost.scheduled_at),
+        scheduled_at: socialPost.scheduled_at || '',
         status: socialPost.status || statuses[0] || 'draft',
         likes_count: socialPost.likes_count || 0,
         comments_count: socialPost.comments_count || 0,

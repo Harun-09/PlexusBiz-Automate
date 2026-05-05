@@ -61,7 +61,7 @@ class CampaignController extends Controller
                 'type' => $campaign->type->value,
                 'status' => $campaign->status->value,
                 'segment_tags' => implode(', ', $segmentFilters['tags'] ?? []),
-                'scheduled_at' => $campaign->scheduled_at?->toJSON(),
+                'scheduled_at' => DateTimeInput::toInputValue($campaign->scheduled_at),
             ],
             'campaignTypes' => $this->campaignTypes(),
             'statuses' => $this->campaignStatuses(),

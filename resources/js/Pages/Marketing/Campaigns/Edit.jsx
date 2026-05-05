@@ -16,29 +16,13 @@ function Field({ label, error, children, hint = null }) {
     );
 }
 
-const toDateTimeLocal = (value) => {
-    if (!value) {
-        return '';
-    }
-
-    const date = new Date(value);
-
-    if (Number.isNaN(date.getTime())) {
-        return '';
-    }
-
-    const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-
-    return local.toISOString().slice(0, 16);
-};
-
 export default function Edit({ auth, flash, errors, campaign, campaignTypes = ['email'], statuses = [] }) {
     const { data, setData, put, processing } = useForm({
         name: campaign.name || '',
         type: campaign.type || campaignTypes[0] || 'email',
         status: campaign.status || statuses[0] || 'draft',
         segment_tags: campaign.segment_tags || '',
-        scheduled_at: toDateTimeLocal(campaign.scheduled_at),
+        scheduled_at: campaign.scheduled_at || '',
     });
 
     const submit = (event) => {
