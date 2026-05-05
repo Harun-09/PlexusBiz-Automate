@@ -261,9 +261,9 @@
             </tr>
             <tr>
                 <td>3</td>
-                <td>Supplier product management</td>
-                <td><span class="route">/supplier/products</span> or <span class="route">/commerce/products</span></td>
-                <td>Product list, create form, edit form, stock, MOQ, and bulk price fields</td>
+                <td>E-commerce proof flow from catalog to invoice</td>
+                <td><span class="route">/products</span>, <span class="route">/products/{slug}</span>, <span class="route">/admin/products</span>, <span class="route">/admin/bulk-pricing</span>, <span class="route">/cart</span>, <span class="route">/checkout</span>, <span class="route">/checkout/success/{orderNumber}</span>, <span class="route">/commerce/orders</span>, <span class="route">/invoices</span></td>
+                <td>Seeded product cards, MOQ/stock/category on product detail, separate admin pricing workspace, cart totals, checkout success, and generated order/invoice records after one purchase</td>
             </tr>
             <tr>
                 <td>4</td>
@@ -361,15 +361,16 @@
     <section>
         <h2>Step 3. Prove E-Commerce</h2>
         <ol>
-            <li>As a buyer, open <span class="route">/products</span> and show at least one product card.</li>
-            <li>Open <span class="route">/products/bulk-orders</span> and <span class="route">/products/moq-pricing</span> to show bulk and MOQ visibility.</li>
-            <li>As a supplier or admin, open <span class="route">/supplier/products</span> or <span class="route">/commerce/products</span>.</li>
-            <li>Create or edit a product and point out MOQ, regular price, bulk price, inventory, and category fields.</li>
-            <li>Save the product and immediately reopen the list view so the stored data is visible.</li>
-            <li>Add the product to cart, go to <span class="route">/cart</span>, and continue to checkout.</li>
-            <li>Complete checkout and show the success page at <span class="route">/checkout/success/{orderNumber}</span>.</li>
-            <li>Open the order view or invoice page and show invoice generation and order totals.</li>
-            <li>If needed, narrate that stock changes and order records are persisted, not mocked.</li>
+            <li>As a buyer, open <span class="route">/products</span> and show at least one seeded product card, for example <strong>Commercial Water Pump 100L</strong>, <strong>Industrial Dock Plate 1500lb</strong>, or <strong>Wholesale Filing Cabinet Pro</strong>.</li>
+            <li>Open the product detail page from any card and point to the visible <strong>MOQ</strong>, <strong>Stock</strong>, <strong>SKU</strong>, <strong>Category</strong>, current price, and the tier table.</li>
+            <li>Open <span class="route">/products/bulk-orders</span> and <span class="route">/products/moq-pricing</span> to show the same catalog in the bulk and MOQ-focused views.</li>
+            <li>Switch to admin and open <span class="route">/admin/products</span>. Create or edit a product to show <strong>Supplier</strong>, <strong>SKU</strong>, <strong>Product Name</strong>, <strong>Description</strong>, <strong>Regular Price</strong>, <strong>MOQ</strong>, <strong>Bulk Price</strong>, <strong>Stock Quantity</strong>, and <strong>Status</strong>.</li>
+            <li>Open <span class="route">/admin/bulk-pricing</span> for the same product and show the separate MOQ control and tier price table. Explain that basic product details and quantity-based pricing are managed in two different workspaces.</li>
+            <li>Save the product or pricing change and immediately return to the list or product detail view so the stored values are visible.</li>
+            <li>Switch back to buyer, add the seeded product to cart using at least the MOQ quantity, then open <span class="route">/cart</span> and show the item count, unit price, tier price if applied, and line total.</li>
+            <li>Continue to <span class="route">/checkout</span>, complete the checkout flow, and show <span class="route">/checkout/success/{orderNumber}</span>. If the payment gateway is not fully configured, the page may say <em>Checkout received</em>, but the order is still created.</li>
+            <li>Open <span class="route">/commerce/orders</span> and <span class="route">/invoices</span>, then open the invoice detail page. Show the generated order number, invoice number, order total, item lines, and download/preview actions.</li>
+            <li>If the orders page was empty before checkout, explain that this is expected. The proof is the new row that appears after the order is placed and the invoice is issued.</li>
         </ol>
     </section>
 
