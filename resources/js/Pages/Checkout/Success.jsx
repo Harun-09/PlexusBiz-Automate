@@ -66,6 +66,12 @@ export default function CheckoutSuccess({
                                 </div>
                             )}
 
+                            <div className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-4 text-sm leading-6 text-blue-900">
+                                This order has already been routed to supplier fulfillment automatically. You do not need to
+                                contact the supplier manually. The buyer sees the confirmed order here, while the supplier
+                                sees a pending fulfillment row in the supplier queue and ships the product after confirming it.
+                            </div>
+
                             <div className="flex flex-wrap gap-3">
                                 {auth?.user ? (
                                     <Link
