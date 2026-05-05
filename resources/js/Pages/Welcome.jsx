@@ -1632,19 +1632,19 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                                         <Link
                                             key={item.label}
                                             href={item.href}
-                                            className={`flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-left transition ${
+                                            className={`flex w-full items-center gap-3 rounded-[12px] border border-white/5 px-3 py-2.5 text-left transition ${
                                                 item.featured
-                                                    ? 'bg-[#4ba8ff] text-white shadow-[0_12px_30px_-18px_rgba(75,168,255,0.95)] hover:bg-[#57b0ff]'
-                                                    : 'hover:bg-white/10'
+                                                    ? 'bg-gradient-to-r from-[#67b9ff] via-[#4fa8ff] to-[#4598f8] text-white shadow-[0_14px_28px_-18px_rgba(75,168,255,0.9)] hover:from-[#71c1ff] hover:to-[#4d9fff]'
+                                                    : 'bg-gradient-to-r from-white/8 via-white/6 to-white/[0.03] text-white hover:from-white/14 hover:via-white/9 hover:to-white/[0.06]'
                                             }`}
                                         >
                                             <span className={`inline-flex shrink-0 items-center justify-center ${item.featured ? 'text-white' : 'text-white/90'}`}>
                                                 <item.icon className="h-6 w-6" />
                                             </span>
-                                            <span className={`min-w-0 flex-1 text-sm font-semibold leading-5 ${item.featured ? 'text-white' : 'text-white'}`}>
+                                            <span className="min-w-0 flex-1 text-sm font-semibold leading-5 text-white">
                                                 {item.label}
                                             </span>
-                                            <span className={`text-lg font-black ${item.featured ? 'text-white/70' : 'text-white/35'}`}>
+                                            <span className={`text-lg font-black ${item.featured ? 'text-white/75' : 'text-white/40'}`}>
                                                 &gt;
                                             </span>
                                         </Link>
