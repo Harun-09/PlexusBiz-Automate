@@ -77,10 +77,6 @@ export default function Register({ accountTypes = [] }) {
                     <h2>Request a role account.</h2>
                 </div>
 
-                <div className="mb-5 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm leading-6 text-blue-900">
-                    Submit the role and business details below. Admin review is required before the account becomes active.
-                </div>
-
                 <form onSubmit={submit} className="auth-form__body auth-form__body--register">
                     <div className="auth-register-grid auth-register-grid--two">
                         <div className="auth-field">
