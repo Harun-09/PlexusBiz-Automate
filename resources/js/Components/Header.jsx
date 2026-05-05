@@ -11,9 +11,9 @@ const pathToBreadcrumbs = (path) => {
     return parts.map((part) => part.replace(/[-_]/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase()));
 };
 
-export default function Header({ user, header, currentPath, onOpenSidebar }) {
-    const breadcrumbs = pathToBreadcrumbs(currentPath);
-    const showBreadcrumbs = breadcrumbs.length > 1;
+export default function Header({ user, header, currentPath, onOpenSidebar, showBreadcrumbs = true }) {
+    const breadcrumbs = showBreadcrumbs ? pathToBreadcrumbs(currentPath) : [];
+    const shouldShowBreadcrumbs = showBreadcrumbs && breadcrumbs.length > 1;
     const roleLabel = (user?.roles || [])
         .map((role) => String(role).replace(/_/g, ' '))
         .filter(Boolean)
@@ -34,7 +34,7 @@ export default function Header({ user, header, currentPath, onOpenSidebar }) {
                 </button>
 
                 <div className="min-w-0 flex-1">
-                    {showBreadcrumbs ? (
+                    {shouldShowBreadcrumbs ? (
                         <div className="flex flex-wrap items-center gap-1 text-xs font-semibold text-slate-500">
                             {breadcrumbs.map((crumb, index) => (
                                 <span key={`${crumb}-${index}`} className="inline-flex items-center gap-1">
@@ -44,7 +44,7 @@ export default function Header({ user, header, currentPath, onOpenSidebar }) {
                             ))}
                         </div>
                     ) : null}
-                    <div className={showBreadcrumbs ? 'mt-1 min-w-0' : 'min-w-0'}>{header}</div>
+                    <div className={shouldShowBreadcrumbs ? 'mt-1 min-w-0' : 'min-w-0'}>{header}</div>
                 </div>
 
                 <div className="flex items-center gap-4">

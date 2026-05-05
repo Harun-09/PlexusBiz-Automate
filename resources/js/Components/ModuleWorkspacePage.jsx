@@ -381,8 +381,10 @@ export default function ModuleWorkspacePage({ auth, workspace, module = {} }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
+            showBreadcrumbs={!module.compactHeader}
             header={
                 <PageHeader
+                    compact={Boolean(module.compactHeader)}
                     eyebrow={module.eyebrow || 'Workspace'}
                     title={workspace.title}
                     description={workspace.description}

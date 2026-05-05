@@ -3,7 +3,7 @@ import Sidebar from '@/Components/Sidebar';
 import FlashBanner from '@/Components/FlashBanner';
 import { useEffect, useState } from 'react';
 
-export default function AppShell({ user, header, children, flash = null }) {
+export default function AppShell({ user, header, children, flash = null, showBreadcrumbs = true }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const currentPath = typeof window === 'undefined' ? '/dashboard' : window.location.pathname;
 
@@ -48,6 +48,7 @@ export default function AppShell({ user, header, children, flash = null }) {
                     header={header}
                     currentPath={currentPath}
                     onOpenSidebar={() => setSidebarOpen(true)}
+                    showBreadcrumbs={showBreadcrumbs}
                 />
 
                 <main className="min-h-[calc(100vh-4rem)] px-4 py-6 sm:px-6 lg:px-8">

@@ -4,6 +4,7 @@ const buildModuleConfig = (auth, supplierStatus = null) => ({
     eyebrow: 'E-Commerce',
     tag: 'Inventory',
     theme: 'slate',
+    compactHeader: true,
     heroTitle: 'Product operations',
     heroCopy: 'Supplier-owned catalog, stock, MOQ, and status live here for inventory management and B2B visibility.',
     panelTitle: 'What this page covers',
