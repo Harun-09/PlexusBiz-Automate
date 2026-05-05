@@ -37,7 +37,12 @@ const moduleConfig = {
         },
     ],
     actions: [
-        { label: 'Inspect Rules', href: '/workflow/rules', variant: 'primary' },
+        {
+            label: 'Inspect Rules',
+            href: '/workflow/rules',
+            variant: 'primary',
+            permissions: ['manage_automation_rules'],
+        },
         { label: 'Open Support FAQ', href: '/support/faq', variant: 'secondary' },
     ],
 };
