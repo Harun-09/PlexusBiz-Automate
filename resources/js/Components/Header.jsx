@@ -1,19 +1,7 @@
 import Dropdown from '@/Components/Dropdown';
 import NotificationBell from '@/Components/NotificationBell';
 
-const pathToBreadcrumbs = (path) => {
-    const parts = path.split('/').filter(Boolean);
-
-    if (parts.length === 0) {
-        return ['Dashboard'];
-    }
-
-    return parts.map((part) => part.replace(/[-_]/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase()));
-};
-
-export default function Header({ user, header, currentPath, onOpenSidebar, showBreadcrumbs = true }) {
-    const breadcrumbs = showBreadcrumbs ? pathToBreadcrumbs(currentPath) : [];
-    const shouldShowBreadcrumbs = showBreadcrumbs && breadcrumbs.length > 1;
+export default function Header({ user, header, onOpenSidebar }) {
     const roleLabel = (user?.roles || [])
         .map((role) => String(role).replace(/_/g, ' '))
         .filter(Boolean)
@@ -34,17 +22,7 @@ export default function Header({ user, header, currentPath, onOpenSidebar, showB
                 </button>
 
                 <div className="min-w-0 flex-1">
-                    {shouldShowBreadcrumbs ? (
-                        <div className="flex flex-wrap items-center gap-1 text-xs font-semibold text-slate-500">
-                            {breadcrumbs.map((crumb, index) => (
-                                <span key={`${crumb}-${index}`} className="inline-flex items-center gap-1">
-                                    {index > 0 ? <span className="text-slate-300">/</span> : null}
-                                    {crumb}
-                                </span>
-                            ))}
-                        </div>
-                    ) : null}
-                    <div className={shouldShowBreadcrumbs ? 'mt-1 min-w-0' : 'min-w-0'}>{header}</div>
+                    <div className="min-w-0">{header}</div>
                 </div>
 
                 <div className="flex items-center gap-4">

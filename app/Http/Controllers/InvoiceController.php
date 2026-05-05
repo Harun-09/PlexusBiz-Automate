@@ -5,10 +5,9 @@ namespace App\Http\Controllers;
 use App\Domains\ECommerce\Models\Invoice;
 use App\Domains\ECommerce\Services\InvoicePdfService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Response as HttpResponse;
 use Inertia\Inertia;
 use Inertia\Response;
-use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class InvoiceController extends Controller
 {
