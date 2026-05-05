@@ -1,4 +1,5 @@
 import { useForm } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 
 export default function ProductForm({
     product = null,
@@ -13,8 +14,9 @@ export default function ProductForm({
 }) {
     const isEditing = !!product;
     const pricingUrl = !hideSupplier && (product?.id ? `/admin/bulk-pricing?product=${product.id}` : '/admin/bulk-pricing');
+    const [imagePreview, setImagePreview] = useState(product?.primary_image_url || '');
 
-    const { data, setData, post, put, processing, errors } = useForm({
+    const { data, setData, post, processing, errors } = useForm({
         supplier_id: product?.supplier_id || defaultSupplierId || '',
         sku: product?.sku || '',
         name: product?.name || '',
@@ -24,15 +26,24 @@ export default function ProductForm({
         bulk_price: product?.bulk_price || '',
         stock_quantity: product?.stock_quantity || 0,
         status: product?.status || 'draft',
+        image: null,
+        ...(method === 'put' ? { _method: 'put' } : {}),
     });
+
+    useEffect(() => {
+        if (data.image instanceof File) {
+            const previewUrl = URL.createObjectURL(data.image);
+            setImagePreview(previewUrl);
+
+            return () => URL.revokeObjectURL(previewUrl);
+        }
+
+        setImagePreview(product?.primary_image_url || '');
+    }, [data.image, product?.primary_image_url]);
 
     const submit = (e) => {
         e.preventDefault();
-        if (method === 'put') {
-            put(submitUrl, { preserveScroll: true });
-        } else {
-            post(submitUrl, { preserveScroll: true });
-        }
+        post(submitUrl, { preserveScroll: true, forceFormData: true });
     };
 
     return (
@@ -98,6 +109,51 @@ export default function ProductForm({
                         required
                     />
                     {errors.name && <p className="mt-1.5 text-sm text-rose-600">{errors.name}</p>}
+                </div>
+
+                <div className="md:col-span-2">
+                    <div className="grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)]">
+                        <div>
+                            <label htmlFor="product-image" className="block text-xs font-bold uppercase tracking-wider text-gray-500">
+                                Product Image
+                            </label>
+                            <input
+                                id="product-image"
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => setData('image', e.target.files?.[0] ?? null)}
+                                className="mt-1.5 block w-full rounded-xl border-gray-200 bg-gray-50/50 text-sm shadow-sm transition file:mr-4 file:rounded-lg file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-xs file:font-semibold file:uppercase file:tracking-wider file:text-white hover:file:bg-blue-700 focus:border-blue-500 focus:bg-white focus:ring-blue-500"
+                            />
+                            <p className="mt-1.5 text-xs leading-5 text-gray-500">
+                                JPG, PNG, WEBP, or AVIF. Upload one primary image for marketplace and admin previews.
+                            </p>
+                            {errors.image && <p className="mt-1.5 text-sm text-rose-600">{errors.image}</p>}
+                            {data.image?.name ? (
+                                <p className="mt-2 text-xs font-medium text-blue-700">
+                                    Selected file: {data.image.name}
+                                </p>
+                            ) : null}
+                        </div>
+
+                        <div className="rounded-2xl border border-dashed border-blue-200 bg-blue-50/60 p-4">
+                            {imagePreview ? (
+                                <img
+                                    src={imagePreview}
+                                    alt={product?.name || 'Product image preview'}
+                                    className="h-48 w-full rounded-xl object-cover shadow-sm"
+                                />
+                            ) : (
+                                <div className="flex h-48 items-center justify-center rounded-xl border border-dashed border-blue-100 bg-white text-sm text-gray-400">
+                                    No product image selected yet.
+                                </div>
+                            )}
+                            <p className="mt-3 text-xs leading-5 text-gray-500">
+                                {product?.primary_image_url
+                                    ? 'This is the current primary image. Choose a new file to replace it.'
+                                    : 'This image will become the primary product image after save.'}
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Description */}

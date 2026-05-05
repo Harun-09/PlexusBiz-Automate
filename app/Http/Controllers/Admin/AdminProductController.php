@@ -7,6 +7,7 @@ use App\Domains\ECommerce\Models\PricingTier;
 use App\Domains\ECommerce\Models\Product;
 use App\Domains\ECommerce\Models\Supplier;
 use App\Http\Controllers\Controller;
+use App\Support\Media\AssetStorageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -98,7 +99,7 @@ class AdminProductController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, AssetStorageService $assets): RedirectResponse
     {
         $validated = $request->validate([
             'supplier_id' => ['required', 'integer', 'exists:suppliers,id'],
@@ -110,10 +111,13 @@ class AdminProductController extends Controller
             'bulk_price' => ['nullable', 'numeric', 'min:0'],
             'stock_quantity' => ['required', 'integer', 'min:0'],
             'status' => ['required', 'string', Rule::in(array_map(fn (ProductStatus $s): string => $s->value, ProductStatus::cases()))],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,avif', 'max:5120'],
         ]);
 
         $bulkPrice = $validated['bulk_price'] ?? null;
+        $image = $validated['image'] ?? null;
         unset($validated['bulk_price']);
+        unset($validated['image']);
 
         $product = Product::create([
             ...$validated,
@@ -124,12 +128,18 @@ class AdminProductController extends Controller
 
         $this->syncBulkTier($product, $bulkPrice);
 
+        if ($image !== null) {
+            $assets->replaceProductImage($product, $image, [
+                'alt_text' => $product->name,
+            ]);
+        }
+
         return redirect()->route('admin.products.index')->with('success', 'Product created successfully.');
     }
 
     public function edit(Product $product): Response
     {
-        $product->load(['supplier', 'pricingTiers']);
+        $product->load(['supplier', 'pricingTiers', 'images']);
 
         $suppliers = Supplier::query()
             ->where('status', 'approved')
@@ -153,13 +163,14 @@ class AdminProductController extends Controller
                 'bulk_price' => $product->pricingTiers->sortBy('min_quantity')->first()?->unit_price,
                 'stock_quantity' => $product->stock_quantity,
                 'status' => $product->status->value,
+                'primary_image_url' => $product->primaryImage()?->url(),
             ],
             'suppliers' => $suppliers,
             'statuses' => array_map(fn (ProductStatus $s): string => $s->value, ProductStatus::cases()),
         ]);
     }
 
-    public function update(Request $request, Product $product): RedirectResponse
+    public function update(Request $request, Product $product, AssetStorageService $assets): RedirectResponse
     {
         $validated = $request->validate([
             'supplier_id' => ['required', 'integer', 'exists:suppliers,id'],
@@ -171,10 +182,13 @@ class AdminProductController extends Controller
             'bulk_price' => ['nullable', 'numeric', 'min:0'],
             'stock_quantity' => ['required', 'integer', 'min:0'],
             'status' => ['required', 'string', Rule::in(array_map(fn (ProductStatus $s): string => $s->value, ProductStatus::cases()))],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,avif', 'max:5120'],
         ]);
 
         $bulkPrice = $validated['bulk_price'] ?? null;
+        $image = $validated['image'] ?? null;
         unset($validated['bulk_price']);
+        unset($validated['image']);
 
         $oldMoq = (int) $product->moq;
         $wasActive = $product->status === ProductStatus::Active;
@@ -194,6 +208,12 @@ class AdminProductController extends Controller
         }
 
         $this->syncBulkTier($product, $bulkPrice);
+
+        if ($image !== null) {
+            $assets->replaceProductImage($product, $image, [
+                'alt_text' => $product->name,
+            ]);
+        }
 
         return redirect()->route('admin.products.index')->with('success', 'Product updated successfully.');
     }

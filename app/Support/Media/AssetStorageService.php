@@ -26,6 +26,25 @@ class AssetStorageService
         ]);
     }
 
+    public function replaceProductImage(Product $product, UploadedFile $file, array $attributes = []): ProductImage
+    {
+        $image = $this->storeProductImage($product, $file, array_merge($attributes, [
+            'is_primary' => true,
+            'sort_order' => 0,
+        ]));
+
+        ProductImage::query()
+            ->where('product_id', $product->id)
+            ->where('id', '!=', $image->id)
+            ->get()
+            ->each(function (ProductImage $existing): void {
+                $this->deleteProductImageFiles($existing);
+                $existing->delete();
+            });
+
+        return $image;
+    }
+
     public function attachSocialMediaFile(SocialPost $post, UploadedFile $file, array $attributes = []): SocialPost
     {
         $manifest = $this->buildSocialManifest($post, $file);
@@ -52,6 +71,12 @@ class AssetStorageService
         }
 
         return Storage::disk($disk ?: config('media.public_disk', 'public'))->url($path);
+    }
+
+    public function deleteProductImage(ProductImage $image): void
+    {
+        $this->deleteProductImageFiles($image);
+        $image->delete();
     }
 
     public function productVariantPath(Product $product, string $variant, string $extension): string
@@ -393,5 +418,45 @@ class AssetStorageService
     private function isExternalUrl(string $value): bool
     {
         return Str::startsWith($value, ['http://', 'https://', '//']);
+    }
+
+    private function deleteProductImageFiles(ProductImage $image): void
+    {
+        $pathsByDisk = [];
+        $this->pushDiskPath($pathsByDisk, (string) data_get($image->storageMeta(), 'original_disk', config('media.original_disk', 'local')), $image->originalPath());
+        $this->pushDiskPath($pathsByDisk, (string) data_get($image->storageMeta(), 'public_disk', config('media.public_disk', 'public')), $image->publicPath());
+
+        foreach (['thumbnail', 'preview'] as $variant) {
+            $variantMeta = $image->variantMeta($variant);
+
+            if (! is_array($variantMeta)) {
+                continue;
+            }
+
+            $this->pushDiskPath($pathsByDisk, (string) data_get($variantMeta, 'disk', config('media.public_disk', 'public')), $image->variantPath($variant));
+        }
+
+        foreach ($pathsByDisk as $disk => $paths) {
+            if ($paths === []) {
+                continue;
+            }
+
+            Storage::disk($disk)->delete(array_values(array_unique($paths)));
+        }
+    }
+
+    /**
+     * @param array<string, array<int, string>> $pathsByDisk
+     */
+    private function pushDiskPath(array &$pathsByDisk, string $disk, ?string $path): void
+    {
+        $path = trim((string) $path);
+
+        if ($disk === '' || $path === '' || $this->isExternalUrl($path)) {
+            return;
+        }
+
+        $pathsByDisk[$disk] ??= [];
+        $pathsByDisk[$disk][] = $path;
     }
 }
