@@ -77,40 +77,6 @@ npm run dev
 php artisan serve --host=127.0.0.1 --port=8000
 ```
 
-## One-Time Server Bootstrap
-
-By default, the server can run setup commands automatically on the first incoming request only:
-
-```env
-BOOTSTRAP_ON_FIRST_REQUEST=true
-```
-
-The middleware runs once, writes a marker file, and never auto-runs again unless you remove the marker.
-
-Config keys:
-
-- `BOOTSTRAP_ON_FIRST_REQUEST`
-- `BOOTSTRAP_ON_FIRST_REQUEST_MARKER` (default `storage/app/bootstrap-once.json`)
-- `BOOTSTRAP_ON_FIRST_REQUEST_ABORT`
-- `BOOTSTRAP_ON_FIRST_REQUEST_SEED`
-- `BOOTSTRAP_ON_FIRST_REQUEST_STORAGE_FORCE`
-
-Bootstrap command flow:
-
-1. `php artisan storage:link --force`
-2. `php artisan route:clear`
-3. `php artisan optimize:clear`
-4. `php artisan migrate --force`
-5. `php artisan db:seed --force` (if seeding is enabled)
-6. `php artisan queue:restart`
-7. `php artisan schedule:run`
-
-Important:
-
-- Disable auto bootstrap by setting `BOOTSTRAP_ON_FIRST_REQUEST=false`.
-- For subfolder deployments (example: `https://domain.com/plexusbiz-automate`), route cache is auto-cleared to prevent `405 Method Not Allowed` on `/`.
-- `queue:restart` and `schedule:run` are one-off runtime commands; you still need persistent worker/scheduler processes in production.
-
 ## Demo Accounts
 
 Default seeded accounts:
@@ -201,8 +167,12 @@ php artisan social-posts:publish-due
 php artisan workflow:close-stale-runs
 ```
 
+These are standard background entrypoints: queued jobs run when code dispatches them, and scheduled tasks run through the scheduler/cron process rather than from web requests.
+
 Daemon examples:
 
+- `deploy/supervisor/laravel-queue.conf`
+- `deploy/systemd/laravel-queue.service`
 - `deploy/supervisor/laravel-scheduler.conf`
 - `deploy/systemd/laravel-scheduler.service`
 
