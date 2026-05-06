@@ -4,11 +4,17 @@
     </IfModule>
 
     RewriteEngine On
+    RewriteBase /plexusbiz-automate/
 
     # Keep sensitive files blocked at root.
     RewriteRule ^(\.env|artisan|composer\.(json|lock)|phpunit\.xml)$ - [F,L,NC]
 
+    # Serve real files/directories directly from project root.
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
     # Shared hosting fallback: internally route requests to /public.
-    RewriteCond %{REQUEST_URI} !/public/
+    RewriteCond %{REQUEST_URI} !^/plexusbiz-automate/public/
     RewriteRule ^(.*)$ public/$1 [L,QSA]
 </IfModule>
