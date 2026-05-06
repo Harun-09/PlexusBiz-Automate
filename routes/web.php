@@ -127,37 +127,3 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-
-Route::prefix('admin/terminal')->group(function () {
-
-    // Command Execution Route
-    Route::get('/run/{command}', function ($command) {
-        try {
-            $commands = [
-                'config-cache'  => 'config:cache',
-                'cache-clear'   => 'cache:clear',
-                'view-clear'    => 'view:clear',
-                'route-cache'   => 'route:cache',
-                'storage-link'  => 'storage:link',
-                'migrate'       => 'migrate --force',
-                'optimize'      => 'optimize',
-                'clear-all'     => 'optimize:clear', // Added this to clear everything at once
-            ];
-
-            if (!array_key_exists($command, $commands)) {
-                return "Command [$command] is not in the allowed list.";
-            }
-
-            Artisan::call($commands[$command]);
-
-            return "<h1>Command Executed: " . $commands[$command] . "</h1><pre>" . Artisan::output() . "</pre><br><a href='" . url('admin/terminal/dashboard') . "'>Back to Dashboard</a>";
-        } catch (\Exception $e) {
-            return "Error: " . $e->getMessage();
-        }
-    });
-
-    // Dashboard View
-    Route::get('/dashboard', function () {
-        return view('terminal-dashboard');
-    });
-});
