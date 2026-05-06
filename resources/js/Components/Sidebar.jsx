@@ -71,10 +71,10 @@ const SIDEBAR_MODULES = [
         roles: ['marketing_manager', 'admin'],
         icon: MegaphoneIcon,
         items: [
-            { label: 'Social Campaigns', href: '/social/posts', icon: MegaphoneIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_posts'] },
-            { label: 'Social Calendar', href: '/social/calendar', icon: CalendarDaysIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_posts'] },
-            { label: 'Scheduled Posts', href: '/social/posts', icon: ClockIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_posts'] },
-            { label: 'Social Accounts', href: '/social/accounts', icon: IdentificationIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_accounts'] },
+            { label: 'Social Campaigns', href: '/social/posts', icon: MegaphoneIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_posts'], exact: true },
+            { label: 'Social Calendar', href: '/social/calendar', icon: CalendarDaysIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_posts'], exact: true },
+            { label: 'Scheduled Posts', href: '/social/posts/scheduled', icon: ClockIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_posts'], exact: true },
+            { label: 'Social Accounts', href: '/social/accounts', icon: IdentificationIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_accounts'], exact: true },
         ],
     },
     {
@@ -155,21 +155,30 @@ export default function Sidebar({ user, currentPath, onNavigate = null }) {
         };
     };
 
+    const pathMatches = (path) => currentUrlPath === path || (path !== '/' && currentUrlPath.startsWith(`${path}/`));
+
     const hasMatchingQueryItem = (moduleItems) => moduleItems.some((item) => {
         const { search } = splitHref(item.href);
         return search && item.href === currentUrl;
     });
 
-    const isActive = (href, moduleItems = []) => {
-        const { path, search } = splitHref(href);
+    const moduleContainsCurrentPath = (moduleItems) => moduleItems.some((item) => {
+        const { path } = splitHref(item.href);
+        return pathMatches(path);
+    });
 
-        if (search) {
-            return currentUrl === href;
+    const isActive = (item, moduleItems = []) => {
+        const { path, search } = splitHref(item.href);
+
+        if (item.exact) {
+            return search ? currentUrl === item.href : currentUrlPath === path;
         }
 
-        const matchesPath = currentUrlPath === path || (path !== '/' && currentUrlPath.startsWith(`${path}/`));
+        if (search) {
+            return currentUrl === item.href;
+        }
 
-        return matchesPath && !hasMatchingQueryItem(moduleItems);
+        return pathMatches(path) && !hasMatchingQueryItem(moduleItems);
     };
 
     const toggleModule = (key) => {
@@ -180,9 +189,7 @@ export default function Sidebar({ user, currentPath, onNavigate = null }) {
         ));
     };
 
-    const activeModuleKey = modules.find((module) => module.items.some((item) => isActive(item.href, module.items)))?.key ?? null;
-
-    const isOpen = (key) => openKeys.includes(key) || activeModuleKey === key;
+    const isOpen = (module) => openKeys.includes(module.key) || moduleContainsCurrentPath(module.items);
 
     return (
         <aside className="flex h-full min-h-0 flex-col border-r border-slate-800 bg-slate-950">
@@ -208,14 +215,14 @@ export default function Sidebar({ user, currentPath, onNavigate = null }) {
                     <div className="mt-2 space-y-1">
                         <SidebarItem
                             item={{ label: 'Dashboard', href: '/dashboard', icon: DashboardIcon }}
-                            active={isActive('/dashboard')}
+                            active={isActive({ href: '/dashboard' })}
                             onNavigate={onNavigate}
                         />
                     </div>
                 </div>
 
                 {modules.map((module) => {
-                    const open = isOpen(module.key);
+                    const open = isOpen(module);
 
                     return (
                         <div key={module.key} className="rounded-lg border border-white/10 bg-white/[0.04]">
@@ -241,7 +248,7 @@ export default function Sidebar({ user, currentPath, onNavigate = null }) {
                                         <SidebarItem
                                             key={`${module.key}-${item.href}-${item.label}`}
                                             item={item}
-                                            active={isActive(item.href, module.items)}
+                                            active={isActive(item, module.items)}
                                             onNavigate={onNavigate}
                                         />
                                     ))}

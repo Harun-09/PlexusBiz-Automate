@@ -285,7 +285,7 @@
             <tr>
                 <td>Testing, seed data, and documentation</td>
                 <td><span class="status done">Done</span></td>
-                <td>Add critical feature/unit tests, factories, seeders, README, .env.example, queue/scheduler docs, deployment checklist, Docker/Render deployment files, and backup commands.</td>
+                <td>Add critical feature/unit tests, factories, seeders, README, .env.example, queue/scheduler docs, deployment checklist, and backup commands.</td>
             </tr>
             </tbody>
         </table>
@@ -299,7 +299,7 @@
             <li>Tailwind CSS will be the only UI utility framework.</li>
             <li>Product and social media assets use a storage abstraction with separate original and public paths, predictable naming, generated thumbnails or resized variants, and cleanup rules for obsolete uploads.</li>
             <li>Automation payload logging is mandatory and must preserve full trigger context as JSON, not just selected fields.</li>
-            <li>Render deployment will use Docker from the GitHub repo, with Apache/PHP binding to Render's <code>PORT</code> and Laravel production caches generated at container start.</li>
+            <li>Deployment operations stay provider-agnostic and are documented in <code>docs/operations.md</code>.</li>
         </ul>
     </section>
 
@@ -322,7 +322,6 @@
             <li>Created <code>docs/requirement-proof-guide.html</code> with the exact demo sequence, credentials, routes, terminal commands, and database backup proof steps.</li>
             <li>Generated SQL backup at <code>database/backups/plexusbiz_assignment_backup.sql</code> after applying the current local migrations.</li>
             <li>SMS is covered through the mock SMS provider and workflow <code>send_sms</code> action so the assignment's order placed SMS proof is visible without paid provider credentials.</li>
-            <li>Added Docker and Render deployment support with <code>Dockerfile</code>, <code>render.yaml</code>, runtime OPcache, Apache static compression/cache headers, persistent public media storage, <code>/healthz</code>, and updated operations docs.</li>
         </ul>
     </section>
 

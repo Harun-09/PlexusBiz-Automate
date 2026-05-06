@@ -7,7 +7,7 @@
     <style>
         @page {
             size: A4 portrait;
-            margin: 20px;
+            margin: 0;
         }
 
         * {
@@ -21,6 +21,9 @@
         html,
         body {
             width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
         }
 
         body {
@@ -32,7 +35,11 @@
         }
 
         .page {
-            width: 100%;
+            margin: 20px;
+        }
+
+        .page-inner {
+            width: auto;
         }
 
         .header {
@@ -48,6 +55,7 @@
         .header-table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: fixed;
         }
 
         .header-table td {
@@ -55,8 +63,16 @@
         }
 
         .brand {
-            width: 52%;
-            padding-right: 8px;
+            width: 54%;
+            padding-right: 10px;
+        }
+
+        .header-card {
+            min-height: 84px;
+            padding: 8px 10px;
+            border: 1px solid #dbeafe;
+            border-radius: 8px;
+            background: #ffffff;
         }
 
         .brand h1 {
@@ -74,10 +90,12 @@
         }
 
         .invoice-meta {
-            width: 48%;
+            width: 46%;
             text-align: right;
             overflow-wrap: anywhere;
             word-break: break-word;
+            padding-right: 8px;
+            padding-left: 6px;
         }
 
         .invoice-meta h2 {
@@ -93,6 +111,7 @@
             margin-bottom: 1.5px;
             color: #475569;
             font-size: 8.4px;
+            line-height: 1.25;
         }
 
         .status-badge {
@@ -266,25 +285,30 @@
 </head>
 <body>
     <div class="page">
+        <div class="page-inner">
         <div class="header">
             <table class="header-table">
                 <tr>
                     <td class="brand">
-                        <h1>PlexusBiz Automate</h1>
-                        <p>B2B E-Commerce & Business Automation Platform</p>
-                        <p>Email: support@plexusbiz.com</p>
+                        <div class="header-card">
+                            <h1>PlexusBiz Automate</h1>
+                            <p>B2B E-Commerce & Business Automation Platform</p>
+                            <p>Email: support@plexusbiz.com</p>
+                        </div>
                     </td>
                     <td class="invoice-meta">
-                        <h2>INVOICE</h2>
-                        <p class="meta-line"><strong>Invoice Number:</strong> {{ $invoice->invoice_number }}</p>
-                        <p class="meta-line"><strong>Order Number:</strong> {{ $invoice->order->order_number }}</p>
-                        <p class="meta-line"><strong>Date:</strong> {{ $invoice->issued_at->format('M d, Y') }}</p>
-                        <p class="meta-line"><strong>Due Date:</strong> {{ $invoice->due_at->format('M d, Y') }}</p>
-                        <p>
-                            <span class="status-badge status-{{ $invoice->status->value }}">
-                                {{ ucfirst($invoice->status->value) }}
-                            </span>
-                        </p>
+                        <div class="header-card">
+                            <h2>INVOICE</h2>
+                            <p class="meta-line"><strong>Invoice Number:</strong> {{ $invoice->invoice_number }}</p>
+                            <p class="meta-line"><strong>Order Number:</strong> {{ $invoice->order->order_number }}</p>
+                            <p class="meta-line"><strong>Date:</strong> {{ $invoice->issued_at->format('M d, Y') }}</p>
+                            <p class="meta-line"><strong>Due Date:</strong> {{ $invoice->due_at->format('M d, Y') }}</p>
+                            <p>
+                                <span class="status-badge status-{{ $invoice->status->value }}">
+                                    {{ ucfirst($invoice->status->value) }}
+                                </span>
+                            </p>
+                        </div>
                     </td>
                 </tr>
             </table>
@@ -372,6 +396,7 @@
         <div class="footer">
             <p>Thank you for your business. This invoice was generated automatically by PlexusBiz Automate.</p>
             <p>For any questions, please contact our support team.</p>
+        </div>
         </div>
     </div>
 </body>

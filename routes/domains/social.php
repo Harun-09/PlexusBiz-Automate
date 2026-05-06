@@ -11,6 +11,7 @@ Route::prefix('social')->name('social.')->middleware('role:marketing_manager|adm
     Route::middleware('permission:manage_social_posts')->group(function (): void {
         Route::get('/campaigns', fn () => redirect()->route('social.posts.index'))->name('campaigns.index');
         Route::get('/calendar', [WorkspaceController::class, 'socialCalendar'])->name('calendar');
+        Route::get('/posts/scheduled', [WorkspaceController::class, 'socialScheduledPosts'])->name('posts.scheduled');
         Route::get('/posts', [WorkspaceController::class, 'socialPosts'])->name('posts.index');
         Route::get('/posts/create', [SocialPostController::class, 'create'])->name('posts.create');
         Route::post('/posts', [SocialPostController::class, 'store'])->name('posts.store');

@@ -557,7 +557,32 @@ class WorkspaceController extends Controller
 
     public function socialPosts(Request $request): Response
     {
+        return $this->socialPostsWorkspace($request);
+    }
+
+    public function socialScheduledPosts(Request $request): Response
+    {
+        return $this->socialPostsWorkspace(
+            $request,
+            SocialPostStatus::Scheduled->value,
+            'Scheduled Posts',
+            'Queued social posts waiting for their publish window.',
+            'scheduled',
+        );
+    }
+
+    private function socialPostsWorkspace(
+        Request $request,
+        ?string $forcedStatus = null,
+        string $title = 'Social Campaigns',
+        string $description = 'Scheduled content across Facebook and Instagram with engagement tracking.',
+        string $variant = 'campaigns',
+    ): Response {
         $filters = $this->filters($request, $this->enumValues(SocialPostStatus::class));
+
+        if ($forcedStatus !== null) {
+            $filters['status'] = $forcedStatus;
+        }
 
         $query = SocialPost::query()->with(['account', 'campaign']);
 
@@ -636,12 +661,21 @@ class WorkspaceController extends Controller
                 ];
             });
 
-        return $this->page('Social Campaigns', 'Scheduled content across Facebook and Instagram with engagement tracking.', [
-            ['label' => 'Total Posts', 'value' => SocialPost::count()],
-            ['label' => 'Scheduled', 'value' => SocialPost::where('status', SocialPostStatus::Scheduled->value)->count()],
-            ['label' => 'Published', 'value' => SocialPost::where('status', SocialPostStatus::Published->value)->count()],
-            ['label' => 'Failed', 'value' => SocialPost::where('status', SocialPostStatus::Failed->value)->count()],
-        ], ['Post', 'Platform', 'Account', 'Campaign', 'Status', 'Scheduled', 'Published', 'Likes', 'Comments', 'Shares', 'Reach', 'Clicks', 'Action'], $rows, filters: $filters, component: 'Social/Posts/Index');
+        return $this->page(
+            $title,
+            $description,
+            [
+                ['label' => 'Total Posts', 'value' => SocialPost::count()],
+                ['label' => 'Scheduled', 'value' => SocialPost::where('status', SocialPostStatus::Scheduled->value)->count()],
+                ['label' => 'Published', 'value' => SocialPost::where('status', SocialPostStatus::Published->value)->count()],
+                ['label' => 'Failed', 'value' => SocialPost::where('status', SocialPostStatus::Failed->value)->count()],
+            ],
+            ['Post', 'Platform', 'Account', 'Campaign', 'Status', 'Scheduled', 'Published', 'Likes', 'Comments', 'Shares', 'Reach', 'Clicks', 'Action'],
+            $rows,
+            filters: $filters,
+            component: 'Social/Posts/Index',
+            extraProps: ['variant' => $variant],
+        );
     }
 
     public function socialAccounts(Request $request): Response
@@ -1192,9 +1226,9 @@ class WorkspaceController extends Controller
         return back()->with('success', 'Ticket assignment updated successfully.');
     }
 
-    private function page(string $title, string $description, array $metrics, array $columns, iterable $rows, string $emptyState = 'No records found.', ?array $filters = null, string $component = 'Workspace/Index'): Response
+    private function page(string $title, string $description, array $metrics, array $columns, iterable $rows, string $emptyState = 'No records found.', ?array $filters = null, string $component = 'Workspace/Index', array $extraProps = []): Response
     {
-        return Inertia::render($component, [
+        return Inertia::render($component, array_merge([
             'workspace' => [
                 'title' => $title,
                 'description' => $description,
@@ -1204,7 +1238,7 @@ class WorkspaceController extends Controller
                 'emptyState' => $emptyState,
                 'filters' => $filters,
             ],
-        ]);
+        ], $extraProps));
     }
 
     private function currentSupplier(Request $request): Supplier

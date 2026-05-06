@@ -51,6 +51,14 @@ class AutomationModulesTest extends TestCase
                 ->has('workspace.rows', 2));
 
         $this->actingAs($marketing)
+            ->get('/social/posts/scheduled')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page
+                ->component('Social/Posts/Index')
+                ->where('workspace.title', 'Scheduled Posts')
+                ->has('workspace.rows', 2));
+
+        $this->actingAs($marketing)
             ->get('/social/posts/create')
             ->assertOk()
             ->assertInertia(fn (Assert $page): Assert => $page->component('Social/Posts/Create'));
