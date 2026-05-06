@@ -1,55 +1,120 @@
 # PlexusBiz Automate
 
-PlexusBiz Automate is a Laravel 10, React, and Tailwind CSS modular monolith for B2B e-commerce, CRM, marketing automation, social scheduling, workflow automation, support automation, and REST APIs.
+PlexusBiz Automate is a modular Laravel 10 platform for B2B commerce and business automation.  
+It combines e-commerce, CRM, marketing automation, social scheduling, workflow rules, support operations, and authenticated REST APIs in one codebase.
+
+## Tech Stack
+
+- Backend: Laravel 10, Sanctum, Spatie Laravel Permission
+- Frontend: Inertia.js + React 18 + Tailwind CSS
+- Database: MySQL
+- PDF: barryvdh/laravel-dompdf
+- Build: Vite (`--configLoader native`)
+
+## Solution Scope
+
+This project covers the assignment modules as live, data-backed flows:
+
+- E-Commerce: marketplace, supplier onboarding, product CRUD, stock tracking, MOQ, bulk pricing, cart, checkout, invoices, RFQ
+- CRM: customer profiling, purchase history, segmentation, lead management, interaction timeline
+- Marketing Automation: template-based campaigns, trigger-based automation, scheduled dispatch
+- Social Automation: social accounts, scheduled posts, calendar, publish workflow, engagement placeholders
+- Workflow Engine: event-driven IF/THEN automation with logs and scheduler integration
+- Admin and RBAC: role-based access, user management, module controls, audit visibility
+- Support Automation: tickets, replies, notifications, FAQ matching, chatbot-ready API endpoint
 
 ## Architecture
 
-The application keeps business logic grouped by domain under `app/Domains`:
+Business logic is organized by domain under `app/Domains`:
 
-- `ECommerce`: suppliers, catalog, pricing tiers, inventory, cart, checkout, orders, invoices, RFQs.
-- `CRM`: customer profiles, lifecycle tracking, leads, interactions, segmentation.
-- `Marketing`: campaigns, templates, recipients, mockable email providers, dispatch jobs.
-- `Social`: social accounts, scheduled posts, mock Facebook/Instagram publishing, engagement placeholders.
-- `Workflow`: automation rules, event listeners, queued/sync action execution, full payload snapshots in `workflow_logs`.
-- `Support`: support tickets, messages, FAQ matching, auto replies, supplier notifications, chatbot API.
-- `Admin`, `Settings`, `Notifications`: route and module boundaries for platform expansion.
+- `ECommerce`
+- `CRM`
+- `Marketing`
+- `Social`
+- `Workflow`
+- `Support`
+- `Admin`
+- `Settings`
+- `Notifications`
 
-Domain routes are registered through `App\Providers\DomainServiceProvider` and the module registry in `config/domains.php`.
+Routes are modularized through `App\Providers\DomainServiceProvider` and domain registry configuration in `config/domains.php`.
 
-## Assignment Coverage
+## Quick Start
 
-The assignment modules are implemented as live, data-backed flows:
-
-- E-Commerce: multi-vendor marketplace, supplier onboarding, product CRUD, inventory tracking, bulk pricing and MOQ, cart to checkout to confirmation, and invoices.
-- CRM: customer registration and profiling, purchase history, basic segmentation, lead management, and interaction history.
-- Social Media Automation: scheduled Facebook and Instagram posts, content calendar, rule-based publishing, campaign management, and engagement placeholders.
-- Marketing Automation: template-based email campaigns, trigger-based rules, and scheduling. SMS is adapter-ready but not required for the assignment demo.
-- Workflow Automation: IF/THEN automation rules, queued and sync execution, scheduler support, and execution logs.
-- Admin Panel: RBAC, platform monitoring, user management, and module enable/disable control.
-- Order & Support Automation: auto confirmations, support tickets, auto replies, supplier notifications, and chatbot-ready API structure.
-
-Seeded data and feature tests cover the core flows so the platform remains dynamic rather than placeholder-only.
-
-## Local Setup
+### 1) Install dependencies
 
 ```bash
 composer install
 npm install
-cp .env.example .env
-php artisan key:generate
-php artisan migrate --seed
-npm run build
-php artisan serve
 ```
 
-For local development with hot reload:
+### 2) Configure environment
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+Set MySQL credentials in `.env` (`DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`).
+
+### 3) Prepare database and build assets
+
+```bash
+php artisan migrate --seed
+npm run build
+```
+
+### 4) Run locally
+
+```bash
+php artisan serve --host=127.0.0.1 --port=8000
+```
+
+For hot reload in development:
 
 ```bash
 npm run dev
-php artisan serve
+php artisan serve --host=127.0.0.1 --port=8000
 ```
 
-Seeded accounts:
+## One-Time Server Bootstrap (Optional)
+
+If you want the server to run setup commands automatically on the first incoming request only, enable:
+
+```env
+BOOTSTRAP_ON_FIRST_REQUEST=true
+```
+
+The middleware runs once, writes a marker file, and never auto-runs again unless you remove the marker.
+
+Config keys:
+
+- `BOOTSTRAP_ON_FIRST_REQUEST`
+- `BOOTSTRAP_ON_FIRST_REQUEST_MARKER` (default `storage/app/bootstrap-once.json`)
+- `BOOTSTRAP_ON_FIRST_REQUEST_ABORT`
+- `BOOTSTRAP_ON_FIRST_REQUEST_MIGRATE_FRESH`
+- `BOOTSTRAP_ON_FIRST_REQUEST_SEED`
+- `BOOTSTRAP_ON_FIRST_REQUEST_STORAGE_FORCE`
+
+Bootstrap command flow:
+
+1. `php artisan storage:link --force`
+2. `php artisan optimize:clear`
+3. `php artisan migrate:fresh --seed --force` (if `BOOTSTRAP_ON_FIRST_REQUEST_MIGRATE_FRESH=true`)
+4. `php artisan optimize`
+5. `php artisan queue:restart`
+6. `php artisan schedule:run`
+
+If `BOOTSTRAP_ON_FIRST_REQUEST_MIGRATE_FRESH=false`, it uses `migrate --force` (+ `db:seed --force` when seeding is enabled).
+
+Important:
+
+- `migrate:fresh` destroys existing tables and data.
+- `queue:restart` and `schedule:run` are one-off runtime commands; you still need persistent worker/scheduler processes in production.
+
+## Demo Accounts
+
+Default seeded accounts:
 
 | Role | Email | Password |
 | --- | --- | --- |
@@ -58,7 +123,7 @@ Seeded accounts:
 | Buyer | `buyer@plexus.test` | `password` |
 | Marketing Manager | `marketing@plexus.test` | `password` |
 
-Assignment aliases are seeded with the same password:
+Assignment aliases (same password):
 
 | Role | Email | Password |
 | --- | --- | --- |
@@ -67,21 +132,30 @@ Assignment aliases are seeded with the same password:
 | Buyer | `buyer@example.com` | `password` |
 | Marketing Manager | `marketing@example.com` | `password` |
 
-Assignment-friendly route aliases are also available for the demo, including `/register-supplier`, `/supplier/products`, `/admin/leads`, `/admin/social-posts`, `/admin/campaigns`, `/admin/automation-rules`, `/admin/modules`, `/buyer/tickets`, and `/customer/profile`.
+## Key Demo Routes
 
-## Testing
+- `GET /products`
+- `GET /products/bulk-orders`
+- `GET /products/moq-pricing`
+- `GET /register-supplier`
+- `GET /supplier/products`
+- `GET /admin/leads`
+- `GET /admin/campaigns`
+- `GET /social/posts`
+- `GET /social/posts/scheduled`
+- `GET /social/calendar`
+- `GET /workflow/rules`
+- `GET /workflow/logs`
+- `GET /buyer/tickets`
+- `GET /admin/modules`
+- `GET /settings/modules`
+- `GET /invoices`
 
-```bash
-php artisan test
-npm run build
-npm audit --audit-level=low
-```
+## API Surface
 
-Current coverage includes RBAC, checkout and inventory, CRM purchase history, marketing dispatch, social publishing, workflow payload snapshots, support automation, workspace routes, and authenticated API resources.
+All v1 API routes are authenticated with Sanctum and protected by policies/permissions.
 
-## API
-
-All v1 API routes use Sanctum authentication and Laravel policies.
+Primary endpoints:
 
 ```text
 GET  /api/v1/products
@@ -94,45 +168,97 @@ GET  /api/v1/support-tickets
 POST /api/v1/support/chatbot/message
 ```
 
-Index endpoints support:
+Compatibility route also exists:
+
+- `POST /api/support/chatbot/message`
+
+Supported index query params:
 
 - `search`
 - `status`
-- `per_page` from 1 to 100
-- `sort`, with `-created_at` style descending fields
+- `per_page` (1-100)
+- `sort` (supports descending syntax like `-created_at`)
 
-The support chatbot endpoint also remains available at `POST /api/support/chatbot/message` for compatibility.
+## Automation and Background Jobs
 
-## Automation Logging
-
-Automation execution must preserve trigger context. `WorkflowEngineService` writes every matched, skipped, queued, successful, or failed execution to `workflow_logs` with:
+Workflow execution snapshots are written to `workflow_logs` with:
 
 - `trigger_event`
-- full JSON `payload`
+- `payload` (full JSON snapshot)
 - `status`
-- JSON `result`
+- `result`
 - `error`
 - `executed_at`
 
-This applies to order placement and support ticket creation events.
-
-## Scheduler Commands
+Runtime commands:
 
 ```bash
+php artisan queue:work
 php artisan schedule:work
 php artisan schedule:run
-php artisan queue:work
 php artisan campaigns:send-scheduled
 php artisan carts:check-abandoned
 php artisan social-posts:publish-due
+php artisan workflow:close-stale-runs
 ```
 
-Daemon examples are in `deploy/supervisor/laravel-scheduler.conf` and `deploy/systemd/laravel-scheduler.service`.
+Daemon examples:
 
-## Requirement Proof Guide
+- `deploy/supervisor/laravel-scheduler.conf`
+- `deploy/systemd/laravel-scheduler.service`
 
-Open `docs/requirement-proof-guide.html` for the full step-by-step viva/demo sequence.
+## Testing and Quality
 
-## Operations
+Run the full test suite:
 
-See [docs/operations.md](docs/operations.md) for queue workers, scheduler setup, deployment checklist, and backup/restore commands.
+```bash
+php artisan test
+```
+
+Build validation:
+
+```bash
+npm run build
+```
+
+The project includes feature coverage for:
+
+- RBAC and auth access control
+- Checkout, inventory, payments, and invoice preview/download
+- CRM leads, customers, purchases, interactions
+- Marketing campaign triggers and scheduled dispatch
+- Social publishing and scheduled jobs
+- Workflow rule execution and payload logging
+- Support automation and chatbot endpoint
+- API resources and workspace module routes
+
+## Operations and Deployment
+
+Deployment and runbook details are documented in:
+
+- [docs/operations.md](docs/operations.md)
+- [docs/operations.html](docs/operations.html)
+
+These include:
+
+- queue/scheduler setup
+- production deployment checklist
+- backup and restore commands
+- credential handling guidance
+
+## Assignment Proof Package
+
+Use these documents for evaluator/demo flow:
+
+- [docs/requirement-proof-guide.html](docs/requirement-proof-guide.html)
+- [docs/workflow.html](docs/workflow.html)
+
+Database backup artifact:
+
+- `database/backups/plexusbiz_assignment_backup.sql`
+
+## Security Notes
+
+- Keep real provider credentials only in `.env`
+- Do not commit secrets
+- Mock adapters are used for local/demo-safe email, SMS, Facebook, and Instagram behavior
