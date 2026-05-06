@@ -17,6 +17,8 @@ class RunOneTimeServerBootstrap
             return $next($request);
         }
 
+        $this->clearSubdirectoryRouteCacheIfNeeded();
+
         $markerPath = $this->markerPath();
         $lockPath = $markerPath.'.lock';
 
@@ -87,6 +89,7 @@ class RunOneTimeServerBootstrap
                 'name' => 'storage:link',
                 'arguments' => $this->settingStorageLinkForce() ? ['--force' => true] : [],
             ],
+            ['name' => 'route:clear', 'arguments' => []],
             ['name' => 'optimize:clear', 'arguments' => []],
             ['name' => 'migrate', 'arguments' => ['--force' => true]],
         ];
@@ -95,7 +98,6 @@ class RunOneTimeServerBootstrap
             $commands[] = ['name' => 'db:seed', 'arguments' => ['--force' => true]];
         }
 
-        $commands[] = ['name' => 'optimize', 'arguments' => []];
         $commands[] = ['name' => 'queue:restart', 'arguments' => []];
         $commands[] = ['name' => 'schedule:run', 'arguments' => []];
 
@@ -134,6 +136,50 @@ class RunOneTimeServerBootstrap
             'commands' => $executed,
             'error' => $error,
         ];
+    }
+
+    private function clearSubdirectoryRouteCacheIfNeeded(): void
+    {
+        if (! $this->isSubdirectoryDeployment() || ! app()->routesAreCached()) {
+            return;
+        }
+
+        try {
+            Artisan::call('route:clear');
+            Log::warning('Route cache was auto-cleared for subdirectory deployment to avoid 405 root requests.', [
+                'app_url' => $this->appUrl(),
+            ]);
+        } catch (Throwable $exception) {
+            Log::error('Failed to auto-clear route cache for subdirectory deployment.', [
+                'app_url' => $this->appUrl(),
+                'error' => $exception->getMessage(),
+            ]);
+        }
+    }
+
+    private function isSubdirectoryDeployment(): bool
+    {
+        $path = parse_url($this->appUrl(), PHP_URL_PATH);
+
+        if (! is_string($path)) {
+            return false;
+        }
+
+        return trim($path, '/') !== '';
+    }
+
+    private function appUrl(): string
+    {
+        $configured = config('app.url');
+        if (is_string($configured) && trim($configured) !== '') {
+            return trim($configured);
+        }
+
+        $fromEnv = $this->envFromDotenv('APP_URL');
+
+        return $fromEnv === null || trim($fromEnv) === ''
+            ? 'http://localhost'
+            : trim($fromEnv);
     }
 
     private function formatCommand(string $name, array $arguments): string

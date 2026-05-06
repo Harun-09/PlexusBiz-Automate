@@ -15,6 +15,7 @@
     RewriteRule ^ - [L]
 
     # Shared hosting fallback: internally route requests to /public.
-    RewriteCond %{REQUEST_URI} !^/plexusbiz-automate/public/
+    RewriteCond %{ENV:REDIRECT_STATUS} ^$
+    RewriteCond %{REQUEST_URI} !^/plexusbiz-automate/public($|/)
     RewriteRule ^(.*)$ public/$1 [L,QSA]
 </IfModule>

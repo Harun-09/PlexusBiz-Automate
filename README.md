@@ -98,16 +98,17 @@ Config keys:
 Bootstrap command flow:
 
 1. `php artisan storage:link --force`
-2. `php artisan optimize:clear`
-3. `php artisan migrate --force`
-4. `php artisan db:seed --force` (if seeding is enabled)
-5. `php artisan optimize`
+2. `php artisan route:clear`
+3. `php artisan optimize:clear`
+4. `php artisan migrate --force`
+5. `php artisan db:seed --force` (if seeding is enabled)
 6. `php artisan queue:restart`
 7. `php artisan schedule:run`
 
 Important:
 
 - Disable auto bootstrap by setting `BOOTSTRAP_ON_FIRST_REQUEST=false`.
+- For subfolder deployments (example: `https://domain.com/plexusbiz-automate`), route cache is auto-cleared to prevent `405 Method Not Allowed` on `/`.
 - `queue:restart` and `schedule:run` are one-off runtime commands; you still need persistent worker/scheduler processes in production.
 
 ## Demo Accounts

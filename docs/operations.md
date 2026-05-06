@@ -64,12 +64,13 @@ npm run build
 php artisan down
 php artisan migrate --force
 php artisan config:cache
-php artisan route:cache
 php artisan view:cache
 php artisan event:cache
 php artisan queue:restart
 php artisan up
 ```
+
+For subfolder deployments (example: `https://domain.com/plexusbiz-automate`), do **not** run `php artisan route:cache` because it can cause `405 Method Not Allowed` on `/`.
 
 Verify after deployment:
 
