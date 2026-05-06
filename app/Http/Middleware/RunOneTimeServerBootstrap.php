@@ -76,21 +76,11 @@ class RunOneTimeServerBootstrap
                 'arguments' => config('bootstrap.once.storage_link_force', true) ? ['--force' => true] : [],
             ],
             ['name' => 'optimize:clear', 'arguments' => []],
+            ['name' => 'migrate', 'arguments' => ['--force' => true]],
         ];
 
-        if (config('bootstrap.once.migrate_fresh', false)) {
-            $arguments = ['--force' => true];
-            if (config('bootstrap.once.seed', true)) {
-                $arguments['--seed'] = true;
-            }
-
-            $commands[] = ['name' => 'migrate:fresh', 'arguments' => $arguments];
-        } else {
-            $commands[] = ['name' => 'migrate', 'arguments' => ['--force' => true]];
-
-            if (config('bootstrap.once.seed', true)) {
-                $commands[] = ['name' => 'db:seed', 'arguments' => ['--force' => true]];
-            }
+        if (config('bootstrap.once.seed', true)) {
+            $commands[] = ['name' => 'db:seed', 'arguments' => ['--force' => true]];
         }
 
         $commands[] = ['name' => 'optimize', 'arguments' => []];

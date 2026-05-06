@@ -77,9 +77,9 @@ npm run dev
 php artisan serve --host=127.0.0.1 --port=8000
 ```
 
-## One-Time Server Bootstrap (Optional)
+## One-Time Server Bootstrap
 
-If you want the server to run setup commands automatically on the first incoming request only, enable:
+By default, the server can run setup commands automatically on the first incoming request only:
 
 ```env
 BOOTSTRAP_ON_FIRST_REQUEST=true
@@ -92,7 +92,6 @@ Config keys:
 - `BOOTSTRAP_ON_FIRST_REQUEST`
 - `BOOTSTRAP_ON_FIRST_REQUEST_MARKER` (default `storage/app/bootstrap-once.json`)
 - `BOOTSTRAP_ON_FIRST_REQUEST_ABORT`
-- `BOOTSTRAP_ON_FIRST_REQUEST_MIGRATE_FRESH`
 - `BOOTSTRAP_ON_FIRST_REQUEST_SEED`
 - `BOOTSTRAP_ON_FIRST_REQUEST_STORAGE_FORCE`
 
@@ -100,16 +99,15 @@ Bootstrap command flow:
 
 1. `php artisan storage:link --force`
 2. `php artisan optimize:clear`
-3. `php artisan migrate:fresh --seed --force` (if `BOOTSTRAP_ON_FIRST_REQUEST_MIGRATE_FRESH=true`)
-4. `php artisan optimize`
-5. `php artisan queue:restart`
-6. `php artisan schedule:run`
-
-If `BOOTSTRAP_ON_FIRST_REQUEST_MIGRATE_FRESH=false`, it uses `migrate --force` (+ `db:seed --force` when seeding is enabled).
+3. `php artisan migrate --force`
+4. `php artisan db:seed --force` (if seeding is enabled)
+5. `php artisan optimize`
+6. `php artisan queue:restart`
+7. `php artisan schedule:run`
 
 Important:
 
-- `migrate:fresh` destroys existing tables and data.
+- Disable auto bootstrap by setting `BOOTSTRAP_ON_FIRST_REQUEST=false`.
 - `queue:restart` and `schedule:run` are one-off runtime commands; you still need persistent worker/scheduler processes in production.
 
 ## Demo Accounts
