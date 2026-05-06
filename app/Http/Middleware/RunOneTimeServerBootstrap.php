@@ -45,16 +45,28 @@ class RunOneTimeServerBootstrap
             if (! is_file($markerPath)) {
                 $result = $this->runBootstrapCommands();
 
-                file_put_contents(
-                    $markerPath,
-                    json_encode([
-                        'attempted_at' => now()->toIso8601String(),
-                        'app_env' => app()->environment(),
-                        'success' => $result['success'],
-                        'commands' => $result['commands'],
-                        'error' => $result['error'],
-                    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
-                );
+                if ($result['success']) {
+                    file_put_contents(
+                        $markerPath,
+                        json_encode([
+                            'attempted_at' => now()->toIso8601String(),
+                            'app_env' => app()->environment(),
+                            'success' => true,
+                            'commands' => $result['commands'],
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+                    );
+                } else {
+                    file_put_contents(
+                        $markerPath.'.failed',
+                        json_encode([
+                            'attempted_at' => now()->toIso8601String(),
+                            'app_env' => app()->environment(),
+                            'success' => false,
+                            'commands' => $result['commands'],
+                            'error' => $result['error'],
+                        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+                    );
+                }
 
                 if (! $result['success'] && $this->settingAbortOnFailure()) {
                     abort(500, 'One-time server bootstrap failed. Check logs and storage marker file.');
