@@ -13,7 +13,7 @@ class RunOneTimeServerBootstrap
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! config('bootstrap.once.enabled') || app()->runningInConsole()) {
+        if (! $this->settingEnabled() || app()->runningInConsole()) {
             return $next($request);
         }
 
@@ -56,7 +56,7 @@ class RunOneTimeServerBootstrap
                     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
                 );
 
-                if (! $result['success'] && config('bootstrap.once.abort_on_failure', true)) {
+                if (! $result['success'] && $this->settingAbortOnFailure()) {
                     abort(500, 'One-time server bootstrap failed. Check logs and storage marker file.');
                 }
             }
@@ -73,13 +73,13 @@ class RunOneTimeServerBootstrap
         $commands = [
             [
                 'name' => 'storage:link',
-                'arguments' => config('bootstrap.once.storage_link_force', true) ? ['--force' => true] : [],
+                'arguments' => $this->settingStorageLinkForce() ? ['--force' => true] : [],
             ],
             ['name' => 'optimize:clear', 'arguments' => []],
             ['name' => 'migrate', 'arguments' => ['--force' => true]],
         ];
 
-        if (config('bootstrap.once.seed', true)) {
+        if ($this->settingSeedEnabled()) {
             $commands[] = ['name' => 'db:seed', 'arguments' => ['--force' => true]];
         }
 
@@ -150,7 +150,7 @@ class RunOneTimeServerBootstrap
 
     private function markerPath(): string
     {
-        $marker = (string) config('bootstrap.once.marker_path', 'app/bootstrap-once.json');
+        $marker = (string) $this->settingMarkerPath();
         $isAbsolute = str_starts_with($marker, DIRECTORY_SEPARATOR)
             || preg_match('/^[A-Za-z]:[\\\\\\/]/', $marker) === 1;
 
@@ -162,5 +162,90 @@ class RunOneTimeServerBootstrap
         if (! is_dir($directory)) {
             @mkdir($directory, 0755, true);
         }
+    }
+
+    private function settingEnabled(): bool
+    {
+        return $this->settingBool('enabled', 'BOOTSTRAP_ON_FIRST_REQUEST', true);
+    }
+
+    private function settingAbortOnFailure(): bool
+    {
+        return $this->settingBool('abort_on_failure', 'BOOTSTRAP_ON_FIRST_REQUEST_ABORT', true);
+    }
+
+    private function settingSeedEnabled(): bool
+    {
+        return $this->settingBool('seed', 'BOOTSTRAP_ON_FIRST_REQUEST_SEED', true);
+    }
+
+    private function settingStorageLinkForce(): bool
+    {
+        return $this->settingBool('storage_link_force', 'BOOTSTRAP_ON_FIRST_REQUEST_STORAGE_FORCE', true);
+    }
+
+    private function settingMarkerPath(): string
+    {
+        return $this->settingString('marker_path', 'BOOTSTRAP_ON_FIRST_REQUEST_MARKER', 'app/bootstrap-once.json');
+    }
+
+    private function settingBool(string $configKey, string $envKey, bool $default): bool
+    {
+        $configValue = config("bootstrap.once.{$configKey}");
+
+        if ($configValue !== null) {
+            return filter_var($configValue, FILTER_VALIDATE_BOOLEAN);
+        }
+
+        $envValue = $this->envFromDotenv($envKey);
+        if ($envValue === null || $envValue === '') {
+            return $default;
+        }
+
+        return filter_var($envValue, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    private function settingString(string $configKey, string $envKey, string $default): string
+    {
+        $configValue = config("bootstrap.once.{$configKey}");
+        if (is_string($configValue) && $configValue !== '') {
+            return $configValue;
+        }
+
+        $envValue = $this->envFromDotenv($envKey);
+        if ($envValue === null || trim($envValue) === '') {
+            return $default;
+        }
+
+        return trim($envValue);
+    }
+
+    private function envFromDotenv(string $key): ?string
+    {
+        $envFile = base_path('.env');
+        if (! is_file($envFile) || ! is_readable($envFile)) {
+            return null;
+        }
+
+        $lines = @file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if (! is_array($lines)) {
+            return null;
+        }
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if ($line === '' || str_starts_with($line, '#') || ! str_contains($line, '=')) {
+                continue;
+            }
+
+            [$name, $value] = explode('=', $line, 2);
+            if (trim($name) !== $key) {
+                continue;
+            }
+
+            return trim($value, " \t\n\r\0\x0B\"'");
+        }
+
+        return null;
     }
 }
