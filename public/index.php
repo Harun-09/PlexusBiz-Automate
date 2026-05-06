@@ -5,6 +5,16 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
+// Normalize /public requests when the project is deployed from the repository root.
+if (isset($_SERVER['REQUEST_URI'])) {
+    $requestPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '';
+
+    if (preg_match('#^(.*?/public)(?:/.*)?$#', $requestPath, $matches)) {
+        $_SERVER['SCRIPT_NAME'] = $matches[1] . '/index.php';
+        $_SERVER['PHP_SELF'] = $matches[1] . '/index.php';
+    }
+}
+
 /*
 |--------------------------------------------------------------------------
 | Check If The Application Is Under Maintenance

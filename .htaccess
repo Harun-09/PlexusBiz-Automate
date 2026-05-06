@@ -1,3 +1,7 @@
+# Disable directory listing
+Options -Indexes
+DirectoryIndex index.php index.html
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
@@ -8,6 +12,7 @@
 
     # Keep sensitive files blocked at root.
     RewriteRule ^(\.env|artisan|composer\.(json|lock)|phpunit\.xml)$ - [F,L,NC]
+    RewriteRule \.sql$ - [F,L,NC]
 
     # Serve real files/directories directly from project root.
     RewriteCond %{REQUEST_FILENAME} -f [OR]
