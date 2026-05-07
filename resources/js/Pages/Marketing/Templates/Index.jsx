@@ -37,11 +37,11 @@ const moduleConfig = {
         },
     ],
     actions: [
-        { label: 'Create Template', href: '/marketing/templates/create', variant: 'primary' },
-        { label: 'Back to Email Campaigns', href: '/marketing/campaigns', variant: 'secondary' },
+        { label: 'Create Template', href: route('marketing.templates.create'), variant: 'primary' },
+        { label: 'Back to Email Campaigns', href: route('marketing.campaigns.index'), variant: 'secondary' },
         {
             label: 'Open Workflow Rules',
-            href: '/workflow/rules',
+            href: route('workflow.rules.index'),
             variant: 'secondary',
             permissions: ['manage_automation_rules'],
         },

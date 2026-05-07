@@ -4,6 +4,7 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
+import { assetHref } from '@/Utils/url';
 import { Head, useForm } from '@inertiajs/react';
 
 export default function ResetPassword({ token, email }) {
@@ -41,7 +42,7 @@ export default function ResetPassword({ token, email }) {
                 <div className="auth-card-brand">
                     <span className="auth-card-brand__mark">
                         <img
-                            src="/images/project-logo.png"
+                            src={assetHref('/images/project-logo.png')}
                             alt="PlexusBiz Automate"
                             className="auth-card-brand__logo"
                         />

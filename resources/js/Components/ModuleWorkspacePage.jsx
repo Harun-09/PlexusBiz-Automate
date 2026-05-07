@@ -4,6 +4,7 @@ import KpiCard from '@/Components/KpiCard';
 import PageHeader from '@/Components/PageHeader';
 import { canAccess } from '@/Utils/access';
 import { actionButtonClasses, statusBadgeClasses, statusFilterChipClasses } from '@/Utils/pillStyles';
+import { appHref } from '@/Utils/url';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 
 const METRIC_TONES = ['blue', 'emerald', 'amber', 'rose'];
@@ -177,7 +178,7 @@ const renderWorkspaceCell = (_column, value) => {
             return (
                 <div className="flex flex-col gap-1">
                     <Link
-                        href={value.href}
+                        href={appHref(value.href)}
                         method="post"
                         as="button"
                         preserveScroll
@@ -209,7 +210,7 @@ const renderWorkspaceCell = (_column, value) => {
             return (
                 <div className="flex flex-col gap-1">
                     <Link
-                        href={value.href}
+                        href={appHref(value.href)}
                         method="post"
                         as="button"
                         preserveScroll
@@ -256,7 +257,7 @@ const renderWorkspaceCell = (_column, value) => {
                                 return;
                             }
 
-                            router.delete(value.href, {
+                            router.delete(appHref(value.href), {
                                 preserveScroll: value.preserveScroll ?? true,
                             });
                         }}
@@ -269,7 +270,7 @@ const renderWorkspaceCell = (_column, value) => {
 
             return (
                 <Link
-                    href={value.href}
+                    href={appHref(value.href)}
                     preserveScroll={value.preserveScroll ?? true}
                     className={linkClassName}
                 >
@@ -310,7 +311,7 @@ const ActionButton = ({ action, theme }) => {
 
     return (
         <Link
-            href={action.href}
+            href={appHref(action.href)}
             className={`inline-flex items-center justify-center rounded-lg border px-4 py-2 text-sm font-semibold shadow-sm transition ${classes}`}
         >
             {action.label}
@@ -325,7 +326,7 @@ export default function ModuleWorkspacePage({ auth, workspace, module = {} }) {
     const metrics = workspace.metrics || [];
     const statusOptions = filters?.statuses || [];
     const visibleActions = (module.actions || []).filter((action) => canAccess(auth?.user, action));
-    const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname : route('dashboard');
     const { data, setData } = useForm({
         search: filters?.search || '',
         status: filters?.status || '',
@@ -344,7 +345,7 @@ export default function ModuleWorkspacePage({ auth, workspace, module = {} }) {
     };
 
     const applyFilters = (overrides = {}) => {
-        router.get(currentPath || '/', buildParams(overrides), {
+        router.get(appHref(currentPath || route('dashboard')), buildParams(overrides), {
             preserveScroll: true,
             preserveState: true,
             replace: true,
@@ -359,7 +360,7 @@ export default function ModuleWorkspacePage({ auth, workspace, module = {} }) {
     const resetFilters = () => {
         setData({ search: '', status: '' });
 
-        router.get(currentPath || '/', {}, {
+        router.get(appHref(currentPath || route('dashboard')), {}, {
             preserveScroll: true,
             preserveState: true,
             replace: true,

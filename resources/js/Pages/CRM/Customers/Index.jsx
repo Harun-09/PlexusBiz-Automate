@@ -19,8 +19,8 @@ const moduleConfig = {
         { label: 'Account context', detail: 'Each row keeps email, phone, and order count available for support and marketing.' },
     ],
     actions: [
-        { label: 'Purchase History', href: '/crm/purchases', variant: 'primary' },
-        { label: 'Lead Management', href: '/crm/leads', variant: 'secondary' },
+        { label: 'Purchase History', href: route('crm.purchases.index'), variant: 'primary' },
+        { label: 'Lead Management', href: route('crm.leads.index'), variant: 'secondary' },
     ],
     tableTitle: 'Customer Profiles',
 };

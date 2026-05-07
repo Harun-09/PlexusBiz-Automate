@@ -106,7 +106,7 @@ export default function ModuleSettingsIndex({ auth, modules, summary, flash }) {
     const submit = (event) => {
         event.preventDefault();
 
-        patch('/settings/modules', {
+        patch(route('settings.modules.update'), {
             preserveScroll: true,
         });
     };

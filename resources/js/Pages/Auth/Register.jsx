@@ -5,6 +5,7 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
+import { assetHref } from '@/Utils/url';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 const employeeOptions = ['1 - 10', '11 - 25', '26 - 50', '51 - 200', '201 - 500', '500+'];
@@ -61,7 +62,7 @@ export default function Register({ accountTypes = [] }) {
                 <div className="auth-card-brand auth-card-brand--visible">
                     <span className="auth-card-brand__mark">
                         <img
-                            src="/images/project-logo.png"
+                            src={assetHref('/images/project-logo.png')}
                             alt="PlexusBiz Automate"
                             className="auth-card-brand__logo"
                         />

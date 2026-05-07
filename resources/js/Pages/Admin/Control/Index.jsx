@@ -7,32 +7,32 @@ const shortcuts = [
     {
         label: 'User management',
         description: 'Review roles, status, and access for platform users.',
-        href: '/admin/users',
+        href: route('admin.users.index'),
     },
     {
         label: 'Supplier onboarding',
         description: 'Approve vendors and keep onboarding state visible.',
-        href: '/admin/suppliers',
+        href: route('admin.suppliers.index'),
     },
     {
         label: 'Product operations',
         description: 'Inspect catalog status, stock, and supplier ownership.',
-        href: '/admin/products',
+        href: route('admin.products.index'),
     },
     {
         label: 'Bulk pricing & MOQ',
         description: 'Manage tiered pricing rules in one canonical screen.',
-        href: '/admin/bulk-pricing',
+        href: route('admin.bulk-pricing.index'),
     },
     {
         label: 'Audit trail',
         description: 'Review critical admin and automation changes.',
-        href: '/admin/audit-logs',
+        href: route('admin.audit-logs'),
     },
     {
         label: 'Marketplace',
         description: 'Jump to the live catalog view used by buyers.',
-        href: '/marketplace',
+        href: route('marketplace.index'),
     },
 ];
 
@@ -51,13 +51,13 @@ export default function Index({ auth, workspace }) {
                     actions={(
                         <>
                             <Link
-                                href="/admin/users"
+                                href={route('admin.users.index')}
                                 className="inline-flex items-center justify-center rounded-lg bg-slate-950 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
                             >
                                 Users
                             </Link>
                             <Link
-                                href="/admin/suppliers"
+                                href={route('admin.suppliers.index')}
                                 className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
                             >
                                 Suppliers

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Domains\ECommerce\Enums\PaymentStatus;
 use App\Domains\ECommerce\Models\Order;
 use App\Domains\ECommerce\Models\Payment;
+use App\Domains\ECommerce\Services\PaymentGatewayResolver;
 use App\Domains\ECommerce\Services\SslCommerzService;
 use App\Domains\ECommerce\Services\StripeGatewayService;
 use Illuminate\Http\JsonResponse;
@@ -18,6 +19,7 @@ class PaymentController extends Controller
     public function __construct(
         private readonly SslCommerzService $sslCommerz,
         private readonly StripeGatewayService $stripeGateway,
+        private readonly PaymentGatewayResolver $paymentGatewayResolver,
     ) {
     }
 
@@ -44,9 +46,9 @@ class PaymentController extends Controller
             $request->string('gateway')->toString() ?: $order->payment_method ?: config('commerce.default_payment_gateway', 'stripe')
         );
 
-        if (! in_array($gateway, ['stripe', 'sslcommerz'], true)) {
+        if ($gateway === null) {
             return $this->checkoutSuccessRoute($order)
-                ->with('error', 'Selected payment gateway is not supported.');
+                ->with('error', 'No payment gateway is configured.');
         }
 
         if ($order->isPaid()) {
@@ -387,13 +389,9 @@ class PaymentController extends Controller
             ->firstOrFail();
     }
 
-    private function resolveGateway(string $gateway): string
+    private function resolveGateway(string $gateway): ?string
     {
-        $gateway = strtolower(trim($gateway));
-
-        return in_array($gateway, ['stripe', 'sslcommerz'], true)
-            ? $gateway
-            : (string) config('commerce.default_payment_gateway', 'stripe');
+        return $this->paymentGatewayResolver->resolve($gateway);
     }
 
     private function resolvePayment(Order $order, string $gateway): Payment

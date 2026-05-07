@@ -1,6 +1,7 @@
 export const fetchPdfObjectUrl = async (url) => {
     const response = await fetch(url, {
         credentials: 'same-origin',
+        cache: 'no-store',
         headers: {
             Accept: 'application/pdf',
         },

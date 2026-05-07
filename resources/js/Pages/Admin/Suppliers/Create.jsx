@@ -21,7 +21,7 @@ export default function CreateSupplier({ auth, users, statuses }) {
                         <SupplierForm
                             users={users}
                             statuses={statuses}
-                            submitUrl="/admin/suppliers"
+                            submitUrl={route('admin.suppliers.store')}
                             method="post"
                         />
                     </div>

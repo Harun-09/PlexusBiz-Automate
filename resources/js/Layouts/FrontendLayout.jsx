@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, Head } from '@inertiajs/react';
+import { Link, Head, router } from '@inertiajs/react';
+import { assetHref } from '@/Utils/url';
 
 const blueSurfaceGradient = 'bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1]';
 
@@ -14,18 +15,18 @@ const footerSections = [
     {
         title: 'Customer Service',
         links: [
-            { label: 'Help Center', href: '#footer' },
+            { label: 'Help Center', href: route('faq') },
             { label: 'Track an Order', href: '#footer' },
             { label: 'Return an Item', href: '#footer' },
-            { label: 'Return Policy', href: '#footer' },
-            { label: 'Privacy & Security', href: '#footer' },
+            { label: 'Return Policy', href: route('terms') },
+            { label: 'Privacy & Security', href: route('privacy') },
             { label: 'Feedback', href: '#footer' },
         ],
     },
     {
         title: 'My Account',
         links: [
-            { label: 'Login/Register', href: '#footer' },
+            { label: 'Login/Register', href: route('login') },
             { label: 'Browsing History', href: '#footer' },
             { label: 'Order History', href: '#footer' },
             { label: 'Returns History', href: '#footer' },
@@ -41,14 +42,14 @@ const footerSections = [
     {
         title: 'Company Information',
         links: [
-            { label: 'About PlexusBiz', href: '#footer' },
+            { label: 'About PlexusBiz', href: route('about') },
             { label: 'Investor Relations', href: '#footer' },
             { label: 'PlexusBiz Student Internship Program', href: '#footer' },
             { label: 'Gamer Zone', href: '#footer' },
             { label: 'Awards/Rankings', href: '#footer' },
             { label: 'Hours and Locations', href: '#footer' },
             { label: 'Press Inquiries', href: '#footer' },
-            { label: 'PlexusBiz Careers', href: '#footer' },
+            { label: 'PlexusBiz Careers', href: route('about') },
             { label: 'Newsroom', href: '#footer' },
             { label: 'Cigna MRF', href: '#footer' },
             { label: 'PlexusBiz Insider', href: '#footer' },
@@ -65,7 +66,7 @@ const footerSections = [
             { label: 'Become an Affiliate', href: '#footer' },
             { label: 'PlexusBiz Creators', href: '#footer' },
             { label: 'Site Map', href: '#footer' },
-            { label: 'Shop by Brand', href: '#footer' },
+            { label: 'Shop by Brand', href: '#brands' },
             { label: 'Rebates', href: '#footer' },
             { label: 'Mobile Apps', href: '#footer' },
             { label: 'Student Discount', href: '#footer' },
@@ -90,9 +91,9 @@ const footerSections = [
 
 function PlexusBizMark() {
     return (
-        <Link href="/" className="flex shrink-0 items-center gap-2 sm:gap-3">
+        <Link href={route('landing')} className="flex shrink-0 items-center gap-2 sm:gap-3">
             <img
-                src="/images/project-logo.png"
+                src={assetHref('/images/project-logo.png')}
                 alt="PlexusBiz Automate"
                 className="h-10 w-10 rounded-full bg-white object-cover shadow-[0_0_18px_rgba(255,255,255,0.18)] sm:h-11 sm:w-11"
             />
@@ -419,7 +420,6 @@ function AddressSelectorModal({ isOpen, onClose, isAuthed }) {
 
 function FooterColumn({ section }) {
     const [isOpen, setIsOpen] = useState(false);
-    const slugify = (text) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
     return (
         <div className={`mb-3 md:mb-0 transition-all duration-200 border border-white/20 md:border-transparent md:p-0 ${isOpen ? `rounded-[12px] ${blueSurfaceGradient}` : 'rounded-full'}`}>
@@ -444,13 +444,24 @@ function FooterColumn({ section }) {
 
             {/* Links List (toggled on mobile, always visible on desktop) */}
             <ul className={`md:mt-0 md:block ${isOpen ? 'block px-5 pb-2' : 'hidden'}`}>
-                {section.links.map((link, index) => (
-                    <li key={link.label} className={index !== section.links.length - 1 ? 'border-b border-white/20 md:border-transparent' : ''}>
-                        <Link href={`/p/${slugify(link.label)}`} className="block py-3 md:py-1.5 text-[15px] font-medium text-white/95 transition hover:text-white hover:underline">
-                            {link.label}
-                        </Link>
-                    </li>
-                ))}
+                {section.links.map((link, index) => {
+                    const href = link.href || '#footer';
+                    const linkClassName = 'block py-3 md:py-1.5 text-[15px] font-medium text-white/95 transition hover:text-white hover:underline';
+
+                    return (
+                        <li key={link.label} className={index !== section.links.length - 1 ? 'border-b border-white/20 md:border-transparent' : ''}>
+                            {href.startsWith('#') ? (
+                                <a href={href} className={linkClassName}>
+                                    {link.label}
+                                </a>
+                            ) : (
+                                <Link href={href} className={linkClassName}>
+                                    {link.label}
+                                </Link>
+                            )}
+                        </li>
+                    );
+                })}
             </ul>
         </div>
     );
@@ -463,6 +474,7 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
     const headerRef = useRef(null);
     const [headerHeight, setHeaderHeight] = useState(148);
     const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+    const [headerSearch, setHeaderSearch] = useState('');
 
     useEffect(() => {
         const updateHeaderHeight = () => {
@@ -488,10 +500,27 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
 
                             <AddressTile onClick={() => setIsAddressModalOpen(true)} />
 
-                            <form className="order-4 col-span-full min-w-0 flex-1 sm:order-none sm:col-span-1 xl:mr-[200px] xl:pl-1" onSubmit={(event) => event.preventDefault()}>
+                            <form
+                                className="order-4 col-span-full min-w-0 flex-1 sm:order-none sm:col-span-1 xl:mr-[200px] xl:pl-1"
+                                onSubmit={(event) => {
+                                    event.preventDefault();
+
+                                    const query = headerSearch.trim();
+                                    router.get(
+                                        route('products.index'),
+                                        query ? { search: query } : {},
+                                        {
+                                            preserveScroll: true,
+                                            preserveState: false,
+                                        },
+                                    );
+                                }}
+                            >
                                 <div className="relative flex h-10 w-full items-stretch overflow-hidden rounded-full border border-[#d9e3f3] bg-white shadow-[0_10px_30px_-18px_rgba(9,20,48,0.9)] sm:h-11">
                                     <input
                                         type="search"
+                                        value={headerSearch}
+                                        onChange={(event) => setHeaderSearch(event.target.value)}
                                         placeholder="Search products, deals, and parts"
                                         className="min-w-0 flex-1 bg-transparent px-4 text-[13px] text-slate-800 outline-none placeholder:text-[#7c8aa3] sm:px-5"
                                     />
@@ -638,14 +667,14 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 text-xs sm:text-sm text-[#0b2e71]">
                                 <span>© 2003-{new Date().getFullYear()} PlexusBiz Inc. All rights reserved.</span>
                                 <div className="flex flex-wrap justify-center sm:justify-start items-center gap-3">
-                                    <a href="#" className="font-medium hover:text-[#1f68d9] hover:underline whitespace-nowrap">Terms & Conditions</a>
-                                    <a href="#" className="font-medium hover:text-[#1f68d9] hover:underline whitespace-nowrap">Privacy Policy</a>
-                                    <a href="#" className="flex items-center gap-1 font-medium hover:text-[#1f68d9] hover:underline whitespace-nowrap">
+                                    <Link href={route('terms')} className="font-medium hover:text-[#1f68d9] hover:underline whitespace-nowrap">Terms & Conditions</Link>
+                                    <Link href={route('privacy')} className="font-medium hover:text-[#1f68d9] hover:underline whitespace-nowrap">Privacy Policy</Link>
+                                    <Link href={route('privacy')} className="flex items-center gap-1 font-medium hover:text-[#1f68d9] hover:underline whitespace-nowrap">
                                         Your Privacy Choices
                                         <svg className="w-5 h-5 text-[#1f68d9]" viewBox="0 0 24 24" fill="currentColor">
                                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                                         </svg>
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                             

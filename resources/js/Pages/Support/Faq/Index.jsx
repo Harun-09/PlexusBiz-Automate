@@ -37,10 +37,10 @@ const moduleConfig = {
         },
     ],
     actions: [
-        { label: 'Open Tickets', href: '/support/tickets', variant: 'primary' },
+        { label: 'Open Tickets', href: route('support.tickets.index'), variant: 'primary' },
         {
             label: 'Inspect Workflow Rules',
-            href: '/workflow/rules',
+            href: route('workflow.rules.index'),
             variant: 'secondary',
             permissions: ['manage_automation_rules'],
         },

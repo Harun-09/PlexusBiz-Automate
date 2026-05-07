@@ -19,9 +19,9 @@ const moduleConfig = {
         { label: 'Ownership', detail: 'Marketing or sales can quickly see which user owns each lead.' },
     ],
     actions: [
-        { label: 'Create Lead', href: '/crm/leads/create', variant: 'primary' },
-        { label: 'Open Interactions', href: '/crm/interactions', variant: 'secondary' },
-        { label: 'Customer Profiles', href: '/crm/customers', variant: 'secondary' },
+        { label: 'Create Lead', href: route('crm.leads.create'), variant: 'primary' },
+        { label: 'Open Interactions', href: route('crm.interactions.index'), variant: 'secondary' },
+        { label: 'Customer Profiles', href: route('crm.customers.index'), variant: 'secondary' },
     ],
     tableTitle: 'Lead Pipeline',
 };

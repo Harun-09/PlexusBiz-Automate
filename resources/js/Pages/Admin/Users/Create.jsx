@@ -21,7 +21,7 @@ export default function CreateUser({ auth, roles, statuses }) {
                         <UserForm
                             roles={roles}
                             statuses={statuses}
-                            submitUrl="/admin/users"
+                            submitUrl={route('admin.users.store')}
                             method="post"
                         />
                     </div>

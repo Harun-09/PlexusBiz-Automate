@@ -1,5 +1,6 @@
 import EmptyState from '@/Components/EmptyState';
 import StatusBadge from '@/Components/StatusBadge';
+import { appHref } from '@/Utils/url';
 import { Link } from '@inertiajs/react';
 
 const renderValue = (column, value) => {
@@ -13,7 +14,7 @@ const renderValue = (column, value) => {
 
     if (String(column).toLowerCase() === 'action' && typeof value === 'string' && value.startsWith('/')) {
         return (
-            <Link href={value} className="font-bold text-blue-800 hover:text-blue-950">
+            <Link href={appHref(value)} className="font-bold text-blue-800 hover:text-blue-950">
                 Open
             </Link>
         );

@@ -3,8 +3,9 @@ import { useMemo, useState } from 'react';
 import FrontendLayout from '@/Layouts/FrontendLayout';
 import FlashBanner from '@/Components/FlashBanner';
 import { selectionPillClasses } from '@/Utils/pillStyles';
+import { assetHref } from '@/Utils/url';
 
-const fallbackImage = '/images/landing/deal-imac.jpg';
+const fallbackImage = assetHref('/images/landing/deal-imac.jpg');
 
 const catalogModes = {
     catalog: {

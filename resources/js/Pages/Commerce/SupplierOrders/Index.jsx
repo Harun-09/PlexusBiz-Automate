@@ -19,8 +19,8 @@ const moduleConfig = {
         { label: 'Admin oversight', detail: 'Admins can update any supplier order without leaving the commerce workspace.' },
     ],
     actions: [
-        { label: 'Orders', href: '/commerce/orders', variant: 'primary' },
-        { label: 'Products', href: '/commerce/products', variant: 'secondary' },
+        { label: 'Orders', href: route('commerce.orders.index'), variant: 'primary' },
+        { label: 'Products', href: route('commerce.products.index'), variant: 'secondary' },
     ],
     tableTitle: 'Supplier fulfillment queue',
     searchPlaceholder: 'Search supplier order or order number',

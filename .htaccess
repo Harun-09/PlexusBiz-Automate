@@ -1,0 +1,13 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block direct access to hidden files when project root is web-accessible.
+    RewriteRule (^|/)\. - [F,L]
+
+    # Keep ACME challenge files reachable when present.
+    RewriteRule ^\.well-known/ - [L]
+
+    # Send all traffic to /public without exposing project-root files.
+    RewriteCond %{REQUEST_URI} !/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

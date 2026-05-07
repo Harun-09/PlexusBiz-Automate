@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import Footer from '@/Components/Footer';
+import { assetHref } from '@/Utils/url';
 
 export default function Guest({ children, variant = 'login', registerHero = {} }) {
     const isRegister = variant === 'register';
@@ -20,10 +21,10 @@ export default function Guest({ children, variant = 'login', registerHero = {} }
 
                 <div className="auth-shell auth-shell--register">
                     <aside className="auth-register-hero">
-                        <Link href="/" className="auth-brand auth-brand--register" aria-label="Go to homepage">
+                        <Link href={route('landing')} className="auth-brand auth-brand--register" aria-label="Go to homepage">
                             <span className="auth-brand__mark auth-brand__mark--register">
                                 <img
-                                    src="/images/project-logo.png"
+                                    src={assetHref('/images/project-logo.png')}
                                     alt="PlexusBiz Automate"
                                     className="auth-brand__logo"
                                 />
@@ -88,10 +89,10 @@ export default function Guest({ children, variant = 'login', registerHero = {} }
             <div className="auth-shell">
                 <aside className="auth-panel">
                     <div className="auth-panel__top">
-                        <Link href="/" className="auth-brand" aria-label="Go to homepage">
+                        <Link href={route('landing')} className="auth-brand" aria-label="Go to homepage">
                             <span className="auth-brand__mark">
                                 <img
-                                    src="/images/project-logo.png"
+                                    src={assetHref('/images/project-logo.png')}
                                     alt="PlexusBiz Automate"
                                     className="auth-brand__logo"
                                 />

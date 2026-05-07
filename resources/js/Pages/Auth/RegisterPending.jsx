@@ -1,4 +1,5 @@
 import GuestLayout from '@/Layouts/GuestLayout';
+import { assetHref } from '@/Utils/url';
 import { Head, Link } from '@inertiajs/react';
 
 const accountLabels = {
@@ -29,7 +30,7 @@ export default function RegisterPending({ accountType = '', accountTypes = [] })
                 <div className="auth-card-brand auth-card-brand--visible">
                     <span className="auth-card-brand__mark">
                         <img
-                            src="/images/project-logo.png"
+                            src={assetHref('/images/project-logo.png')}
                             alt="PlexusBiz Automate"
                             className="auth-card-brand__logo"
                         />
@@ -67,13 +68,13 @@ export default function RegisterPending({ accountType = '', accountTypes = [] })
 
                     <div className="flex flex-col gap-3 sm:flex-row">
                         <Link
-                            href="/login"
+                            href={route('login')}
                             className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-slate-950 to-blue-700 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-blue-700/20 transition hover:-translate-y-0.5 hover:shadow-blue-700/30"
                         >
                             Go to login
                         </Link>
                         <Link
-                            href="/"
+                            href={route('landing')}
                             className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-bold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
                         >
                             Back to homepage

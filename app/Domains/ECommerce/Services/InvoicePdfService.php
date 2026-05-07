@@ -47,12 +47,16 @@ class InvoicePdfService
 
     public function download(Invoice $invoice): Response
     {
-        return $this->invoicePdf($invoice)->download($this->downloadName($invoice));
+        return $this->withNoCacheHeaders(
+            $this->invoicePdf($invoice)->download($this->downloadName($invoice))
+        );
     }
 
     public function stream(Invoice $invoice): Response
     {
-        return $this->invoicePdf($invoice)->stream($this->downloadName($invoice));
+        return $this->withNoCacheHeaders(
+            $this->invoicePdf($invoice)->stream($this->downloadName($invoice))
+        );
     }
 
     private function generateInvoiceNumber(): string
@@ -75,5 +79,13 @@ class InvoicePdfService
         return Pdf::loadView('invoices.template', [
             'invoice' => $this->loadInvoice($invoice),
         ])->setPaper('a4', 'portrait');
+    }
+
+    private function withNoCacheHeaders(Response $response): Response
+    {
+        return $response
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
     }
 }

@@ -2,8 +2,9 @@ import { Head, Link, router } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 import FrontendLayout from '@/Layouts/FrontendLayout';
 import FlashBanner from '@/Components/FlashBanner';
+import { assetHref } from '@/Utils/url';
 
-const fallbackImage = '/images/landing/deal-imac.jpg';
+const fallbackImage = assetHref('/images/landing/deal-imac.jpg');
 
 function formatMoney(amount, currency = 'BDT') {
     const numericAmount = Number(amount ?? 0);
@@ -169,6 +170,7 @@ export default function Show({
 
     const [selectedImage, setSelectedImage] = useState(gallery[0]?.url || product.primary_image_url || fallbackImage);
     const [quantity, setQuantity] = useState(Math.max(1, Number(defaultQuantity || product.moq || 1)));
+    const [actionMessage, setActionMessage] = useState('');
     const validationMessage = Object.values(errors || {}).find(Boolean);
 
     const availableStock = Number(product.available_stock ?? 0);
@@ -195,6 +197,16 @@ export default function Show({
         : availableStock <= minimumOrder
             ? `Only ${availableStock} left`
             : `${availableStock} available`;
+    const maxQuantity = Math.max(minimumOrder, availableStock);
+    const quantityPresets = useMemo(() => {
+        const tierSteps = (product.pricing_tiers || []).map((tier) => Number(tier.min_quantity || 0));
+        const candidates = [minimumOrder, minimumOrder * 2, minimumOrder * 5, ...tierSteps]
+            .filter((value) => Number.isFinite(value) && value >= minimumOrder && value <= maxQuantity);
+
+        return [...new Set(candidates)]
+            .sort((left, right) => left - right)
+            .slice(0, 5);
+    }, [maxQuantity, minimumOrder, product.pricing_tiers]);
 
     const addToCart = () => {
         if (!canPurchase) {
@@ -227,6 +239,30 @@ export default function Show({
                 onSuccess: () => router.visit(route('checkout.index')),
             },
         );
+    };
+
+    const shareProduct = async () => {
+        const shareUrl = typeof window !== 'undefined' ? window.location.href : route('products.show', product.slug);
+        const shareTitle = `${product.name} | PlexusBiz Marketplace`;
+
+        try {
+            if (typeof navigator !== 'undefined' && navigator.share) {
+                await navigator.share({ title: shareTitle, url: shareUrl });
+                setActionMessage('Product link shared.');
+                return;
+            }
+
+            if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(shareUrl);
+                setActionMessage('Product link copied to clipboard.');
+                return;
+            }
+        } catch {
+            setActionMessage('Unable to share right now. Copy the URL from your browser.');
+            return;
+        }
+
+        setActionMessage('Share is not available in this browser.');
     };
 
     return (
@@ -338,6 +374,18 @@ export default function Show({
                                             <p className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-100">Category</p>
                                             <p className="mt-1 truncate text-sm font-black">{product.category?.name || 'Uncategorized'}</p>
                                         </div>
+                                        <div className="rounded-2xl bg-white/10 p-3">
+                                            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-100">Pricing tiers</p>
+                                            <p className="mt-1 text-lg font-black">{(product.pricing_tiers || []).length || 1}</p>
+                                        </div>
+                                        <div className="rounded-2xl bg-white/10 p-3">
+                                            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-100">Best tier starts</p>
+                                            <p className="mt-1 text-sm font-black">
+                                                {(product.pricing_tiers || []).length > 0
+                                                    ? `${Math.max(...(product.pricing_tiers || []).map((tier) => Number(tier.min_quantity || 0)))}+ units`
+                                                    : 'Base price only'}
+                                            </p>
+                                        </div>
                                     </div>
                                     <p className="mt-4 text-sm leading-6 text-blue-100">
                                         Start from the MOQ, then the tier table and checkout step keep the buying flow aligned with the inventory rules already in the backend.
@@ -359,6 +407,9 @@ export default function Show({
                                             ['SKU', product.sku || 'N/A'],
                                             ['MOQ', `${minimumOrder}`],
                                             ['Available stock', `${availableStock}`],
+                                            ['Pricing tiers', `${(product.pricing_tiers || []).length || 1}`],
+                                            ['Current unit price', formatMoney(unitPrice, currency)],
+                                            ['Estimated dispatch', canPurchase ? '1-3 business days' : 'Restock required'],
                                         ].map(([label, value]) => (
                                             <div key={label} className="flex items-center justify-between gap-4 py-3 text-sm">
                                                 <dt className="font-semibold text-slate-500">{label}</dt>
@@ -374,6 +425,38 @@ export default function Show({
                                     currency={currency}
                                     basePrice={product.base_price}
                                 />
+                            </div>
+
+                            <div className="grid gap-4 lg:grid-cols-2">
+                                <div className="rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm">
+                                    <p className="text-[11px] font-black uppercase tracking-[0.24em] text-[#0b2e71]">
+                                        Buying guidance
+                                    </p>
+                                    <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-600">
+                                        <li>Use MOQ as the starting quantity to keep the order valid.</li>
+                                        <li>Tier pricing updates automatically when quantity crosses a threshold.</li>
+                                        <li>Use RFQ when you need custom terms, lead time, or volume-specific pricing.</li>
+                                    </ul>
+                                </div>
+                                <div className="rounded-[28px] border border-[#d7e3f4] bg-[#f8fbff] p-5 shadow-sm">
+                                    <p className="text-[11px] font-black uppercase tracking-[0.24em] text-[#0b2e71]">
+                                        Supplier readiness
+                                    </p>
+                                    <dl className="mt-3 space-y-2 text-sm">
+                                        <div className="flex items-center justify-between gap-4 rounded-2xl bg-white px-3 py-2">
+                                            <dt className="text-slate-500">Supplier</dt>
+                                            <dd className="font-black text-slate-900">{product.supplier?.company_name || 'N/A'}</dd>
+                                        </div>
+                                        <div className="flex items-center justify-between gap-4 rounded-2xl bg-white px-3 py-2">
+                                            <dt className="text-slate-500">Availability</dt>
+                                            <dd className="font-black text-slate-900">{stockBadge}</dd>
+                                        </div>
+                                        <div className="flex items-center justify-between gap-4 rounded-2xl bg-white px-3 py-2">
+                                            <dt className="text-slate-500">Checkout path</dt>
+                                            <dd className="font-black text-slate-900">Cart → Checkout → Gateway</dd>
+                                        </div>
+                                    </dl>
+                                </div>
                             </div>
                         </div>
 
@@ -414,21 +497,19 @@ export default function Show({
                                         <input
                                             type="number"
                                             min={minimumOrder}
-                                            max={Math.max(minimumOrder, availableStock)}
+                                            max={maxQuantity}
                                             value={safeQuantity}
                                             disabled={!canPurchase}
                                             onChange={(event) => {
                                                 const nextValue = Number(event.target.value || minimumOrder);
-                                                const maxQuantity = Math.max(minimumOrder, availableStock);
                                                 setQuantity(Math.min(Math.max(minimumOrder, nextValue), maxQuantity));
                                             }}
                                             className="h-11 w-full rounded-2xl border border-slate-200 bg-white text-center text-base font-black text-slate-950 outline-none focus:border-[#ff8a00]"
                                         />
                                         <button
                                             type="button"
-                                            disabled={!canPurchase || safeQuantity >= Math.max(minimumOrder, availableStock)}
+                                            disabled={!canPurchase || safeQuantity >= maxQuantity}
                                             onClick={() => setQuantity((current) => {
-                                                const maxQuantity = Math.max(minimumOrder, availableStock);
                                                 return Math.min(maxQuantity, current + 1);
                                             })}
                                             className="grid h-11 w-11 place-items-center rounded-full border border-slate-200 bg-white text-lg font-black text-slate-700 transition hover:border-[#ffb16d] hover:text-[#d75d00] disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-300"
@@ -439,6 +520,25 @@ export default function Show({
                                     <p className="mt-2 text-xs font-semibold text-slate-500">
                                         Order total: {formatMoney(lineTotal, currency)}
                                     </p>
+                                    {quantityPresets.length > 0 ? (
+                                        <div className="mt-3 flex flex-wrap gap-2">
+                                            {quantityPresets.map((preset) => (
+                                                <button
+                                                    key={preset}
+                                                    type="button"
+                                                    disabled={!canPurchase}
+                                                    onClick={() => setQuantity(preset)}
+                                                    className={`rounded-full border px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] transition ${
+                                                        safeQuantity === preset
+                                                            ? 'border-[#ff8a00] bg-[#fff3e7] text-[#d75d00]'
+                                                            : 'border-slate-200 bg-white text-slate-600 hover:border-[#ffb16d] hover:text-[#d75d00]'
+                                                    } disabled:cursor-not-allowed disabled:opacity-40`}
+                                                >
+                                                    {preset} units
+                                                </button>
+                                            ))}
+                                        </div>
+                                    ) : null}
                                 </div>
 
                                 <div className="grid gap-3">
@@ -483,6 +583,19 @@ export default function Show({
                                             </Link>
                                         </>
                                     )}
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={shareProduct}
+                                        className="inline-flex items-center justify-center rounded-full border border-[#d7e3f4] bg-[#f4f8ff] px-4 py-2.5 text-xs font-black uppercase tracking-[0.14em] text-[#0b2e71] transition hover:border-[#ffb16d] hover:text-[#d75d00]"
+                                    >
+                                        Share product
+                                    </button>
+                                    {actionMessage ? (
+                                        <p className="text-center text-xs font-semibold text-slate-500">{actionMessage}</p>
+                                    ) : null}
                                 </div>
 
                                 <div className="rounded-[24px] border border-[#e8eef8] bg-[#f8fbff] p-4 text-sm leading-6 text-slate-600">

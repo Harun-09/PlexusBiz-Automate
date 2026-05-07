@@ -108,10 +108,14 @@ class CartController extends Controller
                 'name' => $product?->name,
                 'slug' => $product?->slug,
                 'sku' => $product?->sku,
+                'base_price' => (float) ($product?->base_price ?? $item->unit_price),
                 'moq' => (int) ($product?->moq ?? 1),
                 'available_stock' => (int) ($product?->availableStock() ?? 0),
                 'status' => $product?->status?->value,
                 'primary_image_url' => $product?->primaryImageUrl() ?? asset('images/landing/deal-imac.jpg'),
+                'category' => [
+                    'name' => $product?->category?->name,
+                ],
                 'supplier' => [
                     'id' => $product?->supplier?->id,
                     'company_name' => $product?->supplier?->company_name,

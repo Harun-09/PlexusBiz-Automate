@@ -39,11 +39,11 @@ const moduleConfig = {
     actions: [
         {
             label: 'Inspect Rules',
-            href: '/workflow/rules',
+            href: route('workflow.rules.index'),
             variant: 'primary',
             permissions: ['manage_automation_rules'],
         },
-        { label: 'Open Support FAQ', href: '/support/faq', variant: 'secondary' },
+        { label: 'Open Support FAQ', href: route('support.faq.index'), variant: 'secondary' },
     ],
 };
 

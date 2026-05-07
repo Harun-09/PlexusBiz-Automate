@@ -37,9 +37,9 @@ const moduleConfig = {
         },
     ],
     actions: [
-        { label: 'Schedule Post', href: '/social/posts/create', variant: 'primary' },
-        { label: 'Open Calendar', href: '/social/calendar', variant: 'secondary' },
-        { label: 'Review Accounts', href: '/social/accounts', variant: 'secondary' },
+        { label: 'Schedule Post', href: route('social.posts.create'), variant: 'primary' },
+        { label: 'Open Calendar', href: route('social.calendar'), variant: 'secondary' },
+        { label: 'Review Accounts', href: route('social.accounts.index'), variant: 'secondary' },
     ],
 };
 

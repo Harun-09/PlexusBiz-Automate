@@ -19,8 +19,8 @@ const moduleConfig = {
         { label: 'Action ready', detail: 'Invoice actions still work from the same backend payload.' },
     ],
     actions: [
-        { label: 'Back to Customers', href: '/crm/customers', variant: 'primary' },
-        { label: 'View Segments', href: '/crm/segments', variant: 'secondary' },
+        { label: 'Back to Customers', href: route('crm.customers.index'), variant: 'primary' },
+        { label: 'View Segments', href: route('crm.segments.index'), variant: 'secondary' },
     ],
     tableTitle: 'Order History',
 };

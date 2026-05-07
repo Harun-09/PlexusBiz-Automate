@@ -19,26 +19,28 @@ export default function UsersIndex({ auth, users, pendingApplications = [], filt
 
     const submitFilters = (e) => {
         e.preventDefault();
-        router.get('/admin/users', Object.fromEntries(Object.entries(data).filter(([, v]) => v !== '')), {
+        router.get(route('admin.users.index'), Object.fromEntries(Object.entries(data).filter(([, v]) => v !== '')), {
             preserveState: true, preserveScroll: true, replace: true,
         });
     };
 
     const resetFilters = () => {
         setData({ search: '', status: '', role: '' });
-        router.get('/admin/users', {}, { preserveState: true, preserveScroll: true, replace: true });
+        router.get(route('admin.users.index'), {}, { preserveState: true, preserveScroll: true, replace: true });
     };
 
     const deleteUser = () => {
         if (!showDeleteModal) return;
-        router.delete(`/admin/users/${showDeleteModal}`, {
+        router.delete(route('admin.users.destroy', showDeleteModal), {
             preserveScroll: true,
             onFinish: () => setShowDeleteModal(null),
         });
     };
 
     const reviewApplication = (userId, action) => {
-        router.patch(`/admin/users/${userId}/${action}`, {}, {
+        const routeName = action === 'approve' ? 'admin.users.approve' : 'admin.users.reject';
+
+        router.patch(route(routeName, userId), {}, {
             preserveScroll: true,
             preserveState: true,
         });
@@ -54,7 +56,7 @@ export default function UsersIndex({ auth, users, pendingApplications = [], filt
                         <p className="mt-1 text-sm text-gray-500">Create, edit, and manage platform users and their roles.</p>
                     </div>
                     <Link
-                        href="/admin/users/create"
+                        href={route('admin.users.create')}
                         className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-slate-900 to-blue-700 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-700/20 transition hover:shadow-blue-700/30 hover:-translate-y-0.5 sm:w-auto"
                     >
                         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
@@ -209,7 +211,7 @@ export default function UsersIndex({ auth, users, pendingApplications = [], filt
                                                 <td className="whitespace-nowrap px-6 py-4 text-gray-500">{user.created_at}</td>
                                                 <td className="whitespace-nowrap px-6 py-4">
                                                     <div className="flex items-center gap-2">
-                                                        <Link href={`/admin/users/${user.id}/edit`}
+                                                        <Link href={route('admin.users.edit', user.id)}
                                                             className={`inline-flex items-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-semibold shadow-sm transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${actionButtonClasses('secondary')}`}>
                                                             <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z" /></svg>
                                                             Edit

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Marketplace;
 use App\Domains\ECommerce\Models\CartItem;
 use App\Domains\ECommerce\Services\CartService;
 use App\Domains\ECommerce\Services\CheckoutService;
+use App\Domains\ECommerce\Services\PaymentGatewayResolver;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\PaymentController;
 use Illuminate\Http\RedirectResponse;
@@ -18,6 +19,7 @@ class CheckoutController extends Controller
     public function __construct(
         private readonly CartService $cartService,
         private readonly CheckoutService $checkoutService,
+        private readonly PaymentGatewayResolver $paymentGatewayResolver,
     ) {
     }
 
@@ -47,7 +49,7 @@ class CheckoutController extends Controller
             ],
             'csrfToken' => csrf_token(),
             'currency' => config('commerce.currency', 'BDT'),
-            'defaultGateway' => config('commerce.default_payment_gateway', 'stripe'),
+            'defaultGateway' => $this->paymentGatewayResolver->resolve() ?? config('commerce.default_payment_gateway', 'stripe'),
             'gateways' => $this->gateways(),
         ]);
     }
@@ -78,7 +80,7 @@ class CheckoutController extends Controller
     private function presentCartItem(CartItem $item): array
     {
         $product = $item->product;
-        $product?->loadMissing(['supplier', 'images']);
+        $product?->loadMissing(['supplier', 'category', 'images']);
 
         return [
             'id' => $item->id,
@@ -91,8 +93,12 @@ class CheckoutController extends Controller
                 'slug' => $product?->slug,
                 'sku' => $product?->sku,
                 'primary_image_url' => $product?->primaryImageUrl() ?? asset('images/landing/deal-imac.jpg'),
+                'base_price' => (float) ($product?->base_price ?? $item->unit_price),
                 'moq' => (int) ($product?->moq ?? 1),
                 'available_stock' => (int) ($product?->availableStock() ?? 0),
+                'category' => [
+                    'name' => $product?->category?->name,
+                ],
                 'supplier' => [
                     'company_name' => $product?->supplier?->company_name,
                 ],

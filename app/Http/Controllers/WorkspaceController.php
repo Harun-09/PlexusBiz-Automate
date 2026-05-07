@@ -13,6 +13,7 @@ use App\Domains\ECommerce\Models\PricingTier;
 use App\Domains\ECommerce\Models\Product;
 use App\Domains\ECommerce\Models\Supplier;
 use App\Domains\ECommerce\Models\SupplierOrder;
+use App\Domains\ECommerce\Services\PaymentGatewayResolver;
 use App\Domains\Marketing\Enums\CampaignStatus;
 use App\Domains\Marketing\Enums\MessageChannel;
 use App\Domains\Marketing\Models\Campaign;
@@ -46,6 +47,11 @@ use Inertia\Response;
 
 class WorkspaceController extends Controller
 {
+    public function __construct(
+        private readonly PaymentGatewayResolver $paymentGatewayResolver,
+    ) {
+    }
+
     public function admin(Request $request): Response
     {
         return $this->page('Admin Control', 'Platform KPIs and operational queues.', [
@@ -1314,12 +1320,12 @@ class WorkspaceController extends Controller
     private function orderPaymentSummary(Order $order): array
     {
         $status = $order->payment_status ?: PaymentStatus::Pending->value;
-        $gateway = $order->payment_method ?: config('commerce.default_payment_gateway', 'stripe');
+        $gateway = $this->paymentGatewayResolver->resolve($order->payment_method);
 
         return [
             'kind' => 'payment-summary',
             'status' => $status,
-            'method' => $this->formatPaymentGateway($gateway),
+            'method' => $gateway ? $this->formatPaymentGateway($gateway) : 'Unavailable',
         ];
     }
 
@@ -1354,11 +1360,21 @@ class WorkspaceController extends Controller
             ];
         }
 
+        $gateway = $this->paymentGatewayResolver->resolve($order->payment_method);
+
+        if ($gateway === null) {
+            return [
+                'kind' => 'status',
+                'label' => 'Payment unavailable',
+                'status' => 'blocked',
+            ];
+        }
+
         return [
             'kind' => 'payment-action',
             'label' => $order->payment_method ? 'Continue payment' : 'Pay now',
             'href' => route('payment.process', $order->order_number),
-            'gateway' => $this->formatPaymentGateway($order->payment_method ?: config('commerce.default_payment_gateway', 'stripe')),
+            'gateway' => $this->formatPaymentGateway($gateway),
         ];
     }
 

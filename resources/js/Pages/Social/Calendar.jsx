@@ -87,20 +87,20 @@ export default function SocialCalendar({ auth, posts, month, year, status, statu
         if (m > 12) { m = 1; y++; }
         const params = { month: m, year: y };
         if (status) params.status = status;
-        router.get('/social/calendar', params, { preserveState: true, preserveScroll: true, replace: true });
+        router.get(route('social.calendar'), params, { preserveState: true, preserveScroll: true, replace: true });
     };
 
     const goToday = () => {
         const now = new Date();
         const params = { month: now.getMonth() + 1, year: now.getFullYear() };
         if (status) params.status = status;
-        router.get('/social/calendar', params, { preserveState: true, preserveScroll: true, replace: true });
+        router.get(route('social.calendar'), params, { preserveState: true, preserveScroll: true, replace: true });
     };
 
     const filterStatus = (s) => {
         const params = { month, year };
         if (s) params.status = s;
-        router.get('/social/calendar', params, { preserveState: true, preserveScroll: true, replace: true });
+        router.get(route('social.calendar'), params, { preserveState: true, preserveScroll: true, replace: true });
     };
 
     return (

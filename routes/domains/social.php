@@ -2,16 +2,18 @@
 
 use App\Http\Controllers\Social\SocialAccountController;
 use App\Http\Controllers\Social\SocialPostController;
+use App\Http\Controllers\RouteAliasController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('social')->name('social.')->middleware('role:marketing_manager|admin')->group(function (): void {
-    Route::get('/', fn () => redirect()->route('social.calendar'))->name('index');
+    Route::get('/', [RouteAliasController::class, 'socialIndex'])->name('index');
 
     Route::middleware('permission:manage_social_posts')->group(function (): void {
-        Route::get('/campaigns', fn () => redirect()->route('social.posts.index'))->name('campaigns.index');
+        Route::get('/campaigns', [RouteAliasController::class, 'socialCampaignsIndex'])->name('campaigns.index');
         Route::get('/calendar', [WorkspaceController::class, 'socialCalendar'])->name('calendar');
         Route::get('/posts', [WorkspaceController::class, 'socialPosts'])->name('posts.index');
+        Route::get('/posts/scheduled', [RouteAliasController::class, 'socialScheduledPosts'])->name('posts.scheduled');
         Route::get('/posts/create', [SocialPostController::class, 'create'])->name('posts.create');
         Route::post('/posts', [SocialPostController::class, 'store'])->name('posts.store');
         Route::get('/posts/{socialPost}/edit', [SocialPostController::class, 'edit'])->name('posts.edit');

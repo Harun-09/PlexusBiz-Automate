@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import { appHref } from '@/Utils/url';
 
 export function SidebarIcon({ icon, active = false, size = 'item' }) {
     const Icon = typeof icon === 'function' ? icon : null;
@@ -34,7 +35,7 @@ export default function SidebarItem({ item, active = false, dense = false, onNav
     ].filter(Boolean).join(' ');
 
     return (
-        <Link href={item.href} className={classes} onClick={onNavigate}>
+        <Link href={appHref(item.href)} className={classes} onClick={onNavigate}>
             <SidebarIcon icon={item.icon || item.label.slice(0, 1)} active={active} />
             <span className="min-w-0 flex-1 truncate">{item.label}</span>
             {item.badge ? (

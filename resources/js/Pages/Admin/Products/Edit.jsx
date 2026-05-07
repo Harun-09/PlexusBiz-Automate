@@ -21,7 +21,7 @@ export default function EditProduct({ auth, product, suppliers, statuses }) {
                             product={product}
                             suppliers={suppliers}
                             statuses={statuses}
-                            submitUrl={`/admin/products/${product.id}`}
+                            submitUrl={route('admin.products.update', product.id)}
                             method="put"
                         />
                     </div>

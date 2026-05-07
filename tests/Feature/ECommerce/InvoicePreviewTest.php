@@ -35,6 +35,7 @@ class InvoicePreviewTest extends TestCase
         $preview->assertOk();
         $this->assertStringContainsString('application/pdf', (string) $preview->headers->get('content-type'));
         $this->assertStringContainsString('inline', (string) $preview->headers->get('content-disposition'));
+        $this->assertPdfPageCount((string) $preview->getContent(), 1);
 
         $download = $this->actingAs($buyer)->get("/invoices/{$invoice->id}/download");
 
@@ -55,6 +56,7 @@ class InvoicePreviewTest extends TestCase
         $preview->assertOk();
         $this->assertStringContainsString('application/pdf', (string) $preview->headers->get('content-type'));
         $this->assertStringContainsString('inline', (string) $preview->headers->get('content-disposition'));
+        $this->assertPdfPageCount((string) $preview->getContent(), 1);
 
         $download = $this->actingAs($marketingManager)->get("/invoices/{$invoice->id}/download");
 
@@ -136,5 +138,11 @@ class InvoicePreviewTest extends TestCase
         ]);
 
         return [$invoice, $order, $product, $supplier];
+    }
+
+    private function assertPdfPageCount(string $pdf, int $expected): void
+    {
+        $this->assertStringStartsWith('%PDF', $pdf);
+        $this->assertSame($expected, preg_match_all('/\/Type\s*\/Page\b/', $pdf));
     }
 }

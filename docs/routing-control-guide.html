@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PlexusBiz Routing Control Guide</title>
+    <style>
+        :root {
+            --bg: #f5f7fb;
+            --card: #ffffff;
+            --ink: #0f172a;
+            --muted: #475569;
+            --line: #dbe3ee;
+            --brand: #175cd3;
+            --ok: #067647;
+            --warn: #b54708;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            line-height: 1.55;
+        }
+
+        main {
+            width: min(1200px, 100%);
+            margin: 0 auto;
+            padding: 28px 16px 42px;
+        }
+
+        h1, h2, h3 { margin: 0; line-height: 1.2; }
+        h1 { font-size: 32px; margin-top: 8px; }
+        h2 { font-size: 21px; margin-bottom: 10px; }
+        h3 { font-size: 16px; margin-bottom: 8px; }
+        p { margin: 10px 0 0; color: var(--muted); }
+
+        section {
+            margin-top: 14px;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: var(--brand);
+            background: #eaf1ff;
+            padding: 5px 10px;
+            border-radius: 999px;
+        }
+
+        .grid {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            margin-top: 14px;
+        }
+
+        .tile {
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 12px;
+            background: #fcfdff;
+        }
+
+        .ok {
+            border-left: 4px solid var(--ok);
+            background: #ecfdf3;
+            color: #065f46;
+            padding: 12px 14px;
+            border-radius: 10px;
+        }
+
+        .warn {
+            border-left: 4px solid var(--warn);
+            background: #fff8f1;
+            color: #9a3412;
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        code {
+            background: #eef2f7;
+            border-radius: 5px;
+            padding: 2px 5px;
+            color: #111827;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 13px;
+        }
+
+        ul, ol {
+            margin: 8px 0 0;
+            padding-left: 20px;
+        }
+
+        li { margin: 6px 0; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        th, td {
+            border-bottom: 1px solid var(--line);
+            text-align: left;
+            vertical-align: top;
+            padding: 9px 10px;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #1e293b;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <header>
+        <span class="eyebrow">PlexusBiz Automate</span>
+        <h1>Routing Control Guide</h1>
+        <p>Updated on 2026-05-07 for subfolder deployment target: <code>http://harun.intelsofts.com/plexusbiz</code>.</p>
+    </header>
+
+    <section>
+        <h2>Current Status</h2>
+        <div class="ok">
+            Subfolder hardcoded-path pass is done, missing footer routes are added, root rewrite file is added, and route cache is now safe.
+        </div>
+        <div class="warn">
+            Use <code>APP_SUBFOLDER_PATH</code>, not <code>APP_BASE_PATH</code>. Laravel bootstrap uses <code>APP_BASE_PATH</code> for application root.
+        </div>
+    </section>
+
+    <section>
+        <h2>Where Routing Is Controlled</h2>
+        <div class="grid">
+            <article class="tile">
+                <h3>Entry Rewrite</h3>
+                <p><code>.htaccess</code> (project root) forwards requests to <code>public/</code> when document root is not <code>public</code>.</p>
+                <p><code>public/.htaccess</code> rewrites non-file/non-directory requests to <code>index.php</code>.</p>
+            </article>
+            <article class="tile">
+                <h3>Main Route Loader</h3>
+                <p><code>app/Providers/RouteServiceProvider.php</code> loads <code>routes/web.php</code> and <code>routes/api.php</code>.</p>
+            </article>
+            <article class="tile">
+                <h3>Module Route Loader</h3>
+                <p><code>app/Providers/DomainServiceProvider.php</code> + <code>app/Support/Domain/DomainRegistry.php</code> load enabled domain route files.</p>
+            </article>
+            <article class="tile">
+                <h3>Access Gates</h3>
+                <p><code>app/Http/Kernel.php</code> route middleware aliases (<code>auth</code>, <code>role</code>, <code>permission</code>, etc).</p>
+            </article>
+            <article class="tile">
+                <h3>Subfolder Auto Fix</h3>
+                <p><code>app/Http/Middleware/ApplySubfolderContext.php</code> force root URL from subfolder context.</p>
+            </article>
+            <article class="tile">
+                <h3>Frontend URL Layer</h3>
+                <p><code>resources/js/Utils/url.js</code> + <code>window.__APP_BASE_PATH__</code> in <code>resources/views/app.blade.php</code>.</p>
+            </article>
+        </div>
+    </section>
+
+    <section>
+        <h2>Frontend Route Control Files</h2>
+        <ul>
+            <li><code>resources/js/Components/Sidebar.jsx</code> and <code>SidebarItem.jsx</code>: role-aware menu links.</li>
+            <li><code>resources/js/Components/ModuleWorkspacePage.jsx</code>: action buttons, filters, deletes, and query navigation.</li>
+            <li><code>resources/js/Layouts/AppShell.jsx</code>: app shell navigation and dashboard fallback links.</li>
+            <li><code>resources/js/Layouts/FrontendLayout.jsx</code> and <code>FooterSimple.jsx</code>: public links and call-to-actions.</li>
+            <li><code>resources/js/Pages/**</code>: page-level actions, forms, and redirects.</li>
+        </ul>
+        <p>Rule: use <code>route('name')</code> or <code>appHref(...)</code>, not hardcoded <code>/admin...</code> or <code>/social...</code> style absolute paths.</p>
+    </section>
+
+    <section>
+        <h2>Footer Route Additions (Previously 404)</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>URL</th>
+                <th>Route Name</th>
+                <th>Controller</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><code>/about</code></td>
+                <td><code>about</code></td>
+                <td><code>PublicPageController@about</code></td>
+            </tr>
+            <tr>
+                <td><code>/contact</code></td>
+                <td><code>contact</code></td>
+                <td><code>PublicPageController@contact</code></td>
+            </tr>
+            <tr>
+                <td><code>/terms</code></td>
+                <td><code>terms</code></td>
+                <td><code>PublicPageController@terms</code></td>
+            </tr>
+            <tr>
+                <td><code>/privacy</code></td>
+                <td><code>privacy</code></td>
+                <td><code>PublicPageController@privacy</code></td>
+            </tr>
+            <tr>
+                <td><code>/faq</code></td>
+                <td><code>faq</code></td>
+                <td><code>PublicPageController@faq</code></td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Quick Fix vs Structural Fix</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Type</th>
+                <th>What to do</th>
+                <th>Files</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Quick fix</td>
+                <td>Fix broken links by replacing hardcoded <code>/...</code> with named routes.</td>
+                <td><code>resources/js/Pages/**</code>, <code>Components/**</code></td>
+            </tr>
+            <tr>
+                <td>Quick fix</td>
+                <td>Ensure missing legal/info pages exist for footer links.</td>
+                <td><code>routes/web.php</code>, <code>PublicPageController</code>, <code>Public/StaticPage.jsx</code></td>
+            </tr>
+            <tr>
+                <td>Structural fix</td>
+                <td>Use middleware to set URL root in subfolder/proxy contexts.</td>
+                <td><code>ApplySubfolderContext.php</code>, <code>Kernel.php</code></td>
+            </tr>
+            <tr>
+                <td>Structural fix</td>
+                <td>Use controller-based alias redirects instead of raw path redirects.</td>
+                <td><code>RouteAliasController.php</code>, <code>routes/web.php</code>, <code>routes/domains/*.php</code></td>
+            </tr>
+            <tr>
+                <td>Structural fix</td>
+                <td>Keep env/config for subfolder explicit and cache-safe.</td>
+                <td><code>.env.example</code>, <code>config/app.php</code></td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Deploy Settings for /plexusbiz</h2>
+        <p>Use this in production environment:</p>
+        <pre>APP_URL=http://harun.intelsofts.com/plexusbiz
+APP_SUBFOLDER_PATH=/plexusbiz
+ASSET_URL=http://harun.intelsofts.com/plexusbiz</pre>
+        <p>If document root points directly to <code>public/</code>, keep <code>APP_SUBFOLDER_PATH</code> empty unless URL truly includes subfolder prefix.</p>
+    </section>
+
+    <section>
+        <h2>Validation Commands</h2>
+        <ol>
+            <li><code>php artisan route:cache</code></li>
+            <li><code>php artisan route:list --except-vendor | rg Closure</code> (should return nothing)</li>
+            <li><code>php artisan config:cache</code></li>
+            <li><code>npm run build</code></li>
+        </ol>
+    </section>
+</main>
+</body>
+</html>

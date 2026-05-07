@@ -37,8 +37,8 @@ const moduleConfig = {
         },
     ],
     actions: [
-        { label: 'Admin Control', href: '/admin', variant: 'primary' },
-        { label: 'Workflow Logs', href: '/workflow/logs', variant: 'secondary' },
+        { label: 'Admin Control', href: route('admin.dashboard'), variant: 'primary' },
+        { label: 'Workflow Logs', href: route('workflow.logs.index'), variant: 'secondary' },
     ],
     tableTitle: 'Audit Events',
     searchPlaceholder: 'Search audit logs',

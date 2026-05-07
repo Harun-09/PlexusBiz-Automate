@@ -149,7 +149,7 @@ export default function Create({ auth, flash, errors, priorities = [] }) {
                                     </button>
 
                                     <Link
-                                        href="/support/faq"
+                                        href={route('support.faq.index')}
                                         className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:border-blue-200 hover:text-blue-800"
                                     >
                                         View FAQ

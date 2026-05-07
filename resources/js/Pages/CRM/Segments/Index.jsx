@@ -19,8 +19,8 @@ const moduleConfig = {
         { label: 'Live counts', detail: 'Audience totals are derived from the current segmentation service.' },
     ],
     actions: [
-        { label: 'View Customers', href: '/crm/customers', variant: 'primary' },
-        { label: 'Open Leads', href: '/crm/leads', variant: 'secondary' },
+        { label: 'View Customers', href: route('crm.customers.index'), variant: 'primary' },
+        { label: 'Open Leads', href: route('crm.leads.index'), variant: 'secondary' },
     ],
     tableTitle: 'Saved Segments',
 };

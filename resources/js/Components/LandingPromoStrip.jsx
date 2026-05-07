@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { assetHref } from '@/Utils/url';
 
 const blueSurfaceGradient = 'bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1]';
 
@@ -75,7 +76,7 @@ export default function LandingPromoStrip() {
                         </div>
 
                         <img
-                            src="/images/store/banners/tools-feature-04.jpg"
+                            src={assetHref('/images/store/banners/tools-feature-04.jpg')}
                             alt=""
                             className="hidden min-h-[230px] w-full rounded-[24px] object-cover lg:block"
                             loading="lazy"
@@ -120,7 +121,7 @@ export default function LandingPromoStrip() {
                         </div>
 
                         <img
-                            src="/images/store/banners/tools-feature-05.jpg"
+                            src={assetHref('/images/store/banners/tools-feature-05.jpg')}
                             alt=""
                             className="hidden min-h-[230px] w-full rounded-[24px] object-cover lg:block"
                             loading="lazy"

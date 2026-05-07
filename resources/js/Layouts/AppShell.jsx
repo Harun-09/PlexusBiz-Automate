@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 export default function AppShell({ user, header, children, flash = null, showBreadcrumbs = true }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const currentPath = typeof window === 'undefined'
-        ? '/dashboard'
+        ? route('dashboard')
         : `${window.location.pathname}${window.location.search}`;
 
     useEffect(() => {

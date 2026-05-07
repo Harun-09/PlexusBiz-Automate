@@ -18,19 +18,19 @@ export default function SuppliersIndex({ auth, suppliers, filters, statuses, fla
 
     const submitFilters = (e) => {
         e.preventDefault();
-        router.get('/admin/suppliers', Object.fromEntries(Object.entries(data).filter(([, v]) => v !== '')), {
+        router.get(route('admin.suppliers.index'), Object.fromEntries(Object.entries(data).filter(([, v]) => v !== '')), {
             preserveState: true, preserveScroll: true, replace: true,
         });
     };
 
     const resetFilters = () => {
         setData({ search: '', status: '' });
-        router.get('/admin/suppliers', {}, { preserveState: true, preserveScroll: true, replace: true });
+        router.get(route('admin.suppliers.index'), {}, { preserveState: true, preserveScroll: true, replace: true });
     };
 
     const deleteSupplier = () => {
         if (!showDeleteModal) return;
-        router.delete(`/admin/suppliers/${showDeleteModal}`, {
+        router.delete(route('admin.suppliers.destroy', showDeleteModal), {
             preserveScroll: true,
             onFinish: () => setShowDeleteModal(null),
         });
@@ -46,7 +46,7 @@ export default function SuppliersIndex({ auth, suppliers, filters, statuses, fla
                         <p className="mt-1 text-sm text-gray-500">Onboard, approve, and manage supplier accounts.</p>
                     </div>
                     <Link
-                        href="/admin/suppliers/create"
+                        href={route('admin.suppliers.create')}
                         className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-slate-900 to-blue-700 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-700/20 transition hover:shadow-blue-700/30 hover:-translate-y-0.5 sm:w-auto"
                     >
                         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
@@ -126,7 +126,7 @@ export default function SuppliersIndex({ auth, suppliers, filters, statuses, fla
                                                 <td className="whitespace-nowrap px-6 py-4 text-gray-500">{supplier.approved_at || '-'}</td>
                                                 <td className="whitespace-nowrap px-6 py-4">
                                                     <div className="flex items-center gap-2">
-                                                        <Link href={`/admin/suppliers/${supplier.id}/edit`}
+                                                        <Link href={route('admin.suppliers.edit', supplier.id)}
                                                             className={`inline-flex items-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-semibold shadow-sm transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${actionButtonClasses('secondary')}`}>
                                                             <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z" /></svg>
                                                             Edit

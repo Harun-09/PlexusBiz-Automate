@@ -73,7 +73,7 @@ function ManagementPanel({ product }) {
 
     const submitMoq = (event) => {
         event.preventDefault();
-        moqForm.put(`/admin/bulk-pricing/${product.id}`, {
+        moqForm.put(route('admin.bulk-pricing.update', product.id), {
             preserveScroll: true,
             onSuccess: () => moqForm.reset('moq'),
         });
@@ -83,8 +83,8 @@ function ManagementPanel({ product }) {
         event.preventDefault();
 
         const url = editingTierId
-            ? `/admin/bulk-pricing/${product.id}/tiers/${editingTierId}`
-            : `/admin/bulk-pricing/${product.id}/tiers`;
+            ? route('admin.bulk-pricing.tiers.update', { product: product.id, tier: editingTierId })
+            : route('admin.bulk-pricing.tiers.store', product.id);
 
         const submit = editingTierId ? tierForm.put : tierForm.post;
 
@@ -101,7 +101,7 @@ function ManagementPanel({ product }) {
             return;
         }
 
-        router.delete(`/admin/bulk-pricing/${product.id}/tiers/${tierId}`, {
+        router.delete(route('admin.bulk-pricing.tiers.destroy', { product: product.id, tier: tierId }), {
             preserveScroll: true,
         });
     };
@@ -117,13 +117,13 @@ function ManagementPanel({ product }) {
                     </div>
                     <div className="flex flex-wrap gap-2">
                         <Link
-                            href="/admin/products"
+                            href={route('admin.products.index')}
                             className={`inline-flex items-center justify-center rounded-xl border px-4 py-2 text-xs font-semibold uppercase tracking-wider transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${actionButtonClasses('secondary')}`}
                         >
                             Product CRUD
                         </Link>
                         <Link
-                            href={`/admin/products/${product.id}/edit`}
+                            href={route('admin.products.edit', product.id)}
                             className={`inline-flex items-center justify-center rounded-xl border px-4 py-2 text-xs font-semibold uppercase tracking-wider transition focus:outline-none focus:ring-2 focus:ring-offset-2 ${actionButtonClasses('primary')}`}
                         >
                             Edit Product
@@ -316,7 +316,7 @@ export default function BulkPricingIndex({ auth, summary, products, selectedProd
 
     const submitFilters = (event) => {
         event.preventDefault();
-        router.get('/admin/bulk-pricing', buildQuery(currentProductId), {
+        router.get(route('admin.bulk-pricing.index'), buildQuery(currentProductId), {
             preserveState: true,
             preserveScroll: true,
             replace: true,
@@ -325,7 +325,7 @@ export default function BulkPricingIndex({ auth, summary, products, selectedProd
 
     const resetFilters = () => {
         setData({ search: '', status: '', supplier: '' });
-        router.get('/admin/bulk-pricing', toQuery({ product: currentProductId }), {
+        router.get(route('admin.bulk-pricing.index'), toQuery({ product: currentProductId }), {
             preserveState: true,
             preserveScroll: true,
             replace: true,
@@ -343,13 +343,13 @@ export default function BulkPricingIndex({ auth, summary, products, selectedProd
                     actions={(
                         <>
                             <Link
-                                href="/admin/products"
+                                href={route('admin.products.index')}
                                 className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
                             >
                                 Product CRUD
                             </Link>
                             <Link
-                                href="/admin/products/create"
+                                href={route('admin.products.create')}
                                 className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-slate-900 to-blue-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-700/20 transition hover:shadow-blue-700/30 hover:-translate-y-0.5"
                             >
                                 Add Product
@@ -515,10 +515,10 @@ export default function BulkPricingIndex({ auth, summary, products, selectedProd
                                                             </td>
                                                             <td className="whitespace-nowrap px-6 py-4">
                                                                 <Link
-                                                                    href={`/admin/bulk-pricing?${new URLSearchParams(toQuery({
+                                                                    href={route('admin.bulk-pricing.index', toQuery({
                                                                         ...data,
                                                                         product: product.id,
-                                                                    })).toString()}`}
+                                                                    }))}
                                                                     className="inline-flex items-center justify-center gap-1 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-100"
                                                                 >
                                                                     Manage

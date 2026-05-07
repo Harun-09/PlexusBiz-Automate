@@ -1,10 +1,11 @@
 <?php
 
+use App\Http\Controllers\RouteAliasController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('support')->name('support.')->group(function (): void {
-    Route::get('/', fn () => redirect()->route('support.tickets.index'))->name('index');
+    Route::get('/', [RouteAliasController::class, 'supportIndex'])->name('index');
 
     Route::middleware(['auth', 'role:buyer|supplier|admin'])->group(function (): void {
         Route::get('/tickets', [WorkspaceController::class, 'supportTickets'])->name('tickets.index');

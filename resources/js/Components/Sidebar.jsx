@@ -29,6 +29,7 @@ import {
     WorkflowIcon,
 } from '@/Components/SidebarIcons';
 import { canAccess } from '@/Utils/access';
+import { assetHref, normalizedPathAndQuery } from '@/Utils/url';
 import { Link } from '@inertiajs/react';
 import { useState } from 'react';
 
@@ -39,17 +40,17 @@ const SIDEBAR_MODULES = [
         roles: ['buyer', 'supplier', 'admin'],
         icon: StorefrontIcon,
         items: [
-            { label: 'Marketplace Catalog', href: '/marketplace', icon: StorefrontIcon, roles: ['buyer', 'supplier', 'admin'] },
-            { label: 'Bulk Orders', href: '/products/bulk-orders', icon: ShoppingCartIcon, roles: ['buyer', 'supplier', 'admin'] },
-            { label: 'MOQ Pricing', href: '/products/moq-pricing', icon: TagIcon, roles: ['buyer', 'supplier', 'admin'] },
-            { label: 'Cart', href: '/cart', icon: ShoppingCartIcon, roles: ['buyer'], permissions: ['manage_cart'] },
-            { label: 'Supplier Onboarding', href: '/admin/suppliers', icon: TruckIcon, roles: ['admin'], permissions: ['manage_suppliers'] },
-            { label: 'Product CRUD', href: '/admin/products', icon: CubeIcon, roles: ['admin'], permissions: ['manage_products'] },
-            { label: 'Inventory & Stock', href: '/commerce/products', icon: ChartBarIcon, roles: ['supplier', 'admin'], permissions: ['manage_own_products', 'manage_products'], requiresSupplierApproval: true },
-            { label: 'Add Product', href: '/commerce/products/create', icon: PlusSquareIcon, roles: ['supplier'], permissions: ['manage_own_products'], requiresSupplierApproval: true },
-            { label: 'Orders', href: '/commerce/orders', icon: ClipboardListIcon, roles: ['buyer', 'supplier', 'admin'] },
-            { label: 'Supplier Orders', href: '/commerce/supplier-orders', icon: TruckIcon, roles: ['supplier', 'admin'], permissions: ['manage_own_orders', 'manage_orders'], requiresSupplierApproval: true },
-            { label: 'Invoices', href: '/invoices', icon: DocumentTextIcon, roles: ['buyer', 'supplier', 'admin'] },
+            { label: 'Marketplace Catalog', href: route('marketplace.index'), icon: StorefrontIcon, roles: ['buyer', 'supplier', 'admin'] },
+            { label: 'Bulk Orders', href: route('products.bulk'), icon: ShoppingCartIcon, roles: ['buyer', 'supplier', 'admin'] },
+            { label: 'MOQ Pricing', href: route('products.moq'), icon: TagIcon, roles: ['buyer', 'supplier', 'admin'] },
+            { label: 'Cart', href: route('cart.index'), icon: ShoppingCartIcon, roles: ['buyer'], permissions: ['manage_cart'] },
+            { label: 'Supplier Onboarding', href: route('admin.suppliers.index'), icon: TruckIcon, roles: ['admin'], permissions: ['manage_suppliers'] },
+            { label: 'Product CRUD', href: route('admin.products.index'), icon: CubeIcon, roles: ['admin'], permissions: ['manage_products'] },
+            { label: 'Inventory & Stock', href: route('commerce.products.index'), icon: ChartBarIcon, roles: ['supplier', 'admin'], permissions: ['manage_own_products', 'manage_products'], requiresSupplierApproval: true },
+            { label: 'Add Product', href: route('commerce.products.create'), icon: PlusSquareIcon, roles: ['supplier'], permissions: ['manage_own_products'], requiresSupplierApproval: true },
+            { label: 'Orders', href: route('commerce.orders.index'), icon: ClipboardListIcon, roles: ['buyer', 'supplier', 'admin'] },
+            { label: 'Supplier Orders', href: route('commerce.supplier-orders.index'), icon: TruckIcon, roles: ['supplier', 'admin'], permissions: ['manage_own_orders', 'manage_orders'], requiresSupplierApproval: true },
+            { label: 'Invoices', href: route('invoices.index'), icon: DocumentTextIcon, roles: ['buyer', 'supplier', 'admin'] },
         ],
     },
     {
@@ -58,11 +59,11 @@ const SIDEBAR_MODULES = [
         roles: ['admin', 'marketing_manager'],
         icon: UsersIcon,
         items: [
-            { label: 'Customers', href: '/crm/customers', icon: UsersIcon, roles: ['admin', 'marketing_manager'] },
-            { label: 'Purchase History', href: '/crm/purchases', icon: ClockIcon, roles: ['admin', 'marketing_manager'] },
-            { label: 'Segments', href: '/crm/segments', icon: FunnelIcon, roles: ['admin', 'marketing_manager'] },
-            { label: 'Leads', href: '/crm/leads', icon: TargetIcon, roles: ['admin', 'marketing_manager'] },
-            { label: 'Interactions', href: '/crm/interactions', icon: ChatBubbleIcon, roles: ['admin', 'marketing_manager'] },
+            { label: 'Customers', href: route('crm.customers.index'), icon: UsersIcon, roles: ['admin', 'marketing_manager'] },
+            { label: 'Purchase History', href: route('crm.purchases.index'), icon: ClockIcon, roles: ['admin', 'marketing_manager'] },
+            { label: 'Segments', href: route('crm.segments.index'), icon: FunnelIcon, roles: ['admin', 'marketing_manager'] },
+            { label: 'Leads', href: route('crm.leads.index'), icon: TargetIcon, roles: ['admin', 'marketing_manager'] },
+            { label: 'Interactions', href: route('crm.interactions.index'), icon: ChatBubbleIcon, roles: ['admin', 'marketing_manager'] },
         ],
     },
     {
@@ -71,10 +72,10 @@ const SIDEBAR_MODULES = [
         roles: ['marketing_manager', 'admin'],
         icon: MegaphoneIcon,
         items: [
-            { label: 'Social Campaigns', href: '/social/posts', icon: MegaphoneIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_posts'] },
-            { label: 'Social Calendar', href: '/social/calendar', icon: CalendarDaysIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_posts'] },
-            { label: 'Scheduled Posts', href: '/social/posts', icon: ClockIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_posts'] },
-            { label: 'Social Accounts', href: '/social/accounts', icon: IdentificationIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_accounts'] },
+            { label: 'Social Campaigns', href: route('social.posts.index'), icon: MegaphoneIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_posts'] },
+            { label: 'Social Calendar', href: route('social.calendar'), icon: CalendarDaysIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_posts'] },
+            { label: 'Scheduled Posts', href: route('social.posts.scheduled'), icon: ClockIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_posts'] },
+            { label: 'Social Accounts', href: route('social.accounts.index'), icon: IdentificationIcon, roles: ['marketing_manager', 'admin'], permissions: ['manage_social_accounts'] },
         ],
     },
     {
@@ -83,8 +84,8 @@ const SIDEBAR_MODULES = [
         roles: ['marketing_manager', 'admin'],
         icon: SparklesIcon,
         items: [
-            { label: 'Email Campaigns', href: '/marketing/campaigns', icon: MegaphoneIcon, roles: ['marketing_manager', 'admin'] },
-            { label: 'Campaign Templates', href: '/marketing/templates', icon: DocumentTextIcon, roles: ['marketing_manager', 'admin'] },
+            { label: 'Email Campaigns', href: route('marketing.campaigns.index'), icon: MegaphoneIcon, roles: ['marketing_manager', 'admin'] },
+            { label: 'Campaign Templates', href: route('marketing.templates.index'), icon: DocumentTextIcon, roles: ['marketing_manager', 'admin'] },
         ],
     },
     {
@@ -93,9 +94,9 @@ const SIDEBAR_MODULES = [
         roles: ['workflow_manager', 'marketing_manager', 'admin'],
         icon: WorkflowIcon,
         items: [
-            { label: 'Automation Rules', href: '/workflow/rules', icon: WorkflowIcon, roles: ['workflow_manager', 'marketing_manager', 'admin'] },
-            { label: 'Workflow Logs', href: '/workflow/logs', icon: ClipboardListIcon, roles: ['workflow_manager', 'marketing_manager', 'admin'] },
-            { label: 'Failed Logs', href: '/workflow/logs?status=failed', icon: AlertTriangleIcon, roles: ['workflow_manager', 'marketing_manager', 'admin'] },
+            { label: 'Automation Rules', href: route('workflow.rules.index'), icon: WorkflowIcon, roles: ['workflow_manager', 'marketing_manager', 'admin'] },
+            { label: 'Workflow Logs', href: route('workflow.logs.index'), icon: ClipboardListIcon, roles: ['workflow_manager', 'marketing_manager', 'admin'] },
+            { label: 'Failed Logs', href: route('workflow.logs.index', { status: 'failed' }), icon: AlertTriangleIcon, roles: ['workflow_manager', 'marketing_manager', 'admin'] },
         ],
     },
     {
@@ -104,11 +105,11 @@ const SIDEBAR_MODULES = [
         roles: ['admin'],
         icon: ShieldCheckIcon,
         items: [
-            { label: 'Admin Dashboard', href: '/admin', icon: DashboardIcon, roles: ['admin'] },
-            { label: 'Users', href: '/admin/users', icon: UsersIcon, roles: ['admin'] },
-            { label: 'Bulk Pricing & MOQ', href: '/admin/bulk-pricing', icon: CalculatorIcon, roles: ['admin'] },
-            { label: 'Module Settings', href: '/settings/modules', icon: SlidersHorizontalIcon, roles: ['admin'] },
-            { label: 'Audit Logs', href: '/admin/audit-logs', icon: FileSearchIcon, roles: ['admin'] },
+            { label: 'Admin Dashboard', href: route('admin.dashboard'), icon: DashboardIcon, roles: ['admin'] },
+            { label: 'Users', href: route('admin.users.index'), icon: UsersIcon, roles: ['admin'] },
+            { label: 'Bulk Pricing & MOQ', href: route('admin.bulk-pricing.index'), icon: CalculatorIcon, roles: ['admin'] },
+            { label: 'Module Settings', href: route('settings.modules.index'), icon: SlidersHorizontalIcon, roles: ['admin'] },
+            { label: 'Audit Logs', href: route('admin.audit-logs'), icon: FileSearchIcon, roles: ['admin'] },
         ],
     },
     {
@@ -117,8 +118,8 @@ const SIDEBAR_MODULES = [
         roles: ['buyer', 'supplier', 'admin', 'marketing_manager'],
         icon: LifeBuoyIcon,
         items: [
-            { label: 'Support Tickets', href: '/support/tickets', icon: LifeBuoyIcon, roles: ['buyer', 'supplier', 'admin'], permissions: ['manage_own_tickets', 'manage_tickets'] },
-            { label: 'Support FAQ', href: '/support/faq', icon: QuestionMarkCircleIcon, roles: ['buyer', 'supplier', 'admin', 'marketing_manager'] },
+            { label: 'Support Tickets', href: route('support.tickets.index'), icon: LifeBuoyIcon, roles: ['buyer', 'supplier', 'admin'], permissions: ['manage_own_tickets', 'manage_tickets'] },
+            { label: 'Support FAQ', href: route('support.faq.index'), icon: QuestionMarkCircleIcon, roles: ['buyer', 'supplier', 'admin', 'marketing_manager'] },
         ],
     },
 ];
@@ -144,11 +145,12 @@ export default function Sidebar({ user, currentPath, onNavigate = null }) {
     const modules = visibleModules(user);
     const [openKeys, setOpenKeys] = useState([]);
 
-    const [currentUrlPath, currentUrlSearch = ''] = currentPath.split('?');
-    const currentUrl = `${currentUrlPath}${currentUrlSearch ? `?${currentUrlSearch}` : ''}`;
+    const currentUrl = normalizedPathAndQuery(currentPath);
+    const [currentUrlPath] = currentUrl.split('?');
 
     const splitHref = (href) => {
-        const [path, search = ''] = href.split('?');
+        const normalized = normalizedPathAndQuery(href);
+        const [path, search = ''] = normalized.split('?');
         return {
             path,
             search: search ? `?${search}` : '',
@@ -189,7 +191,7 @@ export default function Sidebar({ user, currentPath, onNavigate = null }) {
             <div className="flex h-16 items-center border-b border-white/10 px-4">
                 <Link href={route('dashboard')} className="flex items-center gap-3">
                     <img
-                        src="/images/project-logo.png"
+                        src={assetHref('/images/project-logo.png')}
                         alt="PlexusBiz"
                         className="h-10 w-10 rounded-lg bg-white object-cover shadow"
                     />
@@ -207,8 +209,8 @@ export default function Sidebar({ user, currentPath, onNavigate = null }) {
                     <p className="px-3 text-[11px] font-black uppercase text-slate-500">Workspace</p>
                     <div className="mt-2 space-y-1">
                         <SidebarItem
-                            item={{ label: 'Dashboard', href: '/dashboard', icon: DashboardIcon }}
-                            active={isActive('/dashboard')}
+                            item={{ label: 'Dashboard', href: route('dashboard'), icon: DashboardIcon }}
+                            active={isActive(route('dashboard'))}
                             onNavigate={onNavigate}
                         />
                     </div>

@@ -9,11 +9,14 @@ export default function ProductForm({
     method = 'post',
     defaultSupplierId = '',
     hideSupplier = false,
-    cancelUrl = '/admin/products',
+    cancelUrl = null,
     supplierLabel = '',
 }) {
     const isEditing = !!product;
-    const pricingUrl = !hideSupplier && (product?.id ? `/admin/bulk-pricing?product=${product.id}` : '/admin/bulk-pricing');
+    const resolvedCancelUrl = cancelUrl || route('admin.products.index');
+    const pricingUrl = !hideSupplier
+        ? route('admin.bulk-pricing.index', product?.id ? { product: product.id } : {})
+        : null;
     const [imagePreview, setImagePreview] = useState(product?.primary_image_url || '');
 
     const { data, setData, post, processing, errors } = useForm({
@@ -280,7 +283,7 @@ export default function ProductForm({
                     ) : null}
                     {isEditing ? 'Update Product' : 'Create Product'}
                 </button>
-                <a href={cancelUrl} className="inline-flex w-full items-center justify-center rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-600 shadow-sm transition hover:bg-gray-50 sm:w-auto">
+                <a href={resolvedCancelUrl} className="inline-flex w-full items-center justify-center rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-600 shadow-sm transition hover:bg-gray-50 sm:w-auto">
                     Cancel
                 </a>
             </div>

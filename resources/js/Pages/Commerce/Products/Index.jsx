@@ -23,8 +23,8 @@ const buildModuleConfig = (auth) => ({
     actions: [
         ...(canAccess(auth?.user, { roles: ['admin'] })
             ? [
-                { label: 'Bulk Pricing & MOQ', href: '/admin/bulk-pricing', variant: 'primary' },
-                { label: 'Supplier Onboarding', href: '/admin/suppliers', variant: 'secondary' },
+                { label: 'Bulk Pricing & MOQ', href: route('admin.bulk-pricing.index'), variant: 'primary' },
+                { label: 'Supplier Onboarding', href: route('admin.suppliers.index'), variant: 'secondary' },
             ]
             : []),
         ...(canAccess(auth?.user, { roles: ['supplier'], requiresSupplierApproval: true })

@@ -2,11 +2,12 @@
 
 use App\Http\Controllers\Marketing\CampaignController;
 use App\Http\Controllers\Marketing\CampaignTemplateController;
+use App\Http\Controllers\RouteAliasController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('marketing')->name('marketing.')->middleware('role:marketing_manager|admin')->group(function (): void {
-    Route::redirect('/', '/marketing/campaigns')->name('index');
+    Route::get('/', [RouteAliasController::class, 'marketingIndexAlias'])->name('index');
 
     Route::get('/campaigns', [WorkspaceController::class, 'campaigns'])->name('campaigns.index');
     Route::get('/campaigns/create', [CampaignController::class, 'create'])->name('campaigns.create');

@@ -165,4 +165,45 @@ class WorkspaceRoutesTest extends TestCase
                 ->where('workspace.rows.0.Action.kind', 'payment-action')
                 ->where('workspace.rows.0.Action.label', 'Pay now'));
     }
+
+    public function test_orders_workspace_uses_the_available_payment_gateway_when_the_default_is_unconfigured(): void
+    {
+        $this->seed(RbacSeeder::class);
+
+        $buyer = User::where('email', 'buyer@plexus.test')->firstOrFail();
+
+        Order::create([
+            'buyer_id' => $buyer->id,
+            'order_number' => 'ORD-'.Str::upper(Str::random(10)),
+            'status' => OrderStatus::Pending,
+            'subtotal' => '149.99',
+            'tax_total' => '0.00',
+            'shipping_total' => '0.00',
+            'discount_total' => '0.00',
+            'grand_total' => '149.99',
+            'currency' => 'BDT',
+            'placed_at' => now(),
+            'checkout_token' => null,
+            'payment_method' => null,
+            'payment_status' => PaymentStatus::Pending->value,
+            'transaction_id' => null,
+        ]);
+
+        $this->mock(\App\Domains\ECommerce\Services\StripeGatewayService::class, function ($mock): void {
+            $mock->shouldReceive('isConfigured')->andReturnFalse();
+        });
+
+        $this->mock(\App\Domains\ECommerce\Services\SslCommerzService::class, function ($mock): void {
+            $mock->shouldReceive('isConfigured')->andReturnTrue();
+        });
+
+        $this->actingAs($buyer)
+            ->get('/commerce/orders')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page
+                ->component('Commerce/Orders/Index')
+                ->where('workspace.rows.0.Payment.method', 'SSLCOMMERZ')
+                ->where('workspace.rows.0.Action.kind', 'payment-action')
+                ->where('workspace.rows.0.Action.gateway', 'SSLCOMMERZ'));
+    }
 }

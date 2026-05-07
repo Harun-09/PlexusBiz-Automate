@@ -2,8 +2,9 @@ import { Head, Link } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 import FrontendLayout from '@/Layouts/FrontendLayout';
 import FlashBanner from '@/Components/FlashBanner';
+import { assetHref } from '@/Utils/url';
 
-const fallbackImage = '/images/landing/deal-imac.jpg';
+const fallbackImage = assetHref('/images/landing/deal-imac.jpg');
 
 function formatMoney(amount, currency = 'BDT') {
     const numericAmount = Number(amount ?? 0);
@@ -35,7 +36,10 @@ function CheckoutLineItem({ item, currency }) {
             <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-black text-slate-950">{product.name}</p>
                 <p className="text-xs text-slate-500">
-                    {product.supplier?.company_name || 'PlexusBiz supplier'} - Qty {item.quantity}
+                    {product.supplier?.company_name || 'PlexusBiz supplier'} | Qty {item.quantity}
+                </p>
+                <p className="text-[11px] text-slate-400">
+                    SKU {product.sku || 'N/A'} | {product.category?.name || 'General'}
                 </p>
             </div>
             <div className="text-right">
@@ -102,6 +106,29 @@ export default function Index({ auth, flash, errors, cart, buyer, csrfToken, cur
         () => gateways.find((gateway) => gateway.key === selectedGateway) || gateways[0] || null,
         [gateways, selectedGateway],
     );
+    const supplierBreakdown = useMemo(() => {
+        const buckets = new Map();
+
+        items.forEach((item) => {
+            const supplierName = item.product?.supplier?.company_name || 'Supplier';
+            const existing = buckets.get(supplierName) || {
+                supplierName,
+                lines: 0,
+                units: 0,
+                amount: 0,
+            };
+
+            existing.lines += 1;
+            existing.units += Number(item.quantity || 0);
+            existing.amount += Number(item.line_total || 0);
+            buckets.set(supplierName, existing);
+        });
+
+        return Array.from(buckets.values()).sort((left, right) => right.amount - left.amount);
+    }, [items]);
+    const gatewaySettlement = selectedGateway === 'sslcommerz'
+        ? 'Local payment methods with Bangladesh-friendly settlement.'
+        : 'Card-first flow with fast confirmation for international buyers.';
 
     return (
         <FrontendLayout auth={auth} canLogin={true} cartCount={cart?.summary?.items_count || 0}>
@@ -170,7 +197,10 @@ export default function Index({ auth, flash, errors, cart, buyer, csrfToken, cur
                                         Checkout ready
                                     </p>
                                     <p className="mt-3 text-sm leading-6 text-slate-600">
-                                        Submit the form to continue into Stripe or SSLCOMMERZ. No extra step is needed for the buyer dashboard flow.
+                                        {supplierBreakdown.length} supplier{supplierBreakdown.length > 1 ? 's' : ''} in this order. Submit once and continue into {selectedGatewayInfo?.label || 'the selected gateway'}.
+                                    </p>
+                                    <p className="mt-2 text-xs text-slate-500">
+                                        {gatewaySettlement}
                                     </p>
                                 </div>
                             </div>
@@ -255,6 +285,27 @@ export default function Index({ auth, flash, errors, cart, buyer, csrfToken, cur
                                         <SummaryRow label="Tax" value={formatMoney(summary.tax_total || 0, currency)} />
                                         <SummaryRow label="Discount" value={formatMoney(summary.discount_total || 0, currency)} />
                                     </dl>
+
+                                    {supplierBreakdown.length > 0 ? (
+                                        <div className="mt-4 rounded-[24px] border border-[#e8eef8] bg-[#f8fbff] p-4">
+                                            <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-500">
+                                                Supplier split
+                                            </p>
+                                            <div className="mt-3 space-y-2">
+                                                {supplierBreakdown.map((supplier) => (
+                                                    <div key={supplier.supplierName} className="flex items-center justify-between gap-3 rounded-2xl bg-white px-3 py-2 text-xs">
+                                                        <div>
+                                                            <p className="font-black text-slate-900">{supplier.supplierName}</p>
+                                                            <p className="text-slate-500">
+                                                                {supplier.lines} line{supplier.lines > 1 ? 's' : ''} | {supplier.units} units
+                                                            </p>
+                                                        </div>
+                                                        <p className="font-black text-[#0b2e71]">{formatMoney(supplier.amount, currency)}</p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ) : null}
 
                                     <div className="mt-5 rounded-[24px] bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1] p-4 text-white">
                                         <p className="text-[11px] font-black uppercase tracking-[0.24em] text-blue-100">

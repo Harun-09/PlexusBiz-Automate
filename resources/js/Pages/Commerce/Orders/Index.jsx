@@ -19,8 +19,8 @@ const moduleConfig = {
         { label: 'Support overlap', detail: 'Problem orders can be routed to support without leaving the workspace.' },
     ],
     actions: [
-        { label: 'Marketplace Catalog', href: '/marketplace', variant: 'primary' },
-        { label: 'Support Tickets', href: '/support/tickets', variant: 'secondary' },
+        { label: 'Marketplace Catalog', href: route('marketplace.index'), variant: 'primary' },
+        { label: 'Support Tickets', href: route('support.tickets.index'), variant: 'secondary' },
     ],
     tableTitle: 'Order queue',
     searchPlaceholder: 'Search order number',

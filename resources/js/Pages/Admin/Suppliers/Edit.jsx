@@ -21,7 +21,7 @@ export default function EditSupplier({ auth, supplier, statuses }) {
                         <SupplierForm
                             supplier={supplier}
                             statuses={statuses}
-                            submitUrl={`/admin/suppliers/${supplier.id}`}
+                            submitUrl={route('admin.suppliers.update', supplier.id)}
                             method="put"
                         />
                     </div>

@@ -16,6 +16,7 @@ use App\Domains\ECommerce\Enums\OrderStatus;
 use App\Domains\ECommerce\Enums\PaymentStatus;
 use App\Domains\ECommerce\Models\Order;
 use App\Domains\ECommerce\Models\Rfq;
+use App\Domains\ECommerce\Services\PaymentGatewayResolver;
 use App\Domains\Notifications\Models\Message;
 use App\Domains\Support\Models\SupportTicket;
 use App\Http\Controllers\Controller;
@@ -34,6 +35,7 @@ class CrmController extends Controller
     public function __construct(
         private readonly CustomerProfileService $profiles,
         private readonly CustomerSegmentationService $segments,
+        private readonly PaymentGatewayResolver $paymentGatewayResolver,
     ) {
     }
 
@@ -750,12 +752,12 @@ class CrmController extends Controller
     private function orderPaymentSummary(Order $order): array
     {
         $status = $order->payment_status ?: PaymentStatus::Pending->value;
-        $gateway = $order->payment_method ?: config('commerce.default_payment_gateway', 'stripe');
+        $gateway = $this->paymentGatewayResolver->resolve($order->payment_method);
 
         return [
             'kind' => 'payment-summary',
             'status' => $status,
-            'method' => $this->formatPaymentGateway($gateway),
+            'method' => $gateway ? $this->formatPaymentGateway($gateway) : 'Unavailable',
         ];
     }
 

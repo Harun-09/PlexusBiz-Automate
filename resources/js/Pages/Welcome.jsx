@@ -4,9 +4,10 @@ import LandingPromoStrip from '@/Components/LandingPromoStrip';
 import PromoArtwork from '@/Components/PromoArtwork';
 
 import { canAccess } from '@/Utils/access';
+import { assetHref } from '@/Utils/url';
 
-const storeAsset = (path) => `/images/store/${path}`;
-const ecommerceAsset = (path) => `/images/ecommerce/${path}`;
+const storeAsset = (path) => assetHref(`/images/store/${path}`);
+const ecommerceAsset = (path) => assetHref(`/images/ecommerce/${path}`);
 const blueSurfaceGradient = 'bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1]';
 const productImage = (name) => storeAsset(`products/${name}.png`);
 const bannerImage = (name) => storeAsset(`banners/${name}.jpg`);
@@ -14,6 +15,7 @@ const brandImage = (name) => storeAsset(`brands/${name}.png`);
 const ecommerceProductImage = (name) => ecommerceAsset(`products/${name}.jpg`);
 const ecommerceBannerImage = (name) => ecommerceAsset(`banners/${name}.jpg`);
 const ecommerceCardImage = (name) => ecommerceAsset(`cards/${name}.jpg`);
+const catalogSearchHref = (search) => route('products.index', search ? { search } : {});
 
 const heroStats = [
     {
@@ -500,20 +502,20 @@ function SupportIcon({ className = '' }) {
 }
 
 const marketplaceShortcutItems = [
-    { icon: ProductsIcon, label: 'Marketplace Catalog', href: '/products' },
-    { icon: OrdersIcon, label: 'Bulk Orders', href: '/products/bulk-orders' },
-    { icon: InvoicesIcon, label: 'MOQ Pricing', href: '/products/moq-pricing' },
+    { icon: ProductsIcon, label: 'Marketplace Catalog', href: route('products.index') },
+    { icon: OrdersIcon, label: 'Bulk Orders', href: route('products.bulk') },
+    { icon: InvoicesIcon, label: 'MOQ Pricing', href: route('products.moq') },
     { icon: SupportIcon, label: 'Supplier Onboarding', href: route('supplier.apply') },
-    { icon: ProductsIcon, label: 'Product CRUD', href: '/admin/products', access: { roles: ['admin'], permissions: ['manage_products'] } },
-    { icon: OrdersIcon, label: 'Inventory & Stock', href: '/commerce/products', access: { roles: ['supplier', 'admin'], permissions: ['manage_own_products', 'manage_products'], requiresSupplierApproval: true } },
-    { icon: OrdersIcon, label: 'Orders & Checkout', href: '/commerce/orders', access: { roles: ['buyer', 'supplier', 'admin'] } },
-    { icon: InvoicesIcon, label: 'Invoices', href: '/invoices', access: { roles: ['buyer', 'supplier', 'admin'] } },
-    { icon: ProductsIcon, label: 'CRM Customers', href: '/crm', access: { roles: ['admin', 'marketing_manager'] } },
-    { icon: OrdersIcon, label: 'Marketing Automation', href: '/marketing', access: { roles: ['marketing_manager', 'admin'] } },
-    { icon: SupportIcon, label: 'Workflow Automation', href: '/workflow', access: { roles: ['workflow_manager', 'marketing_manager', 'admin'] } },
-    { icon: SupportIcon, label: 'Support Tickets', href: '/support', access: { roles: ['buyer', 'supplier', 'admin'], permissions: ['manage_own_tickets', 'manage_tickets'] } },
-    { icon: InvoicesIcon, label: 'Module Settings', href: '/settings/modules', access: { roles: ['admin'] } },
-    { icon: ProductsIcon, label: 'Audit Logs', href: '/admin/audit-logs', access: { roles: ['admin'] } },
+    { icon: ProductsIcon, label: 'Product CRUD', href: route('admin.products.index'), access: { roles: ['admin'], permissions: ['manage_products'] } },
+    { icon: OrdersIcon, label: 'Inventory & Stock', href: route('commerce.products.index'), access: { roles: ['supplier', 'admin'], permissions: ['manage_own_products', 'manage_products'], requiresSupplierApproval: true } },
+    { icon: OrdersIcon, label: 'Orders & Checkout', href: route('commerce.orders.index'), access: { roles: ['buyer', 'supplier', 'admin'] } },
+    { icon: InvoicesIcon, label: 'Invoices', href: route('invoices.index'), access: { roles: ['buyer', 'supplier', 'admin'] } },
+    { icon: ProductsIcon, label: 'CRM Customers', href: route('crm.index'), access: { roles: ['admin', 'marketing_manager'] } },
+    { icon: OrdersIcon, label: 'Marketing Automation', href: route('marketing.index'), access: { roles: ['marketing_manager', 'admin'] } },
+    { icon: SupportIcon, label: 'Workflow Automation', href: route('workflow.index'), access: { roles: ['workflow_manager', 'marketing_manager', 'admin'] } },
+    { icon: SupportIcon, label: 'Support Tickets', href: route('support.index'), access: { roles: ['buyer', 'supplier', 'admin'], permissions: ['manage_own_tickets', 'manage_tickets'] } },
+    { icon: InvoicesIcon, label: 'Module Settings', href: route('settings.modules.index'), access: { roles: ['admin'] } },
+    { icon: ProductsIcon, label: 'Audit Logs', href: route('admin.audit-logs'), access: { roles: ['admin'] } },
 ];
 
 const comboBundlesPrimary = [
@@ -1224,19 +1226,23 @@ function RatingDots({ rating = '4.5', reviews = '0' }) {
 }
 
 function ShelfProductCard({ item }) {
+    const productHref = catalogSearchHref(item.title);
+
     return (
         <article className="flex h-full flex-col rounded-[10px] bg-[#edf2fb] p-4">
-            <div className="overflow-hidden rounded-[8px] bg-white">
+            <Link href={productHref} className="overflow-hidden rounded-[8px] bg-white transition hover:opacity-95">
                 {item.artVariant ? (
                     <PromoArtwork variant={item.artVariant} className="aspect-[4/3]" framed={false} />
                 ) : (
                     <ProductImageFrame src={item.image} />
                 )}
-            </div>
+            </Link>
             <div className="mt-3">
                 <RatingDots rating={item.rating} reviews={item.reviews} />
                 <h3 className="mt-2 min-h-[3.2rem] text-sm font-semibold leading-6 text-slate-800 sm:text-[15px]">
-                    {item.title}
+                    <Link href={productHref} className="transition hover:text-[#0b3d91] hover:underline">
+                        {item.title}
+                    </Link>
                 </h3>
                 {item.save ? (
                     <p className="mt-1 text-xs font-semibold text-[#e64620]">{item.save}</p>
@@ -1251,30 +1257,44 @@ function ShelfProductCard({ item }) {
                         </span>
                     ) : null}
                 </div>
+                <div className="mt-3">
+                    <Link
+                        href={productHref}
+                        className="inline-flex items-center rounded-full border border-[#d7e3f4] bg-white px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-[#0b3d91] transition hover:border-[#ffb16d] hover:bg-[#fff3e8] hover:text-[#d75d00]"
+                    >
+                        View options
+                    </Link>
+                </div>
             </div>
         </article>
     );
 }
 
 function ToolStripCard({ tool, tone = blueSurfaceGradient }) {
+    const toolHref = catalogSearchHref(tool.title);
+
     return (
         <article className={`relative overflow-hidden rounded-[10px] ${tone} p-4 text-white`}>
             <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-[1fr_120px] sm:items-center">
                 <div>
                     <h3 className="text-2xl font-black leading-tight sm:text-3xl">{tool.title}</h3>
-                    <p className="mt-1 text-sm font-semibold text-white/95 sm:text-base">Check it out &gt;</p>
+                    <Link href={toolHref} className="mt-1 inline-flex text-sm font-semibold text-white/95 hover:text-white sm:text-base">
+                        Check it out &gt;
+                    </Link>
                 </div>
                 <div className="overflow-hidden rounded-[8px] bg-white/10">
-                    {tool.imageUrl ? (
-                        <img
-                            src={tool.imageUrl}
-                            alt=""
-                            className="aspect-[4/3] h-full w-full object-cover"
-                            loading="lazy"
-                        />
-                    ) : (
-                        <PromoArtwork variant={tool.artVariant || 'tile'} className="aspect-[4/3]" framed={false} />
-                    )}
+                    <Link href={toolHref}>
+                        {tool.imageUrl ? (
+                            <img
+                                src={tool.imageUrl}
+                                alt=""
+                                className="aspect-[4/3] h-full w-full object-cover"
+                                loading="lazy"
+                            />
+                        ) : (
+                            <PromoArtwork variant={tool.artVariant || 'tile'} className="aspect-[4/3]" framed={false} />
+                        )}
+                    </Link>
                 </div>
             </div>
         </article>
@@ -1300,9 +1320,9 @@ function BrandLogoCard({ brand }) {
 
 function PlexusBizMark() {
     return (
-        <Link href="/" className="flex shrink-0 items-center gap-2 sm:gap-3">
+        <Link href={route('landing')} className="flex shrink-0 items-center gap-2 sm:gap-3">
             <img
-                src="/images/project-logo.png"
+                src={assetHref('/images/project-logo.png')}
                 alt="PlexusBiz Automate"
                 className="h-11 w-11 rounded-full bg-white object-cover shadow-[0_0_18px_rgba(255,255,255,0.18)] sm:h-12 sm:w-12"
             />
@@ -1509,6 +1529,7 @@ function CategoryPanel({ panel }) {
     const tileGridClass = panel.tileGridClass || 'mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2';
     const tileAspectClass = panel.tileAspectClass || 'aspect-[4/3]';
     const bannerClassName = panel.bannerClassName || 'min-h-[220px] sm:min-h-[260px]';
+    const panelHref = catalogSearchHref(panel.title);
 
     return (
         <article className="overflow-hidden rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm">
@@ -1532,7 +1553,11 @@ function CategoryPanel({ panel }) {
             {panel.tiles ? (
                 <div className={tileGridClass}>
                     {panel.tiles.map((tile) => (
-                        <div key={tile.label} className="rounded-[18px] bg-[#f4f8ff] p-3">
+                        <Link
+                            key={tile.label}
+                            href={catalogSearchHref(tile.label)}
+                            className="rounded-[18px] bg-[#f4f8ff] p-3 transition hover:bg-[#e9f1ff]"
+                        >
                             <div className="overflow-hidden rounded-[14px] bg-white">
                                 <PromoArtwork
                                     variant={tile.artVariant || 'categoryTile'}
@@ -1545,10 +1570,19 @@ function CategoryPanel({ panel }) {
                                 />
                             </div>
                             <p className="mt-3 text-sm font-semibold text-slate-900">{tile.label}</p>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             ) : null}
+
+            <div className="mt-4">
+                <Link
+                    href={panelHref}
+                    className="inline-flex items-center rounded-full border border-[#d7e3f4] bg-[#f4f8ff] px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-[#0b3d91] transition hover:border-[#ffb16d] hover:bg-[#fff3e8] hover:text-[#d75d00]"
+                >
+                    Explore category
+                </Link>
+            </div>
         </article>
     );
 }
@@ -1704,7 +1738,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                             </div>
                         </section>
 
-                        <section className="grid gap-4 xl:grid-cols-4">
+                        <section id="build" className="grid gap-4 xl:grid-cols-4">
                             {categoryPanels.map((panel) => (
                                 <CategoryPanel key={panel.title} panel={panel} />
                             ))}
@@ -1741,7 +1775,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                             </div>
                         </section>
 
-                        <section className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
+                        <section id="featured" className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
                             <ShelfHeading title="More Items to Consider" href="#footer" />
                             <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-6">
                                 {considerationItems.slice(0, 6).map((item) => (
@@ -1762,12 +1796,12 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                                 ))}
                             </div>
                             <div className="mt-6 flex justify-center">
-                                <button
-                                    type="button"
-                                    className="rounded-full border border-slate-300 px-8 py-2 text-sm font-black text-slate-600"
+                                <Link
+                                    href={route('products.index')}
+                                    className="rounded-full border border-slate-300 px-8 py-2 text-sm font-black text-slate-600 transition hover:border-[#ffb16d] hover:text-[#d75d00]"
                                 >
                                     Load More
-                                </button>
+                                </Link>
                             </div>
                         </section>
 

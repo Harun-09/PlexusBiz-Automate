@@ -7,7 +7,7 @@
     <style>
         @page {
             size: A4 portrait;
-            margin: 8mm 10mm 8mm;
+            margin: 0;
         }
 
         * {
@@ -21,33 +21,41 @@
         html,
         body {
             width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             font-family: DejaVu Sans, Helvetica, Arial, sans-serif;
-            font-size: 10px;
-            line-height: 1.34;
+            font-size: 9.4px;
+            line-height: 1.3;
             color: #334155;
             background: #ffffff;
         }
 
         .page {
-            width: 100%;
+            margin: 20px;
+        }
+
+        .page-inner {
+            width: auto;
         }
 
         .header {
             width: 100%;
-            margin-bottom: 9px;
-            padding: 12px 14px;
-            border: 1px solid #dbeafe;
-            border-bottom: 2px solid #2563eb;
-            border-radius: 12px;
-            background: #f8fbff;
+            margin-bottom: 6px;
+            padding: 8px 10px;
+            border: 1px solid #c7d2fe;
+            border-top: 4px solid #1d4ed8;
+            border-radius: 8px;
+            background: #f9fbff;
         }
 
         .header-table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: fixed;
         }
 
         .header-table td {
@@ -55,51 +63,63 @@
         }
 
         .brand {
-            width: 58%;
-            padding-right: 12px;
+            width: 54%;
+            padding-right: 10px;
+        }
+
+        .header-card {
+            min-height: 84px;
+            padding: 8px 10px;
+            border: 1px solid #dbeafe;
+            border-radius: 8px;
+            background: #ffffff;
         }
 
         .brand h1 {
             margin-bottom: 3px;
             color: #2563eb;
-            font-size: 22px;
+            font-size: 18px;
             line-height: 1.05;
             font-weight: 800;
-            letter-spacing: -0.02em;
         }
 
         .brand p {
             margin-bottom: 1px;
             color: #64748b;
-            font-size: 9px;
+            font-size: 8.8px;
         }
 
         .invoice-meta {
-            width: 42%;
+            width: 46%;
             text-align: right;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            padding-right: 8px;
+            padding-left: 6px;
         }
 
         .invoice-meta h2 {
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             color: #2563eb;
-            font-size: 18px;
+            font-size: 15px;
             line-height: 1.05;
             font-weight: 800;
             letter-spacing: 0.02em;
         }
 
         .meta-line {
-            margin-bottom: 1px;
+            margin-bottom: 1.5px;
             color: #475569;
-            font-size: 9px;
+            font-size: 8.4px;
+            line-height: 1.25;
         }
 
         .status-badge {
             display: inline-block;
-            margin-top: 3px;
-            padding: 3px 10px;
+            margin-top: 2px;
+            padding: 3px 9px;
             border-radius: 999px;
-            font-size: 9px;
+            font-size: 8.6px;
             font-weight: 700;
             border: 1px solid transparent;
         }
@@ -117,14 +137,14 @@
         }
 
         .section {
-            margin-bottom: 10px;
+            margin-bottom: 6px;
             page-break-inside: avoid;
         }
 
         .section-title {
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             color: #2563eb;
-            font-size: 10px;
+            font-size: 9.5px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.1em;
@@ -141,16 +161,24 @@
             vertical-align: top;
         }
 
+        .info-table td:first-child {
+            padding-right: 4px;
+        }
+
+        .info-table td:last-child {
+            padding-left: 4px;
+        }
+
         .info-card {
-            min-height: 72px;
-            padding: 8px 10px;
+            min-height: 58px;
+            padding: 6px 8px;
             border: 1px solid #dbeafe;
-            border-radius: 12px;
+            border-radius: 8px;
             background: #ffffff;
         }
 
         .info-card p {
-            margin-bottom: 2px;
+            margin-bottom: 1.5px;
         }
 
         .label {
@@ -164,19 +192,25 @@
             table-layout: fixed;
         }
 
+        .items-box {
+            overflow: hidden;
+            border: 1px solid #dbeafe;
+            border-radius: 8px;
+        }
+
         .items-table thead th {
-            padding: 7px 8px;
+            padding: 6px 7px;
             background: #2563eb;
             color: #ffffff;
-            font-size: 9px;
+            font-size: 8.8px;
             font-weight: 700;
             text-align: left;
         }
 
         .items-table td {
-            padding: 7px 8px;
+            padding: 5px 7px;
             border-bottom: 1px solid #e2e8f0;
-            font-size: 9px;
+            font-size: 8.8px;
             vertical-align: top;
             word-break: break-word;
         }
@@ -198,7 +232,7 @@
         .item-sku {
             margin-top: 1px;
             color: #64748b;
-            font-size: 8.5px;
+            font-size: 8px;
         }
 
         .text-right {
@@ -206,16 +240,16 @@
         }
 
         .summary {
-            width: 280px;
-            margin-top: 10px;
+            width: 260px;
+            margin-top: 6px;
             margin-left: auto;
             page-break-inside: avoid;
         }
 
         .summary-box {
-            padding: 8px 10px;
+            padding: 6px 9px;
             border: 1px solid #dbeafe;
-            border-radius: 12px;
+            border-radius: 8px;
             background: #f8fbff;
         }
 
@@ -225,52 +259,56 @@
         }
 
         .summary-table td {
-            padding: 4px 0;
+            padding: 3px 0;
             border-bottom: 1px solid #e2e8f0;
         }
 
         .summary-table tr.total td {
-            padding-top: 6px;
+            padding-top: 5px;
             border-top: 2px solid #2563eb;
             border-bottom: none;
             color: #2563eb;
-            font-size: 11.5px;
+            font-size: 11px;
             font-weight: 800;
         }
 
         .footer {
-            margin-top: 10px;
-            padding-top: 8px;
+            margin-top: 8px;
+            padding-top: 6px;
             border-top: 1px solid #dbeafe;
             color: #64748b;
-            font-size: 9px;
+            font-size: 8.5px;
             line-height: 1.3;
             text-align: center;
-            page-break-inside: avoid;
         }
     </style>
 </head>
 <body>
     <div class="page">
+        <div class="page-inner">
         <div class="header">
             <table class="header-table">
                 <tr>
                     <td class="brand">
-                        <h1>PlexusBiz Automate</h1>
-                        <p>B2B E-Commerce & Business Automation Platform</p>
-                        <p>Email: support@plexusbiz.com</p>
+                        <div class="header-card">
+                            <h1>PlexusBiz Automate</h1>
+                            <p>B2B E-Commerce & Business Automation Platform</p>
+                            <p>Email: support@plexusbiz.com</p>
+                        </div>
                     </td>
                     <td class="invoice-meta">
-                        <h2>INVOICE</h2>
-                        <p class="meta-line"><strong>Invoice Number:</strong> {{ $invoice->invoice_number }}</p>
-                        <p class="meta-line"><strong>Order Number:</strong> {{ $invoice->order->order_number }}</p>
-                        <p class="meta-line"><strong>Date:</strong> {{ $invoice->issued_at->format('M d, Y') }}</p>
-                        <p class="meta-line"><strong>Due Date:</strong> {{ $invoice->due_at->format('M d, Y') }}</p>
-                        <p>
-                            <span class="status-badge status-{{ $invoice->status->value }}">
-                                {{ ucfirst($invoice->status->value) }}
-                            </span>
-                        </p>
+                        <div class="header-card">
+                            <h2>INVOICE</h2>
+                            <p class="meta-line"><strong>Invoice Number:</strong> {{ $invoice->invoice_number }}</p>
+                            <p class="meta-line"><strong>Order Number:</strong> {{ $invoice->order->order_number }}</p>
+                            <p class="meta-line"><strong>Date:</strong> {{ $invoice->issued_at->format('M d, Y') }}</p>
+                            <p class="meta-line"><strong>Due Date:</strong> {{ $invoice->due_at->format('M d, Y') }}</p>
+                            <p>
+                                <span class="status-badge status-{{ $invoice->status->value }}">
+                                    {{ ucfirst($invoice->status->value) }}
+                                </span>
+                            </p>
+                        </div>
                     </td>
                 </tr>
             </table>
@@ -301,31 +339,33 @@
 
         <div class="section">
             <div class="section-title">Order Items</div>
-            <table class="items-table">
-                <thead>
-                    <tr>
-                        <th style="width: 40%;">Product</th>
-                        <th style="width: 20%;">Supplier</th>
-                        <th style="width: 10%;">Qty</th>
-                        <th class="text-right" style="width: 15%;">Unit Price</th>
-                        <th class="text-right" style="width: 15%;">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($invoice->order->items as $item)
+            <div class="items-box">
+                <table class="items-table">
+                    <thead>
                         <tr>
-                            <td>
-                                <div class="item-name">{{ $item->product_name }}</div>
-                                <div class="item-sku">SKU: {{ $item->sku }}</div>
-                            </td>
-                            <td>{{ $item->supplier->company_name ?? $item->supplier->user->name ?? 'N/A' }}</td>
-                            <td>{{ $item->quantity }}</td>
-                            <td class="text-right">{{ number_format($item->unit_price, 2) }} {{ $invoice->order->currency }}</td>
-                            <td class="text-right">{{ number_format($item->total, 2) }} {{ $invoice->order->currency }}</td>
+                            <th style="width: 40%;">Product</th>
+                            <th style="width: 20%;">Supplier</th>
+                            <th style="width: 10%;">Qty</th>
+                            <th class="text-right" style="width: 15%;">Unit Price</th>
+                            <th class="text-right" style="width: 15%;">Total</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach($invoice->order->items as $item)
+                            <tr>
+                                <td>
+                                    <div class="item-name">{{ $item->product_name }}</div>
+                                    <div class="item-sku">SKU: {{ $item->sku }}</div>
+                                </td>
+                                <td>{{ $item->supplier->company_name ?? $item->supplier->user->name ?? 'N/A' }}</td>
+                                <td>{{ $item->quantity }}</td>
+                                <td class="text-right">{{ number_format($item->unit_price, 2) }} {{ $invoice->order->currency }}</td>
+                                <td class="text-right">{{ number_format($item->total, 2) }} {{ $invoice->order->currency }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <div class="summary">
@@ -356,6 +396,7 @@
         <div class="footer">
             <p>Thank you for your business. This invoice was generated automatically by PlexusBiz Automate.</p>
             <p>For any questions, please contact our support team.</p>
+        </div>
         </div>
     </div>
 </body>

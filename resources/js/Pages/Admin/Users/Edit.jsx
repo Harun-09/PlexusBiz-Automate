@@ -22,7 +22,7 @@ export default function EditUser({ auth, user, roles, statuses }) {
                             user={user}
                             roles={roles}
                             statuses={statuses}
-                            submitUrl={`/admin/users/${user.id}`}
+                            submitUrl={route('admin.users.update', user.id)}
                             method="put"
                         />
                     </div>

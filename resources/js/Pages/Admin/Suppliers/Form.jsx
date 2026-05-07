@@ -2,6 +2,7 @@ import { useForm } from '@inertiajs/react';
 
 export default function SupplierForm({ supplier = null, users = [], statuses, submitUrl, method = 'post' }) {
     const isEditing = !!supplier;
+    const suppliersIndexUrl = route('admin.suppliers.index');
 
     const { data, setData, post, put, processing, errors } = useForm({
         user_id: supplier?.user_id || '',
@@ -148,7 +149,7 @@ export default function SupplierForm({ supplier = null, users = [], statuses, su
                     ) : null}
                     {isEditing ? 'Update Supplier' : 'Create Supplier'}
                 </button>
-                <a href="/admin/suppliers" className="inline-flex w-full items-center justify-center rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-600 shadow-sm transition hover:bg-gray-50 sm:w-auto">
+                <a href={suppliersIndexUrl} className="inline-flex w-full items-center justify-center rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-600 shadow-sm transition hover:bg-gray-50 sm:w-auto">
                     Cancel
                 </a>
             </div>

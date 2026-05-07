@@ -19,8 +19,8 @@ const moduleConfig = {
         { label: 'Event driven', detail: 'CRM activity can feed workflow automation later.' },
     ],
     actions: [
-        { label: 'View Customers', href: '/crm/customers', variant: 'primary' },
-        { label: 'View Leads', href: '/crm/leads', variant: 'secondary' },
+        { label: 'View Customers', href: route('crm.customers.index'), variant: 'primary' },
+        { label: 'View Leads', href: route('crm.leads.index'), variant: 'secondary' },
     ],
     tableTitle: 'Activity History',
 };

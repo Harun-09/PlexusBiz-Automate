@@ -1,8 +1,10 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { useMemo } from 'react';
 import FrontendLayout from '@/Layouts/FrontendLayout';
 import FlashBanner from '@/Components/FlashBanner';
+import { assetHref } from '@/Utils/url';
 
-const fallbackImage = '/images/landing/deal-imac.jpg';
+const fallbackImage = assetHref('/images/landing/deal-imac.jpg');
 
 function formatMoney(amount, currency = 'BDT') {
     const numericAmount = Number(amount ?? 0);
@@ -206,6 +208,36 @@ export default function Index({ auth, flash, errors, cart, suggestions, currency
     const summary = cart?.summary || {};
     const items = Array.isArray(cart?.items) ? cart.items : [];
     const validationMessage = Object.values(errors || {}).find(Boolean);
+    const supplierBreakdown = useMemo(() => {
+        const buckets = new Map();
+
+        items.forEach((item) => {
+            const supplierName = item.product?.supplier?.company_name || item.supplier?.company_name || 'Supplier';
+            const existing = buckets.get(supplierName) || {
+                supplierName,
+                lines: 0,
+                units: 0,
+                amount: 0,
+            };
+
+            existing.lines += 1;
+            existing.units += Number(item.quantity || 0);
+            existing.amount += Number(item.line_total || 0);
+            buckets.set(supplierName, existing);
+        });
+
+        return Array.from(buckets.values()).sort((left, right) => right.amount - left.amount);
+    }, [items]);
+    const savingsFromTierPricing = useMemo(() => {
+        return items.reduce((total, item) => {
+            const basePrice = Number(item.product?.base_price || item.unit_price || 0);
+            const unitPrice = Number(item.unit_price || 0);
+            const quantity = Number(item.quantity || 0);
+            const savings = (basePrice - unitPrice) * quantity;
+
+            return total + (savings > 0 ? savings : 0);
+        }, 0);
+    }, [items]);
 
     return (
         <FrontendLayout auth={auth} canLogin={true} cartCount={cart?.summary?.items_count || 0}>
@@ -310,6 +342,29 @@ export default function Index({ auth, flash, errors, cart, suggestions, currency
                                         <LineItem key={item.id} item={item} currency={currency} />
                                     ))}
                                 </div>
+
+                                {supplierBreakdown.length > 0 ? (
+                                    <div className="rounded-[28px] border border-[#d7e3f4] bg-white p-5 shadow-sm">
+                                        <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-500">
+                                            Supplier breakdown
+                                        </p>
+                                        <div className="mt-4 space-y-3">
+                                            {supplierBreakdown.map((supplier) => (
+                                                <div key={supplier.supplierName} className="flex items-center justify-between gap-4 rounded-2xl bg-slate-50 px-4 py-3 text-sm">
+                                                    <div>
+                                                        <p className="font-black text-slate-900">{supplier.supplierName}</p>
+                                                        <p className="text-xs text-slate-500">
+                                                            {supplier.lines} line{supplier.lines > 1 ? 's' : ''} | {supplier.units} units
+                                                        </p>
+                                                    </div>
+                                                    <p className="text-base font-black text-[#0b2e71]">
+                                                        {formatMoney(supplier.amount, currency)}
+                                                    </p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ) : null}
                             </div>
 
                             <aside className="space-y-4">
@@ -354,6 +409,18 @@ export default function Index({ auth, flash, errors, cart, suggestions, currency
                                         </p>
                                         <p className="mt-2 text-sm leading-6 text-blue-100">
                                             The checkout step will hand off to the payment gateway selected on the next screen.
+                                        </p>
+                                    </div>
+
+                                    <div className="mt-4 rounded-[24px] border border-[#e8eef8] bg-[#f8fbff] p-4 text-sm text-slate-600">
+                                        <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-500">
+                                            Pricing insight
+                                        </p>
+                                        <p className="mt-2">
+                                            Tier pricing savings in this cart: <span className="font-black text-slate-900">{formatMoney(savingsFromTierPricing, currency)}</span>
+                                        </p>
+                                        <p className="mt-2 text-xs text-slate-500">
+                                            Savings are calculated from base price versus applied unit price for each line.
                                         </p>
                                     </div>
 

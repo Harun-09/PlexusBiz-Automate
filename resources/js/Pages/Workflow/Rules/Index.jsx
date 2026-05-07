@@ -37,9 +37,9 @@ const moduleConfig = {
         },
     ],
     actions: [
-        { label: 'Create Rule', href: '/workflow/rules/create', variant: 'primary' },
-        { label: 'Open Logs', href: '/workflow/logs', variant: 'secondary' },
-        { label: 'View Support FAQ', href: '/support/faq', variant: 'secondary' },
+        { label: 'Create Rule', href: route('workflow.rules.create'), variant: 'primary' },
+        { label: 'Open Logs', href: route('workflow.logs.index'), variant: 'secondary' },
+        { label: 'View Support FAQ', href: route('support.faq.index'), variant: 'secondary' },
     ],
 };
 

@@ -1,16 +1,16 @@
 <?php
 
-use App\Domains\ECommerce\Models\Order;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\PublicPageController;
 use App\Http\Controllers\RfqRequestController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RouteAliasController;
 use App\Http\Controllers\SupplierOnboardingController;
+use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\WorkspaceController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,18 +23,17 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+Route::get('/', WelcomeController::class)->name('landing');
+
+Route::get('/about', [PublicPageController::class, 'about'])->name('about');
+Route::get('/contact', [PublicPageController::class, 'contact'])->name('contact');
+Route::get('/terms', [PublicPageController::class, 'terms'])->name('terms');
+Route::get('/privacy', [PublicPageController::class, 'privacy'])->name('privacy');
+Route::get('/faq', [PublicPageController::class, 'faq'])->name('faq');
 
 Route::get('/p/{slug}', [App\Http\Controllers\PageController::class, 'show'])->name('page.show');
 
-Route::redirect('/auth/login', '/login');
+Route::get('/auth/login', [RouteAliasController::class, 'authLogin']);
 
 Route::middleware('guest')->group(function (): void {
     Route::get('/supplier/apply', [SupplierOnboardingController::class, 'create'])
@@ -94,7 +93,7 @@ Route::get('/dashboard', DashboardController::class)->middleware(['auth', 'verif
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::redirect('/customer/profile', '/profile')->name('customer.profile.alias');
+    Route::get('/customer/profile', [RouteAliasController::class, 'customerProfileAlias'])->name('customer.profile.alias');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::patch('/profile/customer', [ProfileController::class, 'updateCustomer'])->name('profile.customer.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -105,12 +104,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/products/{product}/edit', [WorkspaceController::class, 'supplierProductEdit'])->middleware('role:supplier')->name('products.edit');
     });
 
-    Route::redirect('/buyer/tickets', '/support/tickets')->name('buyer.tickets.alias');
+    Route::get('/buyer/tickets', [RouteAliasController::class, 'buyerTicketsAlias'])->name('buyer.tickets.alias');
 
-    Route::redirect('/orders', '/commerce/orders')->name('orders.index.alias');
-    Route::get('/orders/{order}', function (Order $order) {
-        return redirect()->route('commerce.orders.index', ['search' => $order->order_number]);
-    })->middleware('role:buyer|supplier|admin')->name('orders.show.alias');
+    Route::get('/orders', [RouteAliasController::class, 'ordersIndexAlias'])->name('orders.index.alias');
+    Route::get('/orders/{order}', [RouteAliasController::class, 'ordersShowAlias'])
+        ->middleware('role:buyer|supplier|admin')
+        ->name('orders.show.alias');
 
     // Invoice Routes
     Route::prefix('invoices')->name('invoices.')->group(function (): void {

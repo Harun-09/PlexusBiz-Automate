@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import { assetHref } from '@/Utils/url';
 
 const blueSurfaceGradient = 'bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1]';
 
@@ -6,17 +7,17 @@ const footerSections = [
     {
         title: 'Quick Links',
         links: [
-            { label: 'Marketplace', href: '/marketplace' },
+            { label: 'Marketplace', href: route('marketplace.index') },
             { label: 'Become a supplier', href: route('supplier.apply') },
-            { label: 'About Us', href: '/about' },
-            { label: 'Contact', href: '/contact' },
+            { label: 'About Us', href: route('about') },
+            { label: 'Contact', href: route('contact') },
         ],
     },
     {
         title: 'Support',
         links: [
-            { label: 'Help Center', href: '/support/tickets' },
-            { label: 'FAQs', href: '/faq' },
+            { label: 'Help Center', href: route('support.tickets.index') },
+            { label: 'FAQs', href: route('faq') },
         ],
     },
     {
@@ -29,8 +30,8 @@ const footerSections = [
     {
         title: 'Legal',
         links: [
-            { label: 'Terms', href: '/terms' },
-            { label: 'Privacy', href: '/privacy' },
+            { label: 'Terms', href: route('terms') },
+            { label: 'Privacy', href: route('privacy') },
         ],
     },
 ];
@@ -43,10 +44,10 @@ export default function FooterSimple() {
             >
                 <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 xl:px-10">
                     <div className="mb-8 flex flex-col gap-5 border-b border-white/20 pb-6 sm:flex-row sm:items-end sm:justify-between">
-                        <Link href="/" className="group inline-flex items-center gap-4">
+                        <Link href={route('landing')} className="group inline-flex items-center gap-4">
                             <span className="grid h-16 w-16 shrink-0 place-items-center rounded-[22px] border border-white/15 bg-white p-2 shadow-[0_18px_42px_-26px_rgba(0,0,0,0.45)] transition group-hover:scale-[1.02]">
                                 <img
-                                    src="/images/project-logo.png"
+                                    src={assetHref('/images/project-logo.png')}
                                     alt="PlexusBiz Automate"
                                     className="h-full w-full rounded-[16px] object-cover"
                                 />

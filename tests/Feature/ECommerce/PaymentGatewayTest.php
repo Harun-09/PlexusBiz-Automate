@@ -55,6 +55,45 @@ class PaymentGatewayTest extends TestCase
         $this->assertNotNull($order->fresh()->checkout_token);
     }
 
+    public function test_payment_process_falls_back_to_sslcommerz_when_stripe_is_unavailable(): void
+    {
+        $buyer = User::factory()->create();
+        $order = $this->createOrder($buyer, [
+            'grand_total' => '1499.99',
+            'currency' => 'BDT',
+        ]);
+
+        $this->mock(StripeGatewayService::class, function ($mock): void {
+            $mock->shouldReceive('isConfigured')->andReturnFalse();
+        });
+
+        $this->mock(SslCommerzService::class, function ($mock): void {
+            $mock->shouldReceive('isConfigured')->andReturnTrue();
+            $mock->shouldReceive('initiatePayment')->once()->andReturn([
+                'status' => 'SUCCESS',
+                'sessionkey' => 'ssl_session_fallback',
+                'GatewayPageURL' => 'https://sslcommerz.test/checkout',
+            ]);
+        });
+
+        $response = $this->actingAs($buyer)->post('/checkout/'.$order->order_number.'/payment');
+
+        $response->assertRedirect('https://sslcommerz.test/checkout');
+
+        $this->assertDatabaseHas('orders', [
+            'id' => $order->id,
+            'payment_method' => 'sslcommerz',
+            'payment_status' => PaymentStatus::Processing->value,
+        ]);
+
+        $this->assertDatabaseHas('payments', [
+            'order_id' => $order->id,
+            'payment_method' => 'sslcommerz',
+            'status' => PaymentStatus::Processing->value,
+            'currency' => 'BDT',
+        ]);
+    }
+
     public function test_stripe_success_redirect_marks_payment_completed_and_renders_checkout_success(): void
     {
         $buyer = User::factory()->create();

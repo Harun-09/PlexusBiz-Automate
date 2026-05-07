@@ -19,8 +19,8 @@ const moduleConfig = {
         { label: 'Searchable list', detail: 'Name, company, and email filters flow directly into the query.' },
     ],
     actions: [
-        { label: 'CRM Customers', href: '/crm/customers', variant: 'primary' },
-        { label: 'Purchase History', href: '/crm/purchases', variant: 'secondary' },
+        { label: 'CRM Customers', href: route('crm.customers.index'), variant: 'primary' },
+        { label: 'Purchase History', href: route('crm.purchases.index'), variant: 'secondary' },
     ],
     tableTitle: 'Customer Accounts',
     searchPlaceholder: 'Search customer accounts',

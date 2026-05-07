@@ -2,6 +2,7 @@ import { useForm } from '@inertiajs/react';
 
 export default function UserForm({ user = null, roles, statuses, submitUrl, method = 'post' }) {
     const isEditing = !!user;
+    const usersIndexUrl = route('admin.users.index');
 
     const { data, setData, post, put, processing, errors } = useForm({
         name: user?.name || '',
@@ -124,7 +125,7 @@ export default function UserForm({ user = null, roles, statuses, submitUrl, meth
                     ) : null}
                     {isEditing ? 'Update User' : 'Create User'}
                 </button>
-                <a href="/admin/users" className="inline-flex w-full items-center justify-center rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-600 shadow-sm transition hover:bg-gray-50 sm:w-auto">
+                <a href={usersIndexUrl} className="inline-flex w-full items-center justify-center rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-600 shadow-sm transition hover:bg-gray-50 sm:w-auto">
                     Cancel
                 </a>
             </div>

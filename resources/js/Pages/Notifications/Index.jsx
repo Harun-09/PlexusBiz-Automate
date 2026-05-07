@@ -19,8 +19,8 @@ const moduleConfig = {
         { label: 'Searchable feed', detail: 'Subject, body, and channel search stay linked to the current route.' },
     ],
     actions: [
-        { label: 'Support Tickets', href: '/support/tickets', variant: 'primary' },
-        { label: 'CRM Interactions', href: '/crm/interactions', variant: 'secondary' },
+        { label: 'Support Tickets', href: route('support.tickets.index'), variant: 'primary' },
+        { label: 'CRM Interactions', href: route('crm.interactions.index'), variant: 'secondary' },
     ],
     tableTitle: 'Messages',
     searchPlaceholder: 'Search subject or body',

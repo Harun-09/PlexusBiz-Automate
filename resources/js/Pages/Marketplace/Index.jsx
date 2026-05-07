@@ -19,8 +19,8 @@ const moduleConfig = {
         { label: 'Catalog search', detail: 'Search by product name or supplier and keep results synced to the route.' },
     ],
     actions: [
-        { label: 'Bulk Orders', href: '/products/bulk-orders', variant: 'primary' },
-        { label: 'MOQ Pricing', href: '/products/moq-pricing', variant: 'secondary' },
+        { label: 'Bulk Orders', href: route('products.bulk'), variant: 'primary' },
+        { label: 'MOQ Pricing', href: route('products.moq'), variant: 'secondary' },
     ],
     tableTitle: 'Active catalog',
     searchPlaceholder: 'Search products or suppliers',
