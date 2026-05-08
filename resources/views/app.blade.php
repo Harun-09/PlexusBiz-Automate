@@ -6,6 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
+        <link rel="icon" type="image/png" href="{{ asset('images/project-logo.png') }}?v=1">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -13,13 +14,41 @@
 
         <!-- Scripts -->
         @php
-            $detectedBasePath = config('app.subfolder_path') ?: request()->getBasePath();
-            $detectedBasePath = '/'.trim((string) $detectedBasePath, '/');
+            $detectedBasePath = (string) (parse_url(url('/'), PHP_URL_PATH) ?? '');
+            $detectedBasePath = '/'.trim($detectedBasePath, '/');
 
-            if ($detectedBasePath === '/' || $detectedBasePath === '/public') {
+            if ($detectedBasePath === '/') {
                 $detectedBasePath = '';
-            } elseif (str_ends_with($detectedBasePath, '/public')) {
-                $detectedBasePath = substr($detectedBasePath, 0, -7);
+            } else {
+                $hasTrailingSlash = str_ends_with($detectedBasePath, '/');
+                $segments = array_values(array_filter(
+                    explode('/', trim($detectedBasePath, '/')),
+                    static fn (string $segment): bool => $segment !== ''
+                ));
+
+                if (count($segments) >= 4) {
+                    do {
+                        $updated = false;
+                        $segmentCount = count($segments);
+
+                        for ($len = intdiv($segmentCount, 2); $len >= 2; $len--) {
+                            $head = array_slice($segments, 0, $len);
+                            $next = array_slice($segments, $len, $len);
+
+                            if ($head === $next && in_array('public', $head, true)) {
+                                $segments = array_merge($head, array_slice($segments, $len * 2));
+                                $updated = true;
+                                break;
+                            }
+                        }
+                    } while ($updated);
+                }
+
+                $detectedBasePath = '/'.implode('/', $segments);
+
+                if ($detectedBasePath !== '/' && $hasTrailingSlash) {
+                    $detectedBasePath .= '/';
+                }
             }
         @endphp
         <script>
