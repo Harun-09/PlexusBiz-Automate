@@ -1,26 +1,29 @@
-# Disable directory listing
-Options -Indexes
-DirectoryIndex index.php index.html
-
 <IfModule mod_rewrite.c>
-    <IfModule mod_negotiation.c>
-        Options -MultiViews -Indexes
-    </IfModule>
-
     RewriteEngine On
-    RewriteBase /plexusbiz-automate/
+    RewriteBase /plexusbiz/
 
-    # Keep sensitive files blocked at root.
-    RewriteRule ^(\.env|artisan|composer\.(json|lock)|phpunit\.xml)$ - [F,L,NC]
-    RewriteRule \.sql$ - [F,L,NC]
+    # Canonical entry point: /plexusbiz -> /plexusbiz/public/
+    RewriteRule ^$ /plexusbiz/public/ [R=302,L]
 
-    # Serve real files/directories directly from project root.
-    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    # Canonicalize duplicated subfolder URLs at the root rewrite layer.
+    RewriteCond %{REQUEST_URI} ^/plexusbiz/public/plexusbiz/public/(.+)$ [NC]
+    RewriteRule ^ /plexusbiz/public/%1 [R=302,L]
+    RewriteCond %{REQUEST_URI} ^/plexusbiz/public/plexusbiz/public/?$ [NC]
+    RewriteRule ^ /plexusbiz/public/ [R=302,L]
+
+    # Block direct access to hidden files when project root is web-accessible.
+    RewriteRule (^|/)\. - [F,L]
+
+    # Keep ACME challenge files reachable when present.
+    RewriteRule ^\.well-known/ - [L]
+
+    # Prevent browsing non-public project directories from web.
+    RewriteCond %{REQUEST_URI} !^/plexusbiz/public(?:/|$) [NC]
+    RewriteCond %{REQUEST_URI} !^/plexusbiz/?$ [NC]
     RewriteCond %{REQUEST_FILENAME} -d
-    RewriteRule ^ - [L]
+    RewriteRule ^ - [F,L]
 
-    # Shared hosting fallback: internally route requests to /public.
-    RewriteCond %{ENV:REDIRECT_STATUS} ^$
-    RewriteCond %{REQUEST_URI} !^/plexusbiz-automate/public($|/)
-    RewriteRule ^(.*)$ public/$1 [L,QSA]
+    # Send traffic to /public (same pattern used by the working sibling projects).
+    RewriteCond %{REQUEST_URI} !^/plexusbiz/public(?:/|$) [NC]
+    RewriteRule ^(.*)$ /plexusbiz/public/$1 [L]
 </IfModule>
