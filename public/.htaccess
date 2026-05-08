@@ -3,20 +3,27 @@
         Options -MultiViews -Indexes
     </IfModule>
 
+    DirectoryIndex index.php index.html
+
     RewriteEngine On
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
+    # Canonicalize accidental duplicated subfolder paths (shared-hosting rewrite collisions).
+    RewriteCond %{REQUEST_URI} ^/plexusbiz/public(?:/index\.php)?/plexusbiz/public(?:/index\.php)?/(.+)$ [NC]
+    RewriteRule ^ /plexusbiz/public/%1 [R=302,L]
+    RewriteCond %{REQUEST_URI} ^/plexusbiz/public(?:/index\.php)?/plexusbiz/public(?:/index\.php)?/?$ [NC]
+    RewriteRule ^ /plexusbiz/public/ [R=302,L]
+
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$
-    RewriteCond %{REQUEST_METHOD} =GET
     RewriteRule ^ %1 [L,R=301]
 
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ index.php [L]
+    RewriteRule ^(.*)$ index.php?/$1 [L,QSA]
 </IfModule>
