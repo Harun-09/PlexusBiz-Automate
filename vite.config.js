@@ -20,6 +20,9 @@ export default defineConfig(({ mode }) => {
 
     return {
         base: buildBase,
+        // Keep Vite cache out of node_modules to avoid Windows EPERM locks
+        // while unlinking pre-bundled dependency files.
+        cacheDir: 'storage/framework/vite',
         build: {
             manifest: 'manifest.json',
             // Windows on Laragon can intermittently lock public/build/assets.

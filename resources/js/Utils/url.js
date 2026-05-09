@@ -1,5 +1,43 @@
 const ABSOLUTE_PROTOCOL_PATTERN = /^[a-z][a-z0-9+.-]*:/i;
 
+const collapseLeadingPublicRepeat = (pathname) => {
+    if (typeof pathname !== 'string' || pathname === '') {
+        return pathname;
+    }
+
+    const hasTrailingSlash = pathname.endsWith('/');
+    let segments = pathname.split('/').filter(Boolean);
+
+    if (segments.length < 4) {
+        return pathname;
+    }
+
+    let updated = false;
+
+    do {
+        updated = false;
+
+        for (let len = Math.floor(segments.length / 2); len >= 2; len -= 1) {
+            const head = segments.slice(0, len);
+            const next = segments.slice(len, len * 2);
+
+            if (head.length === next.length && head.every((item, index) => item === next[index]) && head.includes('public')) {
+                segments = [...head, ...segments.slice(len * 2)];
+                updated = true;
+                break;
+            }
+        }
+    } while (updated);
+
+    const collapsed = `/${segments.join('/')}`;
+
+    if (collapsed !== '/' && hasTrailingSlash) {
+        return `${collapsed}/`;
+    }
+
+    return collapsed;
+};
+
 const normalizeBasePath = (value) => {
     if (typeof value !== 'string') {
         return '';
@@ -13,13 +51,8 @@ const normalizeBasePath = (value) => {
 
     let withoutSlashes = trimmed.replace(/^\/+|\/+$/g, '');
 
-    if (withoutSlashes === 'public') {
-        return '';
-    }
-
-    if (withoutSlashes.endsWith('/public')) {
-        withoutSlashes = withoutSlashes.slice(0, -7);
-    }
+    const collapsed = collapseLeadingPublicRepeat(`/${withoutSlashes}`);
+    withoutSlashes = collapsed.replace(/^\/+|\/+$/g, '');
 
     return withoutSlashes ? `/${withoutSlashes}` : '';
 };
@@ -85,11 +118,13 @@ export const appHref = (href) => {
         return href;
     }
 
-    const value = href.trim();
+    let value = href.trim();
 
     if (value === '' || isExternalHref(value) || !value.startsWith('/')) {
         return value;
     }
+
+    value = collapseLeadingPublicRepeat(value);
 
     const basePath = appBasePath();
 

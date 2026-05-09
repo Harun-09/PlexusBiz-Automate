@@ -1,0 +1,76 @@
+{
+  "hash": "ded87d1b",
+  "configHash": "d277a4a8",
+  "lockfileHash": "9c5bfc9c",
+  "browserHash": "a516dc76",
+  "optimized": {
+    "@headlessui/react": {
+      "src": "../../../../node_modules/@headlessui/react/dist/headlessui.esm.js",
+      "file": "@headlessui_react.js",
+      "fileHash": "b8e2b952",
+      "needsInterop": false
+    },
+    "@inertiajs/react": {
+      "src": "../../../../node_modules/@inertiajs/react/dist/index.esm.js",
+      "file": "@inertiajs_react.js",
+      "fileHash": "c0641cdf",
+      "needsInterop": false
+    },
+    "axios": {
+      "src": "../../../../node_modules/axios/index.js",
+      "file": "axios.js",
+      "fileHash": "f5e26c55",
+      "needsInterop": false
+    },
+    "laravel-vite-plugin/inertia-helpers": {
+      "src": "../../../../node_modules/laravel-vite-plugin/inertia-helpers/index.js",
+      "file": "laravel-vite-plugin_inertia-helpers.js",
+      "fileHash": "79953310",
+      "needsInterop": false
+    },
+    "react-dom": {
+      "src": "../../../../node_modules/react-dom/index.js",
+      "file": "react-dom.js",
+      "fileHash": "33375278",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "eba67718",
+      "needsInterop": true
+    },
+    "react": {
+      "src": "../../../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "b4ea93d4",
+      "needsInterop": true
+    },
+    "react/jsx-dev-runtime": {
+      "src": "../../../../node_modules/react/jsx-dev-runtime.js",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "b67430d3",
+      "needsInterop": true
+    },
+    "react/jsx-runtime": {
+      "src": "../../../../node_modules/react/jsx-runtime.js",
+      "file": "react_jsx-runtime.js",
+      "fileHash": "cdc2e10f",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "axios-BGL_sbLC": {
+      "file": "axios-BGL_sbLC.js",
+      "isDynamicEntry": false
+    },
+    "chunk-CYJPkc-J": {
+      "file": "chunk-CYJPkc-J.js",
+      "isDynamicEntry": false
+    },
+    "react-dom-DWxzl2PR": {
+      "file": "react-dom-DWxzl2PR.js",
+      "isDynamicEntry": false
+    }
+  }
+}
