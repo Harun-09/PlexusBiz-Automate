@@ -19,4 +19,22 @@ class ProductPolicy
             || $product->status === ProductStatus::Active
             || ($user->hasRole('supplier') && $product->supplier?->user_id === $user->id);
     }
+
+    public function create(User $user): bool
+    {
+        return $user->hasRole('admin')
+            || ($user->hasRole('supplier') && $user->supplier?->isApproved());
+    }
+
+    public function update(User $user, Product $product): bool
+    {
+        return $user->hasRole('admin')
+            || ($user->hasRole('supplier') && $product->supplier?->user_id === $user->id);
+    }
+
+    public function delete(User $user, Product $product): bool
+    {
+        return $user->hasRole('admin')
+            || ($user->hasRole('supplier') && $product->supplier?->user_id === $user->id);
+    }
 }

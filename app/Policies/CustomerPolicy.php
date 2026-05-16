@@ -21,4 +21,14 @@ class CustomerPolicy
     {
         return $user->hasAnyRole(['admin', 'marketing_manager']) || $customer->user_id === $user->id;
     }
+
+    public function create(User $user): bool
+    {
+        return $user->hasAnyRole(['admin', 'marketing_manager']);
+    }
+
+    public function delete(User $user, Customer $customer): bool
+    {
+        return $user->hasAnyRole(['admin', 'marketing_manager']);
+    }
 }

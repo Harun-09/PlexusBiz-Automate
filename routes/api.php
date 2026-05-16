@@ -31,13 +31,13 @@ Route::middleware('auth:sanctum')->prefix('support')->name('support.')->group(fu
 });
 
 Route::middleware('auth:sanctum')->prefix('v1')->name('v1.')->group(function (): void {
-    Route::apiResource('products', ProductController::class)->only(['index', 'show']);
-    Route::apiResource('orders', OrderController::class)->only(['index', 'show']);
-    Route::apiResource('customers', CustomerController::class)->only(['index', 'show']);
+    Route::apiResource('products', ProductController::class);
+    Route::apiResource('orders', OrderController::class);
+    Route::apiResource('customers', CustomerController::class);
     Route::apiResource('campaigns', CampaignController::class);
     Route::apiResource('campaign-templates', CampaignTemplateController::class);
-    Route::apiResource('social-posts', SocialPostController::class)->only(['index', 'show']);
-    Route::apiResource('workflow-logs', WorkflowLogController::class)->only(['index', 'show']);
+    Route::apiResource('social-posts', SocialPostController::class);
+    Route::apiResource('workflow-logs', WorkflowLogController::class);
     Route::post('/support/chatbot/message', SupportChatbotController::class)->name('support.chatbot.message');
     Route::apiResource('support-tickets', SupportTicketController::class)->only(['index', 'show', 'store']);
     Route::post('/support-tickets/{supportTicket}/reply', [SupportTicketController::class, 'reply'])->name('support-tickets.reply');
