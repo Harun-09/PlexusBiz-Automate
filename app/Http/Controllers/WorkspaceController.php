@@ -661,6 +661,9 @@ class WorkspaceController extends Controller
                 ];
             });
 
+        $filters['platform'] = $platformFilter;
+        $filters['platforms'] = $platforms;
+
         return $this->page(
             $title,
             $description,
@@ -669,6 +672,8 @@ class WorkspaceController extends Controller
                 ['label' => 'Scheduled', 'value' => SocialPost::where('status', SocialPostStatus::Scheduled->value)->count()],
                 ['label' => 'Published', 'value' => SocialPost::where('status', SocialPostStatus::Published->value)->count()],
                 ['label' => 'Failed', 'value' => SocialPost::where('status', SocialPostStatus::Failed->value)->count()],
+                ['label' => 'Facebook', 'value' => SocialPost::where('platform', SocialPlatform::Facebook->value)->count()],
+                ['label' => 'Instagram', 'value' => SocialPost::where('platform', SocialPlatform::Instagram->value)->count()],
             ],
             ['Post', 'Platform', 'Account', 'Campaign', 'Status', 'Scheduled', 'Published', 'Likes', 'Comments', 'Shares', 'Reach', 'Clicks', 'Action'],
             $rows,

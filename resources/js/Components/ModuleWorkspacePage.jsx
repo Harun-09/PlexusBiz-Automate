@@ -324,17 +324,20 @@ export default function ModuleWorkspacePage({ auth, workspace, module = {} }) {
     const rows = workspace.rows || [];
     const metrics = workspace.metrics || [];
     const statusOptions = filters?.statuses || [];
+    const platformOptions = filters?.platforms || [];
     const visibleActions = (module.actions || []).filter((action) => canAccess(auth?.user, action));
     const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
     const { data, setData } = useForm({
         search: filters?.search || '',
         status: filters?.status || '',
+        platform: filters?.platform || '',
     });
 
     const buildParams = (overrides = {}) => {
         const next = {
             search: data.search,
             status: data.status,
+            platform: data.platform,
             ...overrides,
         };
 
@@ -357,7 +360,7 @@ export default function ModuleWorkspacePage({ auth, workspace, module = {} }) {
     };
 
     const resetFilters = () => {
-        setData({ search: '', status: '' });
+        setData({ search: '', status: '', platform: '' });
 
         router.get(currentPath || '/', {}, {
             preserveScroll: true,
@@ -369,6 +372,11 @@ export default function ModuleWorkspacePage({ auth, workspace, module = {} }) {
     const selectStatus = (status) => {
         setData('status', status);
         applyFilters({ status });
+    };
+
+    const selectPlatform = (platform) => {
+        setData('platform', platform);
+        applyFilters({ platform });
     };
 
     const moduleHighlights = module.highlights || [];
@@ -523,33 +531,69 @@ export default function ModuleWorkspacePage({ auth, workspace, module = {} }) {
                                 </div>
                             </div>
 
-                            {statusOptions.length > 0 ? (
-                                <div className="flex flex-wrap gap-2 xl:justify-end">
-                                    <button
-                                        type="button"
-                                        onClick={() => selectStatus('')}
-                                        className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
-                                            statusFilterChipClasses('', !data.status)
-                                        }`}
-                                    >
-                                        All
-                                    </button>
-                                    {statusOptions.map((status) => {
-                                        const active = data.status === status;
-
-                                        return (
+                            {statusOptions.length > 0 || platformOptions.length > 0 ? (
+                                <div className="space-y-3 xl:justify-self-end">
+                                    {statusOptions.length > 0 ? (
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            <span className="text-[11px] font-bold uppercase text-slate-500">Status</span>
                                             <button
-                                                key={status}
                                                 type="button"
-                                                onClick={() => selectStatus(status)}
-                                                className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold capitalize transition ${
-                                                    statusFilterChipClasses(status, active)
+                                                onClick={() => selectStatus('')}
+                                                className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
+                                                    statusFilterChipClasses('', !data.status)
                                                 }`}
                                             >
-                                                {formatStatusLabel(status)}
+                                                All
                                             </button>
-                                        );
-                                    })}
+                                            {statusOptions.map((status) => {
+                                                const active = data.status === status;
+
+                                                return (
+                                                    <button
+                                                        key={status}
+                                                        type="button"
+                                                        onClick={() => selectStatus(status)}
+                                                        className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold capitalize transition ${
+                                                            statusFilterChipClasses(status, active)
+                                                        }`}
+                                                    >
+                                                        {formatStatusLabel(status)}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    ) : null}
+
+                                    {platformOptions.length > 0 ? (
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            <span className="text-[11px] font-bold uppercase text-slate-500">Platform</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => selectPlatform('')}
+                                                className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
+                                                    statusFilterChipClasses('', !data.platform)
+                                                }`}
+                                            >
+                                                All
+                                            </button>
+                                            {platformOptions.map((platform) => {
+                                                const active = data.platform === platform;
+
+                                                return (
+                                                    <button
+                                                        key={platform}
+                                                        type="button"
+                                                        onClick={() => selectPlatform(platform)}
+                                                        className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold capitalize transition ${
+                                                            statusFilterChipClasses(platform, active)
+                                                        }`}
+                                                    >
+                                                        {formatStatusLabel(platform)}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    ) : null}
                                 </div>
                             ) : null}
                         </form>
@@ -572,6 +616,11 @@ export default function ModuleWorkspacePage({ auth, workspace, module = {} }) {
                             {filters?.status ? (
                                 <span className="inline-flex rounded-md border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600">
                                     Status: {formatStatusLabel(filters.status)}
+                                </span>
+                            ) : null}
+                            {filters?.platform ? (
+                                <span className="inline-flex rounded-md border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600">
+                                    Platform: {formatStatusLabel(filters.platform)}
                                 </span>
                             ) : null}
                         </div>
