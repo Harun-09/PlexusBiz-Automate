@@ -9,15 +9,17 @@ export default function SupplierForm({ supplier = null, users = [], statuses, su
         contact_email: supplier?.contact_email || '',
         phone: supplier?.phone || '',
         tax_number: supplier?.tax_number || '',
+        logo: null,
+        verification_document: null,
         status: supplier?.status || 'pending',
     });
 
     const submit = (e) => {
         e.preventDefault();
         if (method === 'put') {
-            put(submitUrl, { preserveScroll: true });
+            put(submitUrl, { preserveScroll: true, forceFormData: true });
         } else {
-            post(submitUrl, { preserveScroll: true });
+            post(submitUrl, { preserveScroll: true, forceFormData: true });
         }
     };
 
@@ -112,6 +114,32 @@ export default function SupplierForm({ supplier = null, users = [], statuses, su
                         placeholder="TIN or VAT number"
                     />
                     {errors.tax_number && <p className="mt-1.5 text-sm text-rose-600">{errors.tax_number}</p>}
+                </div>
+
+                <div>
+                    <label htmlFor="supplier-logo" className="block text-xs font-bold uppercase tracking-wider text-gray-500">Company Logo</label>
+                    <input
+                        id="supplier-logo"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setData('logo', e.target.files?.[0] ?? null)}
+                        className="mt-1.5 block w-full rounded-xl border-gray-200 bg-gray-50/50 text-sm shadow-sm transition focus:border-blue-500 focus:bg-white focus:ring-blue-500"
+                    />
+                    {supplier?.logo_url ? <p className="mt-1.5 text-xs text-blue-700">Existing logo is already uploaded.</p> : null}
+                    {errors.logo && <p className="mt-1.5 text-sm text-rose-600">{errors.logo}</p>}
+                </div>
+
+                <div>
+                    <label htmlFor="supplier-document" className="block text-xs font-bold uppercase tracking-wider text-gray-500">Verification Document</label>
+                    <input
+                        id="supplier-document"
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={(e) => setData('verification_document', e.target.files?.[0] ?? null)}
+                        className="mt-1.5 block w-full rounded-xl border-gray-200 bg-gray-50/50 text-sm shadow-sm transition focus:border-blue-500 focus:bg-white focus:ring-blue-500"
+                    />
+                    {supplier?.verification_document_name ? <p className="mt-1.5 text-xs text-blue-700">Existing file: {supplier.verification_document_name}</p> : null}
+                    {errors.verification_document && <p className="mt-1.5 text-sm text-rose-600">{errors.verification_document}</p>}
                 </div>
 
                 {/* Status */}

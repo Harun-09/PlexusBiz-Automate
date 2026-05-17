@@ -52,6 +52,7 @@ class AdminProductController extends Controller
             'name' => $product->name,
             'supplier' => $product->supplier?->company_name,
             'supplier_id' => $product->supplier_id,
+            'tags' => is_array($product->tags) ? implode(', ', $product->tags) : '',
             'base_price' => $product->base_price,
             'stock' => $product->availableStock(),
             'moq' => $product->moq,
@@ -106,6 +107,7 @@ class AdminProductController extends Controller
             'sku' => ['required', 'string', 'max:100', 'unique:products,sku'],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
+            'tags' => ['nullable', 'string', 'max:1000'],
             'base_price' => ['required', 'numeric', 'min:0'],
             'moq' => ['required', 'integer', 'min:1'],
             'bulk_price' => ['nullable', 'numeric', 'min:0'],
@@ -122,6 +124,7 @@ class AdminProductController extends Controller
         $product = Product::create([
             ...$validated,
             'slug' => $this->uniqueProductSlug($validated['name']),
+            'tags' => $this->normalizeTags($validated['tags'] ?? null),
             'reserved_quantity' => 0,
             'published_at' => $validated['status'] === 'active' ? now() : null,
         ]);
@@ -158,6 +161,7 @@ class AdminProductController extends Controller
                 'sku' => $product->sku,
                 'name' => $product->name,
                 'description' => $product->description ?? '',
+                'tags' => is_array($product->tags) ? implode(', ', $product->tags) : '',
                 'base_price' => $product->base_price,
                 'moq' => $product->moq,
                 'bulk_price' => $product->pricingTiers->sortBy('min_quantity')->first()?->unit_price,
@@ -177,6 +181,7 @@ class AdminProductController extends Controller
             'sku' => ['required', 'string', 'max:100', Rule::unique('products', 'sku')->ignore($product->id)],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
+            'tags' => ['nullable', 'string', 'max:1000'],
             'base_price' => ['required', 'numeric', 'min:0'],
             'moq' => ['required', 'integer', 'min:1'],
             'bulk_price' => ['nullable', 'numeric', 'min:0'],
@@ -197,6 +202,7 @@ class AdminProductController extends Controller
         $product->update([
             ...$validated,
             'slug' => $this->uniqueProductSlug($validated['name'], $product),
+            'tags' => $this->normalizeTags($validated['tags'] ?? null),
             ...($isNowActive && ! $wasActive ? ['published_at' => now()] : []),
         ]);
 
@@ -266,5 +272,25 @@ class AdminProductController extends Controller
         }
 
         return $slug;
+    }
+
+    /**
+     * @param mixed $value
+     * @return array<int, string>|null
+     */
+    private function normalizeTags(mixed $value): ?array
+    {
+        $raw = trim((string) $value);
+
+        if ($raw === '') {
+            return null;
+        }
+
+        $tags = array_values(array_unique(array_filter(array_map(
+            'trim',
+            preg_split('/[\r\n,]+/', $raw) ?: [],
+        ))));
+
+        return $tags === [] ? null : $tags;
     }
 }

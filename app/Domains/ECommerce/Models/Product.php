@@ -21,6 +21,7 @@ class Product extends Model
         'name',
         'slug',
         'description',
+        'tags',
         'base_price',
         'moq',
         'stock_quantity',
@@ -31,6 +32,7 @@ class Product extends Model
 
     protected $casts = [
         'base_price' => 'decimal:2',
+        'tags' => 'array',
         'published_at' => 'datetime',
         'status' => ProductStatus::class,
     ];

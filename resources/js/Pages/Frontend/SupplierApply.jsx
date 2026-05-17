@@ -29,12 +29,15 @@ export default function SupplierApply({ countries = [] }) {
         country: 'Bangladesh',
         password: '',
         password_confirmation: '',
+        logo: null,
+        verification_document: null,
     });
 
     const submit = (event) => {
         event.preventDefault();
         post(route('supplier.apply.store'), {
             preserveScroll: true,
+            forceFormData: true,
             onSuccess: () => reset('password', 'password_confirmation'),
         });
     };
@@ -203,6 +206,26 @@ export default function SupplierApply({ countries = [] }) {
                                     required
                                 />
                             </Field>
+
+                            <div className="grid gap-5 sm:grid-cols-2">
+                                <Field label="Company Logo" error={errors.logo}>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => setData('logo', e.target.files?.[0] ?? null)}
+                                        className="input"
+                                    />
+                                </Field>
+
+                                <Field label="Verification Document" error={errors.verification_document}>
+                                    <input
+                                        type="file"
+                                        accept=".pdf,.jpg,.jpeg,.png"
+                                        onChange={(e) => setData('verification_document', e.target.files?.[0] ?? null)}
+                                        className="input"
+                                    />
+                                </Field>
+                            </div>
 
                             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-600">
                                 Your application will be reviewed by an admin before supplier tools are enabled.

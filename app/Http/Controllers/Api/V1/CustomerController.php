@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Domains\CRM\Enums\CustomerLifecycleStage;
 use App\Domains\CRM\Enums\CustomerStatus;
 use App\Domains\CRM\Models\Customer;
+use App\Http\Controllers\Api\Concerns\FormatsApiResponses;
 use App\Http\Controllers\Api\V1\Concerns\AppliesApiFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\ApiIndexRequest;
@@ -16,8 +17,9 @@ use Illuminate\Validation\Rule;
 class CustomerController extends Controller
 {
     use AppliesApiFilters;
+    use FormatsApiResponses;
 
-    public function index(ApiIndexRequest $request)
+    public function index(ApiIndexRequest $request): JsonResponse
     {
         $this->authorize('viewAny', Customer::class);
 
@@ -27,14 +29,23 @@ class CustomerController extends Controller
         $this->applyStatus($query, $request);
         $this->applySort($query, $request, ['created_at', 'updated_at', 'last_activity_at', 'company_name']);
 
-        return CustomerResource::collection($query->paginate($request->perPage())->withQueryString());
+        $paginator = $query->paginate($request->perPage())->withQueryString();
+
+        return $this->paginatedResourceResponse(
+            paginator: $paginator,
+            resourceClass: CustomerResource::class,
+            message: 'Customers fetched successfully.',
+        );
     }
 
-    public function show(Customer $customer): CustomerResource
+    public function show(Customer $customer): JsonResponse
     {
         $this->authorize('view', $customer);
 
-        return CustomerResource::make($customer);
+        return $this->resourceResponse(
+            CustomerResource::make($customer),
+            'Customer details fetched successfully.',
+        );
     }
 
     public function store(Request $request): JsonResponse
@@ -44,10 +55,11 @@ class CustomerController extends Controller
         $validated = $this->validateCustomer($request);
         $customer = Customer::create($this->customerPayload($validated));
 
-        return response()->json([
-            'message' => 'Customer created successfully',
-            'data' => CustomerResource::make($customer),
-        ], 201);
+        return $this->resourceResponse(
+            CustomerResource::make($customer),
+            'Customer created successfully',
+            201,
+        );
     }
 
     public function update(Request $request, Customer $customer): JsonResponse
@@ -57,18 +69,18 @@ class CustomerController extends Controller
         $validated = $this->validateCustomer($request, $customer);
 
         if ($validated === []) {
-            return response()->json([
-                'message' => 'No changes submitted',
-                'data' => CustomerResource::make($customer),
-            ]);
+            return $this->resourceResponse(
+                CustomerResource::make($customer),
+                'No changes submitted',
+            );
         }
 
         $customer->forceFill($this->customerPayload($validated, $customer))->save();
 
-        return response()->json([
-            'message' => 'Customer updated successfully',
-            'data' => CustomerResource::make($customer->refresh()),
-        ]);
+        return $this->resourceResponse(
+            CustomerResource::make($customer->refresh()),
+            'Customer updated successfully',
+        );
     }
 
     public function destroy(Customer $customer): JsonResponse
@@ -77,9 +89,10 @@ class CustomerController extends Controller
 
         $customer->delete();
 
-        return response()->json([
-            'message' => 'Customer deleted successfully',
-        ]);
+        return $this->successResponse(
+            data: null,
+            message: 'Customer deleted successfully',
+        );
     }
 
     /**

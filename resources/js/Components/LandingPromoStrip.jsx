@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from '@inertiajs/react';
 
 const blueSurfaceGradient = 'bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1]';
 
@@ -69,9 +70,9 @@ export default function LandingPromoStrip() {
                                     Sign up
                                 </button>
                             </form>
-                            <a href="#" className="mt-3 inline-block text-sm text-[#3f70d4] hover:text-[#2953b1]">
+                            <Link href={route('products.bulk')} className="mt-3 inline-block text-sm text-[#3f70d4] hover:text-[#2953b1]">
                                 View Latest Email Deals &rarr;
-                            </a>
+                            </Link>
                         </div>
 
                         <img

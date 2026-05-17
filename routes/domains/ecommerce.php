@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\WorkspaceController;
+use App\Http\Controllers\RfqResponseController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('commerce')->name('commerce.')->group(function (): void {
@@ -28,6 +29,30 @@ Route::prefix('commerce')->name('commerce.')->group(function (): void {
     Route::get('/orders', [WorkspaceController::class, 'commerceOrders'])
         ->middleware('role:buyer|supplier|admin')
         ->name('orders.index');
+
+    Route::get('/rfq-responses', [WorkspaceController::class, 'supplierRfqResponses'])
+        ->middleware('role:supplier|admin')
+        ->name('rfq-responses.index');
+
+    Route::get('/rfq-quotes', [WorkspaceController::class, 'buyerRfqResponses'])
+        ->middleware('role:buyer|admin')
+        ->name('rfq-quotes.index');
+
+    Route::get('/rfq-responses/{rfq}/create', [RfqResponseController::class, 'create'])
+        ->middleware('role:supplier|admin')
+        ->name('rfq-responses.create');
+
+    Route::post('/rfq-responses/{rfq}', [RfqResponseController::class, 'store'])
+        ->middleware('role:supplier|admin')
+        ->name('rfq-responses.store');
+
+    Route::post('/rfq-responses/{rfqResponse}/accept', [RfqResponseController::class, 'accept'])
+        ->middleware('role:buyer|admin')
+        ->name('rfq-responses.accept');
+
+    Route::post('/rfq-responses/{rfqResponse}/reject', [RfqResponseController::class, 'reject'])
+        ->middleware('role:buyer|admin')
+        ->name('rfq-responses.reject');
 
     Route::get('/supplier-orders', [WorkspaceController::class, 'supplierOrders'])
         ->middleware('role:supplier|admin')

@@ -7,6 +7,7 @@ use App\Domains\Support\Enums\TicketPriority;
 use App\Domains\Support\Enums\TicketStatus;
 use App\Domains\Support\Models\SupportTicket;
 use App\Domains\Support\Services\SupportTicketService;
+use App\Http\Controllers\Api\Concerns\FormatsApiResponses;
 use App\Http\Controllers\Api\V1\Concerns\AppliesApiFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\ApiIndexRequest;
@@ -20,12 +21,13 @@ use Illuminate\Validation\Rule;
 class SupportTicketController extends Controller
 {
     use AppliesApiFilters;
+    use FormatsApiResponses;
 
     public function __construct(private readonly SupportTicketService $tickets)
     {
     }
 
-    public function index(ApiIndexRequest $request)
+    public function index(ApiIndexRequest $request): JsonResponse
     {
         $this->authorize('viewAny', SupportTicket::class);
 
@@ -42,14 +44,23 @@ class SupportTicketController extends Controller
         $this->applyStatus($query, $request);
         $this->applySort($query, $request, ['created_at', 'updated_at', 'last_message_at']);
 
-        return SupportTicketResource::collection($query->paginate($request->perPage())->withQueryString());
+        $paginator = $query->paginate($request->perPage())->withQueryString();
+
+        return $this->paginatedResourceResponse(
+            paginator: $paginator,
+            resourceClass: SupportTicketResource::class,
+            message: 'Support tickets fetched successfully.',
+        );
     }
 
-    public function show(SupportTicket $supportTicket): SupportTicketResource
+    public function show(SupportTicket $supportTicket): JsonResponse
     {
         $this->authorize('view', $supportTicket);
 
-        return SupportTicketResource::make($supportTicket->load(['requester', 'supplier.user', 'order', 'customer', 'assignee', 'messages.sender', 'supplierNotifications']));
+        return $this->resourceResponse(
+            SupportTicketResource::make($supportTicket->load(['requester', 'supplier.user', 'order', 'customer', 'assignee', 'messages.sender', 'supplierNotifications'])),
+            'Support ticket details fetched successfully.',
+        );
     }
 
     public function store(Request $request): JsonResponse
@@ -60,10 +71,11 @@ class SupportTicketController extends Controller
 
         $ticket = $this->tickets->createTicket($request->user(), $validated, SupportChannel::Web);
 
-        return response()->json([
-            'message' => 'Support ticket created successfully',
-            'data' => SupportTicketResource::make($ticket->load(['requester', 'supplier.user', 'order', 'customer', 'assignee', 'messages.sender', 'supplierNotifications'])),
-        ], 201);
+        return $this->resourceResponse(
+            SupportTicketResource::make($ticket->load(['requester', 'supplier.user', 'order', 'customer', 'assignee', 'messages.sender', 'supplierNotifications'])),
+            'Support ticket created successfully',
+            201,
+        );
     }
 
     public function reply(Request $request, SupportTicket $supportTicket): JsonResponse
@@ -76,10 +88,10 @@ class SupportTicketController extends Controller
 
         $ticket = $this->tickets->replyTicket($supportTicket, $request->user(), $validated);
 
-        return response()->json([
-            'message' => 'Reply added successfully',
-            'data' => SupportTicketResource::make($ticket),
-        ]);
+        return $this->resourceResponse(
+            SupportTicketResource::make($ticket),
+            'Reply added successfully',
+        );
     }
 
     public function updateStatus(Request $request, SupportTicket $supportTicket): JsonResponse
@@ -92,10 +104,10 @@ class SupportTicketController extends Controller
 
         $ticket = $this->tickets->updateStatus($supportTicket, TicketStatus::from($validated['status']));
 
-        return response()->json([
-            'message' => 'Ticket status updated successfully',
-            'data' => SupportTicketResource::make($ticket),
-        ]);
+        return $this->resourceResponse(
+            SupportTicketResource::make($ticket),
+            'Ticket status updated successfully',
+        );
     }
 
     public function assign(Request $request, SupportTicket $supportTicket): JsonResponse
@@ -109,10 +121,10 @@ class SupportTicketController extends Controller
         $assignee = isset($validated['assigned_to']) ? User::query()->find($validated['assigned_to']) : null;
         $ticket = $this->tickets->assignTicket($supportTicket, $assignee);
 
-        return response()->json([
-            'message' => 'Ticket assignment updated successfully',
-            'data' => SupportTicketResource::make($ticket),
-        ]);
+        return $this->resourceResponse(
+            SupportTicketResource::make($ticket),
+            'Ticket assignment updated successfully',
+        );
     }
 
     /**

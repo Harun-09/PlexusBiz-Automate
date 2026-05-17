@@ -374,12 +374,12 @@ function DealCard({ item }) {
                     </span>
                 </div>
 
-                <button
-                    type="button"
-                    className="mt-4 rounded-2xl border border-[#d7e3f4] bg-[#f4f8ff] px-4 py-2 text-xs font-extrabold uppercase tracking-[0.16em] text-[#1a56b5] transition hover:border-[#ffb16d] hover:bg-[#fff3e8] hover:text-[#d75d00]"
+                <Link
+                    href={route('rfq.create')}
+                    className="mt-4 inline-flex items-center justify-center rounded-2xl border border-[#d7e3f4] bg-[#f4f8ff] px-4 py-2 text-xs font-extrabold uppercase tracking-[0.16em] text-[#1a56b5] transition hover:border-[#ffb16d] hover:bg-[#fff3e8] hover:text-[#d75d00]"
                 >
-                    Add to cart
-                </button>
+                    Request RFQ
+                </Link>
             </div>
         </article>
     );
@@ -522,7 +522,7 @@ const comboBundlesPrimary = [
         savings: 'Combo up savings $40.00',
         price: '$379.97',
         compare: '$419.97',
-        cta: 'Build with it',
+        cta: 'View MOQ tiers',
         accent: 'from-[#e8f1ff] to-[#cfe0ff]',
         items: [
             {
@@ -544,7 +544,7 @@ const comboBundlesPrimary = [
         savings: 'Combo up savings $70.00',
         price: '$1,279.97',
         compare: '$1,349.97',
-        cta: 'Add to cart',
+        cta: 'Request quote',
         accent: 'from-[#dfe9ff] to-[#c8dbff]',
         items: [
             {
@@ -566,7 +566,7 @@ const comboBundlesPrimary = [
         savings: 'Flash pricing and limited drops',
         price: '$1,399.99',
         compare: '$1,799.99',
-        cta: 'See all',
+        cta: 'View bulk offers',
         accent: 'from-[#4f7fe0] via-[#3f70d4] to-[#2953b1]',
         tone: 'dark',
         note: '+ $20 off w/ promo code SSF6252, limited offer',
@@ -585,7 +585,7 @@ const comboBundlesSecondary = [
         savings: 'Combo up savings $78.00',
         price: '$297.98',
         compare: '$375.98',
-        cta: 'Build with it',
+        cta: 'View MOQ tiers',
         accent: 'from-[#eef3ff] to-[#dce7ff]',
         items: [
             {
@@ -607,7 +607,7 @@ const comboBundlesSecondary = [
         savings: 'Combo up savings $45.00',
         price: '$924.97',
         compare: '$969.97',
-        cta: 'Add to cart',
+        cta: 'Request quote',
         accent: 'from-[#edf6ff] to-[#dbe9ff]',
         items: [
             {
@@ -631,7 +631,7 @@ const promoShowcaseSlides = [
         eyebrow: 'Memory Finder',
         title: 'Select the Right RAM',
         copy: 'Compare speed, latency, and capacity in a polished slider made for quick scanning.',
-        cta: 'Shop now',
+        cta: 'Request quote',
         href: '#deals',
         artVariant: 'memory',
         imageUrl: bannerImage('memory-finder'),
@@ -640,7 +640,7 @@ const promoShowcaseSlides = [
         eyebrow: 'Massive Mega Sale',
         title: 'Huge Savings on Notebooks & Gaming Laptops',
         copy: 'Keep the visual strong, dark, and product-driven so the call to action stays clear.',
-        cta: 'Shop now',
+        cta: 'View bulk catalog',
         href: '#deals',
         artVariant: 'banner',
         imageUrl: bannerImage('laptop-sale'),
@@ -649,7 +649,7 @@ const promoShowcaseSlides = [
         eyebrow: 'Best Sellers',
         title: 'Our most popular products, updated frequently.',
         copy: 'A third slide keeps the carousel feeling alive without crowding the page.',
-        cta: 'See all',
+        cta: 'View all bulk items',
         href: '#deals',
         artVariant: 'hero',
         imageUrl: bannerImage('top-products'),
@@ -1378,7 +1378,7 @@ function BundleCard({ bundle }) {
                     </h3>
                 </div>
                 <a
-                    href="#"
+                    href={route('products.bulk')}
                     className={`text-xs font-bold ${isDark ? 'text-white/80' : 'text-[#0b3d91]'}`}
                 >
                     More options
@@ -1419,18 +1419,18 @@ function BundleCard({ bundle }) {
             </div>
 
             <div className="mt-auto flex flex-col gap-3 pt-4 sm:flex-row">
-                <button
-                    type="button"
-                    className={`flex-1 rounded-full border px-4 py-2 text-xs font-black uppercase tracking-[0.16em] ${isDark ? 'border-white/15 bg-white/10 text-white' : 'border-[#d7e3f4] bg-white text-[#0b3d91]'}`}
+                <Link
+                    href={route('products.moq')}
+                    className={`flex-1 rounded-full border px-4 py-2 text-center text-xs font-black uppercase tracking-[0.16em] ${isDark ? 'border-white/15 bg-white/10 text-white' : 'border-[#d7e3f4] bg-white text-[#0b3d91]'}`}
                 >
                     {bundle.cta}
-                </button>
-                <button
-                    type="button"
-                    className="flex-1 rounded-full bg-[#ff9a1f] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-white"
+                </Link>
+                <Link
+                    href={route('rfq.create')}
+                    className="flex-1 rounded-full bg-[#ff9a1f] px-4 py-2 text-center text-xs font-black uppercase tracking-[0.16em] text-white"
                 >
-                    Add to cart
-                </button>
+                    Request RFQ
+                </Link>
             </div>
         </article>
     );
@@ -1450,12 +1450,12 @@ function PromoBanner({ banner }) {
                     <h3 className="max-w-md text-2xl font-black tracking-[-0.05em] sm:text-3xl">
                         {banner.subtitle}
                     </h3>
-                    <a
-                        href="#deals"
+                    <Link
+                        href={route('products.bulk')}
                         className="inline-flex w-fit items-center rounded-full bg-[#ffcf30] px-5 py-2 text-xs font-black uppercase tracking-[0.16em] text-[#0b2e71]"
                     >
                         {banner.cta}
-                    </a>
+                    </Link>
                 </div>
             </div>
         </article>
@@ -1562,7 +1562,7 @@ function ToolCard({ tool }) {
             <h3 className="mt-3 text-lg font-black tracking-[-0.03em] text-[#0b2e71]">{tool.title}</h3>
             <p className="mt-1 text-sm leading-6 text-slate-600">{tool.copy}</p>
             <a
-                href="#"
+                href={route('products.moq')}
                 className="mt-4 inline-flex rounded-full border border-[#d7e3f4] bg-[#f4f8ff] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-[#0b3d91]"
             >
                 Check it out
@@ -1597,7 +1597,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
 
     return (
         <FrontendLayout auth={auth} canLogin={canLogin}>
-            <Head title="PlexusBiz Automate | Electronics Store: Tech, PC Parts, AI PC & More" />
+            <Head title="PlexusBiz Automate | B2B Wholesale Marketplace" />
 
             <div
                 id="hero"
@@ -1669,24 +1669,24 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                         <BannerImageGrid banners={lowerBannerImages} />
 
                         <section id="deals" className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
-                            <ShelfHeading title="Today's Best Deals" href="#footer" action="See all deals" />
+                            <ShelfHeading title="Top Bulk Procurement Picks" href={route('products.bulk')} action="View bulk catalog" />
                             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
                                 {bestDealShelfItems.map((item) => (
                                     <ShelfProductCard key={item.title} item={item} />
                                 ))}
                             </div>
                             <div className="mt-6 flex justify-center">
-                                <a
-                                    href="#footer"
+                                <Link
+                                    href={route('products.bulk')}
                                     className="inline-flex min-w-[220px] items-center justify-center rounded-full bg-[#1f67c9] px-6 py-3 text-sm font-black text-white"
                                 >
-                                    See all deals &gt;
-                                </a>
+                                    View bulk catalog &gt;
+                                </Link>
                             </div>
                         </section>
 
-                        <section className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
-                            <ShelfHeading title="Smart Comfort Home" href="#footer" />
+                        <section id="featured" className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
+                            <ShelfHeading title="Office Procurement Picks" href={route('products.moq')} action="See MOQ pricing" />
                             <div className="grid gap-6 xl:grid-cols-[1fr_860px]">
                                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                                     {smartComfortItems.map((item) => (
@@ -1715,7 +1715,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                         </section>
 
                         <section className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
-                            <ShelfHeading title="Gaming Laptops" href="#footer" />
+                            <ShelfHeading title="Device Procurement" href={route('products.bulk')} />
                             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
                                 {gamingLaptopItems.map((item) => (
                                     <ShelfProductCard key={`gaming-${item.title}`} item={item} />
@@ -1724,7 +1724,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                         </section>
 
                         <section className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
-                            <ShelfHeading title="Water / Liquid Cooling" href="#footer" />
+                            <ShelfHeading title="Industrial Cooling" href={route('products.bulk')} />
                             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
                                 {coolingDealItems.map((item) => (
                                     <ShelfProductCard key={`cooling-${item.title}`} item={item} />
@@ -1733,7 +1733,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                         </section>
 
                         <section className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
-                            <ShelfHeading title="3D Printing & Engraving" href="#footer" />
+                            <ShelfHeading title="Fabrication & Engraving" href={route('rfq.create')} action="Request quotation" />
                             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
                                 {printingDealItems.map((item) => (
                                     <ShelfProductCard key={`printing-${item.title}`} item={item} />
@@ -1742,7 +1742,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                         </section>
 
                         <section className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
-                            <ShelfHeading title="More Items to Consider" href="#footer" />
+                            <ShelfHeading title="More Items to Consider" href={route('products.index')} />
                             <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-6">
                                 {considerationItems.slice(0, 6).map((item) => (
                                     <ShelfProductCard key={`consider-top-${item.title}`} item={item} />
@@ -1771,8 +1771,8 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                             </div>
                         </section>
 
-                        <section id="tools" className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
-                            <ShelfHeading title="Shopping Tools" href="#footer" />
+                        <section id="build" className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
+                            <ShelfHeading title="Procurement Tools" href={route('rfq.create')} action="Open RFQ desk" />
                             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
                                 {shoppingTools.map((tool, index) => (
                                     <ToolStripCard
@@ -1807,7 +1807,7 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                         </section>
 
                         <section id="brands" className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
-                            <ShelfHeading title="Featured Brands" href="#footer" />
+                            <ShelfHeading title="Featured Brands" href={route('products.bulk')} />
                             <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-7">
                                 {brandLogoItems.map((brand) => (
                                     <BrandLogoCard key={brand.name} brand={brand} />

@@ -43,4 +43,9 @@ class Rfq extends Model
     {
         return $this->hasMany(RfqItem::class);
     }
+
+    public function responses(): HasMany
+    {
+        return $this->hasMany(RfqResponse::class);
+    }
 }

@@ -56,6 +56,16 @@ class SocialPostResource extends JsonResource
                 'id' => $this->campaign->id,
                 'name' => $this->campaign->name,
             ] : null),
+            'social_campaign' => $this->whenLoaded('socialCampaign', fn (): ?array => $this->socialCampaign ? [
+                'id' => $this->socialCampaign->id,
+                'name' => $this->socialCampaign->name,
+                'status' => $this->socialCampaign->status,
+            ] : null),
+            'calendar_entry' => $this->whenLoaded('contentCalendar', fn (): ?array => $this->contentCalendar ? [
+                'id' => $this->contentCalendar->id,
+                'scheduled_for' => $this->contentCalendar->scheduled_for?->toJSON(),
+                'status' => $this->contentCalendar->status,
+            ] : null),
             'created_at' => $this->created_at?->toJSON(),
             'updated_at' => $this->updated_at?->toJSON(),
         ];

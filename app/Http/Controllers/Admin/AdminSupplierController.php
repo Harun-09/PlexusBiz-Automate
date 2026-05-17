@@ -10,6 +10,8 @@ use App\Models\User;
 use App\Support\Audit\AuditLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -90,7 +92,13 @@ class AdminSupplierController extends Controller
             'phone' => ['nullable', 'string', 'max:50'],
             'tax_number' => ['nullable', 'string', 'max:100'],
             'status' => ['required', 'string', Rule::in(array_map(fn (SupplierStatus $s): string => $s->value, SupplierStatus::cases()))],
+            'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,avif', 'max:5120'],
+            'verification_document' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240'],
         ]);
+
+        $logo = $validated['logo'] ?? null;
+        $verificationDocument = $validated['verification_document'] ?? null;
+        unset($validated['logo'], $validated['verification_document']);
 
         $supplier = Supplier::create([
             ...$validated,
@@ -98,6 +106,19 @@ class AdminSupplierController extends Controller
             'approved_at' => $validated['status'] === 'approved' ? now() : null,
             'approved_by' => $validated['status'] === 'approved' ? $request->user()->id : null,
         ]);
+
+        if ($logo instanceof UploadedFile) {
+            $supplier->forceFill([
+                'logo_path' => $this->storeSupplierLogo($supplier, $logo),
+            ])->save();
+        }
+
+        if ($verificationDocument instanceof UploadedFile) {
+            $supplier->forceFill([
+                'verification_document_path' => $this->storeSupplierDocument($supplier, $verificationDocument),
+                'verification_document_name' => $verificationDocument->getClientOriginalName(),
+            ])->save();
+        }
 
         // Assign supplier role to the user if not already assigned
         $user = User::find($validated['user_id']);
@@ -140,6 +161,9 @@ class AdminSupplierController extends Controller
                 'contact_email' => $supplier->contact_email,
                 'phone' => $supplier->phone ?? '',
                 'tax_number' => $supplier->tax_number ?? '',
+                'logo_url' => $supplier->logoUrl(),
+                'verification_document_url' => $supplier->verificationDocumentUrl(),
+                'verification_document_name' => $supplier->verification_document_name,
                 'status' => $supplier->status->value,
             ],
             'statuses' => array_map(fn (SupplierStatus $s): string => $s->value, SupplierStatus::cases()),
@@ -154,7 +178,13 @@ class AdminSupplierController extends Controller
             'phone' => ['nullable', 'string', 'max:50'],
             'tax_number' => ['nullable', 'string', 'max:100'],
             'status' => ['required', 'string', Rule::in(array_map(fn (SupplierStatus $s): string => $s->value, SupplierStatus::cases()))],
+            'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,avif', 'max:5120'],
+            'verification_document' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240'],
         ]);
+
+        $logo = $validated['logo'] ?? null;
+        $verificationDocument = $validated['verification_document'] ?? null;
+        unset($validated['logo'], $validated['verification_document']);
 
         $before = $this->supplierAuditSnapshot($supplier->loadMissing('user'));
         $wasApproved = $supplier->status === SupplierStatus::Approved;
@@ -168,6 +198,19 @@ class AdminSupplierController extends Controller
                 'approved_by' => $request->user()->id,
             ] : []),
         ]);
+
+        if ($logo instanceof UploadedFile) {
+            $supplier->forceFill([
+                'logo_path' => $this->storeSupplierLogo($supplier, $logo),
+            ])->save();
+        }
+
+        if ($verificationDocument instanceof UploadedFile) {
+            $supplier->forceFill([
+                'verification_document_path' => $this->storeSupplierDocument($supplier, $verificationDocument),
+                'verification_document_name' => $verificationDocument->getClientOriginalName(),
+            ])->save();
+        }
 
         $supplier->refresh()->loadMissing('user');
         $after = $this->supplierAuditSnapshot($supplier);
@@ -231,6 +274,9 @@ class AdminSupplierController extends Controller
             'contact_email' => $supplier->contact_email,
             'phone' => $supplier->phone,
             'tax_number' => $supplier->tax_number,
+            'logo_path' => $supplier->logo_path,
+            'verification_document_path' => $supplier->verification_document_path,
+            'verification_document_name' => $supplier->verification_document_name,
             'status' => $supplier->status->value,
             'approved_at' => $supplier->approved_at?->toDateTimeString(),
             'approved_by' => $supplier->approved_by,
@@ -275,5 +321,23 @@ class AdminSupplierController extends Controller
             body: $body,
             sender: $sender,
         );
+    }
+
+    private function storeSupplierLogo(Supplier $supplier, UploadedFile $file): string
+    {
+        $extension = strtolower((string) $file->getClientOriginalExtension());
+        $fileName = 'logo-'.Str::lower(Str::random(10)).($extension !== '' ? '.'.$extension : '');
+        $directory = 'media/suppliers/'.$supplier->slug.'/logo';
+
+        return Storage::disk('public')->putFileAs($directory, $file, $fileName);
+    }
+
+    private function storeSupplierDocument(Supplier $supplier, UploadedFile $file): string
+    {
+        $extension = strtolower((string) $file->getClientOriginalExtension());
+        $fileName = 'verification-'.Str::lower(Str::random(10)).($extension !== '' ? '.'.$extension : '');
+        $directory = 'media/suppliers/'.$supplier->slug.'/documents';
+
+        return Storage::disk('public')->putFileAs($directory, $file, $fileName);
     }
 }

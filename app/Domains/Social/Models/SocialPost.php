@@ -3,10 +3,15 @@
 namespace App\Domains\Social\Models;
 
 use App\Domains\Marketing\Models\Campaign;
+use App\Domains\Social\Models\ContentCalendar;
+use App\Domains\Social\Models\EngagementLog;
+use App\Domains\Social\Models\SocialCampaign;
 use App\Domains\Social\Enums\SocialPlatform;
 use App\Domains\Social\Enums\SocialPostStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -50,6 +55,21 @@ class SocialPost extends Model
     public function account(): BelongsTo
     {
         return $this->belongsTo(SocialAccount::class, 'social_account_id');
+    }
+
+    public function contentCalendar(): HasOne
+    {
+        return $this->hasOne(ContentCalendar::class);
+    }
+
+    public function engagementLogs(): HasMany
+    {
+        return $this->hasMany(EngagementLog::class);
+    }
+
+    public function socialCampaign(): HasOne
+    {
+        return $this->hasOne(SocialCampaign::class, 'campaign_id', 'campaign_id');
     }
 
     public function mediaMeta(): array

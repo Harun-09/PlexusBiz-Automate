@@ -6,6 +6,7 @@ use App\Domains\ECommerce\Enums\OrderStatus;
 use App\Domains\ECommerce\Enums\PaymentStatus;
 use App\Domains\ECommerce\Models\Order;
 use App\Domains\ECommerce\Services\NumberSequenceService;
+use App\Http\Controllers\Api\Concerns\FormatsApiResponses;
 use App\Http\Controllers\Api\V1\Concerns\AppliesApiFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\ApiIndexRequest;
@@ -19,12 +20,13 @@ use Illuminate\Validation\Rule;
 class OrderController extends Controller
 {
     use AppliesApiFilters;
+    use FormatsApiResponses;
 
     public function __construct(private readonly NumberSequenceService $numbers)
     {
     }
 
-    public function index(ApiIndexRequest $request)
+    public function index(ApiIndexRequest $request): JsonResponse
     {
         $this->authorize('viewAny', Order::class);
 
@@ -41,14 +43,23 @@ class OrderController extends Controller
         $this->applyStatus($query, $request);
         $this->applySort($query, $request, ['created_at', 'updated_at', 'placed_at', 'grand_total']);
 
-        return OrderResource::collection($query->paginate($request->perPage())->withQueryString());
+        $paginator = $query->paginate($request->perPage())->withQueryString();
+
+        return $this->paginatedResourceResponse(
+            paginator: $paginator,
+            resourceClass: OrderResource::class,
+            message: 'Orders fetched successfully.',
+        );
     }
 
-    public function show(Order $order): OrderResource
+    public function show(Order $order): JsonResponse
     {
         $this->authorize('view', $order);
 
-        return OrderResource::make($order->load(['buyer', 'customer', 'items']));
+        return $this->resourceResponse(
+            OrderResource::make($order->load(['buyer', 'customer', 'items'])),
+            'Order details fetched successfully.',
+        );
     }
 
     public function store(Request $request): JsonResponse
@@ -77,10 +88,11 @@ class OrderController extends Controller
             'placed_at' => $validated['placed_at'] ?? now(),
         ]);
 
-        return response()->json([
-            'message' => 'Order created successfully',
-            'data' => OrderResource::make($order->load(['buyer', 'customer', 'items'])),
-        ], 201);
+        return $this->resourceResponse(
+            OrderResource::make($order->load(['buyer', 'customer', 'items'])),
+            'Order created successfully',
+            201,
+        );
     }
 
     public function update(Request $request, Order $order): JsonResponse
@@ -90,10 +102,10 @@ class OrderController extends Controller
         $validated = $this->validateOrder($request, $order);
 
         if ($validated === []) {
-            return response()->json([
-                'message' => 'No changes submitted',
-                'data' => OrderResource::make($order->load(['buyer', 'customer', 'items'])),
-            ]);
+            return $this->resourceResponse(
+                OrderResource::make($order->load(['buyer', 'customer', 'items'])),
+                'No changes submitted',
+            );
         }
 
         $payload = [];
@@ -126,10 +138,10 @@ class OrderController extends Controller
 
         $order->forceFill($payload)->save();
 
-        return response()->json([
-            'message' => 'Order updated successfully',
-            'data' => OrderResource::make($order->refresh()->load(['buyer', 'customer', 'items'])),
-        ]);
+        return $this->resourceResponse(
+            OrderResource::make($order->refresh()->load(['buyer', 'customer', 'items'])),
+            'Order updated successfully',
+        );
     }
 
     public function destroy(Order $order): JsonResponse
@@ -138,9 +150,10 @@ class OrderController extends Controller
 
         $order->delete();
 
-        return response()->json([
-            'message' => 'Order deleted successfully',
-        ]);
+        return $this->successResponse(
+            data: null,
+            message: 'Order deleted successfully',
+        );
     }
 
     /**

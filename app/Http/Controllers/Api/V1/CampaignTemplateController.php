@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Domains\Marketing\Enums\MessageChannel;
 use App\Domains\Marketing\Models\CampaignTemplate;
+use App\Http\Controllers\Api\Concerns\FormatsApiResponses;
 use App\Http\Controllers\Api\V1\Concerns\AppliesApiFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\ApiIndexRequest;
@@ -16,8 +17,9 @@ use Illuminate\Validation\Rule;
 class CampaignTemplateController extends Controller
 {
     use AppliesApiFilters;
+    use FormatsApiResponses;
 
-    public function index(ApiIndexRequest $request)
+    public function index(ApiIndexRequest $request): JsonResponse
     {
         $this->authorize('viewAny', CampaignTemplate::class);
 
@@ -38,14 +40,23 @@ class CampaignTemplateController extends Controller
         $this->applyStatus($query, $request);
         $this->applySort($query, $request, ['created_at', 'updated_at', 'name', 'template_key']);
 
-        return CampaignTemplateResource::collection($query->paginate($request->perPage())->withQueryString());
+        $paginator = $query->paginate($request->perPage())->withQueryString();
+
+        return $this->paginatedResourceResponse(
+            paginator: $paginator,
+            resourceClass: CampaignTemplateResource::class,
+            message: 'Campaign templates fetched successfully.',
+        );
     }
 
-    public function show(CampaignTemplate $campaignTemplate): CampaignTemplateResource
+    public function show(CampaignTemplate $campaignTemplate): JsonResponse
     {
         $this->authorize('view', $campaignTemplate);
 
-        return CampaignTemplateResource::make($campaignTemplate->load('campaign'));
+        return $this->resourceResponse(
+            CampaignTemplateResource::make($campaignTemplate->load('campaign')),
+            'Campaign template details fetched successfully.',
+        );
     }
 
     public function store(Request $request): JsonResponse
@@ -65,10 +76,11 @@ class CampaignTemplateController extends Controller
             'status' => $validated['status'],
         ]);
 
-        return response()->json([
-            'message' => 'Template created successfully',
-            'data' => CampaignTemplateResource::make($template->load('campaign')),
-        ], 201);
+        return $this->resourceResponse(
+            CampaignTemplateResource::make($template->load('campaign')),
+            'Template created successfully',
+            201,
+        );
     }
 
     public function update(Request $request, CampaignTemplate $campaignTemplate): JsonResponse
@@ -88,10 +100,10 @@ class CampaignTemplateController extends Controller
             'status' => $validated['status'],
         ])->save();
 
-        return response()->json([
-            'message' => 'Template updated successfully',
-            'data' => CampaignTemplateResource::make($campaignTemplate->refresh()->load('campaign')),
-        ]);
+        return $this->resourceResponse(
+            CampaignTemplateResource::make($campaignTemplate->refresh()->load('campaign')),
+            'Template updated successfully',
+        );
     }
 
     public function destroy(CampaignTemplate $campaignTemplate): JsonResponse
@@ -100,9 +112,10 @@ class CampaignTemplateController extends Controller
 
         $campaignTemplate->delete();
 
-        return response()->json([
-            'message' => 'Template deleted successfully',
-        ]);
+        return $this->successResponse(
+            data: null,
+            message: 'Template deleted successfully',
+        );
     }
 
     /**

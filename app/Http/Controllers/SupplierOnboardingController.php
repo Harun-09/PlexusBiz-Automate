@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -46,6 +48,8 @@ class SupplierOnboardingController extends Controller
             'address_line2' => ['nullable', 'string', 'max:255'],
             'city' => ['nullable', 'string', 'max:120'],
             'country' => ['nullable', 'string', 'max:120'],
+            'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,avif', 'max:5120'],
+            'verification_document' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240'],
         ]);
 
         $user = DB::transaction(function () use ($validated, $messages): User {
@@ -64,7 +68,7 @@ class SupplierOnboardingController extends Controller
 
             $user->assignRole(Role::findOrCreate(RoleName::Supplier->value));
 
-            Supplier::create([
+            $supplier = Supplier::create([
                 'user_id' => $user->id,
                 'company_name' => $validated['company_name'],
                 'slug' => Str::slug($validated['company_name']).'-'.Str::lower(Str::random(4)),
@@ -74,6 +78,19 @@ class SupplierOnboardingController extends Controller
                 'tax_number' => $validated['tax_number'] ?? null,
                 'address' => $address,
             ]);
+
+            if (! empty($validated['logo']) && $validated['logo'] instanceof UploadedFile) {
+                $supplier->forceFill([
+                    'logo_path' => $this->storeSupplierLogo($supplier, $validated['logo']),
+                ])->save();
+            }
+
+            if (! empty($validated['verification_document']) && $validated['verification_document'] instanceof UploadedFile) {
+                $supplier->forceFill([
+                    'verification_document_path' => $this->storeSupplierDocument($supplier, $validated['verification_document']),
+                    'verification_document_name' => $validated['verification_document']->getClientOriginalName(),
+                ])->save();
+            }
 
             $this->notifyAdminsOfApplication($user, $validated['company_name'], $messages);
 
@@ -101,5 +118,23 @@ class SupplierOnboardingController extends Controller
                     ),
                 );
             });
+    }
+
+    private function storeSupplierLogo(Supplier $supplier, UploadedFile $file): string
+    {
+        $extension = strtolower((string) $file->getClientOriginalExtension());
+        $fileName = 'logo-'.Str::lower(Str::random(10)).($extension !== '' ? '.'.$extension : '');
+        $directory = 'media/suppliers/'.$supplier->slug.'/logo';
+
+        return Storage::disk('public')->putFileAs($directory, $file, $fileName);
+    }
+
+    private function storeSupplierDocument(Supplier $supplier, UploadedFile $file): string
+    {
+        $extension = strtolower((string) $file->getClientOriginalExtension());
+        $fileName = 'verification-'.Str::lower(Str::random(10)).($extension !== '' ? '.'.$extension : '');
+        $directory = 'media/suppliers/'.$supplier->slug.'/documents';
+
+        return Storage::disk('public')->putFileAs($directory, $file, $fileName);
     }
 }

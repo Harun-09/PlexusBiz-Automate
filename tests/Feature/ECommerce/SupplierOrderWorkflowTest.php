@@ -122,15 +122,15 @@ class SupplierOrderWorkflowTest extends TestCase
 
         $this->getJson('/api/v1/notifications/unread-count')
             ->assertOk()
-            ->assertJsonPath('unread_count', 1);
+            ->assertJsonPath('data.unread_count', 1);
 
         $this->putJson('/api/v1/notifications/read-all')
             ->assertOk()
-            ->assertJsonPath('updated_count', 1);
+            ->assertJsonPath('data.updated_count', 1);
 
         $this->getJson('/api/v1/notifications/unread-count')
             ->assertOk()
-            ->assertJsonPath('unread_count', 0);
+            ->assertJsonPath('data.unread_count', 0);
 
         $this->actingAs($supplierUser)
             ->post("/commerce/supplier-orders/{$supplierOrder->id}/status/shipped")

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Domains\Marketing\Enums\CampaignStatus;
 use App\Domains\Marketing\Enums\CampaignType;
 use App\Domains\Marketing\Models\Campaign;
+use App\Http\Controllers\Api\Concerns\FormatsApiResponses;
 use App\Http\Controllers\Api\V1\Concerns\AppliesApiFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\ApiIndexRequest;
@@ -18,8 +19,9 @@ use Illuminate\Validation\Rule;
 class CampaignController extends Controller
 {
     use AppliesApiFilters;
+    use FormatsApiResponses;
 
-    public function index(ApiIndexRequest $request)
+    public function index(ApiIndexRequest $request): JsonResponse
     {
         $this->authorize('viewAny', Campaign::class);
 
@@ -29,14 +31,23 @@ class CampaignController extends Controller
         $this->applyStatus($query, $request);
         $this->applySort($query, $request, ['created_at', 'updated_at', 'scheduled_at', 'name']);
 
-        return CampaignResource::collection($query->paginate($request->perPage())->withQueryString());
+        $paginator = $query->paginate($request->perPage())->withQueryString();
+
+        return $this->paginatedResourceResponse(
+            paginator: $paginator,
+            resourceClass: CampaignResource::class,
+            message: 'Campaigns fetched successfully.',
+        );
     }
 
-    public function show(Campaign $campaign): CampaignResource
+    public function show(Campaign $campaign): JsonResponse
     {
         $this->authorize('view', $campaign);
 
-        return CampaignResource::make($campaign->load('creator')->loadCount(['recipients', 'logs', 'templates']));
+        return $this->resourceResponse(
+            CampaignResource::make($campaign->load('creator')->loadCount(['recipients', 'logs', 'templates'])),
+            'Campaign details fetched successfully.',
+        );
     }
 
     public function store(Request $request): JsonResponse
@@ -55,10 +66,11 @@ class CampaignController extends Controller
             'scheduled_at' => $this->parseDateTime($validated['scheduled_at'] ?? null),
         ]);
 
-        return response()->json([
-            'message' => 'Campaign created successfully',
-            'data' => CampaignResource::make($campaign->load('creator')->loadCount(['recipients', 'logs', 'templates'])),
-        ], 201);
+        return $this->resourceResponse(
+            CampaignResource::make($campaign->load('creator')->loadCount(['recipients', 'logs', 'templates'])),
+            'Campaign created successfully',
+            201,
+        );
     }
 
     public function update(Request $request, Campaign $campaign): JsonResponse
@@ -76,10 +88,10 @@ class CampaignController extends Controller
             'scheduled_at' => $this->parseDateTime($validated['scheduled_at'] ?? null),
         ])->save();
 
-        return response()->json([
-            'message' => 'Campaign updated successfully',
-            'data' => CampaignResource::make($campaign->refresh()->load('creator')->loadCount(['recipients', 'logs', 'templates'])),
-        ]);
+        return $this->resourceResponse(
+            CampaignResource::make($campaign->refresh()->load('creator')->loadCount(['recipients', 'logs', 'templates'])),
+            'Campaign updated successfully',
+        );
     }
 
     public function destroy(Campaign $campaign): JsonResponse
@@ -88,9 +100,10 @@ class CampaignController extends Controller
 
         $campaign->delete();
 
-        return response()->json([
-            'message' => 'Campaign deleted successfully',
-        ]);
+        return $this->successResponse(
+            data: null,
+            message: 'Campaign deleted successfully',
+        );
     }
 
     /**

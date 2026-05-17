@@ -7,10 +7,13 @@ use App\Domains\CRM\Models\Customer;
 use App\Domains\ECommerce\Enums\OrderStatus;
 use App\Domains\ECommerce\Enums\PaymentStatus;
 use App\Domains\ECommerce\Enums\ProductStatus;
+use App\Domains\ECommerce\Enums\RfqResponseStatus;
 use App\Domains\ECommerce\Events\OrderStatusChanged;
 use App\Domains\ECommerce\Models\Order;
 use App\Domains\ECommerce\Models\PricingTier;
 use App\Domains\ECommerce\Models\Product;
+use App\Domains\ECommerce\Models\Rfq;
+use App\Domains\ECommerce\Models\RfqResponse;
 use App\Domains\ECommerce\Models\Supplier;
 use App\Domains\ECommerce\Models\SupplierOrder;
 use App\Domains\Marketing\Enums\CampaignStatus;
@@ -20,7 +23,10 @@ use App\Domains\Marketing\Models\CampaignTemplate;
 use App\Domains\Notifications\Models\Message;
 use App\Domains\Social\Enums\SocialPostStatus;
 use App\Domains\Social\Enums\SocialPlatform;
+use App\Domains\Social\Models\ContentCalendar;
+use App\Domains\Social\Models\EngagementLog;
 use App\Domains\Social\Models\SocialAccount;
+use App\Domains\Social\Models\SocialCampaign;
 use App\Domains\Social\Models\SocialPost;
 use App\Domains\Support\Enums\SupportFaqStatus;
 use App\Domains\Support\Models\SupportFaq;
@@ -209,6 +215,7 @@ class WorkspaceController extends Controller
             'sku' => ['required', 'string', 'max:100', 'unique:products,sku'],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
+            'tags' => ['nullable', 'string', 'max:1000'],
             'base_price' => ['required', 'numeric', 'min:0'],
             'moq' => ['required', 'integer', 'min:1'],
             'bulk_price' => ['nullable', 'numeric', 'min:0'],
@@ -225,6 +232,7 @@ class WorkspaceController extends Controller
             'name' => $validated['name'],
             'slug' => $this->uniqueProductSlug($validated['name']),
             'description' => $validated['description'] ?? null,
+            'tags' => $this->normalizeTags($validated['tags'] ?? null),
             'base_price' => $validated['base_price'],
             'moq' => $validated['moq'],
             'stock_quantity' => $validated['stock_quantity'],
@@ -256,6 +264,7 @@ class WorkspaceController extends Controller
                 'sku' => $product->sku,
                 'name' => $product->name,
                 'description' => $product->description ?? '',
+                'tags' => is_array($product->tags) ? implode(', ', $product->tags) : '',
                 'base_price' => $product->base_price,
                 'moq' => $product->moq,
                 'bulk_price' => $product->pricingTiers->sortBy('min_quantity')->first()?->unit_price,
@@ -275,6 +284,7 @@ class WorkspaceController extends Controller
             'sku' => ['required', 'string', 'max:100', Rule::unique('products', 'sku')->ignore($product->id)],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
+            'tags' => ['nullable', 'string', 'max:1000'],
             'base_price' => ['required', 'numeric', 'min:0'],
             'moq' => ['required', 'integer', 'min:1'],
             'bulk_price' => ['nullable', 'numeric', 'min:0'],
@@ -292,6 +302,7 @@ class WorkspaceController extends Controller
         $product->update([
             ...$validated,
             'slug' => $this->uniqueProductSlug($validated['name'], $product),
+            'tags' => $this->normalizeTags($validated['tags'] ?? null),
             ...($isNowActive && ! $wasActive ? ['published_at' => now()] : []),
         ]);
 
@@ -557,7 +568,13 @@ class WorkspaceController extends Controller
 
     public function socialPosts(Request $request): Response
     {
-        return $this->socialPostsWorkspace($request);
+        return $this->socialPostsWorkspace(
+            $request,
+            null,
+            'Social Campaigns',
+            'Scheduled content across Facebook and Instagram with engagement tracking.',
+            'campaigns',
+        );
     }
 
     public function socialScheduledPosts(Request $request): Response
@@ -571,14 +588,254 @@ class WorkspaceController extends Controller
         );
     }
 
+    public function socialCampaigns(Request $request): Response
+    {
+        $filters = $this->filters($request, ['draft', 'scheduled', 'published', 'failed', 'paused']);
+        $query = SocialCampaign::query()->with(['campaign'])->withCount(['calendars', 'engagementLogs']);
+
+        if ($filters['search'] !== '') {
+            $search = $filters['search'];
+
+            $query->where(function (Builder $builder) use ($search): void {
+                $builder->where('name', 'like', "%{$search}%")
+                    ->orWhere('objective', 'like', "%{$search}%")
+                    ->orWhereHas('campaign', fn (Builder $campaign) => $campaign->where('name', 'like', "%{$search}%"));
+            });
+        }
+
+        if ($filters['status'] !== '') {
+            $query->where('status', $filters['status']);
+        }
+
+        $baseQuery = clone $query;
+
+        $rows = $query
+            ->latest()
+            ->limit(50)
+            ->get()
+            ->map(fn (SocialCampaign $campaign): array => [
+                'Campaign' => $campaign->name,
+                'Linked Email Campaign' => $campaign->campaign?->name ?? 'n/a',
+                'Status' => $campaign->status,
+                'Start' => $campaign->start_at?->format('Y-m-d H:i') ?? 'n/a',
+                'End' => $campaign->end_at?->format('Y-m-d H:i') ?? 'n/a',
+                'Calendar Items' => $campaign->calendars_count,
+                'Engagement Logs' => $campaign->engagement_logs_count,
+                'Action' => [
+                    [
+                        'kind' => 'link',
+                        'label' => 'View Posts',
+                        'href' => route('social.posts.index', ['search' => $campaign->name]),
+                    ],
+                ],
+            ]);
+
+        return $this->page(
+            'Social Campaigns',
+            'Dedicated social campaign registry linked with calendar scheduling and engagement logs.',
+            [
+                ['label' => 'Total Social Campaigns', 'value' => SocialCampaign::count()],
+                ['label' => 'Draft', 'value' => SocialCampaign::where('status', 'draft')->count()],
+                ['label' => 'Scheduled', 'value' => SocialCampaign::where('status', 'scheduled')->count()],
+                ['label' => 'Published', 'value' => SocialCampaign::where('status', 'published')->count()],
+            ],
+            ['Campaign', 'Linked Email Campaign', 'Status', 'Start', 'End', 'Calendar Items', 'Engagement Logs', 'Action'],
+            $rows,
+            'No social campaigns found.',
+            $filters,
+            component: 'Workspace/Index',
+        );
+    }
+
+    public function supplierRfqResponses(Request $request): Response
+    {
+        $statusOptions = array_merge(
+            ['awaiting_quote'],
+            array_map(fn (RfqResponseStatus $status): string => $status->value, RfqResponseStatus::cases()),
+        );
+        $filters = $this->filters($request, $statusOptions);
+        $user = $request->user();
+        $supplierIdFilter = (int) $request->integer('supplier_id');
+        $currentSupplierId = null;
+
+        $query = Rfq::query()->with(['buyer', 'supplier', 'items', 'responses']);
+
+        if ($user->hasRole('supplier') && ! $user->hasRole('admin')) {
+            $currentSupplierId = (int) $this->currentSupplier($request)->id;
+            $query->where('supplier_id', $currentSupplierId);
+        } elseif ($supplierIdFilter > 0) {
+            $currentSupplierId = $supplierIdFilter;
+            $query->where('supplier_id', $supplierIdFilter);
+        }
+
+        if ($filters['search'] !== '') {
+            $search = $filters['search'];
+
+            $query->where(function (Builder $builder) use ($search): void {
+                $builder->where('rfq_number', 'like', "%{$search}%")
+                    ->orWhere('message', 'like', "%{$search}%")
+                    ->orWhereHas('buyer', fn (Builder $buyer) => $buyer
+                        ->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%"));
+            });
+        }
+
+        $rows = $query
+            ->latest()
+            ->limit(50)
+            ->get()
+            ->map(function (Rfq $rfq) use ($filters, $user, $currentSupplierId): ?array {
+                $targetSupplierId = $currentSupplierId ?: (int) ($rfq->supplier_id ?? 0);
+                $response = $rfq->responses
+                    ->when($targetSupplierId > 0, fn ($responses) => $responses->where('supplier_id', $targetSupplierId))
+                    ->sortByDesc('id')
+                    ->first();
+
+                $status = $response?->status->value ?? 'awaiting_quote';
+
+                if ($filters['status'] !== '' && $filters['status'] !== $status) {
+                    return null;
+                }
+
+                $actions = [];
+
+                if ($targetSupplierId > 0 || ($user->hasRole('supplier') && ! $user->hasRole('admin'))) {
+                    $actions[] = [
+                        'kind' => 'link',
+                        'label' => $response ? 'Update Quote' : 'Submit Quote',
+                        'href' => route('commerce.rfq-responses.create', [
+                            'rfq' => $rfq->id,
+                            'supplier_id' => $targetSupplierId > 0 ? $targetSupplierId : null,
+                        ]),
+                    ];
+                }
+
+                return [
+                    'RFQ' => $rfq->rfq_number,
+                    'Buyer' => $rfq->buyer?->name ?? 'n/a',
+                    'Supplier' => $rfq->supplier?->company_name ?? 'n/a',
+                    'Items' => $rfq->items->count(),
+                    'Needed By' => $rfq->needed_by?->format('Y-m-d') ?? 'n/a',
+                    'Response Status' => $status,
+                    'Quote' => $response ? number_format((float) $response->quoted_amount, 2).' '.$response->currency : 'n/a',
+                    'Valid Until' => $response?->valid_until?->format('Y-m-d') ?? 'n/a',
+                    'Action' => $actions === [] ? 'Assign supplier first' : $actions,
+                ];
+            })
+            ->filter()
+            ->values();
+
+        return $this->page(
+            'Supplier RFQ Responses',
+            'Suppliers can submit or update RFQ quotes and track buyer decisions.',
+            [
+                ['label' => 'Total RFQs', 'value' => Rfq::count()],
+                ['label' => 'Awaiting Quote', 'value' => Rfq::whereDoesntHave('responses')->count()],
+                ['label' => 'Quoted', 'value' => RfqResponse::where('status', RfqResponseStatus::Pending->value)->count()],
+                ['label' => 'Accepted Quotes', 'value' => RfqResponse::where('status', RfqResponseStatus::Accepted->value)->count()],
+            ],
+            ['RFQ', 'Buyer', 'Supplier', 'Items', 'Needed By', 'Response Status', 'Quote', 'Valid Until', 'Action'],
+            $rows,
+            'No RFQs found for this supplier scope.',
+            $filters,
+            component: 'Workspace/Index',
+        );
+    }
+
+    public function buyerRfqResponses(Request $request): Response
+    {
+        $filters = $this->filters($request, array_map(fn (RfqResponseStatus $status): string => $status->value, RfqResponseStatus::cases()));
+        $query = RfqResponse::query()->with(['rfq.buyer', 'supplier', 'responder']);
+
+        if ($request->user()->hasRole('buyer') && ! $request->user()->hasRole('admin')) {
+            $query->whereHas('rfq', fn (Builder $rfq) => $rfq->where('buyer_id', $request->user()->id));
+        }
+
+        if ($filters['search'] !== '') {
+            $search = $filters['search'];
+
+            $query->where(function (Builder $builder) use ($search): void {
+                $builder->where('message', 'like', "%{$search}%")
+                    ->orWhereHas('rfq', fn (Builder $rfq) => $rfq->where('rfq_number', 'like', "%{$search}%"))
+                    ->orWhereHas('supplier', fn (Builder $supplier) => $supplier->where('company_name', 'like', "%{$search}%"));
+            });
+        }
+
+        if ($filters['status'] !== '') {
+            $query->where('status', $filters['status']);
+        }
+
+        $rows = $query
+            ->latest()
+            ->limit(50)
+            ->get()
+            ->map(function (RfqResponse $response): array {
+                $canAct = $response->status === RfqResponseStatus::Pending;
+                $actions = $canAct ? [
+                    [
+                        'kind' => 'post-action',
+                        'label' => 'Accept',
+                        'href' => route('commerce.rfq-responses.accept', $response),
+                        'variant' => 'primary',
+                    ],
+                    [
+                        'kind' => 'post-action',
+                        'label' => 'Reject',
+                        'href' => route('commerce.rfq-responses.reject', $response),
+                        'variant' => 'danger',
+                    ],
+                ] : [
+                    [
+                        'kind' => 'status',
+                        'status' => $response->status->value,
+                        'label' => Str::headline($response->status->value),
+                    ],
+                ];
+
+                return [
+                    'RFQ' => $response->rfq?->rfq_number ?? 'n/a',
+                    'Supplier' => $response->supplier?->company_name ?? 'n/a',
+                    'Quote' => number_format((float) $response->quoted_amount, 2).' '.$response->currency,
+                    'MOQ' => $response->min_order_quantity ?? 'n/a',
+                    'Lead Time' => $response->lead_time_days !== null ? $response->lead_time_days.' days' : 'n/a',
+                    'Valid Until' => $response->valid_until?->format('Y-m-d') ?? 'n/a',
+                    'Status' => $response->status->value,
+                    'Message' => $response->message ?: 'n/a',
+                    'Action' => $actions,
+                ];
+            });
+
+        return $this->page(
+            'Buyer RFQ Quotes',
+            'Buyers can review supplier RFQ responses and accept or reject each quote.',
+            [
+                ['label' => 'Total Quotes', 'value' => (clone $baseQuery)->count()],
+                ['label' => 'Pending Decision', 'value' => (clone $baseQuery)->where('status', RfqResponseStatus::Pending->value)->count()],
+                ['label' => 'Accepted', 'value' => (clone $baseQuery)->where('status', RfqResponseStatus::Accepted->value)->count()],
+                ['label' => 'Rejected', 'value' => (clone $baseQuery)->where('status', RfqResponseStatus::Rejected->value)->count()],
+            ],
+            ['RFQ', 'Supplier', 'Quote', 'MOQ', 'Lead Time', 'Valid Until', 'Status', 'Message', 'Action'],
+            $rows,
+            'No RFQ responses found.',
+            $filters,
+            component: 'Workspace/Index',
+        );
+    }
+
     private function socialPostsWorkspace(
         Request $request,
         ?string $forcedStatus = null,
-        string $title = 'Social Campaigns',
+        string $title = 'Social Posts',
         string $description = 'Scheduled content across Facebook and Instagram with engagement tracking.',
         string $variant = 'campaigns',
     ): Response {
         $filters = $this->filters($request, $this->enumValues(SocialPostStatus::class));
+        $platforms = $this->enumValues(SocialPlatform::class);
+        $platformFilter = (string) $request->query('platform', '');
+
+        if ($platformFilter !== '' && ! in_array($platformFilter, $platforms, true)) {
+            $platformFilter = '';
+        }
 
         if ($forcedStatus !== null) {
             $filters['status'] = $forcedStatus;
@@ -602,6 +859,10 @@ class WorkspaceController extends Controller
 
         if ($filters['status'] !== '') {
             $query->where('status', $filters['status']);
+        }
+
+        if ($platformFilter !== '') {
+            $query->where('platform', $platformFilter);
         }
 
         $rows = $query
@@ -929,18 +1190,80 @@ class WorkspaceController extends Controller
         $startOfMonth = now()->setDate($year, $month, 1)->startOfDay();
         $endOfMonth = $startOfMonth->copy()->endOfMonth()->endOfDay();
 
-        $query = SocialPost::query();
+        $query = ContentCalendar::query()->with(['socialPost']);
 
         if ($statusFilter !== '') {
             $query->where('status', $statusFilter);
         }
 
-        $posts = $query
+        $entries = $query
+            ->whereBetween('scheduled_for', [$startOfMonth, $endOfMonth])
+            ->orderBy('scheduled_for')
+            ->get();
+
+        $postIds = $entries
+            ->pluck('social_post_id')
+            ->filter()
+            ->map(fn ($id) => (int) $id)
+            ->values()
+            ->all();
+
+        $engagementByPost = $postIds === []
+            ? collect()
+            : EngagementLog::query()
+                ->whereIn('social_post_id', $postIds)
+                ->get()
+                ->groupBy('social_post_id');
+
+        $posts = $entries
+            ->map(function (ContentCalendar $entry) use ($engagementByPost): array {
+                $post = $entry->socialPost;
+                $engagement = $post ? $engagementByPost->get($post->id, collect()) : collect();
+
+                $metric = fn (string $type): int => (int) optional($engagement->firstWhere('metric_type', $type))->metric_value;
+
+                return [
+                    'id' => $entry->id,
+                    'platform' => $entry->platform,
+                    'status' => $entry->status,
+                    'content' => $entry->content ?: ($post?->content ?? ''),
+                    'content_short' => str($entry->content ?: ($post?->content ?? ''))->limit(60)->toString(),
+                    'scheduled_at' => $entry->scheduled_for?->toISOString(),
+                    'scheduled_date' => $entry->scheduled_for?->format('Y-m-d'),
+                    'scheduled_time' => $entry->scheduled_for?->format('H:i'),
+                    'published_at' => $entry->published_at?->format('Y-m-d H:i') ?? $post?->published_at?->format('Y-m-d H:i'),
+                    'likes' => $post?->likes_count ?? $metric('likes'),
+                    'comments' => $post?->comments_count ?? $metric('comments'),
+                    'shares' => $post?->shares_count ?? $metric('shares'),
+                    'reach' => $post?->reach_count ?? $metric('reach'),
+                    'clicks' => $post?->clicks_count ?? $metric('clicks'),
+                    'failure_reason' => $post?->failure_reason,
+                ];
+            })
+            ->values();
+
+        $existingPostIds = $entries
+            ->pluck('social_post_id')
+            ->filter()
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+
+        $fallbackPosts = SocialPost::query()
+            ->when($statusFilter !== '', fn (Builder $query) => $query->where('status', $statusFilter))
             ->whereBetween('scheduled_at', [$startOfMonth, $endOfMonth])
             ->orderBy('scheduled_at')
-            ->get()
-            ->map(fn (SocialPost $post): array => [
-                'id' => $post->id,
+            ->get();
+
+        foreach ($fallbackPosts as $post) {
+            if (in_array((int) $post->id, $existingPostIds, true)) {
+                continue;
+            }
+
+            $engagement = $engagementByPost->get($post->id, collect());
+            $metric = fn (string $type): int => (int) optional($engagement->firstWhere('metric_type', $type))->metric_value;
+
+            $posts->push([
+                'id' => 'social-post-'.$post->id,
                 'platform' => $post->platform->value,
                 'status' => $post->status->value,
                 'content' => $post->content,
@@ -949,17 +1272,20 @@ class WorkspaceController extends Controller
                 'scheduled_date' => $post->scheduled_at?->format('Y-m-d'),
                 'scheduled_time' => $post->scheduled_at?->format('H:i'),
                 'published_at' => $post->published_at?->format('Y-m-d H:i'),
-                'likes' => $post->likes_count ?? 0,
-                'comments' => $post->comments_count ?? 0,
-                'shares' => $post->shares_count ?? 0,
-                'reach' => $post->reach_count ?? 0,
-                'clicks' => $post->clicks_count ?? 0,
+                'likes' => $post->likes_count ?? $metric('likes'),
+                'comments' => $post->comments_count ?? $metric('comments'),
+                'shares' => $post->shares_count ?? $metric('shares'),
+                'reach' => $post->reach_count ?? $metric('reach'),
+                'clicks' => $post->clicks_count ?? $metric('clicks'),
                 'failure_reason' => $post->failure_reason,
-            ])
-            ->all();
+            ]);
+        }
 
         return Inertia::render('Social/Calendar', [
-            'posts' => $posts,
+            'posts' => $posts
+                ->sortBy('scheduled_at')
+                ->values()
+                ->all(),
             'month' => $month,
             'year' => $year,
             'status' => $statusFilter,
@@ -1275,6 +1601,26 @@ class WorkspaceController extends Controller
         }
 
         return $slug;
+    }
+
+    /**
+     * @param mixed $value
+     * @return array<int, string>|null
+     */
+    private function normalizeTags(mixed $value): ?array
+    {
+        $raw = trim((string) $value);
+
+        if ($raw === '') {
+            return null;
+        }
+
+        $tags = array_values(array_unique(array_filter(array_map(
+            'trim',
+            preg_split('/[\r\n,]+/', $raw) ?: [],
+        ))));
+
+        return $tags === [] ? null : $tags;
     }
 
     private function syncBulkTier(Product $product, mixed $bulkPrice): void

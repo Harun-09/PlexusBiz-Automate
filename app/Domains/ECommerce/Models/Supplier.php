@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Supplier extends Model
 {
@@ -25,6 +26,9 @@ class Supplier extends Model
         'contact_email',
         'phone',
         'tax_number',
+        'logo_path',
+        'verification_document_path',
+        'verification_document_name',
         'address',
         'approved_at',
     ];
@@ -55,6 +59,11 @@ class Supplier extends Model
         return $this->hasMany(SupplierOrder::class);
     }
 
+    public function rfqResponses(): HasMany
+    {
+        return $this->hasMany(RfqResponse::class);
+    }
+
     public function isApproved(): bool
     {
         return $this->status === SupplierStatus::Approved;
@@ -63,5 +72,23 @@ class Supplier extends Model
     public function isPending(): bool
     {
         return $this->status === SupplierStatus::Pending;
+    }
+
+    public function logoUrl(): ?string
+    {
+        if (! $this->logo_path) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->logo_path);
+    }
+
+    public function verificationDocumentUrl(): ?string
+    {
+        if (! $this->verification_document_path) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->verification_document_path);
     }
 }

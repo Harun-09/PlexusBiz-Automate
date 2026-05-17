@@ -7,6 +7,7 @@ use App\Domains\Social\Enums\SocialPlatform;
 use App\Domains\Social\Enums\SocialPostStatus;
 use App\Domains\Social\Models\SocialAccount;
 use App\Domains\Social\Models\SocialPost;
+use App\Domains\Social\Services\SocialPlanningService;
 use App\Http\Controllers\Controller;
 use App\Support\DateTimeInput;
 use Illuminate\Http\RedirectResponse;
@@ -17,6 +18,10 @@ use Inertia\Response;
 
 class SocialPostController extends Controller
 {
+    public function __construct(private readonly SocialPlanningService $planner)
+    {
+    }
+
     public function create(): Response
     {
         $this->authorize('create', SocialPost::class);
@@ -28,7 +33,8 @@ class SocialPostController extends Controller
     {
         $this->authorize('create', SocialPost::class);
 
-        SocialPost::create($this->payload($this->validatePost($request)));
+        $post = SocialPost::create($this->payload($this->validatePost($request)));
+        $this->planner->syncPostArtifacts($post->refresh(), $request->user()->id);
 
         return redirect()
             ->route('social.posts.index')
@@ -61,6 +67,7 @@ class SocialPostController extends Controller
         $this->authorize('update', $socialPost);
 
         $socialPost->forceFill($this->payload($this->validatePost($request)))->save();
+        $this->planner->syncPostArtifacts($socialPost->refresh(), $request->user()->id);
 
         return redirect()
             ->route('social.posts.index')

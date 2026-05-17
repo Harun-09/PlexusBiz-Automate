@@ -2,6 +2,19 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, Head } from '@inertiajs/react';
 
 const blueSurfaceGradient = 'bg-gradient-to-r from-[#4f7fe0] via-[#3f70d4] to-[#2953b1]';
+const isExternalHref = (href = '') => /^(https?:|mailto:|tel:)/i.test(href);
+const socialHrefByName = {
+    Reddit: 'https://www.reddit.com',
+    Facebook: 'https://www.facebook.com',
+    Twitter: 'https://twitter.com',
+    Instagram: 'https://www.instagram.com',
+    LinkedIn: 'https://www.linkedin.com',
+    Pinterest: 'https://www.pinterest.com',
+    YouTube: 'https://www.youtube.com',
+    Twitch: 'https://www.twitch.tv',
+    Discord: 'https://discord.com',
+    TikTok: 'https://www.tiktok.com',
+};
 
 const quickNavLinks = [
     { label: 'Bulk Orders', href: route('products.bulk') },
@@ -14,45 +27,45 @@ const footerSections = [
     {
         title: 'Customer Service',
         links: [
-            { label: 'Help Center', href: '#footer' },
-            { label: 'Track an Order', href: '#footer' },
-            { label: 'Return an Item', href: '#footer' },
-            { label: 'Return Policy', href: '#footer' },
-            { label: 'Privacy & Security', href: '#footer' },
-            { label: 'Feedback', href: '#footer' },
+            { label: 'Help Center', href: '/support/faq' },
+            { label: 'Track an Order', href: '/commerce/orders' },
+            { label: 'Return an Item', href: '/support/tickets/create' },
+            { label: 'Return Policy', href: '/support/faq' },
+            { label: 'Privacy & Security', href: '/support/faq' },
+            { label: 'Feedback', href: route('rfq.create') },
         ],
     },
     {
         title: 'My Account',
         links: [
-            { label: 'Login/Register', href: '#footer' },
-            { label: 'Browsing History', href: '#footer' },
-            { label: 'Order History', href: '#footer' },
-            { label: 'Returns History', href: '#footer' },
-            { label: 'Address Book', href: '#footer' },
-            { label: 'Wish Lists', href: '#footer' },
-            { label: 'My Build Lists', href: '#footer' },
-            { label: 'My Build Showcase', href: '#footer' },
-            { label: 'Email Notifications', href: '#footer' },
-            { label: 'Subscriptions Orders', href: '#footer' },
-            { label: 'Auto Notifications', href: '#footer' },
+            { label: 'Login/Register', href: route('login') },
+            { label: 'Browsing History', href: route('products.index') },
+            { label: 'Order History', href: '/commerce/orders' },
+            { label: 'Returns History', href: '/support/tickets' },
+            { label: 'Address Book', href: route('profile.edit') },
+            { label: 'Wish Lists', href: route('products.bulk') },
+            { label: 'My Build Lists', href: route('products.moq') },
+            { label: 'My Build Showcase', href: route('products.bulk') },
+            { label: 'Email Notifications', href: '/notifications' },
+            { label: 'Subscriptions Orders', href: '/commerce/orders' },
+            { label: 'Auto Notifications', href: '/workflow/logs' },
         ],
     },
     {
         title: 'Company Information',
         links: [
-            { label: 'About PlexusBiz', href: '#footer' },
-            { label: 'Investor Relations', href: '#footer' },
-            { label: 'PlexusBiz Student Internship Program', href: '#footer' },
-            { label: 'Gamer Zone', href: '#footer' },
-            { label: 'Awards/Rankings', href: '#footer' },
-            { label: 'Hours and Locations', href: '#footer' },
-            { label: 'Press Inquiries', href: '#footer' },
-            { label: 'PlexusBiz Careers', href: '#footer' },
-            { label: 'Newsroom', href: '#footer' },
-            { label: 'Cigna MRF', href: '#footer' },
-            { label: 'PlexusBiz Insider', href: '#footer' },
-            { label: 'Calif. Transparency in Supply Chains Act', href: '#footer' },
+            { label: 'About PlexusBiz', href: route('products.index') },
+            { label: 'Investor Relations', href: route('rfq.create') },
+            { label: 'PlexusBiz Student Internship Program', href: route('supplier.apply') },
+            { label: 'Gamer Zone', href: '/products?search=gaming' },
+            { label: 'Awards/Rankings', href: route('products.bulk') },
+            { label: 'Hours and Locations', href: route('products.index') },
+            { label: 'Press Inquiries', href: route('rfq.create') },
+            { label: 'PlexusBiz Careers', href: route('supplier.apply') },
+            { label: 'Newsroom', href: route('products.index') },
+            { label: 'Cigna MRF', href: route('products.moq') },
+            { label: 'PlexusBiz Insider', href: route('products.index') },
+            { label: 'Calif. Transparency in Supply Chains Act', href: route('products.moq') },
         ],
     },
     {
@@ -60,28 +73,28 @@ const footerSections = [
         links: [
             { label: 'Become a supplier', href: route('supplier.apply') },
             { label: 'Sell on PlexusBiz', href: route('supplier.apply') },
-            { label: 'For Your Business', href: '#footer' },
-            { label: 'PlexusBiz Partner Services', href: '#footer' },
-            { label: 'Become an Affiliate', href: '#footer' },
-            { label: 'PlexusBiz Creators', href: '#footer' },
-            { label: 'Site Map', href: '#footer' },
-            { label: 'Shop by Brand', href: '#footer' },
-            { label: 'Rebates', href: '#footer' },
-            { label: 'Mobile Apps', href: '#footer' },
-            { label: 'Student Discount', href: '#footer' },
-            { label: 'PlexusBiz Store Credit Card', href: '#footer' },
-            { label: 'Build Showcases', href: '#footer' },
-            { label: 'Progressive Leasing', href: '#footer' },
-            { label: 'Trade In', href: '#footer' },
+            { label: 'For Your Business', href: route('products.bulk') },
+            { label: 'PlexusBiz Partner Services', href: route('rfq.create') },
+            { label: 'Become an Affiliate', href: route('supplier.apply') },
+            { label: 'PlexusBiz Creators', href: route('products.index') },
+            { label: 'Site Map', href: route('products.index') },
+            { label: 'Shop by Brand', href: '/products?quick=catalog' },
+            { label: 'Rebates', href: route('products.moq') },
+            { label: 'Mobile Apps', href: route('products.index') },
+            { label: 'Student Discount', href: route('products.moq') },
+            { label: 'PlexusBiz Store Credit Card', href: route('rfq.create') },
+            { label: 'Build Showcases', href: route('products.bulk') },
+            { label: 'Progressive Leasing', href: route('rfq.create') },
+            { label: 'Trade In', href: '/support/tickets/create' },
         ],
     },
     {
         title: 'Shop Our Brands',
         links: [
-            { label: 'PlexusBiz Business', href: '#footer' },
-            { label: 'PlexusBiz Global', href: '#footer' },
-            { label: 'ABS', href: '#footer' },
-            { label: 'Rosewill', href: '#footer' },
+            { label: 'PlexusBiz Business', href: route('products.bulk') },
+            { label: 'PlexusBiz Global', href: route('products.index') },
+            { label: 'ABS', href: route('products.index', { search: 'abs' }) },
+            { label: 'Rosewill', href: route('products.index', { search: 'rosewill' }) },
         ],
     },
 ];
@@ -419,7 +432,6 @@ function AddressSelectorModal({ isOpen, onClose, isAuthed }) {
 
 function FooterColumn({ section }) {
     const [isOpen, setIsOpen] = useState(false);
-    const slugify = (text) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
     return (
         <div className={`mb-3 md:mb-0 transition-all duration-200 border border-white/20 md:border-transparent md:p-0 ${isOpen ? `rounded-[12px] ${blueSurfaceGradient}` : 'rounded-full'}`}>
@@ -446,9 +458,20 @@ function FooterColumn({ section }) {
             <ul className={`md:mt-0 md:block ${isOpen ? 'block px-5 pb-2' : 'hidden'}`}>
                 {section.links.map((link, index) => (
                     <li key={link.label} className={index !== section.links.length - 1 ? 'border-b border-white/20 md:border-transparent' : ''}>
-                        <Link href={`/p/${slugify(link.label)}`} className="block py-3 md:py-1.5 text-[15px] font-medium text-white/95 transition hover:text-white hover:underline">
-                            {link.label}
-                        </Link>
+                        {isExternalHref(link.href) ? (
+                            <a
+                                href={link.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block py-3 md:py-1.5 text-[15px] font-medium text-white/95 transition hover:text-white hover:underline"
+                            >
+                                {link.label}
+                            </a>
+                        ) : (
+                            <Link href={link.href} className="block py-3 md:py-1.5 text-[15px] font-medium text-white/95 transition hover:text-white hover:underline">
+                                {link.label}
+                            </Link>
+                        )}
                     </li>
                 ))}
             </ul>
@@ -636,16 +659,16 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                     >
                         <div className="mx-auto flex w-full flex-col items-center justify-between gap-6 px-6 md:flex-row md:items-center lg:px-16 xl:px-20">
                             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 text-xs sm:text-sm text-[#0b2e71]">
-                                <span>© 2003-{new Date().getFullYear()} PlexusBiz Inc. All rights reserved.</span>
+                                <span>(c) 2003-{new Date().getFullYear()} PlexusBiz Inc. All rights reserved.</span>
                                 <div className="flex flex-wrap justify-center sm:justify-start items-center gap-3">
-                                    <a href="#" className="font-medium hover:text-[#1f68d9] hover:underline whitespace-nowrap">Terms & Conditions</a>
-                                    <a href="#" className="font-medium hover:text-[#1f68d9] hover:underline whitespace-nowrap">Privacy Policy</a>
-                                    <a href="#" className="flex items-center gap-1 font-medium hover:text-[#1f68d9] hover:underline whitespace-nowrap">
+                                    <Link href="/support/faq" className="font-medium hover:text-[#1f68d9] hover:underline whitespace-nowrap">Terms & Conditions</Link>
+                                    <Link href="/support/faq" className="font-medium hover:text-[#1f68d9] hover:underline whitespace-nowrap">Privacy Policy</Link>
+                                    <Link href="/support/faq" className="flex items-center gap-1 font-medium hover:text-[#1f68d9] hover:underline whitespace-nowrap">
                                         Your Privacy Choices
                                         <svg className="w-5 h-5 text-[#1f68d9]" viewBox="0 0 24 24" fill="currentColor">
                                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                                         </svg>
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                             
@@ -663,7 +686,14 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
                                     { name: 'Discord', icon: 'M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z' },
                                     { name: 'TikTok', icon: 'M12.525.02c1.31-.032 2.622.016 3.924.062.03.1.063.2.096.3.262.804.664 1.547 1.184 2.193.633.784 1.42 1.436 2.296 1.91 1.002.54 2.103.856 3.23.93v4.064c-1.385-.015-2.766-.35-4.043-1.008-1.045-.537-1.956-1.328-2.656-2.28-.016.27-.033.54-.05 8.118-.03 1.838-.475 3.65-1.3 5.258-1.003 1.962-2.73 3.522-4.832 4.364-2.146.858-4.52 1.032-6.758.502-2.316-.547-4.417-1.92-5.882-3.843-1.464-1.923-2.15-4.316-1.918-6.697.232-2.38 1.36-4.595 3.16-6.195 1.8-1.6 4.144-2.455 6.556-2.4 1.54.034 3.053.486 4.363 1.304v4.453c-1.042-.644-2.253-.984-3.486-.984-1.233 0-2.444.34-3.486.984-.972.6-1.745 1.488-2.22 2.546-.476 1.058-.62 2.235-.414 3.38.206 1.144.773 2.193 1.627 3.013.854.82 1.95 1.36 3.148 1.55 1.198.19 2.428-.007 3.535-.565 1.107-.557 2.023-1.45 2.63-2.56.607-1.11.884-2.384.796-3.66L12.525.02z' }
                                 ].map((social) => (
-                                    <a key={social.name} href="#" className="flex h-6 w-6 items-center justify-center rounded-full text-[#0d1733] transition hover:opacity-75">
+                                    <a
+                                        key={social.name}
+                                        href={socialHrefByName[social.name] ?? 'https://www.plexusbiz.com'}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label={`Open ${social.name}`}
+                                        className="flex h-6 w-6 items-center justify-center rounded-full text-[#0d1733] transition hover:opacity-75"
+                                    >
                                         <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
                                             <path d={social.icon} />
                                         </svg>
@@ -682,3 +712,4 @@ export default function FrontendLayout({ auth, canLogin, cartCount = 0, children
         </div>
     );
 }
+

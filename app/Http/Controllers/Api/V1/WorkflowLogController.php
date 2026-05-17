@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Domains\Workflow\Enums\WorkflowLogStatus;
 use App\Domains\Workflow\Models\WorkflowLog;
+use App\Http\Controllers\Api\Concerns\FormatsApiResponses;
 use App\Http\Controllers\Api\V1\Concerns\AppliesApiFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\ApiIndexRequest;
@@ -15,8 +16,9 @@ use Illuminate\Validation\Rule;
 class WorkflowLogController extends Controller
 {
     use AppliesApiFilters;
+    use FormatsApiResponses;
 
-    public function index(ApiIndexRequest $request)
+    public function index(ApiIndexRequest $request): JsonResponse
     {
         $this->authorize('viewAny', WorkflowLog::class);
 
@@ -27,14 +29,23 @@ class WorkflowLogController extends Controller
         $this->applySort($query, $request, ['created_at', 'executed_at']);
         $query->orderByDesc('id');
 
-        return WorkflowLogResource::collection($query->paginate($request->perPage())->withQueryString());
+        $paginator = $query->paginate($request->perPage())->withQueryString();
+
+        return $this->paginatedResourceResponse(
+            paginator: $paginator,
+            resourceClass: WorkflowLogResource::class,
+            message: 'Workflow logs fetched successfully.',
+        );
     }
 
-    public function show(WorkflowLog $workflowLog): WorkflowLogResource
+    public function show(WorkflowLog $workflowLog): JsonResponse
     {
         $this->authorize('view', $workflowLog);
 
-        return WorkflowLogResource::make($workflowLog->load('rule'));
+        return $this->resourceResponse(
+            WorkflowLogResource::make($workflowLog->load('rule')),
+            'Workflow log details fetched successfully.',
+        );
     }
 
     public function store(Request $request): JsonResponse
@@ -52,10 +63,11 @@ class WorkflowLogController extends Controller
             'executed_at' => $validated['executed_at'] ?? null,
         ]);
 
-        return response()->json([
-            'message' => 'Workflow log created successfully',
-            'data' => WorkflowLogResource::make($workflowLog->load('rule')),
-        ], 201);
+        return $this->resourceResponse(
+            WorkflowLogResource::make($workflowLog->load('rule')),
+            'Workflow log created successfully',
+            201,
+        );
     }
 
     public function update(Request $request, WorkflowLog $workflowLog): JsonResponse
@@ -65,10 +77,10 @@ class WorkflowLogController extends Controller
         $validated = $this->validateWorkflowLog($request, $workflowLog);
 
         if ($validated === []) {
-            return response()->json([
-                'message' => 'No changes submitted',
-                'data' => WorkflowLogResource::make($workflowLog->load('rule')),
-            ]);
+            return $this->resourceResponse(
+                WorkflowLogResource::make($workflowLog->load('rule')),
+                'No changes submitted',
+            );
         }
 
         $payload = [];
@@ -89,10 +101,10 @@ class WorkflowLogController extends Controller
 
         $workflowLog->forceFill($payload)->save();
 
-        return response()->json([
-            'message' => 'Workflow log updated successfully',
-            'data' => WorkflowLogResource::make($workflowLog->refresh()->load('rule')),
-        ]);
+        return $this->resourceResponse(
+            WorkflowLogResource::make($workflowLog->refresh()->load('rule')),
+            'Workflow log updated successfully',
+        );
     }
 
     public function destroy(WorkflowLog $workflowLog): JsonResponse
@@ -101,9 +113,10 @@ class WorkflowLogController extends Controller
 
         $workflowLog->delete();
 
-        return response()->json([
-            'message' => 'Workflow log deleted successfully',
-        ]);
+        return $this->successResponse(
+            data: null,
+            message: 'Workflow log deleted successfully',
+        );
     }
 
     /**

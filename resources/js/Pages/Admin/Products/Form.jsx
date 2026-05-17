@@ -21,6 +21,7 @@ export default function ProductForm({
         sku: product?.sku || '',
         name: product?.name || '',
         description: product?.description || '',
+        tags: Array.isArray(product?.tags) ? product.tags.join(', ') : (product?.tags || ''),
         base_price: product?.base_price || '',
         moq: product?.moq || 1,
         bulk_price: product?.bulk_price || '',
@@ -168,6 +169,20 @@ export default function ProductForm({
                         placeholder="Product description, specifications, and key features..."
                     />
                     {errors.description && <p className="mt-1.5 text-sm text-rose-600">{errors.description}</p>}
+                </div>
+
+                <div className="md:col-span-2">
+                    <label htmlFor="product-tags" className="block text-xs font-bold uppercase tracking-wider text-gray-500">Tags</label>
+                    <input
+                        id="product-tags"
+                        type="text"
+                        value={data.tags}
+                        onChange={(e) => setData('tags', e.target.value)}
+                        className="mt-1.5 block w-full rounded-xl border-gray-200 bg-gray-50/50 text-sm shadow-sm transition focus:border-blue-500 focus:bg-white focus:ring-blue-500"
+                        placeholder="industrial, wholesale, heavy-duty"
+                    />
+                    <p className="mt-1.5 text-xs text-gray-500">Comma-separated tags for product discovery and filtering.</p>
+                    {errors.tags && <p className="mt-1.5 text-sm text-rose-600">{errors.tags}</p>}
                 </div>
 
                 {/* Pricing */}

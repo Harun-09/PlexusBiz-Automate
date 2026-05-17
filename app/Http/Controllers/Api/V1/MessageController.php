@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Domains\Notifications\Models\Message;
 use App\Domains\Notifications\Services\MessageService;
+use App\Http\Controllers\Api\Concerns\FormatsApiResponses;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
+    use FormatsApiResponses;
+
     public function __construct(
         private readonly MessageService $messageService,
     ) {
@@ -26,15 +29,22 @@ class MessageController extends Controller
             $messages = $this->messageService->getInbox($user->id, $request->input('per_page', 15));
         }
 
-        return response()->json([
-            'data' => $messages->items(),
-            'meta' => [
+        return $this->successResponse(
+            data: $messages->items(),
+            message: 'Messages fetched successfully.',
+            meta: [
                 'current_page' => $messages->currentPage(),
                 'last_page' => $messages->lastPage(),
                 'per_page' => $messages->perPage(),
                 'total' => $messages->total(),
+                'pagination' => [
+                    'current_page' => $messages->currentPage(),
+                    'last_page' => $messages->lastPage(),
+                    'per_page' => $messages->perPage(),
+                    'total' => $messages->total(),
+                ],
             ],
-        ]);
+        );
     }
 
     public function show(Request $request, Message $message): JsonResponse
@@ -43,7 +53,7 @@ class MessageController extends Controller
 
         // Check if user is sender or receiver
         if ($message->sender_id !== $user->id && $message->receiver_id !== $user->id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return $this->errorResponse('Unauthorized', 403);
         }
 
         // Mark as read if receiver is viewing
@@ -51,16 +61,20 @@ class MessageController extends Controller
             $message->markAsRead();
         }
 
-        return response()->json([
-            'data' => $message->load(['sender', 'receiver']),
-        ]);
+        return $this->successResponse(
+            $message->load(['sender', 'receiver']),
+            'Message details fetched successfully.',
+        );
     }
 
     public function unreadCount(Request $request): JsonResponse
     {
         $count = $this->messageService->getUnreadCount($request->user()->id);
 
-        return response()->json(['unread_count' => $count]);
+        return $this->successResponse(
+            ['unread_count' => $count],
+            'Unread message count fetched successfully.',
+        );
     }
 
     public function markAsRead(Request $request, Message $message): JsonResponse
@@ -68,25 +82,25 @@ class MessageController extends Controller
         $user = $request->user();
 
         if ($message->receiver_id !== $user->id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return $this->errorResponse('Unauthorized', 403);
         }
 
         $message->markAsRead();
 
-        return response()->json([
-            'message' => 'Message marked as read',
-            'data' => $message,
-        ]);
+        return $this->successResponse(
+            $message,
+            'Message marked as read',
+        );
     }
 
     public function markAllAsRead(Request $request): JsonResponse
     {
         $count = $this->messageService->markAllAsRead($request->user()->id);
 
-        return response()->json([
-            'message' => 'All notifications marked as read',
-            'updated_count' => $count,
-        ]);
+        return $this->successResponse(
+            ['updated_count' => $count],
+            'All notifications marked as read',
+        );
     }
 
     public function recent(Request $request): JsonResponse
@@ -96,7 +110,10 @@ class MessageController extends Controller
             $request->input('limit', 5)
         );
 
-        return response()->json(['data' => $messages]);
+        return $this->successResponse(
+            $messages,
+            'Recent messages fetched successfully.',
+        );
     }
 
     public function store(Request $request): JsonResponse
@@ -114,9 +131,10 @@ class MessageController extends Controller
             sender: $request->user(),
         );
 
-        return response()->json([
-            'message' => 'Message sent successfully',
-            'data' => $message,
-        ], 201);
+        return $this->successResponse(
+            $message,
+            'Message sent successfully',
+            201,
+        );
     }
 }

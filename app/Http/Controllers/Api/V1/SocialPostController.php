@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\V1;
 use App\Domains\Social\Enums\SocialPlatform;
 use App\Domains\Social\Enums\SocialPostStatus;
 use App\Domains\Social\Models\SocialPost;
+use App\Domains\Social\Services\SocialPlanningService;
+use App\Http\Controllers\Api\Concerns\FormatsApiResponses;
 use App\Http\Controllers\Api\V1\Concerns\AppliesApiFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\ApiIndexRequest;
@@ -17,25 +19,39 @@ use Illuminate\Validation\Rule;
 class SocialPostController extends Controller
 {
     use AppliesApiFilters;
+    use FormatsApiResponses;
 
-    public function index(ApiIndexRequest $request)
+    public function __construct(private readonly SocialPlanningService $planner)
+    {
+    }
+
+    public function index(ApiIndexRequest $request): JsonResponse
     {
         $this->authorize('viewAny', SocialPost::class);
 
-        $query = SocialPost::query()->with('campaign');
+        $query = SocialPost::query()->with(['campaign', 'socialCampaign', 'contentCalendar']);
 
         $this->applySearch($query, $request, ['content']);
         $this->applyStatus($query, $request);
         $this->applySort($query, $request, ['created_at', 'updated_at', 'scheduled_at', 'published_at']);
 
-        return SocialPostResource::collection($query->paginate($request->perPage())->withQueryString());
+        $paginator = $query->paginate($request->perPage())->withQueryString();
+
+        return $this->paginatedResourceResponse(
+            paginator: $paginator,
+            resourceClass: SocialPostResource::class,
+            message: 'Social posts fetched successfully.',
+        );
     }
 
-    public function show(SocialPost $socialPost): SocialPostResource
+    public function show(SocialPost $socialPost): JsonResponse
     {
         $this->authorize('view', $socialPost);
 
-        return SocialPostResource::make($socialPost->load('campaign'));
+        return $this->resourceResponse(
+            SocialPostResource::make($socialPost->load(['campaign', 'socialCampaign', 'contentCalendar'])),
+            'Social post details fetched successfully.',
+        );
     }
 
     public function store(Request $request): JsonResponse
@@ -44,11 +60,13 @@ class SocialPostController extends Controller
 
         $validated = $this->validatePostData($request);
         $socialPost = SocialPost::create($this->postPayload($validated));
+        $this->planner->syncPostArtifacts($socialPost->refresh(), $request->user()->id);
 
-        return response()->json([
-            'message' => 'Social post created successfully',
-            'data' => SocialPostResource::make($socialPost->load('campaign')),
-        ], 201);
+        return $this->resourceResponse(
+            SocialPostResource::make($socialPost->fresh()->load(['campaign', 'socialCampaign', 'contentCalendar'])),
+            'Social post created successfully',
+            201,
+        );
     }
 
     public function update(Request $request, SocialPost $socialPost): JsonResponse
@@ -58,18 +76,19 @@ class SocialPostController extends Controller
         $validated = $this->validatePostData($request, $socialPost);
 
         if ($validated === []) {
-            return response()->json([
-                'message' => 'No changes submitted',
-                'data' => SocialPostResource::make($socialPost->load('campaign')),
-            ]);
+            return $this->resourceResponse(
+                SocialPostResource::make($socialPost->load(['campaign', 'socialCampaign', 'contentCalendar'])),
+                'No changes submitted',
+            );
         }
 
         $socialPost->forceFill($this->postPayload($validated, $socialPost))->save();
+        $this->planner->syncPostArtifacts($socialPost->refresh(), $request->user()->id);
 
-        return response()->json([
-            'message' => 'Social post updated successfully',
-            'data' => SocialPostResource::make($socialPost->refresh()->load('campaign')),
-        ]);
+        return $this->resourceResponse(
+            SocialPostResource::make($socialPost->refresh()->load(['campaign', 'socialCampaign', 'contentCalendar'])),
+            'Social post updated successfully',
+        );
     }
 
     public function destroy(SocialPost $socialPost): JsonResponse
@@ -78,9 +97,10 @@ class SocialPostController extends Controller
 
         $socialPost->delete();
 
-        return response()->json([
-            'message' => 'Social post deleted successfully',
-        ]);
+        return $this->successResponse(
+            data: null,
+            message: 'Social post deleted successfully',
+        );
     }
 
     /**

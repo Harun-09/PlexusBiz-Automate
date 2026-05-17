@@ -107,7 +107,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/products', [WorkspaceController::class, 'supplierProducts'])->name('products.index');
         Route::get('/products/create', [WorkspaceController::class, 'supplierProductCreate'])->middleware('role:supplier')->name('products.create');
         Route::get('/products/{product}/edit', [WorkspaceController::class, 'supplierProductEdit'])->middleware('role:supplier')->name('products.edit');
+        Route::redirect('/rfq-responses', '/commerce/rfq-responses')->name('rfq-responses.alias');
     });
+
+    Route::redirect('/buyer/rfq-quotes', '/commerce/rfq-quotes')
+        ->middleware('role:buyer|admin')
+        ->name('buyer.rfq-quotes.alias');
 
     Route::redirect('/buyer/tickets', '/support/tickets')->name('buyer.tickets.alias');
 

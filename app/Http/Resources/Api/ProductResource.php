@@ -18,6 +18,7 @@ class ProductResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
+            'tags' => is_array($this->tags) ? $this->tags : [],
             'base_price' => $this->base_price,
             'moq' => $this->moq,
             'stock_quantity' => $this->stock_quantity,
