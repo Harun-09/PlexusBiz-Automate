@@ -44,12 +44,16 @@ class SupplierOnboardingController extends Controller
             'phone' => ['nullable', 'string', 'max:50'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'tax_number' => ['nullable', 'string', 'max:100'],
+            'tin_number' => ['nullable', 'string', 'max:100'],
+            'bin_number' => ['nullable', 'string', 'max:100'],
             'address_line1' => ['nullable', 'string', 'max:255'],
             'address_line2' => ['nullable', 'string', 'max:255'],
             'city' => ['nullable', 'string', 'max:120'],
             'country' => ['nullable', 'string', 'max:120'],
             'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,avif', 'max:5120'],
             'verification_document' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240'],
+            'trade_license' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240'],
+            'corporate_certificate' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:10240'],
         ]);
 
         $user = DB::transaction(function () use ($validated, $messages): User {
@@ -76,6 +80,8 @@ class SupplierOnboardingController extends Controller
                 'contact_email' => $validated['email'],
                 'phone' => $validated['phone'] ?? null,
                 'tax_number' => $validated['tax_number'] ?? null,
+                'tin_number' => $validated['tin_number'] ?? null,
+                'bin_number' => $validated['bin_number'] ?? null,
                 'address' => $address,
             ]);
 
@@ -87,8 +93,20 @@ class SupplierOnboardingController extends Controller
 
             if (! empty($validated['verification_document']) && $validated['verification_document'] instanceof UploadedFile) {
                 $supplier->forceFill([
-                    'verification_document_path' => $this->storeSupplierDocument($supplier, $validated['verification_document']),
+                    'verification_document_path' => $this->storeSupplierDocument($supplier, $validated['verification_document'], 'verification'),
                     'verification_document_name' => $validated['verification_document']->getClientOriginalName(),
+                ])->save();
+            }
+
+            if (! empty($validated['trade_license']) && $validated['trade_license'] instanceof UploadedFile) {
+                $supplier->forceFill([
+                    'trade_license_path' => $this->storeSupplierDocument($supplier, $validated['trade_license'], 'trade_license'),
+                ])->save();
+            }
+
+            if (! empty($validated['corporate_certificate']) && $validated['corporate_certificate'] instanceof UploadedFile) {
+                $supplier->forceFill([
+                    'corporate_certificate_path' => $this->storeSupplierDocument($supplier, $validated['corporate_certificate'], 'corporate_certificate'),
                 ])->save();
             }
 
@@ -129,10 +147,10 @@ class SupplierOnboardingController extends Controller
         return Storage::disk('public')->putFileAs($directory, $file, $fileName);
     }
 
-    private function storeSupplierDocument(Supplier $supplier, UploadedFile $file): string
+    private function storeSupplierDocument(Supplier $supplier, UploadedFile $file, string $prefix = 'verification'): string
     {
         $extension = strtolower((string) $file->getClientOriginalExtension());
-        $fileName = 'verification-'.Str::lower(Str::random(10)).($extension !== '' ? '.'.$extension : '');
+        $fileName = $prefix.'-'.Str::lower(Str::random(10)).($extension !== '' ? '.'.$extension : '');
         $directory = 'media/suppliers/'.$supplier->slug.'/documents';
 
         return Storage::disk('public')->putFileAs($directory, $file, $fileName);

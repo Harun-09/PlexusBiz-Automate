@@ -186,10 +186,10 @@ class DashboardTest extends TestCase
                 ->where('dashboard.cards.1.value', '1')
                 ->where('dashboard.cards.2.label', 'Low Stock Alerts')
                 ->where('dashboard.cards.2.value', '1')
-                ->where('dashboard.cards.6.label', 'Pending Fulfillment')
-                ->where('dashboard.cards.6.value', '1')
-                ->where('dashboard.cards.7.label', 'Open Tickets')
-                ->where('dashboard.cards.7.value', '1'));
+                ->where('dashboard.cards.7.label', 'Pending Fulfillment')
+                ->where('dashboard.cards.7.value', '1')
+                ->where('dashboard.cards.8.label', 'Open Tickets')
+                ->where('dashboard.cards.8.value', '1'));
     }
 
     public function test_marketing_dashboard_shows_live_campaign_stats(): void

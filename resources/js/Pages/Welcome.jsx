@@ -1,4 +1,4 @@
-﻿import { Head, Link } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import FrontendLayout from '@/Layouts/FrontendLayout';
 import LandingPromoStrip from '@/Components/LandingPromoStrip';
 import PromoArtwork from '@/Components/PromoArtwork';
@@ -337,25 +337,31 @@ function DealCard({ item }) {
     return (
         <article className="group flex h-full flex-col overflow-hidden rounded-[28px] border border-[#d7e3f4] bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-[0_20px_50px_-24px_rgba(10,35,84,0.35)]">
             <div className="relative p-4">
-                <div className="overflow-hidden rounded-[22px] border border-[#eef3fb] bg-slate-50">
+                <Link href={route('products.show', item.slug || item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'))} className="block overflow-hidden rounded-[22px] border border-[#eef3fb] bg-slate-50">
                     <ProductImageFrame
                         src={item.image}
                         className="aspect-[4/3] transition duration-500 group-hover:scale-[1.03]"
                     />
-                </div>
-                <span className={`absolute left-6 top-6 rounded-full ${blueSurfaceGradient} px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-white shadow-sm`}>
-                    {item.badge}
-                </span>
-                <span className="absolute right-6 top-6 rounded-full bg-white/95 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#ff7b22] shadow-sm">
-                    {item.save}
-                </span>
+                </Link>
+                {item.badge ? (
+                    <span className={`absolute left-6 top-6 rounded-full ${blueSurfaceGradient} px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-white shadow-sm`}>
+                        {item.badge}
+                    </span>
+                ) : null}
+                {item.save ? (
+                    <span className="absolute right-6 top-6 rounded-full bg-white/95 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#ff7b22] shadow-sm">
+                        {item.save}
+                    </span>
+                ) : null}
             </div>
 
             <div className="flex flex-1 flex-col px-4 pb-4">
                 <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">{item.category}</p>
-                <h3 className="mt-2 min-h-[3.25rem] text-sm font-bold leading-6 text-slate-900">
-                    {item.title}
-                </h3>
+                <Link href={route('products.show', item.slug || item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}>
+                    <h3 className="mt-2 min-h-[3.25rem] text-sm font-bold leading-6 text-slate-900 transition hover:text-[#0b2e71]">
+                        {item.title}
+                    </h3>
+                </Link>
                 <p className="mt-2 text-xs leading-5 text-slate-600">{item.short}</p>
 
                 <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-slate-500">
@@ -1226,18 +1232,20 @@ function RatingDots({ rating = '4.5', reviews = '0' }) {
 function ShelfProductCard({ item }) {
     return (
         <article className="flex h-full flex-col rounded-[10px] bg-[#edf2fb] p-4">
-            <div className="overflow-hidden rounded-[8px] bg-white">
+            <Link href={route('products.show', item.slug || item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'))} className="block overflow-hidden rounded-[8px] bg-white transition hover:opacity-90">
                 {item.artVariant ? (
                     <PromoArtwork variant={item.artVariant} className="aspect-[4/3]" framed={false} />
                 ) : (
                     <ProductImageFrame src={item.image} />
                 )}
-            </div>
+            </Link>
             <div className="mt-3">
                 <RatingDots rating={item.rating} reviews={item.reviews} />
-                <h3 className="mt-2 min-h-[3.2rem] text-sm font-semibold leading-6 text-slate-800 sm:text-[15px]">
-                    {item.title}
-                </h3>
+                <Link href={route('products.show', item.slug || item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}>
+                    <h3 className="mt-2 min-h-[3.2rem] text-sm font-semibold leading-6 text-slate-800 transition hover:text-[#0b2e71] sm:text-[15px]">
+                        {item.title}
+                    </h3>
+                </Link>
                 {item.save ? (
                     <p className="mt-1 text-xs font-semibold text-[#e64620]">{item.save}</p>
                 ) : null}
@@ -1468,9 +1476,9 @@ function CompactProductCard({ item, dark = false }) {
             className={`overflow-hidden rounded-[24px] border shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${dark ? `border-white/10 ${blueSurfaceGradient} text-white` : 'border-[#d7e3f4] bg-white text-slate-900'}`}
         >
             <div className="p-4">
-                <div className="overflow-hidden rounded-[18px] bg-slate-50">
+                <Link href={route('products.show', item.slug || item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'))} className="block overflow-hidden rounded-[18px] bg-slate-50 transition hover:opacity-90">
                     <ProductImageFrame src={item.image} />
-                </div>
+                </Link>
                 {item.badge ? (
                     <span className={`mt-3 inline-flex rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] ${dark ? 'bg-white/10 text-white' : 'bg-[#eef4ff] text-[#0b3d91]'}`}>
                         {item.badge}
@@ -1481,9 +1489,11 @@ function CompactProductCard({ item, dark = false }) {
                         {item.category}
                     </p>
                 ) : null}
-                <h3 className={`mt-2 text-sm font-bold leading-6 ${dark ? 'text-white' : 'text-slate-900'}`}>
-                    {item.title}
-                </h3>
+                <Link href={route('products.show', item.slug || item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}>
+                    <h3 className={`mt-2 text-sm font-bold leading-6 transition hover:opacity-80 ${dark ? 'text-white' : 'text-slate-900'}`}>
+                        {item.title}
+                    </h3>
+                </Link>
                 {item.short ? (
                     <p className={`mt-2 text-xs leading-5 ${dark ? 'text-white/75' : 'text-slate-600'}`}>
                         {item.short}
@@ -1590,10 +1600,13 @@ function InsightCard({ insight }) {
     );
 }
 
-export default function Welcome({ auth = {}, canLogin, canRegister }) {
+export default function Welcome({ auth = {}, canLogin, canRegister, featuredProducts = [], dbCategories = [] }) {
     const isAuthed = Boolean(auth?.user);
     const primaryHref = isAuthed ? route('dashboard') : route('register');
     const visibleMarketplaceShortcutItems = marketplaceShortcutItems.filter((item) => ! item.access || canAccess(auth?.user, item.access));
+
+    const mainProducts = featuredProducts.length > 0 ? featuredProducts.slice(0, 5) : bestDealShelfItems;
+    const secondaryProducts = featuredProducts.length > 5 ? featuredProducts.slice(5, 11) : smartComfortItems;
 
     return (
         <FrontendLayout auth={auth} canLogin={canLogin}>
@@ -1671,8 +1684,8 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                         <section id="deals" className="rounded-[12px] bg-[#f2f4f8] px-5 py-8">
                             <ShelfHeading title="Top Bulk Procurement Picks" href={route('products.bulk')} action="View bulk catalog" />
                             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-                                {bestDealShelfItems.map((item) => (
-                                    <ShelfProductCard key={item.title} item={item} />
+                                {mainProducts.map((item) => (
+                                    <ShelfProductCard key={item.slug || item.title} item={item} />
                                 ))}
                             </div>
                             <div className="mt-6 flex justify-center">
@@ -1689,8 +1702,8 @@ export default function Welcome({ auth = {}, canLogin, canRegister }) {
                             <ShelfHeading title="Office Procurement Picks" href={route('products.moq')} action="See MOQ pricing" />
                             <div className="grid gap-6 xl:grid-cols-[1fr_860px]">
                                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                                    {smartComfortItems.map((item) => (
-                                        <ShelfProductCard key={item.title} item={item} />
+                                    {secondaryProducts.map((item) => (
+                                        <ShelfProductCard key={item.slug || item.title} item={item} />
                                     ))}
                                 </div>
                                 <article className="overflow-hidden rounded-[12px] bg-[#f7efe7]">

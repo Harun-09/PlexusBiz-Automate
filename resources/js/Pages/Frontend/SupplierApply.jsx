@@ -31,6 +31,10 @@ export default function SupplierApply({ countries = [] }) {
         password_confirmation: '',
         logo: null,
         verification_document: null,
+        trade_license: null,
+        corporate_certificate: null,
+        tin_number: '',
+        bin_number: '',
     });
 
     const submit = (event) => {
@@ -208,6 +212,46 @@ export default function SupplierApply({ countries = [] }) {
                             </Field>
 
                             <div className="grid gap-5 sm:grid-cols-2">
+                                <Field label="TIN Number" error={errors.tin_number}>
+                                    <input
+                                        value={data.tin_number}
+                                        onChange={(e) => setData('tin_number', e.target.value)}
+                                        className="input"
+                                        placeholder="Optional"
+                                    />
+                                </Field>
+
+                                <Field label="BIN Number" error={errors.bin_number}>
+                                    <input
+                                        value={data.bin_number}
+                                        onChange={(e) => setData('bin_number', e.target.value)}
+                                        className="input"
+                                        placeholder="Optional"
+                                    />
+                                </Field>
+                            </div>
+
+                            <div className="grid gap-5 sm:grid-cols-2">
+                                <Field label="Trade License" error={errors.trade_license}>
+                                    <input
+                                        type="file"
+                                        accept=".pdf,.jpg,.jpeg,.png"
+                                        onChange={(e) => setData('trade_license', e.target.files?.[0] ?? null)}
+                                        className="input"
+                                    />
+                                </Field>
+
+                                <Field label="Corporate Certificate" error={errors.corporate_certificate}>
+                                    <input
+                                        type="file"
+                                        accept=".pdf,.jpg,.jpeg,.png"
+                                        onChange={(e) => setData('corporate_certificate', e.target.files?.[0] ?? null)}
+                                        className="input"
+                                    />
+                                </Field>
+                            </div>
+
+                            <div className="grid gap-5 sm:grid-cols-2">
                                 <Field label="Company Logo" error={errors.logo}>
                                     <input
                                         type="file"
@@ -217,7 +261,7 @@ export default function SupplierApply({ countries = [] }) {
                                     />
                                 </Field>
 
-                                <Field label="Verification Document" error={errors.verification_document}>
+                                <Field label="Other Document" error={errors.verification_document}>
                                     <input
                                         type="file"
                                         accept=".pdf,.jpg,.jpeg,.png"

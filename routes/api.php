@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('auth')->name('auth.')->group(function (): void {
+Route::prefix('auth')->middleware('throttle:auth')->name('auth.')->group(function (): void {
     Route::post('/register', [AuthController::class, 'register'])->name('register');
     Route::post('/login', [AuthController::class, 'login'])->name('login');
 
@@ -40,7 +40,7 @@ Route::prefix('auth')->name('auth.')->group(function (): void {
 
 Route::middleware('auth:sanctum')->get('/user', UserProfileController::class);
 
-Route::middleware('auth:sanctum')->prefix('support')->name('support.')->group(function (): void {
+Route::middleware(['auth:sanctum', 'throttle:chatbot'])->prefix('support')->name('support.')->group(function (): void {
     Route::post('/chatbot/message', SupportChatbotController::class)->name('chatbot.message');
 });
 
@@ -56,7 +56,7 @@ Route::middleware('auth:sanctum')->prefix('v1')->name('v1.')->group(function ():
     Route::post('rfq-responses/{rfqResponse}/accept', [RfqResponseController::class, 'accept'])->name('rfq-responses.accept');
     Route::post('rfq-responses/{rfqResponse}/reject', [RfqResponseController::class, 'reject'])->name('rfq-responses.reject');
     Route::apiResource('workflow-logs', WorkflowLogController::class);
-    Route::post('/support/chatbot/message', SupportChatbotController::class)->name('support.chatbot.message');
+    Route::post('/support/chatbot/message', SupportChatbotController::class)->middleware('throttle:chatbot')->name('support.chatbot.message');
     Route::apiResource('support-tickets', SupportTicketController::class)->only(['index', 'show', 'store']);
     Route::post('/support-tickets/{supportTicket}/reply', [SupportTicketController::class, 'reply'])->name('support-tickets.reply');
     Route::put('/support-tickets/{supportTicket}/status', [SupportTicketController::class, 'updateStatus'])->name('support-tickets.status');

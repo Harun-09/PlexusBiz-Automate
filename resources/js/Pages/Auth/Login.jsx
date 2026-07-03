@@ -30,9 +30,9 @@ export default function Login({ status, canResetPassword }) {
         <GuestLayout
             variant="register"
             registerHero={{
-                eyebrow: 'Secure access',
-                title: 'Welcome back to your workspace.',
-                lead: 'Log in to continue with your team console.',
+                eyebrow: 'Business secure access',
+                title: 'Access your operations control center.',
+                lead: 'Sign in to manage teams, workflows, and B2B operations in PlexusBiz Automate.',
             }}
         >
             <Head title="Sign in" />
@@ -48,13 +48,13 @@ export default function Login({ status, canResetPassword }) {
                     </span>
                     <span className="auth-card-brand__copy">
                         <strong>PlexusBiz Automate</strong>
-                        <span>Official workspace login</span>
+                        <span>Business operations portal</span>
                     </span>
                 </div>
 
                 <div className="auth-form__header auth-form__header--register">
                     <span className="auth-eyebrow">Sign in</span>
-                    <h2>Log in to your account.</h2>
+                    <h2>Sign in to your business workspace.</h2>
                 </div>
 
                 {status && <div className="auth-alert auth-alert--success">{status}</div>}

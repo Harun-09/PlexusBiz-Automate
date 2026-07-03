@@ -738,7 +738,7 @@ class WorkspaceController extends Controller
             $rows,
             'No RFQs found for this supplier scope.',
             $filters,
-            component: 'Workspace/Index',
+            component: 'Supplier/RfqDashboard',
         );
     }
 
@@ -760,6 +760,8 @@ class WorkspaceController extends Controller
                     ->orWhereHas('supplier', fn (Builder $supplier) => $supplier->where('company_name', 'like', "%{$search}%"));
             });
         }
+
+        $baseQuery = clone $query;
 
         if ($filters['status'] !== '') {
             $query->where('status', $filters['status']);
@@ -1201,12 +1203,12 @@ class WorkspaceController extends Controller
             ->orderBy('scheduled_for')
             ->get();
 
-        $postIds = $entries
-            ->pluck('social_post_id')
-            ->filter()
-            ->map(fn ($id) => (int) $id)
-            ->values()
-            ->all();
+        $postIds = [];
+        foreach ($entries as $entry) {
+            if ($entry->social_post_id) {
+                $postIds[] = (int) $entry->social_post_id;
+            }
+        }
 
         $engagementByPost = $postIds === []
             ? collect()
@@ -1220,39 +1222,35 @@ class WorkspaceController extends Controller
                 $post = $entry->socialPost;
                 $engagement = $post ? $engagementByPost->get($post->id, collect()) : collect();
 
-                $metric = fn (string $type): int => (int) optional($engagement->firstWhere('metric_type', $type))->metric_value;
-
-                return [
-                    'id' => $entry->id,
-                    'platform' => $entry->platform,
-                    'status' => $entry->status,
-                    'content' => $entry->content ?: ($post?->content ?? ''),
-                    'content_short' => str($entry->content ?: ($post?->content ?? ''))->limit(60)->toString(),
-                    'scheduled_at' => $entry->scheduled_for?->toISOString(),
-                    'scheduled_date' => $entry->scheduled_for?->format('Y-m-d'),
-                    'scheduled_time' => $entry->scheduled_for?->format('H:i'),
-                    'published_at' => $entry->published_at?->format('Y-m-d H:i') ?? $post?->published_at?->format('Y-m-d H:i'),
-                    'likes' => $post?->likes_count ?? $metric('likes'),
-                    'comments' => $post?->comments_count ?? $metric('comments'),
-                    'shares' => $post?->shares_count ?? $metric('shares'),
-                    'reach' => $post?->reach_count ?? $metric('reach'),
-                    'clicks' => $post?->clicks_count ?? $metric('clicks'),
-                    'failure_reason' => $post?->failure_reason,
-                ];
+                return $this->formatSocialCalendarPost(
+                    $entry->id,
+                    $entry->platform,
+                    $entry->status,
+                    $entry->content ?: ($post?->content ?? ''),
+                    $entry->scheduled_for,
+                    $entry->published_at,
+                    $post,
+                    $engagement
+                );
             })
             ->values();
 
-        $existingPostIds = $entries
-            ->pluck('social_post_id')
-            ->filter()
-            ->map(fn ($id): int => (int) $id)
-            ->all();
+        $existingPostIds = [];
+        foreach ($entries as $entry) {
+            if ($entry->social_post_id) {
+                $existingPostIds[] = (int) $entry->social_post_id;
+            }
+        }
 
-        $fallbackPosts = SocialPost::query()
-            ->when($statusFilter !== '', fn (Builder $query) => $query->where('status', $statusFilter))
+        $fallbackQuery = SocialPost::query()
             ->whereBetween('scheduled_at', [$startOfMonth, $endOfMonth])
-            ->orderBy('scheduled_at')
-            ->get();
+            ->orderBy('scheduled_at');
+
+        if ($statusFilter !== '') {
+            $fallbackQuery->where('status', $statusFilter);
+        }
+
+        $fallbackPosts = $fallbackQuery->get();
 
         foreach ($fallbackPosts as $post) {
             if (in_array((int) $post->id, $existingPostIds, true)) {
@@ -1260,25 +1258,17 @@ class WorkspaceController extends Controller
             }
 
             $engagement = $engagementByPost->get($post->id, collect());
-            $metric = fn (string $type): int => (int) optional($engagement->firstWhere('metric_type', $type))->metric_value;
 
-            $posts->push([
-                'id' => 'social-post-'.$post->id,
-                'platform' => $post->platform->value,
-                'status' => $post->status->value,
-                'content' => $post->content,
-                'content_short' => str($post->content)->limit(60)->toString(),
-                'scheduled_at' => $post->scheduled_at?->toISOString(),
-                'scheduled_date' => $post->scheduled_at?->format('Y-m-d'),
-                'scheduled_time' => $post->scheduled_at?->format('H:i'),
-                'published_at' => $post->published_at?->format('Y-m-d H:i'),
-                'likes' => $post->likes_count ?? $metric('likes'),
-                'comments' => $post->comments_count ?? $metric('comments'),
-                'shares' => $post->shares_count ?? $metric('shares'),
-                'reach' => $post->reach_count ?? $metric('reach'),
-                'clicks' => $post->clicks_count ?? $metric('clicks'),
-                'failure_reason' => $post->failure_reason,
-            ]);
+            $posts->push($this->formatSocialCalendarPost(
+                'social-post-'.$post->id,
+                $post->platform->value ?? $post->platform,
+                $post->status->value ?? $post->status,
+                $post->content,
+                $post->scheduled_at,
+                $post->published_at,
+                $post,
+                $engagement
+            ));
         }
 
         return Inertia::render('Social/Calendar', [
@@ -1291,6 +1281,31 @@ class WorkspaceController extends Controller
             'status' => $statusFilter,
             'statuses' => $statuses,
         ]);
+    }
+
+    private function formatSocialCalendarPost($id, $platform, $status, $content, $scheduledFor, $publishedAt, $post, $engagement): array
+    {
+        $metric = function (string $type) use ($engagement): int {
+            return (int) optional($engagement->firstWhere('metric_type', $type))->metric_value;
+        };
+
+        return [
+            'id' => $id,
+            'platform' => $platform,
+            'status' => $status,
+            'content' => $content,
+            'content_short' => str($content)->limit(60)->toString(),
+            'scheduled_at' => $scheduledFor?->toISOString(),
+            'scheduled_date' => $scheduledFor?->format('Y-m-d'),
+            'scheduled_time' => $scheduledFor?->format('H:i'),
+            'published_at' => $publishedAt?->format('Y-m-d H:i') ?? $post?->published_at?->format('Y-m-d H:i'),
+            'likes' => $post?->likes_count ?? $metric('likes'),
+            'comments' => $post?->comments_count ?? $metric('comments'),
+            'shares' => $post?->shares_count ?? $metric('shares'),
+            'reach' => $post?->reach_count ?? $metric('reach'),
+            'clicks' => $post?->clicks_count ?? $metric('clicks'),
+            'failure_reason' => $post?->failure_reason,
+        ];
     }
 
     public function workflowLogs(Request $request): Response
@@ -1708,13 +1723,44 @@ class WorkspaceController extends Controller
         ];
     }
 
+    public function markOrderDelivered(Request $request, Order $order, \App\Domains\ECommerce\Services\EscrowService $escrowService): RedirectResponse
+    {
+        if ($order->buyer_id !== $request->user()->id && ! $request->user()->hasRole('admin')) {
+            abort(403);
+        }
+
+        if ($order->status !== OrderStatus::Shipped) {
+            return back()->with('error', 'Order must be shipped before it can be marked as delivered.');
+        }
+
+        $order->update(['status' => OrderStatus::Completed->value]);
+
+        if ($order->escrow_status === \App\Domains\ECommerce\Enums\EscrowStatus::Held) {
+            $escrowService->release($order);
+        }
+
+        return back()->with('success', 'Order marked as delivered. Payment has been released to the supplier.');
+    }
+
     private function orderPaymentAction(Order $order, bool $canInitiatePayment): array
     {
+        $actions = [];
+
+        if ($order->status === OrderStatus::Shipped && auth()->user()?->hasRole('buyer')) {
+            $actions[] = [
+                'kind' => 'post-action',
+                'label' => 'Mark as Delivered',
+                'href' => route('commerce.orders.mark-delivered', $order),
+                'variant' => 'primary',
+                'note' => 'Releases payment to supplier',
+            ];
+        }
+
         if ($order->isPaid()) {
             $checkoutToken = trim((string) $order->checkout_token);
 
             if ($checkoutToken !== '') {
-                return [
+                $actions[] = [
                     'kind' => 'link',
                     'label' => 'View receipt',
                     'href' => route('checkout.success', [
@@ -1722,29 +1768,33 @@ class WorkspaceController extends Controller
                         'access_token' => $checkoutToken,
                     ]),
                 ];
+            } else {
+                $actions[] = [
+                    'kind' => 'status',
+                    'label' => 'Paid',
+                    'status' => PaymentStatus::Completed->value,
+                ];
             }
-
-            return [
-                'kind' => 'status',
-                'label' => 'Paid',
-                'status' => PaymentStatus::Completed->value,
-            ];
+            return $actions;
         }
 
         if (! $canInitiatePayment) {
-            return [
+            $actions[] = [
                 'kind' => 'status',
                 'label' => ucfirst($order->payment_status ?: PaymentStatus::Pending->value),
                 'status' => $order->payment_status ?: PaymentStatus::Pending->value,
             ];
+            return $actions;
         }
 
-        return [
+        $actions[] = [
             'kind' => 'payment-action',
             'label' => $order->payment_method ? 'Continue payment' : 'Pay now',
             'href' => route('payment.process', $order->order_number),
             'gateway' => $this->formatPaymentGateway($order->payment_method ?: config('commerce.default_payment_gateway', 'stripe')),
         ];
+
+        return $actions;
     }
 
     private function formatMoney(mixed $amount, string $currency = 'BDT'): string

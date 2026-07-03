@@ -42,4 +42,15 @@ class AuditLog extends Model
     {
         return $this->morphTo();
     }
+
+    protected static function booted(): void
+    {
+        static::updating(function ($auditLog) {
+            throw new \Exception('Audit logs are immutable and cannot be updated.');
+        });
+
+        static::deleting(function ($auditLog) {
+            throw new \Exception('Audit logs are immutable and cannot be deleted.');
+        });
+    }
 }

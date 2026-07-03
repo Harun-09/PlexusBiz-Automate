@@ -59,4 +59,9 @@ return [
         'multi_card_name' => env('SSLCOMMERZ_MULTI_CARD_NAME', ''),
     ],
 
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+    ],
+
 ];
+

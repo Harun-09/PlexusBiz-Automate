@@ -32,6 +32,12 @@ class Order extends Model
         'grand_total',
         'currency',
         'placed_at',
+        'payment_term',
+        'due_date',
+        'escrow_status',
+        'delivery_status',
+        'commission_amount',
+        'late_fee_amount',
     ];
 
     protected $casts = [
@@ -40,8 +46,14 @@ class Order extends Model
         'shipping_total' => 'decimal:2',
         'discount_total' => 'decimal:2',
         'grand_total' => 'decimal:2',
+        'commission_amount' => 'decimal:2',
+        'late_fee_amount' => 'decimal:2',
         'placed_at' => 'datetime',
+        'due_date' => 'datetime',
         'status' => OrderStatus::class,
+        'payment_term' => \App\Domains\ECommerce\Enums\PaymentTerm::class,
+        'escrow_status' => \App\Domains\ECommerce\Enums\EscrowStatus::class,
+        'delivery_status' => \App\Domains\ECommerce\Enums\DeliveryStatus::class,
     ];
 
     public function buyer(): BelongsTo

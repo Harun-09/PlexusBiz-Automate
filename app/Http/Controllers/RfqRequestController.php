@@ -194,8 +194,7 @@ class RfqRequestController extends Controller
             ));
         }
 
-        return redirect()
-            ->route($payload['product'] ? 'rfq.product' : 'rfq.create', $payload['product'] ?: [])
+        return redirect('/')
             ->with('success', 'Your quotation request has been received.');
     }
 

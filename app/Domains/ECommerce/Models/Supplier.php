@@ -29,6 +29,11 @@ class Supplier extends Model
         'logo_path',
         'verification_document_path',
         'verification_document_name',
+        'wallet_balance',
+        'trade_license_path',
+        'tin_number',
+        'bin_number',
+        'corporate_certificate_path',
         'address',
         'approved_at',
     ];
@@ -36,6 +41,7 @@ class Supplier extends Model
     protected $casts = [
         'address' => 'array',
         'approved_at' => 'datetime',
+        'wallet_balance' => 'decimal:2',
         'status' => SupplierStatus::class,
     ];
 

@@ -12,6 +12,7 @@ class SupportChatbotService
     public function __construct(
         private readonly FaqMatcher $faqs,
         private readonly SupportTicketService $tickets,
+        private readonly GeminiChatbotService $gemini,
     ) {
     }
 
@@ -22,10 +23,37 @@ class SupportChatbotService
     public function respond(User $user, array $payload): array
     {
         $message = trim((string) $payload['message']);
-        $match = $this->faqs->match($message);
+        
         $ticket = null;
+        $answer = null;
+        $confidence = 0.0;
+        $source = 'ticket';
+        $matchedKeywords = [];
+        
+        $shouldCreateTicket = $payload['create_ticket'] ?? false;
 
-        if (($payload['create_ticket'] ?? false) || $match === null) {
+        $geminiResponse = $this->gemini->generateResponse($message);
+
+        if ($geminiResponse && $geminiResponse['action'] === 'answer') {
+            $answer = $geminiResponse['answer'];
+            $confidence = 0.95;
+            $source = 'faq';
+        } elseif ($geminiResponse && $geminiResponse['action'] === 'create_ticket') {
+            $shouldCreateTicket = true;
+        } else {
+            // Fallback to legacy FaqMatcher if Gemini fails or is not configured
+            $match = $this->faqs->match($message);
+            if ($match !== null) {
+                $answer = $match->faq->answer;
+                $confidence = $match->confidence;
+                $source = 'faq';
+                $matchedKeywords = $match->matchedKeywords;
+            } else {
+                $shouldCreateTicket = true;
+            }
+        }
+
+        if ($shouldCreateTicket) {
             $ticket = $this->tickets->createTicket($user, [
                 'subject' => $payload['subject'] ?? Str::limit($message, 120),
                 'description' => $message,
@@ -33,16 +61,18 @@ class SupportChatbotService
                 'order_id' => $payload['order_id'] ?? null,
                 'metadata' => [
                     'source' => 'chatbot',
-                    'matched_faq_id' => $match?->faq->id,
+                    'gemini_fallback' => true,
                 ],
             ], SupportChannel::Chatbot);
+            
+            $answer = $answer ?? 'A support ticket has been created and the team will follow up.';
         }
 
         return [
-            'answer' => $match?->faq->answer ?? 'A support ticket has been created and the team will follow up.',
-            'confidence' => $match?->confidence ?? 0.0,
-            'source' => $match ? 'faq' : 'ticket',
-            'matched_keywords' => $match?->matchedKeywords ?? [],
+            'answer' => $answer,
+            'confidence' => $confidence,
+            'source' => $source,
+            'matched_keywords' => $matchedKeywords,
             'ticket' => $ticket instanceof SupportTicket ? [
                 'id' => $ticket->id,
                 'number' => $ticket->ticket_number,

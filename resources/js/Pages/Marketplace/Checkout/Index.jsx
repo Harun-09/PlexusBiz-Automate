@@ -97,6 +97,7 @@ export default function Index({ auth, flash, errors, cart, buyer, csrfToken, cur
     const items = Array.isArray(cart?.items) ? cart.items : [];
     const validationMessage = Object.values(errors || {}).find(Boolean);
     const [selectedGateway, setSelectedGateway] = useState(defaultGateway || 'stripe');
+    const [paymentTerm, setPaymentTerm] = useState('cash');
 
     const selectedGatewayInfo = useMemo(
         () => gateways.find((gateway) => gateway.key === selectedGateway) || gateways[0] || null,
@@ -190,28 +191,68 @@ export default function Index({ auth, flash, errors, cart, buyer, csrfToken, cur
                                     <div className="flex items-start justify-between gap-4">
                                         <div>
                                             <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-500">
-                                                Payment method
+                                                Terms & Payment
                                             </p>
                                             <h2 className="mt-1 text-2xl font-black tracking-[-0.04em] text-slate-950">
-                                                Choose where the order should go
+                                                Select Payment Term
                                             </h2>
                                         </div>
-                                        <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-bold text-slate-600">
-                                            {gateways.length} options
-                                        </span>
                                     </div>
 
-                                    <div className="mt-5 grid gap-3">
-                                        {gateways.map((gateway) => (
-                                            <GatewayCard
-                                                key={gateway.key}
-                                                gateway={gateway}
-                                                selectedGateway={selectedGateway}
-                                                onSelect={setSelectedGateway}
-                                            />
+                                    <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                                        {['cash', 'net30', 'net60'].map((term) => (
+                                            <label
+                                                key={term}
+                                                className={`flex cursor-pointer flex-col items-center gap-2 rounded-[24px] border p-4 text-center transition ${
+                                                    paymentTerm === term ? 'border-[#0b2e71] bg-[#e8f0ff] shadow-sm text-[#0b2e71]' : 'border-slate-200 bg-white hover:border-[#bfd0f0]'
+                                                }`}
+                                            >
+                                                <input
+                                                    type="radio"
+                                                    name="payment_term"
+                                                    value={term}
+                                                    checked={paymentTerm === term}
+                                                    onChange={(e) => setPaymentTerm(e.target.value)}
+                                                    className="sr-only"
+                                                    required
+                                                />
+                                                <span className="font-black capitalize">{term.replace('net', 'Net ')}</span>
+                                                {term !== 'cash' && (
+                                                    <span className="text-[10px] text-slate-500">Requires Credit Line</span>
+                                                )}
+                                            </label>
                                         ))}
                                     </div>
                                 </div>
+
+                                {paymentTerm === 'cash' && (
+                                    <div className="rounded-[30px] border border-[#d7e3f4] bg-white p-5 shadow-sm">
+                                        <div className="flex items-start justify-between gap-4">
+                                            <div>
+                                                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-500">
+                                                    Payment Gateway
+                                                </p>
+                                                <h2 className="mt-1 text-2xl font-black tracking-[-0.04em] text-slate-950">
+                                                    Choose where the order should go
+                                                </h2>
+                                            </div>
+                                            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-bold text-slate-600">
+                                                {gateways.length} options
+                                            </span>
+                                        </div>
+
+                                        <div className="mt-5 grid gap-3">
+                                            {gateways.map((gateway) => (
+                                                <GatewayCard
+                                                    key={gateway.key}
+                                                    gateway={gateway}
+                                                    selectedGateway={selectedGateway}
+                                                    onSelect={setSelectedGateway}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
 
                                 <div className="rounded-[30px] border border-[#d7e3f4] bg-white p-5 shadow-sm">
                                     <div className="flex items-center justify-between gap-4">

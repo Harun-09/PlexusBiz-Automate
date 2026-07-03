@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PlexusBiz Operations Runbook</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f6f7f9;
+            --panel: #ffffff;
+            --text: #172033;
+            --muted: #667085;
+            --border: #d9dee8;
+            --blue: #175cd3;
+            --green: #057a55;
+            --amber: #8a5200;
+            --code: #eef2f6;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.6;
+        }
+        main { max-width: 1120px; margin: 0 auto; padding: 32px 20px 56px; }
+        h1, h2, h3 { margin: 0; line-height: 1.25; }
+        h1 { font-size: 32px; }
+        h2 { margin-bottom: 12px; font-size: 22px; }
+        h3 { margin-top: 16px; font-size: 16px; }
+        p { margin: 8px 0 0; color: var(--muted); }
+        section {
+            margin-top: 18px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--panel);
+        }
+        ul, ol { margin: 10px 0 0; padding-left: 22px; }
+        li { margin: 7px 0; }
+        code { padding: 2px 5px; border-radius: 5px; background: var(--code); color: #101828; }
+        pre { overflow-x: auto; padding: 14px 16px; border: 1px solid var(--border); border-radius: 8px; background: #fbfcfe; }
+        pre code { padding: 0; background: transparent; }
+        table { width: 100%; margin-top: 10px; border-collapse: collapse; font-size: 13px; }
+        th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+        th { background: #f9fafb; color: #344054; font-weight: 700; }
+        .meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin-top: 18px; }
+        .meta div { padding: 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--panel); }
+        .label { display: block; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+        .value { display: block; margin-top: 5px; font-weight: 700; }
+        .note { border-left: 4px solid var(--amber); background: #fff7ed; }
+        .ok { border-left: 4px solid var(--green); background: #f0fdf4; }
+    </style>
+</head>
+<body>
+<main>
+    <header>
+        <h1>PlexusBiz Operations Runbook</h1>
+        <p>Queue, scheduler, deployment, backup, and credential checklist for the assignment demo and production handoff.</p>
+    </header>
+
+    <div class="meta">
+        <div><span class="label">Project</span><span class="value">PlexusBiz-Automate</span></div>
+        <div><span class="label">Stack</span><span class="value">Laravel 10, React, Tailwind, MySQL</span></div>
+        <div><span class="label">Queue</span><span class="value">Sync/database for demo; Redis recommended for high volume</span></div>
+        <div><span class="label">Updated</span><span class="value">2026-05-17</span></div>
+    </div>
+
+    <section>
+        <h2>1. Local Verification</h2>
+        <pre><code>composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+npm run build
+php artisan test</code></pre>
+        <p>Use <code>php artisan serve --host=127.0.0.1 --port=8001</code> when a local browser demo is needed.</p>
+    </section>
+
+    <section>
+        <h2>2. Required Runtime Commands</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Need</th>
+                <th>Command</th>
+                <th>Purpose</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr><td>Queue worker</td><td><code>php artisan queue:work</code></td><td>Runs queued workflow, campaign, and social jobs.</td></tr>
+            <tr><td>Scheduler worker</td><td><code>php artisan schedule:work</code></td><td>Local continuous scheduler process.</td></tr>
+            <tr><td>Cron entry</td><td><code>* * * * * php /path/to/artisan schedule:run</code></td><td>Production scheduler trigger.</td></tr>
+            <tr><td>Marketing send</td><td><code>php artisan campaigns:send-scheduled</code></td><td>Sends due campaigns.</td></tr>
+            <tr><td>Abandoned cart</td><td><code>php artisan carts:check-abandoned</code></td><td>Marks old carts and logs reminders.</td></tr>
+            <tr><td>Social publishing</td><td><code>php artisan social-posts:publish-due</code></td><td>Publishes due social posts through mock/live providers.</td></tr>
+            <tr><td>Workflow maintenance</td><td><code>php artisan workflow:close-stale-runs</code></td><td>Closes stale running workflow logs.</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>3. Service Files</h2>
+        <ul>
+            <li>Supervisor queue example: <code>deploy/supervisor/laravel-queue.conf</code></li>
+            <li>Supervisor scheduler example: <code>deploy/supervisor/laravel-scheduler.conf</code></li>
+            <li>systemd queue example: <code>deploy/systemd/laravel-queue.service</code></li>
+            <li>systemd scheduler example: <code>deploy/systemd/laravel-scheduler.service</code></li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>4. Production Deployment Checklist</h2>
+        <ol>
+            <li>Set <code>APP_ENV=production</code>, <code>APP_DEBUG=false</code>, and the correct <code>APP_URL</code>.</li>
+            <li>Configure MySQL credentials and run <code>php artisan migrate --force</code>.</li>
+            <li>Run <code>composer install --no-dev --optimize-autoloader</code>.</li>
+            <li>Run <code>npm install</code> or <code>npm ci</code>, then <code>npm run build</code>.</li>
+            <li>Run <code>php artisan storage:link</code> if public file uploads are enabled.</li>
+            <li>Run <code>php artisan config:cache</code>, <code>php artisan route:cache</code>, and <code>php artisan view:cache</code> after environment values are final.</li>
+            <li>Start queue and scheduler processes using Supervisor, systemd, or hosting panel cron.</li>
+            <li>Verify <code>/healthz</code>, login, checkout, invoice download, campaign scheduler, social publish command, workflow logs, and support chatbot API.</li>
+        </ol>
+    </section>
+
+    <section>
+        <h2>5. Credential Checklist</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Integration</th>
+                <th>Demo-Safe State</th>
+                <th>Real Production Need</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr><td>Email</td><td>Mock/log or local SMTP can prove automation.</td><td>Set SMTP/Mailgun credentials in <code>.env</code>.</td></tr>
+            <tr><td>SMS</td><td>Mock SMS provider records proof without paid credits.</td><td>Set Twilio or another provider adapter and credentials.</td></tr>
+            <tr><td>Social</td><td>Mock Facebook/Instagram providers prove scheduling and logs.</td><td>Set Facebook Graph credentials. Instagram live provider can be added when credentials are available.</td></tr>
+            <tr><td>Payments</td><td>Stripe/SSLCOMMERZ sandbox-style flow can be configured.</td><td>Use real gateway keys, verified webhooks/IPN, and HTTPS callback URLs.</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>6. Backup and Restore</h2>
+        <p>Assignment backup artifact exists at <code>database/backups/plexusbiz_assignment_backup.sql</code>.</p>
+        <pre><code>mysqldump -u DB_USER -p DB_NAME &gt; database/backups/plexusbiz_assignment_backup.sql
+mysql -u DB_USER -p DB_NAME &lt; database/backups/plexusbiz_assignment_backup.sql</code></pre>
+    </section>
+
+    <section class="note">
+        <h2>7. Known Operational Notes</h2>
+        <ul>
+            <li>For local/demo, <code>QUEUE_CONNECTION=sync</code> is acceptable. For production, use database or Redis with a persistent worker.</li>
+            <li>Do not commit real <code>.env</code> credentials.</li>
+            <li>On Windows, stale Vite hot files and locked cache/build assets can break local frontend startup. Clear <code>public/hot</code> and rerun the build/dev server if needed.</li>
+        </ul>
+    </section>
+</main>
+</body>
+</html>

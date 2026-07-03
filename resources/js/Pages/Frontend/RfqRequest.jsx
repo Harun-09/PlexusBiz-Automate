@@ -250,8 +250,8 @@ export default function RfqRequest({ auth, flash, errors, product = null }) {
                                     </button>
 
                                     <div className="text-center text-sm text-slate-500">
-                                        <Link href={route('products.index')} className="font-bold text-blue-700 hover:text-blue-900">
-                                            Back to marketplace
+                                        <Link href={product ? route('products.show', product.slug) : route('products.index')} className="font-bold text-blue-700 hover:text-blue-900">
+                                            {product ? 'Back to product' : 'Back to marketplace'}
                                         </Link>
                                     </div>
                                 </form>

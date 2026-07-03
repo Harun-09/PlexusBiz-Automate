@@ -15,7 +15,7 @@ Route::get('/products/bulk-orders', [ProductController::class, 'index'])
 Route::get('/products/moq-pricing', [ProductController::class, 'index'])
     ->name('products.moq');
 
-Route::get('/products/{product:slug}', [ProductController::class, 'show'])
+Route::get('/products/{slug}', [ProductController::class, 'show'])
     ->name('products.show');
 
 Route::middleware(['auth', 'permission:manage_cart'])->group(function (): void {

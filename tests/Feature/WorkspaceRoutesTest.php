@@ -162,7 +162,7 @@ class WorkspaceRoutesTest extends TestCase
                 ->where('workspace.rows.0.Payment.kind', 'payment-summary')
                 ->where('workspace.rows.0.Payment.status', PaymentStatus::Pending->value)
                 ->where('workspace.rows.0.Payment.method', 'Stripe')
-                ->where('workspace.rows.0.Action.kind', 'payment-action')
-                ->where('workspace.rows.0.Action.label', 'Pay now'));
+                ->where('workspace.rows.0.Action.0.kind', 'payment-action')
+                ->where('workspace.rows.0.Action.0.label', 'Pay now'));
     }
 }

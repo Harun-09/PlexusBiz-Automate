@@ -177,6 +177,7 @@ class DashboardController extends Controller
                 $this->statCard('My Products', '0', 'No supplier profile is linked to this user.', 'blue'),
                 $this->statCard('Active Listings', '0', 'No active catalog items yet.', 'emerald'),
                 $this->statCard('Total Sales', 'BDT 0.00', 'No completed sales are linked to this supplier.', 'amber'),
+                $this->statCard('Wallet Balance', 'BDT 0.00', 'Escrow earnings ready for withdrawal.', 'blue'),
                 $this->statCard('Stock On Hand', '0', 'No inventory is linked to this supplier yet.', 'slate'),
                 $this->statCard('Customers Served', '0', 'No buyer accounts have ordered from this supplier yet.', 'rose'),
                 $this->statCard('Pending Fulfillment', '0', 'No supplier orders waiting right now.', 'amber'),
@@ -245,6 +246,12 @@ class DashboardController extends Controller
                     'amber',
                 ),
                 $this->statCard(
+                    'Wallet Balance',
+                    $this->formatMoney($supplier->wallet_balance),
+                    'Escrow earnings ready for withdrawal.',
+                    'blue',
+                ),
+                $this->statCard(
                     'Customers Served',
                     $this->formatCount($customersServed),
                     'Unique buyer accounts linked to this supplier.',
@@ -289,6 +296,12 @@ class DashboardController extends Controller
                 $this->formatMoney($completedSales),
                 'Completed order value from this supplier\'s sold items.',
                 'amber',
+            ),
+            $this->statCard(
+                'Wallet Balance',
+                $this->formatMoney($supplier->wallet_balance),
+                'Escrow earnings ready for withdrawal.',
+                'blue',
             ),
             $this->statCard(
                 'Stock On Hand',

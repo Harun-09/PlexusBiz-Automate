@@ -8,6 +8,9 @@ use App\Domains\CRM\Services\InteractionLogger;
 use App\Domains\ECommerce\Enums\CartStatus;
 use App\Domains\ECommerce\Enums\InvoiceStatus;
 use App\Domains\ECommerce\Enums\OrderStatus;
+use App\Domains\ECommerce\Enums\PaymentTerm;
+use App\Domains\ECommerce\Enums\EscrowStatus;
+use App\Domains\ECommerce\Enums\DeliveryStatus;
 use App\Domains\ECommerce\Enums\ProductStatus;
 use App\Domains\ECommerce\Events\OrderPlaced;
 use App\Domains\ECommerce\Models\Cart;
@@ -30,9 +33,9 @@ class CheckoutService
     ) {
     }
 
-    public function checkout(User $buyer, ?Cart $cart = null): Order
+    public function checkout(User $buyer, ?Cart $cart = null, string $paymentTerm = 'cash'): Order
     {
-        return DB::transaction(function () use ($buyer, $cart): Order {
+        return DB::transaction(function () use ($buyer, $cart, $paymentTerm): Order {
             $cart = $this->lockCart($buyer, $cart);
             $cart->load('items.product');
             $customer = $this->customers->ensureForUser($buyer);
@@ -64,11 +67,35 @@ class CheckoutService
                 ];
             }
 
+            $paymentTermEnum = PaymentTerm::tryFrom($paymentTerm) ?? PaymentTerm::Cash;
+            $dueDate = match($paymentTermEnum) {
+                PaymentTerm::Net30 => now()->addDays(30),
+                PaymentTerm::Net60 => now()->addDays(60),
+                default => null,
+            };
+
+            if ($paymentTermEnum !== PaymentTerm::Cash) {
+                if ($customer->is_credit_restricted) {
+                    throw ValidationException::withMessages(['payment' => 'Your account is restricted from using net terms due to overdue invoices.']);
+                }
+                $availableCredit = $customer->credit_limit - $customer->credit_used;
+                if ($subtotal > $availableCredit) {
+                    throw ValidationException::withMessages(['payment' => 'Order total exceeds available credit limit.']);
+                }
+                
+                // Update credit used
+                $customer->forceFill(['credit_used' => $customer->credit_used + $subtotal])->save();
+            }
+
             $order = Order::create([
                 'buyer_id' => $buyer->id,
                 'customer_id' => $customer->id,
                 'order_number' => $this->numbers->orderNumber(),
                 'status' => OrderStatus::Confirmed,
+                'payment_term' => $paymentTermEnum->value,
+                'due_date' => $dueDate,
+                'escrow_status' => EscrowStatus::Held->value,
+                'delivery_status' => DeliveryStatus::Pending->value,
                 'subtotal' => number_format($subtotal, 2, '.', ''),
                 'tax_total' => '0.00',
                 'shipping_total' => '0.00',
@@ -104,7 +131,7 @@ class CheckoutService
                 'tax_total' => $order->tax_total,
                 'total' => $order->grand_total,
                 'issued_at' => now(),
-                'due_at' => now()->addDays(7),
+                'due_at' => $dueDate ?? now()->addDays(7), // fallback if cash
             ]);
 
             // Generate PDF for invoice

@@ -27,12 +27,45 @@ use Inertia\Inertia;
 
 Route::get('/healthz', HealthCheckController::class)->name('healthz');
 
+use App\Domains\ECommerce\Models\Product;
+use App\Domains\ECommerce\Models\Category;
+use App\Domains\ECommerce\Enums\ProductStatus;
+use Illuminate\Support\Str;
+
 Route::get('/', function () {
+    $featuredProducts = Product::with(['supplier', 'category', 'images', 'pricingTiers'])
+        ->where('status', ProductStatus::Active->value)
+        ->latest('published_at')
+        ->limit(10)
+        ->get()
+        ->map(function ($product) {
+            return [
+                'title' => $product->name,
+                'category' => $product->category?->name ?? 'Uncategorized',
+                'price' => config('commerce.currency', 'BDT') . ' ' . number_format($product->base_price, 2),
+                'compare' => null,
+                'save' => null,
+                'badge' => 'New',
+                'rating' => '5.0',
+                'reviews' => rand(10, 100),
+                'image' => $product->primaryImageUrl() ?? '/images/ecommerce/products/default.jpg',
+                'short' => Str::of(strip_tags((string) $product->description))->squish()->limit(60)->toString(),
+                'slug' => $product->slug,
+            ];
+        });
+
+    $dbCategories = Category::whereHas('products', fn ($q) => $q->where('status', ProductStatus::Active->value))
+        ->select(['id', 'name', 'slug'])
+        ->limit(4)
+        ->get();
+
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
+        'featuredProducts' => $featuredProducts,
+        'dbCategories' => $dbCategories,
     ]);
 });
 
@@ -108,6 +141,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/products/create', [WorkspaceController::class, 'supplierProductCreate'])->middleware('role:supplier')->name('products.create');
         Route::get('/products/{product}/edit', [WorkspaceController::class, 'supplierProductEdit'])->middleware('role:supplier')->name('products.edit');
         Route::redirect('/rfq-responses', '/commerce/rfq-responses')->name('rfq-responses.alias');
+        Route::get('/analytics', [\App\Http\Controllers\Supplier\AnalyticsController::class, 'index'])->name('analytics');
     });
 
     Route::redirect('/buyer/rfq-quotes', '/commerce/rfq-quotes')
@@ -129,6 +163,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/{invoice}/download', [InvoiceController::class, 'download'])->name('download');
         Route::get('/{invoice}/preview', [InvoiceController::class, 'stream'])->name('preview');
     });
+
+    Route::post('/feedback', [\App\Http\Controllers\FeedbackController::class, 'store'])->name('feedback.store');
 });
 
 require __DIR__.'/auth.php';

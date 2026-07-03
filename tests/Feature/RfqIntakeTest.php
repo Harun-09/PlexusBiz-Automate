@@ -49,7 +49,7 @@ class RfqIntakeTest extends TestCase
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect(route('rfq.product', $product));
+            ->assertRedirect('/');
 
         $customer = Customer::where('user_id', $buyer->id)->firstOrFail();
         $lead = Lead::where('email', 'buyer.rfq@example.com')->firstOrFail();

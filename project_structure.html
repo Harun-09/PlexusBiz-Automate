@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Structure - PlexusBiz-Automate</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 2rem;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .list-group {
+            list-style: none;
+            padding: 0;
+        }
+        .list-group-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+        }
+        .list-group-item:last-child {
+            border-bottom: none;
+        }
+        .folder-icon, .file-icon {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        .folder-icon::before {
+            content: "📁";
+        }
+        .file-icon::before {
+            content: "📄";
+        }
+        .badge {
+            background-color: #007bff;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-left: auto;
+        }
+        h2 {
+            margin-top: 20px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PlexusBiz-Automate Project Structure</h1>
+        <p>A list of root directories and files in the Laravel project.</p>
+        
+        <h2>Directories</h2>
+        <ul class="list-group">
+            <li class="list-group-item"><span class="folder-icon"></span> .git</li>
+            <li class="list-group-item"><span class="folder-icon"></span> .vscode</li>
+            <li class="list-group-item"><span class="folder-icon"></span> app</li>
+            <li class="list-group-item"><span class="folder-icon"></span> bootstrap</li>
+            <li class="list-group-item"><span class="folder-icon"></span> config</li>
+            <li class="list-group-item"><span class="folder-icon"></span> database</li>
+            <li class="list-group-item"><span class="folder-icon"></span> deploy</li>
+            <li class="list-group-item"><span class="folder-icon"></span> docs</li>
+            <li class="list-group-item"><span class="folder-icon"></span> node_modules</li>
+            <li class="list-group-item"><span class="folder-icon"></span> public</li>
+            <li class="list-group-item"><span class="folder-icon"></span> resources</li>
+            <li class="list-group-item"><span class="folder-icon"></span> routes</li>
+            <li class="list-group-item"><span class="folder-icon"></span> scripts</li>
+            <li class="list-group-item"><span class="folder-icon"></span> storage</li>
+            <li class="list-group-item"><span class="folder-icon"></span> tests</li>
+            <li class="list-group-item"><span class="folder-icon"></span> vendor</li>
+        </ul>
+
+        <h2>Files</h2>
+        <ul class="list-group">
+            <li class="list-group-item"><span class="file-icon"></span> .editorconfig <span class="badge">258 bytes</span></li>
+            <li class="list-group-item"><span class="file-icon"></span> .env <span class="badge">2925 bytes</span></li>
+            <li class="list-group-item"><span class="file-icon"></span> .env.example <span class="badge">2494 bytes</span></li>
+            <li class="list-group-item"><span class="file-icon"></span> .gitattributes <span class="badge">186 bytes</span></li>
+            <li class="list-group-item"><span class="file-icon"></span> .gitignore <span class="badge">244 bytes</span></li>
+            <li class="list-group-item"><span class="file-icon"></span> .htaccess <span class="badge">1165 bytes</span></li>
+            <li class="list-group-item"><span class="file-icon"></span> .phpunit.result.cache <span class="badge">20676 bytes</span></li>
+            <li class="list-group-item"><span class="file-icon"></span> README.md <span class="badge">5185 bytes</span></li>
+            <li class="list-group-item"><span class="file-icon"></span> artisan <span class="badge">1686 bytes</span></li>
+            <li class="list-group-item"><span class="file-icon"></span> composer.json <span class="badge">2092 bytes</span></li>
+            <li class="list-group-item"><span class="file-icon"></span> composer.lock <span class="badge">333594 bytes</span></li>
+            <li class="list-group-item"><span class="file-icon"></span> index.php <span class="badge">233 bytes</span></li>
+            <li class="list-group-item"><span class="file-icon"></span> jsconfig.json <span class="badge">201 bytes</span></li>
+            <li class="list-group-item"><span class="file-icon"></span> package-lock.json <span class="badge">103278 bytes</span></li>
+            <li class="list-group-item"><span class="file-icon"></span> package.json <span class="badge">611 bytes</span></li>
+            <li class="list-group-item"><span class="file-icon"></span> phpunit.xml <span class="badge">1012 bytes</span></li>
+            <li class="list-group-item"><span class="file-icon"></span> postcss.config.js <span class="badge">93 bytes</span></li>
+            <li class="list-group-item"><span class="file-icon"></span> tailwind.config.js <span class="badge">576 bytes</span></li>
+            <li class="list-group-item"><span class="file-icon"></span> vite.config.js <span class="badge">1220 bytes</span></li>
+        </ul>
+    </div>
+</body>
+</html>

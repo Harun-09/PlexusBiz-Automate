@@ -27,6 +27,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \App\Domains\ECommerce\Models\Order::observe(\App\Observers\AuditTrailObserver::class);
+        \App\Domains\ECommerce\Models\Invoice::observe(\App\Observers\AuditTrailObserver::class);
+        \App\Domains\ECommerce\Models\Rfq::observe(\App\Observers\AuditTrailObserver::class);
+        \App\Domains\ECommerce\Models\RfqResponse::observe(\App\Observers\AuditTrailObserver::class);
     }
 }

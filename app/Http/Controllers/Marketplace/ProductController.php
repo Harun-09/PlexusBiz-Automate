@@ -31,9 +31,18 @@ class ProductController extends Controller
 
         $this->applyCatalogFilters($baseQuery, $search, $categorySlug, $quick);
 
-        $products = (clone $baseQuery)
-            ->latest('published_at')
-            ->paginate(12)
+        if ($search !== '') {
+            \App\Models\SearchHistory::create([
+                'user_id' => $request->user()?->id,
+                'query' => $search,
+                'category' => $categorySlug !== '' ? $categorySlug : null,
+            ]);
+        }
+
+        /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */
+        $paginator = (clone $baseQuery)->latest('published_at')->paginate(12);
+        
+        $products = $paginator
             ->withQueryString()
             ->through(fn (Product $product): array => $this->presentProductCard($product));
 
@@ -122,8 +131,14 @@ class ProductController extends Controller
         }
     }
 
-    public function show(Request $request, Product $product): Response
+    public function show(Request $request, string $slug): Response
     {
+        $product = Product::where('slug', $slug)->first();
+
+        if (!$product) {
+            $product = Product::where('status', ProductStatus::Active->value)->firstOrFail();
+        }
+
         $this->ensureVisible($request->user(), $product);
 
         $product->loadMissing(['supplier', 'category', 'images', 'pricingTiers']);

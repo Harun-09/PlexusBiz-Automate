@@ -9,8 +9,12 @@ export default function SupplierForm({ supplier = null, users = [], statuses, su
         contact_email: supplier?.contact_email || '',
         phone: supplier?.phone || '',
         tax_number: supplier?.tax_number || '',
+        tin_number: supplier?.tin_number || '',
+        bin_number: supplier?.bin_number || '',
         logo: null,
         verification_document: null,
+        trade_license: null,
+        corporate_certificate: null,
         status: supplier?.status || 'pending',
     });
 
@@ -111,9 +115,37 @@ export default function SupplierForm({ supplier = null, users = [], statuses, su
                         value={data.tax_number}
                         onChange={(e) => setData('tax_number', e.target.value)}
                         className="mt-1.5 block w-full rounded-xl border-gray-200 bg-gray-50/50 text-sm shadow-sm transition focus:border-blue-500 focus:bg-white focus:ring-blue-500"
-                        placeholder="TIN or VAT number"
+                        placeholder="Tax number"
                     />
                     {errors.tax_number && <p className="mt-1.5 text-sm text-rose-600">{errors.tax_number}</p>}
+                </div>
+
+                {/* TIN Number */}
+                <div>
+                    <label htmlFor="supplier-tin" className="block text-xs font-bold uppercase tracking-wider text-gray-500">TIN Number</label>
+                    <input
+                        id="supplier-tin"
+                        type="text"
+                        value={data.tin_number}
+                        onChange={(e) => setData('tin_number', e.target.value)}
+                        className="mt-1.5 block w-full rounded-xl border-gray-200 bg-gray-50/50 text-sm shadow-sm transition focus:border-blue-500 focus:bg-white focus:ring-blue-500"
+                        placeholder="TIN number"
+                    />
+                    {errors.tin_number && <p className="mt-1.5 text-sm text-rose-600">{errors.tin_number}</p>}
+                </div>
+
+                {/* BIN Number */}
+                <div>
+                    <label htmlFor="supplier-bin" className="block text-xs font-bold uppercase tracking-wider text-gray-500">BIN Number</label>
+                    <input
+                        id="supplier-bin"
+                        type="text"
+                        value={data.bin_number}
+                        onChange={(e) => setData('bin_number', e.target.value)}
+                        className="mt-1.5 block w-full rounded-xl border-gray-200 bg-gray-50/50 text-sm shadow-sm transition focus:border-blue-500 focus:bg-white focus:ring-blue-500"
+                        placeholder="BIN number"
+                    />
+                    {errors.bin_number && <p className="mt-1.5 text-sm text-rose-600">{errors.bin_number}</p>}
                 </div>
 
                 <div>
@@ -130,7 +162,7 @@ export default function SupplierForm({ supplier = null, users = [], statuses, su
                 </div>
 
                 <div>
-                    <label htmlFor="supplier-document" className="block text-xs font-bold uppercase tracking-wider text-gray-500">Verification Document</label>
+                    <label htmlFor="supplier-document" className="block text-xs font-bold uppercase tracking-wider text-gray-500">Other Document</label>
                     <input
                         id="supplier-document"
                         type="file"
@@ -138,8 +170,34 @@ export default function SupplierForm({ supplier = null, users = [], statuses, su
                         onChange={(e) => setData('verification_document', e.target.files?.[0] ?? null)}
                         className="mt-1.5 block w-full rounded-xl border-gray-200 bg-gray-50/50 text-sm shadow-sm transition focus:border-blue-500 focus:bg-white focus:ring-blue-500"
                     />
-                    {supplier?.verification_document_name ? <p className="mt-1.5 text-xs text-blue-700">Existing file: {supplier.verification_document_name}</p> : null}
+                    {supplier?.verification_document_url ? <a href={supplier.verification_document_url} target="_blank" rel="noreferrer" className="mt-1.5 text-xs text-blue-700 underline">View current document</a> : null}
                     {errors.verification_document && <p className="mt-1.5 text-sm text-rose-600">{errors.verification_document}</p>}
+                </div>
+
+                <div>
+                    <label htmlFor="supplier-trade" className="block text-xs font-bold uppercase tracking-wider text-gray-500">Trade License</label>
+                    <input
+                        id="supplier-trade"
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={(e) => setData('trade_license', e.target.files?.[0] ?? null)}
+                        className="mt-1.5 block w-full rounded-xl border-gray-200 bg-gray-50/50 text-sm shadow-sm transition focus:border-blue-500 focus:bg-white focus:ring-blue-500"
+                    />
+                    {supplier?.trade_license_url ? <a href={supplier.trade_license_url} target="_blank" rel="noreferrer" className="mt-1.5 text-xs text-blue-700 underline">View trade license</a> : null}
+                    {errors.trade_license && <p className="mt-1.5 text-sm text-rose-600">{errors.trade_license}</p>}
+                </div>
+
+                <div>
+                    <label htmlFor="supplier-corporate" className="block text-xs font-bold uppercase tracking-wider text-gray-500">Corporate Certificate</label>
+                    <input
+                        id="supplier-corporate"
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={(e) => setData('corporate_certificate', e.target.files?.[0] ?? null)}
+                        className="mt-1.5 block w-full rounded-xl border-gray-200 bg-gray-50/50 text-sm shadow-sm transition focus:border-blue-500 focus:bg-white focus:ring-blue-500"
+                    />
+                    {supplier?.corporate_certificate_url ? <a href={supplier.corporate_certificate_url} target="_blank" rel="noreferrer" className="mt-1.5 text-xs text-blue-700 underline">View corporate certificate</a> : null}
+                    {errors.corporate_certificate && <p className="mt-1.5 text-sm text-rose-600">{errors.corporate_certificate}</p>}
                 </div>
 
                 {/* Status */}

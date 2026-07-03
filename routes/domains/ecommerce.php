@@ -30,6 +30,10 @@ Route::prefix('commerce')->name('commerce.')->group(function (): void {
         ->middleware('role:buyer|supplier|admin')
         ->name('orders.index');
 
+    Route::post('/orders/{order}/mark-delivered', [WorkspaceController::class, 'markOrderDelivered'])
+        ->middleware('role:buyer|admin')
+        ->name('orders.mark-delivered');
+
     Route::get('/rfq-responses', [WorkspaceController::class, 'supplierRfqResponses'])
         ->middleware('role:supplier|admin')
         ->name('rfq-responses.index');

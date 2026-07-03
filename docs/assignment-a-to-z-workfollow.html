@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PlexusBiz A-to-Z Assignment Workfollow</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f6f7f9;
+            --panel: #ffffff;
+            --text: #172033;
+            --muted: #667085;
+            --border: #d9dee8;
+            --blue: #175cd3;
+            --green: #057a55;
+            --amber: #8a5200;
+            --rose: #b42318;
+            --slate: #344054;
+            --code: #eef2f6;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.6;
+        }
+
+        main {
+            max-width: 1260px;
+            margin: 0 auto;
+            padding: 32px 20px 56px;
+        }
+
+        h1, h2, h3 {
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: 34px;
+            letter-spacing: 0;
+        }
+
+        h2 {
+            margin-bottom: 12px;
+            font-size: 22px;
+        }
+
+        h3 {
+            margin-top: 16px;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        p {
+            margin: 8px 0 0;
+            color: var(--muted);
+        }
+
+        a {
+            color: var(--blue);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        section {
+            margin-top: 18px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--panel);
+        }
+
+        table {
+            width: 100%;
+            margin-top: 10px;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f9fafb;
+            color: var(--slate);
+            font-weight: 700;
+        }
+
+        ul, ol {
+            margin: 10px 0 0;
+            padding-left: 22px;
+        }
+
+        li {
+            margin: 7px 0;
+        }
+
+        code {
+            padding: 2px 5px;
+            border-radius: 5px;
+            background: var(--code);
+            color: #101828;
+        }
+
+        pre {
+            margin: 10px 0 0;
+            padding: 14px 16px;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #fbfcfe;
+            font-size: 13px;
+        }
+
+        pre code {
+            padding: 0;
+            background: transparent;
+        }
+
+        .meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .meta div,
+        .card {
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--panel);
+        }
+
+        .label {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+        }
+
+        .value {
+            display: block;
+            margin-top: 5px;
+            font-weight: 700;
+        }
+
+        .toc {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .toc a {
+            display: inline-flex;
+            padding: 7px 11px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: #f8fbff;
+            color: var(--text);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .badge {
+            display: inline-block;
+            margin: 2px 4px 2px 0;
+            padding: 3px 9px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .done {
+            color: var(--green);
+            background: #dcfae6;
+        }
+
+        .note {
+            color: var(--amber);
+            background: #fef0c7;
+        }
+
+        .risk {
+            color: var(--rose);
+            background: #fee4e2;
+        }
+
+        .info {
+            color: var(--blue);
+            background: #d1e9ff;
+        }
+
+        .grid-2,
+        .grid-3 {
+            display: grid;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        }
+
+        .callout {
+            margin-top: 12px;
+            padding: 14px 16px;
+            border-left: 4px solid var(--blue);
+            border-radius: 8px;
+            background: #f8fbff;
+        }
+
+        .warning {
+            border-left-color: var(--amber);
+            background: #fff7ed;
+        }
+
+        .ok {
+            border-left-color: var(--green);
+            background: #f0fdf4;
+        }
+
+        .nowrap {
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <header>
+        <h1>PlexusBiz A-to-Z Assignment Workfollow</h1>
+        <p>Full project audit for the B2B E-Commerce & Business Automation Platform: requirement source, implementation map, package choices, proof routes, verification, and practical usage guidance.</p>
+    </header>
+
+    <div class="meta">
+        <div>
+            <span class="label">Project Folder</span>
+            <span class="value"><code>G:\laragon\www\laravel\PlexusBiz-Automate</code></span>
+        </div>
+        <div>
+            <span class="label">Main Requirement Source</span>
+            <span class="value"><code>G:\plexus plan\Assignment-1_ B2B E-Commerce Marketplace (1) (1).pdf</code></span>
+        </div>
+        <div>
+            <span class="label">Checked On</span>
+            <span class="value">2026-05-14</span>
+        </div>
+        <div>
+            <span class="label">Current Status</span>
+            <span class="value"><span class="badge done">Implemented and test-backed</span></span>
+        </div>
+    </div>
+
+    <section id="toc">
+        <h2>Fast Navigation</h2>
+        <div class="toc">
+            <a href="#source">Requirement Source</a>
+            <a href="#verification">Verification</a>
+            <a href="#architecture">Architecture</a>
+            <a href="#requirements">Requirement Map</a>
+            <a href="#database">Database</a>
+            <a href="#packages">Packages</a>
+            <a href="#demo">Demo Order</a>
+            <a href="#files">File Map</a>
+            <a href="#risks">Remaining Notes</a>
+            <a href="#commands">Commands</a>
+        </div>
+    </section>
+
+    <section id="source">
+        <h2>1. Requirement Source and What Was Checked</h2>
+        <p>The PDF asks for a Laravel 10+, MySQL, REST API, Bootstrap/Tailwind based platform with optional React/Vue. The required business scope is not only marketplace CRUD; it includes CRM, social scheduling, marketing automation, workflow automation, admin/RBAC, support automation, deployment, backup, and documentation.</p>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Source</th>
+                <th>What It Requires</th>
+                <th>How I Used It</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><code>Assignment-1_ B2B E-Commerce Marketplace (1) (1).pdf</code></td>
+                <td>Core assignment: e-commerce, CRM, social, marketing, workflow engine, admin, support, minimum DB tables, deployment deliverables, evaluation marks.</td>
+                <td>Used as the checklist for this A-to-Z audit.</td>
+            </tr>
+            <tr>
+                <td><code>G:\plexus plan\b2b_platform_prompt.html</code></td>
+                <td>Senior build prompt: Laravel service layer, events/listeners, jobs/queues, policies, API resources, modular folder structure, provider adapters.</td>
+                <td>Used to check whether the implementation goes beyond a basic CRUD submission.</td>
+            </tr>
+            <tr>
+                <td><code>G:\plexus plan\deep-research-report.md</code></td>
+                <td>Architecture guidance: modular monolith, transactions, after-commit events, mockable providers, security and operational standards.</td>
+                <td>Used to judge why chosen technologies fit this assignment.</td>
+            </tr>
+            <tr>
+                <td><code>README.md</code>, <code>docs/workflow.html</code>, <code>docs/requirement-proof-guide.html</code></td>
+                <td>Current project docs and demo proof sequence.</td>
+                <td>Checked against actual routes, code, migrations, seeders, tests, and package locks.</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="verification">
+        <h2>2. Current Verification Result</h2>
+        <div class="grid-3">
+            <div class="card">
+                <span class="label">Route Surface</span>
+                <span class="value">222 routes</span>
+                <p>Checked with <code>php artisan route:list --except-vendor</code>. Web routes, assignment aliases, and Sanctum-protected API v1 routes are present.</p>
+            </div>
+            <div class="card">
+                <span class="label">Backend Tests</span>
+                <span class="value">122 passed, 1409 assertions</span>
+                <p>Checked with <code>php artisan test</code> after clearing stale cached config.</p>
+            </div>
+            <div class="card">
+                <span class="label">Frontend Build</span>
+                <span class="value">Passed</span>
+                <p>Checked with <code>npm run build</code>. Vite 8 generated production assets under ignored <code>public/build</code>.</p>
+            </div>
+        </div>
+
+        <div class="callout warning">
+            <strong>Windows note:</strong> do not run two <code>php artisan test</code> processes in parallel in this repo. A parallel attempt hit a Windows cache write lock in <code>bootstrap/cache/packages.php</code>. Single-process tests pass after <code>php artisan optimize:clear</code>.
+        </div>
+    </section>
+
+    <section id="architecture">
+        <h2>3. Architecture: What Was Used and Why</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Decision</th>
+                <th>Where It Is Implemented</th>
+                <th>Why This Was Chosen</th>
+                <th>When Another Option Is Better</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Laravel modular monolith</td>
+                <td><code>app/Domains/*</code>, <code>config/domains.php</code>, <code>App\Providers\DomainServiceProvider</code>, <code>routes/domains/*.php</code></td>
+                <td>The assignment is one Laravel app with many business domains. Modular monolith keeps one deploy and one database while avoiding one huge controller/model folder.</td>
+                <td>Use microservices only when independent teams, separate scaling, and service ownership justify distributed complexity.</td>
+            </tr>
+            <tr>
+                <td>Service layer for business logic</td>
+                <td><code>CheckoutService</code>, <code>PricingService</code>, <code>InventoryService</code>, <code>WorkflowEngineService</code>, <code>CampaignDispatchService</code>, <code>SupportTicketService</code></td>
+                <td>Controllers stay thin and business rules remain testable.</td>
+                <td>For very small CRUD apps, direct Eloquent from controllers can be acceptable, but not for this assignment's linked workflows.</td>
+            </tr>
+            <tr>
+                <td>Event/listener workflow</td>
+                <td><code>EventServiceProvider</code>, <code>OrderPlaced</code>, <code>RfqCreated</code>, <code>SupportTicketCreated</code>, workflow listeners</td>
+                <td>Order, RFQ, ticket, and social events can trigger automation without hardcoding every side effect in the request controller.</td>
+                <td>Use simple synchronous service calls for tiny flows where no cross-module automation exists.</td>
+            </tr>
+            <tr>
+                <td>React + Inertia</td>
+                <td><code>resources/js/app.jsx</code>, <code>resources/js/Pages/**/*.jsx</code>, <code>resources/views/app.blade.php</code></td>
+                <td>Gives dynamic dashboard/workspace UI without building a separate SPA API authentication layer.</td>
+                <td>Use Blade-only for mostly static admin forms. Use a separate SPA only when frontend/backend teams and API contracts are independent.</td>
+            </tr>
+            <tr>
+                <td>Tailwind CSS</td>
+                <td><code>tailwind.config.js</code>, <code>resources/css/app.css</code>, React components</td>
+                <td>Creates a polished custom business UI and avoids Bootstrap-looking generic admin screens.</td>
+                <td>Use Bootstrap if speed and standard components matter more than custom product UI.</td>
+            </tr>
+            <tr>
+                <td>Provider adapters and mocks</td>
+                <td><code>MockEmailProvider</code>, <code>MockSmsProvider</code>, <code>MockFacebookPublisher</code>, <code>MockInstagramPublisher</code>, <code>LiveFacebookPublisher</code></td>
+                <td>The assignment asks for SMS/social/email, but real paid credentials may not be available. Adapter design proves the flow and keeps live integration replaceable.</td>
+                <td>Use direct SDK calls only for small internal scripts, not a platform that needs testable integrations.</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="requirements">
+        <h2>4. Requirement-by-Requirement Implementation Map</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>PDF Requirement</th>
+                <th>Status</th>
+                <th>How It Is Done</th>
+                <th>Where To Check</th>
+                <th>Proof Route/Test</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>E-Commerce marketplace</td>
+                <td><span class="badge done">Done</span></td>
+                <td>Products are linked to suppliers and categories, have images, MOQ, bulk pricing tiers, stock, status, cart and checkout flow.</td>
+                <td><code>app/Domains/ECommerce/Models</code>, <code>Marketplace\ProductController</code>, <code>WorkspaceController</code>, <code>2026_05_03_130000_create_ecommerce_tables.php</code></td>
+                <td><code>/products</code>, <code>/marketplace</code>, <code>CheckoutTest</code>, <code>MarketplaceCatalogPageTest</code></td>
+            </tr>
+            <tr>
+                <td>Supplier onboarding</td>
+                <td><span class="badge done">Done</span></td>
+                <td>Guest supplier application creates pending supplier/user records; admin can approve/reject and notify supplier.</td>
+                <td><code>SupplierOnboardingController</code>, <code>AdminSupplierController</code>, <code>RbacSeeder</code></td>
+                <td><code>/register-supplier</code>, <code>/admin/suppliers</code>, <code>SupplierOnboardingNotificationTest</code></td>
+            </tr>
+            <tr>
+                <td>Product CRUD</td>
+                <td><span class="badge done">Done</span></td>
+                <td>Supplier and admin product management supports create/edit/delete, slug handling, category, images, prices, MOQ, stock, and status.</td>
+                <td><code>WorkspaceController</code>, <code>AdminProductController</code>, <code>resources/js/Pages/Commerce/Products</code>, <code>resources/js/Pages/Admin/Products</code></td>
+                <td><code>/supplier/products</code>, <code>/commerce/products</code>, <code>/admin/products</code>, product admin tests</td>
+            </tr>
+            <tr>
+                <td>Inventory and stock tracking</td>
+                <td><span class="badge done">Done</span></td>
+                <td><code>InventoryService</code> checks availability, deducts stock during checkout, and records <code>inventory_movements</code>.</td>
+                <td><code>InventoryService</code>, <code>Product::availableStock()</code>, <code>inventory_movements</code> migration</td>
+                <td><code>CheckoutTest</code>, supplier product pages</td>
+            </tr>
+            <tr>
+                <td>Bulk pricing and MOQ</td>
+                <td><span class="badge done">Done</span></td>
+                <td><code>PricingService</code> rejects quantity below MOQ and selects the best pricing tier by quantity.</td>
+                <td><code>PricingService</code>, <code>pricing_tiers</code>, <code>AdminBulkPricingController</code></td>
+                <td><code>/admin/bulk-pricing</code>, <code>PricingServiceTest</code>, <code>BulkPricingManagementTest</code></td>
+            </tr>
+            <tr>
+                <td>Cart to checkout to confirmation</td>
+                <td><span class="badge done">Done</span></td>
+                <td><code>CartService</code> manages cart items. <code>CheckoutService</code> locks cart/product rows, creates order/items/invoice, deducts stock, creates supplier orders, logs CRM interaction, then dispatches <code>OrderPlaced</code> after commit.</td>
+                <td><code>CartController</code>, <code>CheckoutController</code>, <code>CheckoutService</code></td>
+                <td><code>/cart</code>, <code>/checkout</code>, <code>/checkout/success/{orderNumber}</code>, <code>CheckoutTest</code></td>
+            </tr>
+            <tr>
+                <td>Invoice generation</td>
+                <td><span class="badge done">Done</span></td>
+                <td><code>InvoicePdfService</code> uses DomPDF to create/stream/download invoice PDFs from a Blade template.</td>
+                <td><code>InvoiceController</code>, <code>InvoicePdfService</code>, <code>resources/views/invoices/template.blade.php</code></td>
+                <td><code>/invoices</code>, <code>/invoices/{invoice}/preview</code>, <code>InvoicePreviewTest</code></td>
+            </tr>
+            <tr>
+                <td>CRM customer profile</td>
+                <td><span class="badge done">Done</span></td>
+                <td>Buyer registration/profile data links to <code>customers</code>; CRM pages show customer profile, business info, purchase history, and interactions.</td>
+                <td><code>CustomerProfileService</code>, <code>CrmController</code>, <code>ProfileController</code>, <code>resources/js/Pages/CRM</code></td>
+                <td><code>/crm/customers</code>, <code>/customer/profile</code>, <code>CustomerProfileTest</code></td>
+            </tr>
+            <tr>
+                <td>Purchase history</td>
+                <td><span class="badge done">Done</span></td>
+                <td>Orders link to customers and buyer users; CRM purchase pages expose order and invoice history.</td>
+                <td><code>orders.customer_id</code>, <code>CustomerProfileService::attachOrder</code>, <code>CRM/Purchases/Index.jsx</code></td>
+                <td><code>/crm/purchases</code>, <code>CustomerProfileTest</code></td>
+            </tr>
+            <tr>
+                <td>Customer segmentation</td>
+                <td><span class="badge done">Done</span></td>
+                <td>Segments store JSON filters; service can evaluate tags and spend-based conditions.</td>
+                <td><code>CustomerSegmentationService</code>, <code>customer_segments</code></td>
+                <td><code>/crm/segments</code>, <code>CustomerSegmentationServiceTest</code></td>
+            </tr>
+            <tr>
+                <td>Lead management and RFQ</td>
+                <td><span class="badge done">Done</span></td>
+                <td>Lead CRUD exists for CRM/admin. RFQ intake creates RFQ records, lead context, and workflow trigger payload; suppliers can now submit quotes and buyers can accept/reject.</td>
+                <td><code>LeadController</code>, <code>RfqRequestController</code>, <code>RfqResponseController</code>, <code>leads</code>, <code>rfqs</code>, <code>rfq_items</code>, <code>rfq_responses</code></td>
+                <td><code>/crm/leads</code>, <code>/admin/leads</code>, <code>/rfq</code>, <code>/commerce/rfq-responses</code>, <code>/commerce/rfq-quotes</code>, <code>RfqIntakeTest</code></td>
+            </tr>
+            <tr>
+                <td>Interaction history</td>
+                <td><span class="badge done">Done</span></td>
+                <td>Orders, RFQs, messages, and support ticket conversations are logged against customers.</td>
+                <td><code>InteractionLogger</code>, <code>interactions</code>, support and message tests</td>
+                <td><code>/crm/interactions</code>, <code>MessageInteractionTest</code>, <code>SupportTicketInteractionTest</code></td>
+            </tr>
+            <tr>
+                <td>Social media scheduling</td>
+                <td><span class="badge done">Done</span></td>
+                <td>Social accounts and posts support Facebook/Instagram, scheduled times, calendar range queries, mock publish, and optional live Facebook Graph API mode.</td>
+                <td><code>SocialPostController</code>, <code>SocialScheduleService</code>, <code>SocialPublisherManager</code>, social providers</td>
+                <td><code>/social/accounts</code>, <code>/social/posts</code>, <code>/social/calendar</code>, <code>SocialPublishingTest</code></td>
+            </tr>
+            <tr>
+                <td>Auto-posting workflow and engagement placeholder</td>
+                <td><span class="badge done">Done</span></td>
+                <td>Due posts are published by scheduler/command; result stores external id and placeholder engagement counters, then triggers workflow logs.</td>
+                <td><code>PublishDueSocialPostsCommand</code>, <code>SocialPostPublisherService</code>, <code>social_posts</code></td>
+                <td><code>php artisan social-posts:publish-due</code>, <code>SocialPublishingTest</code></td>
+            </tr>
+            <tr>
+                <td>Marketing automation</td>
+                <td><span class="badge done">Done</span></td>
+                <td>Campaigns, templates, recipients, logs, trigger templates, scheduled dispatch, and email provider adapter are implemented. SMS is workflow/mock adapter supported.</td>
+                <td><code>CampaignDispatchService</code>, <code>MarketingTriggerService</code>, <code>MarketingServiceProvider</code>, campaign jobs/providers</td>
+                <td><code>/marketing/campaigns</code>, <code>/marketing/templates</code>, <code>CampaignDispatchTest</code>, <code>MarketingAutomationFlowTest</code></td>
+            </tr>
+            <tr>
+                <td>Workflow automation engine</td>
+                <td><span class="badge done">Done</span></td>
+                <td>Rules store trigger, conditions JSON, actions JSON, priority, async flag, status. Engine logs success/skipped/running/failed with full payload snapshot.</td>
+                <td><code>AutomationRule</code>, <code>WorkflowLog</code>, <code>WorkflowEngineService</code>, <code>ConditionEvaluator</code>, <code>WorkflowActionExecutor</code></td>
+                <td><code>/workflow/rules</code>, <code>/workflow/logs</code>, <code>WorkflowEngineTest</code></td>
+            </tr>
+            <tr>
+                <td>Admin panel and RBAC</td>
+                <td><span class="badge done">Done</span></td>
+                <td>Spatie roles/permissions, role middleware, user CRUD, supplier/product/admin controls, module settings, audit logs, dashboards.</td>
+                <td><code>RbacSeeder</code>, <code>AdminUserController</code>, <code>ModuleSettingsController</code>, <code>DashboardController</code>, <code>resources/js/Pages/Admin</code></td>
+                <td><code>/admin</code>, <code>/admin/users</code>, <code>/admin/modules</code>, <code>RbacTest</code>, <code>AuditTrailTest</code></td>
+            </tr>
+            <tr>
+                <td>Order and support automation</td>
+                <td><span class="badge done">Done</span></td>
+                <td>Order placed/status events trigger email/SMS/notification workflows. Support ticket creation adds auto replies, supplier notifications, workflow snapshots, and chatbot endpoint support.</td>
+                <td><code>SupportTicketService</code>, <code>SupportChatbotService</code>, <code>SupplierNotificationService</code>, support events/listeners</td>
+                <td><code>/support/tickets</code>, <code>POST /api/v1/support/chatbot/message</code>, support tests</td>
+            </tr>
+            <tr>
+                <td>REST API</td>
+                <td><span class="badge done">Done</span></td>
+                <td>Sanctum-protected <code>/api/v1</code> endpoints expose products, orders, customers, campaigns, templates, social posts, workflow logs, messages, notifications, support tickets, chatbot.</td>
+                <td><code>routes/api.php</code>, <code>app/Http/Controllers/Api/V1</code>, API resources, policies</td>
+                <td><code>ApiResourceTest</code>, <code>MediaAssetStorageTest</code></td>
+            </tr>
+            <tr>
+                <td>Deployment and documentation</td>
+                <td><span class="badge done">Done</span></td>
+                <td>Environment example, scheduler/worker examples, SQL backup, README, proof guide, operations HTML, and source-document gap list are present.</td>
+                <td><code>.env.example</code>, <code>deploy/supervisor</code>, <code>deploy/systemd</code>, <code>database/backups</code>, <code>docs</code></td>
+                <td><code>README.md</code>, <code>docs/requirement-proof-guide.html</code>, <code>docs/operations.html</code></td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="database">
+        <h2>5. Database Coverage</h2>
+        <p>The PDF minimum table list is covered, and the implementation adds the support tables required to make the flows real instead of placeholder-only.</p>
+
+        <table>
+            <thead>
+            <tr>
+                <th>PDF Minimum Table</th>
+                <th>Actual Table / Implementation</th>
+                <th>Purpose</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr><td><code>users</code></td><td><code>users</code>, onboarding/status fields, Sanctum tokens</td><td>Login, role assignment, pending applications.</td></tr>
+            <tr><td><code>roles</code></td><td><code>roles</code>, <code>permissions</code>, Spatie pivot tables</td><td>RBAC and granular permissions.</td></tr>
+            <tr><td><code>suppliers</code></td><td><code>suppliers</code>, <code>supplier_orders</code>, <code>supplier_notifications</code></td><td>Vendor onboarding, fulfillment, supplier alerts.</td></tr>
+            <tr><td><code>products</code></td><td><code>products</code>, <code>product_images</code>, <code>categories</code>, <code>pricing_tiers</code>, <code>inventory_movements</code></td><td>Catalog, image assets, MOQ, bulk pricing, stock audit.</td></tr>
+            <tr><td><code>orders</code></td><td><code>orders</code>, <code>order_items</code>, <code>payments</code>, <code>invoices</code></td><td>Checkout, payment, invoice, order history.</td></tr>
+            <tr><td><code>customers</code></td><td><code>customers</code>, <code>customer_segments</code>, <code>interactions</code></td><td>CRM profile, segmentation, timeline.</td></tr>
+            <tr><td><code>campaigns</code></td><td><code>campaigns</code>, <code>campaign_templates</code>, <code>campaign_recipients</code>, <code>campaign_logs</code></td><td>Marketing campaigns, scheduled sends, logs.</td></tr>
+            <tr><td><code>messages / notifications</code></td><td><code>messages</code>, <code>notifications</code></td><td>In-app notifications and Laravel notification support.</td></tr>
+            <tr><td><code>automation_rules</code></td><td><code>automation_rules</code></td><td>Trigger, conditions JSON, actions JSON, priority, async status.</td></tr>
+            <tr><td><code>workflows_logs</code></td><td><code>workflow_logs</code></td><td>Full payload snapshots and execution outcomes.</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Extra Tables That Make The Assignment Real</h3>
+        <p><code>carts</code>, <code>cart_items</code>, <code>rfqs</code>, <code>rfq_items</code>, <code>social_accounts</code>, <code>social_posts</code>, <code>support_tickets</code>, <code>support_messages</code>, <code>support_faqs</code>, <code>module_settings</code>, <code>audit_logs</code>, <code>pages</code>, <code>failed_jobs</code>, <code>personal_access_tokens</code>.</p>
+    </section>
+
+    <section id="packages">
+        <h2>6. Package and Version Decision Matrix</h2>
+        <p>Versions below come from the current local runtime, <code>composer.lock</code>, and <code>package-lock.json</code>, not from memory.</p>
+
+        <h3>Runtime and Backend Packages</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>Package / Tool</th>
+                <th>Version</th>
+                <th>Used For</th>
+                <th>Why This, Not Another</th>
+                <th>When To Use</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr><td>PHP</td><td>8.3.28 local, repo requires <code>^8.1</code></td><td>Laravel runtime.</td><td>Laravel 10 supports PHP 8.1+, and 8.3 gives current language/runtime fixes locally.</td><td>Use PHP 8.2/8.3 for modern Laravel hosting; avoid old PHP for security and package compatibility.</td></tr>
+            <tr><td><code>laravel/framework</code></td><td>10.50.2</td><td>Backend framework, MVC, Eloquent, queues, scheduler, events, validation, policies.</td><td>The PDF requires Laravel 10+. Symfony/raw PHP would miss assignment alignment and Laravel-native features.</td><td>Use for full-stack business apps with database, auth, queues, APIs, and admin workflows.</td></tr>
+            <tr><td><code>spatie/laravel-permission</code></td><td>6.25.0</td><td>Roles, permissions, role middleware, seeded RBAC.</td><td>Mature package avoids fragile hand-rolled RBAC.</td><td>Use when roles and permissions need to be changed or seeded cleanly.</td></tr>
+            <tr><td><code>laravel/sanctum</code></td><td>3.3.3</td><td>Token API auth for <code>/api/v1</code>.</td><td>Lighter than Passport/OAuth2 and enough for first-party APIs and tokens.</td><td>Use for SPAs, mobile/API tokens, and simple protected API surfaces. Use Passport for OAuth2 provider flows.</td></tr>
+            <tr><td><code>inertiajs/inertia-laravel</code></td><td>0.6.11</td><td>Laravel-to-React page rendering.</td><td>Avoids maintaining a separate SPA backend auth/API layer.</td><td>Use when Laravel remains the app server but React owns rich screens.</td></tr>
+            <tr><td><code>barryvdh/laravel-dompdf</code></td><td>3.1.2</td><td>Invoice PDF preview/download.</td><td>Pure PHP setup is simpler for cPanel/Laragon than wkhtmltopdf binaries.</td><td>Use for invoice/report PDFs with moderate CSS. Use Browsershot/Snappy for pixel-heavy browser CSS rendering.</td></tr>
+            <tr><td><code>tightenco/ziggy</code></td><td>2.6.2</td><td>Named Laravel route helper in React.</td><td>Prevents hardcoded URLs in frontend components.</td><td>Use in Inertia apps that need Laravel route names in JS.</td></tr>
+            <tr><td><code>guzzlehttp/guzzle</code></td><td>7.10.0</td><td>HTTP integration foundation.</td><td>Standard PHP HTTP client package; Laravel HTTP client also uses Guzzle underneath.</td><td>Use for provider integrations and external APIs.</td></tr>
+            <tr><td><code>laravel/breeze</code></td><td>1.29.1</td><td>Auth scaffolding foundation.</td><td>Lightweight starter that fits Laravel + Inertia + React.</td><td>Use for assignment or custom apps that need a clean auth base. Use Jetstream when teams, sessions, and more scaffolding are needed.</td></tr>
+            <tr><td><code>phpunit/phpunit</code></td><td>10.5.63</td><td>Feature/unit tests.</td><td>Laravel default test runner; broad ecosystem support.</td><td>Use for backend regression coverage.</td></tr>
+            <tr><td><code>fakerphp/faker</code></td><td>1.24.1</td><td>Factories and seed/demo data.</td><td>Common Laravel factory data source.</td><td>Use for test fixtures and demo seeds.</td></tr>
+            <tr><td><code>laravel/pint</code></td><td>1.29.1</td><td>PHP style formatting.</td><td>Laravel-standard PSR-12 formatting wrapper.</td><td>Use before commits when code style matters.</td></tr>
+            <tr><td><code>mockery/mockery</code></td><td>1.6.12</td><td>Mocking services/providers in tests.</td><td>Laravel test helpers integrate with Mockery.</td><td>Use for external gateways, providers, and job expectations.</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Frontend Packages</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>Package / Tool</th>
+                <th>Version</th>
+                <th>Used For</th>
+                <th>Why This, Not Another</th>
+                <th>When To Use</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr><td>Node.js / npm</td><td>Node v24.11.0, npm 11.6.1 local</td><td>Frontend build runtime.</td><td>Used by Vite and React tooling.</td><td>Use current LTS/stable versions on dev/build servers; lock package versions through <code>package-lock.json</code>.</td></tr>
+            <tr><td><code>react</code>, <code>react-dom</code></td><td>18.3.1</td><td>Interactive dashboards, forms, tables, workspace pages.</td><td>Assignment allowed React/Vue optional; React + Inertia fits existing UI work and component reuse.</td><td>Use when screens need rich state, filtering, forms, dashboards, and reusable components.</td></tr>
+            <tr><td><code>@inertiajs/react</code></td><td>1.3.0</td><td>React adapter for Laravel Inertia pages.</td><td>Keeps controller-driven page props without REST-only page hydration.</td><td>Use for Laravel apps that want React pages without separate SPA routing.</td></tr>
+            <tr><td><code>tailwindcss</code></td><td>3.4.19</td><td>Utility-first styling.</td><td>Custom business UI and role-specific dashboard polish. Bootstrap would look faster but more generic.</td><td>Use for custom dashboards, product UI, and responsive admin panels.</td></tr>
+            <tr><td><code>@tailwindcss/forms</code></td><td>0.5.11</td><td>Consistent form control styling.</td><td>Reduces custom CSS for inputs/selects.</td><td>Use in Tailwind apps with many forms.</td></tr>
+            <tr><td><code>vite</code></td><td>8.0.10</td><td>Fast dev/build pipeline.</td><td>Modern Laravel asset tool, faster than old Laravel Mix/Webpack setup.</td><td>Use for Laravel 10+ frontend builds.</td></tr>
+            <tr><td><code>laravel-vite-plugin</code></td><td>3.1.0</td><td>Laravel/Vite integration and Inertia page resolution.</td><td>Handles manifest, hot reload, and Laravel Blade integration.</td><td>Use when Laravel renders Vite-built assets.</td></tr>
+            <tr><td><code>@vitejs/plugin-react</code></td><td>6.0.1</td><td>React transform for Vite.</td><td>Required for proper React JSX/HMR pipeline.</td><td>Use for Vite React projects.</td></tr>
+            <tr><td><code>@headlessui/react</code></td><td>1.7.19</td><td>Accessible UI primitives when needed.</td><td>Unstyled primitives work well with Tailwind and avoid a heavy component theme.</td><td>Use for menus, dialogs, disclosure UI. Use Ant/MUI if a full prebuilt enterprise component suite is desired.</td></tr>
+            <tr><td><code>axios</code></td><td>1.16.0</td><td>AJAX/API requests.</td><td>Good defaults for JSON and Laravel CSRF/bootstrap setup.</td><td>Use for frontend API calls; native fetch is fine for simple one-off calls.</td></tr>
+            <tr><td><code>postcss</code>, <code>autoprefixer</code></td><td>8.5.13, 10.5.0</td><td>CSS processing and browser prefixes.</td><td>Tailwind build pipeline expects PostCSS.</td><td>Use in Tailwind/Vite builds.</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Operational Choices</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>Choice</th>
+                <th>Where</th>
+                <th>Reason</th>
+                <th>When To Change</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Database queue fallback</td>
+                <td><code>.env.example</code>, queue jobs, scheduler commands</td>
+                <td>Easier for local/cPanel/demo deployment than Redis.</td>
+                <td>Use Redis for production with high job volume or strict throughput needs.</td>
+            </tr>
+            <tr>
+                <td>Mock email/SMS/social by default</td>
+                <td><code>MARKETING_EMAIL_PROVIDER=mock</code>, <code>MARKETING_SMS_PROVIDER=mock</code>, social provider config</td>
+                <td>Proof works without paid or unavailable provider credentials.</td>
+                <td>Switch to SMTP/Mailgun/Twilio/Facebook credentials in <code>.env</code> for real delivery.</td>
+            </tr>
+            <tr>
+                <td>SQLite in-memory tests</td>
+                <td><code>phpunit.xml</code></td>
+                <td>Fast, isolated tests without touching local MySQL.</td>
+                <td>Use MySQL integration tests for DB-specific behavior like JSON indexes or engine-specific constraints.</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="demo">
+        <h2>7. Demo / Viva Showing Order</h2>
+        <ol>
+            <li>Open project folder: <code>G:\laragon\www\laravel\PlexusBiz-Automate</code>.</li>
+            <li>Prepare app: <code>php artisan optimize:clear</code>, <code>php artisan migrate --seed</code>, <code>npm run build</code>, then <code>php artisan serve --host=127.0.0.1 --port=8001</code>.</li>
+            <li>Admin login: <code>admin@example.com</code> / <code>password</code>. Show <code>/dashboard</code>, <code>/admin</code>, <code>/admin/users</code>, <code>/admin/modules</code>, <code>/admin/audit-logs</code>.</li>
+            <li>Supplier onboarding: open <code>/register-supplier</code>, submit a supplier, then approve/reject from <code>/admin/suppliers</code>.</li>
+            <li>Marketplace/product proof: open <code>/products</code>, <code>/products/moq-pricing</code>, <code>/supplier/products</code>, <code>/admin/bulk-pricing</code>.</li>
+            <li>Checkout proof: buyer login <code>buyer@example.com</code> / <code>password</code>, add product to cart, checkout, then show order, invoice, stock deduction.</li>
+            <li>CRM proof: admin/marketing login, open <code>/crm/customers</code>, <code>/crm/purchases</code>, <code>/crm/segments</code>, <code>/crm/leads</code>, <code>/crm/interactions</code>.</li>
+            <li>RFQ proof: open <code>/rfq</code>, submit RFQ, then show supplier quote flow at <code>/commerce/rfq-responses</code> and buyer decision flow at <code>/commerce/rfq-quotes</code>.</li>
+            <li>Marketing proof: open <code>/marketing/templates</code>, <code>/marketing/campaigns</code>, create/schedule campaign, run <code>php artisan campaigns:send-scheduled</code>.</li>
+            <li>Social proof: open <code>/social/accounts</code>, <code>/social/posts/create</code>, <code>/social/calendar</code>, run <code>php artisan social-posts:publish-due</code>.</li>
+            <li>Workflow proof: open <code>/workflow/rules</code>, create IF/THEN rule, then show <code>/workflow/logs</code>. Run <code>php artisan workflow:close-stale-runs</code> for maintenance proof.</li>
+            <li>Support proof: open <code>/support/tickets</code>, create ticket, reply/status update, show auto reply, supplier notification, and workflow snapshot.</li>
+            <li>API proof: call <code>/api/auth/register</code> or <code>/api/auth/login</code>, use the token for <code>/api/v1/products</code>, <code>/api/v1/orders</code>, <code>/api/v1/customers</code>, <code>/api/v1/campaigns</code>, <code>/api/v1/rfq-responses</code>, and <code>/api/v1/support/chatbot/message</code>.</li>
+            <li>Deployment proof: show <code>.env.example</code>, <code>deploy/supervisor/laravel-scheduler.conf</code>, <code>deploy/systemd/laravel-scheduler.service</code>, <code>database/backups/plexusbiz_assignment_backup.sql</code>, and GitHub repository.</li>
+        </ol>
+    </section>
+
+    <section id="files">
+        <h2>8. Important File Map</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Area</th>
+                <th>Files / Folders</th>
+                <th>Why It Matters</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr><td>Domain registry</td><td><code>config/domains.php</code>, <code>DomainServiceProvider</code>, <code>DomainRegistry</code>, <code>BaseDomainModule</code></td><td>Controls module loading and enable/disable behavior.</td></tr>
+            <tr><td>Routes</td><td><code>routes/web.php</code>, <code>routes/api.php</code>, <code>routes/domains/*.php</code></td><td>All web, API, assignment alias, and module routes.</td></tr>
+            <tr><td>Auth/RBAC</td><td><code>RoleName</code>, <code>PermissionName</code>, <code>RbacSeeder</code>, policies, Spatie config</td><td>Role-based access for admin, supplier, buyer, marketing, workflow manager.</td></tr>
+            <tr><td>E-Commerce</td><td><code>app/Domains/ECommerce</code>, marketplace/admin controllers, product/cart/checkout pages</td><td>Marketplace, products, stock, cart, checkout, invoice, payments, RFQ.</td></tr>
+            <tr><td>CRM</td><td><code>app/Domains/CRM</code>, <code>CrmController</code>, CRM pages</td><td>Customers, leads, segments, interactions, purchase history.</td></tr>
+            <tr><td>Marketing</td><td><code>app/Domains/Marketing</code>, campaign/template controllers and pages</td><td>Email campaign scheduling, templates, logs, trigger rules.</td></tr>
+            <tr><td>Social</td><td><code>app/Domains/Social</code>, social controllers and pages</td><td>Social account registry, scheduled posts, calendar, publishing adapters.</td></tr>
+            <tr><td>Workflow</td><td><code>app/Domains/Workflow</code>, workflow routes/pages/jobs/listeners</td><td>IF/THEN automation engine and logs.</td></tr>
+            <tr><td>Support</td><td><code>app/Domains/Support</code>, support routes/pages/API</td><td>Tickets, auto reply, supplier notification, chatbot-ready API.</td></tr>
+            <tr><td>Frontend shell</td><td><code>resources/js/Layouts</code>, <code>resources/js/Components</code>, <code>resources/js/Pages</code></td><td>Role dashboard, tables, forms, navigation, reusable UI.</td></tr>
+            <tr><td>Docs/proof</td><td><code>README.md</code>, <code>docs/workflow.html</code>, <code>docs/requirement-proof-guide.html</code>, this file</td><td>Evaluator-ready proof and workflow tracking.</td></tr>
+            <tr><td>Tests</td><td><code>tests/Feature</code>, <code>tests/Unit</code>, <code>phpunit.xml</code></td><td>Regression proof for core assignment flows.</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="risks">
+        <h2>9. Remaining Notes and Honest Caveats</h2>
+        <ul>
+            <li><span class="badge note">Provider credentials</span> Email/SMS/social real delivery depends on <code>.env</code> credentials. Mock providers are correct for demo proof, not final live customer delivery.</li>
+            <li><span class="badge note">Social live mode</span> Facebook live publisher exists; Instagram is intentionally mock unless a real Instagram provider is configured later.</li>
+            <li><span class="badge note">Queue mode</span> <code>QUEUE_CONNECTION=sync</code> is fine for local/demo. Production should use database or Redis worker with Supervisor/systemd.</li>
+            <li><span class="badge note">Docs link</span> The operations runbook is available at <code>docs/operations.html</code>, and <code>README.md</code> points to that actual file.</li>
+            <li><span class="badge note">Source-doc gap list</span> The fresh source-document comparison is in <code>docs/requirement-proof-guide.html</code>. Previously flagged RFQ/API/repository/DTO/envelope gaps are now implemented; the remaining recommendations are optional production hardening items.</li>
+            <li><span class="badge note">Original PDF scope</span> The PDF marks chatbot API and Instagram API as optional/mockable. This implementation covers chatbot API and uses mockable social providers where live credentials are unavailable.</li>
+            <li><span class="badge note">Not in PDF</span> Returns/refunds, shipping carrier integration, tax rules, multi-company tenancy, CSV import/export, and advanced analytics are not explicit PDF requirements. Add them only if the evaluator asks for enterprise extras.</li>
+        </ul>
+    </section>
+
+    <section id="commands">
+        <h2>10. Commands Used / Useful Commands</h2>
+        <pre><code>php artisan optimize:clear
+php artisan route:list --except-vendor
+php artisan test
+npm run build</code></pre>
+
+        <h3>Scheduler and Jobs</h3>
+        <pre><code>php artisan schedule:list
+php artisan schedule:work
+php artisan schedule:run
+php artisan queue:work
+php artisan campaigns:send-scheduled
+php artisan carts:check-abandoned
+php artisan social-posts:publish-due
+php artisan workflow:close-stale-runs</code></pre>
+
+        <h3>Local Demo</h3>
+        <pre><code>php artisan migrate --seed
+npm run build
+php artisan serve --host=127.0.0.1 --port=8001</code></pre>
+    </section>
+</main>
+</body>
+</html>

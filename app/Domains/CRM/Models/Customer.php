@@ -32,6 +32,10 @@ class Customer extends Model
         'tags',
         'notes',
         'last_activity_at',
+        'credit_limit',
+        'credit_used',
+        'net_terms',
+        'is_credit_restricted',
     ];
 
     protected $casts = [
