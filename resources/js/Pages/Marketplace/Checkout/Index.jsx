@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 import FrontendLayout from '@/Layouts/FrontendLayout';
 import FlashBanner from '@/Components/FlashBanner';
@@ -92,17 +92,23 @@ function SummaryRow({ label, value, emphasized = false }) {
     );
 }
 
-export default function Index({ auth, flash, errors, cart, buyer, csrfToken, currency, defaultGateway, gateways }) {
+export default function Index({ auth, flash, errors, cart, buyer, isB2C, csrfToken, currency, defaultGateway, gateways }) {
     const summary = cart?.summary || {};
     const items = Array.isArray(cart?.items) ? cart.items : [];
     const validationMessage = Object.values(errors || {}).find(Boolean);
     const [selectedGateway, setSelectedGateway] = useState(defaultGateway || 'stripe');
     const [paymentTerm, setPaymentTerm] = useState('cash');
+    const [shippingMethod, setShippingMethod] = useState(cart?.shipping_method || 'weight_based');
 
     const selectedGatewayInfo = useMemo(
         () => gateways.find((gateway) => gateway.key === selectedGateway) || gateways[0] || null,
         [gateways, selectedGateway],
     );
+
+    const handleShippingChange = (method) => {
+        setShippingMethod(method);
+        router.post(route('cart.update'), { shipping_method: method }, { preserveScroll: true, preserveState: true });
+    };
 
     return (
         <FrontendLayout auth={auth} canLogin={true} cartCount={cart?.summary?.items_count || 0}>
@@ -186,6 +192,64 @@ export default function Index({ auth, flash, errors, cart, buyer, csrfToken, cur
                         <section className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_390px]">
                             <form method="post" action={route('checkout.process')} className="space-y-6">
                                 <input type="hidden" name="_token" value={csrfToken} />
+                                <input type="hidden" name="shipping_method" value={isB2C ? 'standard' : shippingMethod} />
+
+                                <div className="rounded-[30px] border border-[#d7e3f4] bg-white p-5 shadow-sm">
+                                    <div className="flex items-start justify-between gap-4">
+                                        <div>
+                                            <p className="text-[11px] font-black uppercase tracking-[0.24em] text-slate-500">
+                                                Shipping Method
+                                            </p>
+                                            <h2 className="mt-1 text-2xl font-black tracking-[-0.04em] text-slate-950">
+                                                How would you like to receive your order?
+                                            </h2>
+                                        </div>
+                                    </div>
+
+                                    {isB2C ? (
+                                        <div className="mt-5 rounded-[24px] border border-[#0b2e71] bg-[#e8f0ff] p-4 text-[#0b2e71] shadow-sm">
+                                            <p className="font-black">Standard Shipping</p>
+                                            <p className="mt-1 text-sm text-[#0b2e71]/80">Fixed shipping rate for retail orders. {formatMoney(5.00, currency)}</p>
+                                        </div>
+                                    ) : (
+                                        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                                            <label
+                                                className={`flex cursor-pointer flex-col items-start gap-2 rounded-[24px] border p-4 transition ${
+                                                    shippingMethod === 'weight_based' ? 'border-[#0b2e71] bg-[#e8f0ff] shadow-sm text-[#0b2e71]' : 'border-slate-200 bg-white hover:border-[#bfd0f0]'
+                                                }`}
+                                            >
+                                                <input
+                                                    type="radio"
+                                                    name="b2b_shipping"
+                                                    value="weight_based"
+                                                    checked={shippingMethod === 'weight_based'}
+                                                    onChange={(e) => handleShippingChange(e.target.value)}
+                                                    className="sr-only"
+                                                />
+                                                <span className="font-black">Weight-based Shipping</span>
+                                                <span className="text-xs text-slate-500">
+                                                    $2.00 per kg (Total Weight: {summary.total_weight || 0} kg)
+                                                </span>
+                                            </label>
+                                            <label
+                                                className={`flex cursor-pointer flex-col items-start gap-2 rounded-[24px] border p-4 transition ${
+                                                    shippingMethod === 'own_logistics' ? 'border-[#0b2e71] bg-[#e8f0ff] shadow-sm text-[#0b2e71]' : 'border-slate-200 bg-white hover:border-[#bfd0f0]'
+                                                }`}
+                                            >
+                                                <input
+                                                    type="radio"
+                                                    name="b2b_shipping"
+                                                    value="own_logistics"
+                                                    checked={shippingMethod === 'own_logistics'}
+                                                    onChange={(e) => handleShippingChange(e.target.value)}
+                                                    className="sr-only"
+                                                />
+                                                <span className="font-black">Own Logistics</span>
+                                                <span className="text-xs text-slate-500">Pick up or arrange your own shipping. Free.</span>
+                                            </label>
+                                        </div>
+                                    )}
+                                </div>
 
                                 <div className="rounded-[30px] border border-[#d7e3f4] bg-white p-5 shadow-sm">
                                     <div className="flex items-start justify-between gap-4">

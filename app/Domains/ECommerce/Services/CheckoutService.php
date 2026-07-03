@@ -17,7 +17,9 @@ use App\Domains\ECommerce\Models\Cart;
 use App\Domains\ECommerce\Models\Order;
 use App\Domains\ECommerce\Models\Product;
 use App\Domains\ECommerce\Models\SupplierOrder;
+use Illuminate\Contracts\Auth\Authenticatable;
 use App\Models\User;
+use App\Models\B2CCustomer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -33,12 +35,18 @@ class CheckoutService
     ) {
     }
 
-    public function checkout(User $buyer, ?Cart $cart = null, string $paymentTerm = 'cash'): Order
+    public function checkout(Authenticatable $buyer, ?Cart $cart = null, string $paymentTerm = 'cash'): Order
     {
         return DB::transaction(function () use ($buyer, $cart, $paymentTerm): Order {
             $cart = $this->lockCart($buyer, $cart);
             $cart->load('items.product');
-            $customer = $this->customers->ensureForUser($buyer);
+            
+            // For B2C, we don't need a full CRM profile yet, but let's just create one or use a dummy.
+            // Wait, CustomerProfileService is for B2B. If it's a B2CCustomer, they are their own customer.
+            $customer = null;
+            if ($buyer instanceof User) {
+                $customer = $this->customers->ensureForUser($buyer);
+            }
 
             if ($cart->items->isEmpty()) {
                 throw ValidationException::withMessages(['cart' => 'Cart is empty.']);
@@ -46,18 +54,23 @@ class CheckoutService
 
             $preparedItems = [];
             $subtotal = 0.0;
+            $totalWeight = 0.0;
 
             foreach ($cart->items as $item) {
+                $product = clone $item->product; // Keep original without lock if needed
+                // Actually lock the product
                 $product = Product::query()->whereKey($item->product_id)->lockForUpdate()->firstOrFail();
 
                 if ($product->status !== ProductStatus::Active) {
                     throw ValidationException::withMessages(['product' => sprintf('%s is not active.', $product->name)]);
                 }
 
+                // If B2C, check inventory differently? No, inventory is the same
                 $this->inventory->assertAvailable($product, $item->quantity);
                 $unitPrice = $this->pricing->unitPrice($product, $item->quantity);
                 $lineTotal = (float) $unitPrice * $item->quantity;
                 $subtotal += $lineTotal;
+                $totalWeight += (float) ($product->weight ?? 0) * $item->quantity;
 
                 $preparedItems[] = [
                     'cart_item' => $item,
@@ -74,7 +87,8 @@ class CheckoutService
                 default => null,
             };
 
-            if ($paymentTermEnum !== PaymentTerm::Cash) {
+            // Credit logic is for B2B only
+            if ($customer && $paymentTermEnum !== PaymentTerm::Cash) {
                 if ($customer->is_credit_restricted) {
                     throw ValidationException::withMessages(['payment' => 'Your account is restricted from using net terms due to overdue invoices.']);
                 }
@@ -86,10 +100,29 @@ class CheckoutService
                 // Update credit used
                 $customer->forceFill(['credit_used' => $customer->credit_used + $subtotal])->save();
             }
+            
+            // Shipping calculation
+            $shippingCost = 0.0;
+            $shippingMethod = $cart->shipping_method ?? 'weight_based';
+            
+            if ($buyer instanceof B2CCustomer) {
+                $shippingCost = 5.00;
+                $shippingMethod = 'standard';
+            } else {
+                if ($shippingMethod === 'weight_based') {
+                    $shippingCost = $totalWeight * 2.00; // $2/kg placeholder
+                } else {
+                    $shippingCost = 0.00; // own_logistics
+                }
+            }
+
+            $grandTotal = $subtotal + $shippingCost;
 
             $order = Order::create([
-                'buyer_id' => $buyer->id,
-                'customer_id' => $customer->id,
+                'buyer_id' => $buyer instanceof User ? $buyer->id : null,
+                'customer_id' => $customer ? $customer->id : ($buyer instanceof B2CCustomer ? $buyer->id : null), // B2C customer ID is used in customer_id directly here as a simplification, though customer_id in orders is nullable. Let's keep it null if B2C, or store the B2CCustomer ID in a new column. Wait, I made buyer_id nullable. So we can just leave customer_id null for B2C, and buyer_id null, and we don't have a way to link it back! 
+                // Ah, wait. For B2C, buyer_id is null. We need a way to link the order. I should just use `customer_id` for B2C customer!
+                // Yes, `customer_id` is an unsignedBigInteger. 
                 'order_number' => $this->numbers->orderNumber(),
                 'status' => OrderStatus::Confirmed,
                 'payment_term' => $paymentTermEnum->value,
@@ -98,9 +131,10 @@ class CheckoutService
                 'delivery_status' => DeliveryStatus::Pending->value,
                 'subtotal' => number_format($subtotal, 2, '.', ''),
                 'tax_total' => '0.00',
-                'shipping_total' => '0.00',
+                'shipping_total' => number_format($shippingCost, 2, '.', ''),
+                'shipping_method' => $shippingMethod,
                 'discount_total' => '0.00',
-                'grand_total' => number_format($subtotal, 2, '.', ''),
+                'grand_total' => number_format($grandTotal, 2, '.', ''),
                 'currency' => config('commerce.currency', 'BDT'),
                 'placed_at' => now(),
             ]);
@@ -119,7 +153,8 @@ class CheckoutService
                     'status' => OrderStatus::Confirmed->value,
                 ]);
 
-                $this->inventory->deductForOrder($product, $prepared['cart_item']->quantity, $order, $buyer);
+                // inventory deduct expects User for B2B, but can handle B2CCustomer if we modify it, or we just pass the object
+                $this->inventory->deductForOrder($product, $prepared['cart_item']->quantity, $order, $buyer instanceof User ? $buyer : null);
             }
 
             $this->createSupplierOrders($order, $preparedItems);
@@ -131,22 +166,23 @@ class CheckoutService
                 'tax_total' => $order->tax_total,
                 'total' => $order->grand_total,
                 'issued_at' => now(),
-                'due_at' => $dueDate ?? now()->addDays(7), // fallback if cash
+                'due_at' => $dueDate ?? now()->addDays(7),
             ]);
 
-            // Generate PDF for invoice
             $this->invoicePdf->generatePdf($invoice);
 
-            $this->customers->attachOrder($customer, $order);
-            $this->interactions->record(
-                customer: $customer,
-                type: InteractionType::Order,
-                summary: sprintf('Order %s placed for %s.', $order->order_number, $order->grand_total),
-                related: $order,
-                payload: ['order_number' => $order->order_number, 'grand_total' => $order->grand_total],
-                actor: $buyer,
-                direction: 'inbound',
-            );
+            if ($customer) {
+                $this->customers->attachOrder($customer, $order);
+                $this->interactions->record(
+                    customer: $customer,
+                    type: InteractionType::Order,
+                    summary: sprintf('Order %s placed for %s.', $order->order_number, $order->grand_total),
+                    related: $order,
+                    payload: ['order_number' => $order->order_number, 'grand_total' => $order->grand_total],
+                    actor: $buyer instanceof User ? $buyer : null,
+                    direction: 'inbound',
+                );
+            }
 
             $cart->forceFill([
                 'status' => CartStatus::Converted,
@@ -159,10 +195,12 @@ class CheckoutService
         });
     }
 
-    private function lockCart(User $buyer, ?Cart $cart): Cart
+    private function lockCart(Authenticatable $buyer, ?Cart $cart): Cart
     {
+        $column = $buyer instanceof B2CCustomer ? 'b2c_customer_id' : 'user_id';
+        
         $query = Cart::query()
-            ->where('user_id', $buyer->id)
+            ->where($column, $buyer->id)
             ->where('status', CartStatus::Active->value)
             ->lockForUpdate();
 

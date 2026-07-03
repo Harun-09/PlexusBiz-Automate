@@ -23,7 +23,10 @@ class CheckoutController extends Controller
 
     public function index(Request $request): Response|RedirectResponse
     {
-        $cart = $this->cartService->currentFor($request->user());
+        $user = $request->user();
+        $isB2C = $user instanceof \App\Models\B2CCustomer;
+
+        $cart = $this->cartService->currentFor($user);
         $cart->load(['items.product.images', 'items.product.supplier', 'items.supplier']);
 
         if ($cart->items->isEmpty()) {
@@ -36,9 +39,10 @@ class CheckoutController extends Controller
 
         return Inertia::render('Marketplace/Checkout/Index', [
             'buyer' => [
-                'name' => $request->user()->name,
-                'email' => $request->user()->email,
+                'name' => $user->name,
+                'email' => $user->email,
             ],
+            'isB2C' => $isB2C,
             'cartCount' => (int) $summary['items_count'],
             'cart' => [
                 'id' => $cart->id,
@@ -56,16 +60,24 @@ class CheckoutController extends Controller
     {
         $data = $request->validate([
             'gateway' => ['required', Rule::in(['stripe', 'sslcommerz'])],
+            'shipping_method' => ['nullable', 'string', Rule::in(['standard', 'weight_based', 'own_logistics'])],
         ]);
 
-        $cart = $this->cartService->currentFor($request->user());
+        $user = $request->user();
+        $cart = $this->cartService->currentFor($user);
+        
         if ($cart->items()->count() === 0) {
             return redirect()
                 ->route('cart.index')
                 ->with('error', 'Your cart is empty.');
         }
 
-        $order = $this->checkoutService->checkout($request->user(), $cart);
+        // Save selected shipping method before checkout calculation
+        if (isset($data['shipping_method'])) {
+            $cart->forceFill(['shipping_method' => $data['shipping_method']])->save();
+        }
+
+        $order = $this->checkoutService->checkout($user, $cart);
 
         $request->merge(['gateway' => $data['gateway']]);
 

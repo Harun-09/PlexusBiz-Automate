@@ -18,7 +18,7 @@ Route::get('/products/moq-pricing', [ProductController::class, 'index'])
 Route::get('/products/{slug}', [ProductController::class, 'show'])
     ->name('products.show');
 
-Route::middleware(['auth', 'permission:manage_cart'])->group(function (): void {
+Route::middleware(['auth:web,b2c'])->group(function (): void {
     Route::get('/cart', [CartController::class, 'index'])
         ->name('cart.index');
 

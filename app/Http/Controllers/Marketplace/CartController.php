@@ -21,16 +21,21 @@ class CartController extends Controller
 
     public function index(Request $request): Response
     {
-        $cart = $this->cartService->currentFor($request->user());
+        $user = $request->user();
+        $isB2C = $user instanceof \App\Models\B2CCustomer;
+
+        $cart = $this->cartService->currentFor($user);
         $cart->load(['items.product.images', 'items.product.supplier', 'items.supplier']);
 
         $summary = $this->cartService->totals($cart);
 
         return Inertia::render('Marketplace/Cart/Index', [
+            'isB2C' => $isB2C,
             'cartCount' => (int) $summary['items_count'],
             'cart' => [
                 'id' => $cart->id,
                 'status' => $cart->status->value,
+                'shipping_method' => $cart->shipping_method,
                 'summary' => $summary,
                 'items' => $cart->items->map(fn (CartItem $item): array => $this->presentCartItem($item))->values()->all(),
             ],
@@ -60,17 +65,28 @@ class CartController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'item_id' => ['required', 'integer', 'exists:cart_items,id'],
-            'quantity' => ['required', 'integer', 'min:1'],
+            'item_id' => ['nullable', 'integer', 'exists:cart_items,id'],
+            'quantity' => ['nullable', 'integer', 'min:1'],
+            'shipping_method' => ['nullable', 'string', \Illuminate\Validation\Rule::in(['standard', 'weight_based', 'own_logistics'])],
         ]);
 
-        $cart = $this->cartService->currentFor($request->user());
-        $item = $cart->items()->whereKey((int) $data['item_id'])->with('product')->firstOrFail();
+        $user = $request->user();
+        $cart = $this->cartService->currentFor($user);
+        
+        if (isset($data['shipping_method'])) {
+            $cart->forceFill(['shipping_method' => $data['shipping_method']])->save();
+        }
 
-        $this->cartService->updateItem($item, (int) $data['quantity']);
+        if (isset($data['item_id'])) {
+            // Update quantity for specific item
+            $item = $cart->items()->whereKey((int) $data['item_id'])->with('product')->first();
+            if ($item) {
+                $this->cartService->updateItem($item, (int) $data['quantity']);
+            }
+        }
 
         return redirect()
-            ->route('cart.index')
+            ->back() // Change from route('cart.index') to back() so it works from checkout too
             ->with('success', 'Cart updated successfully.');
     }
 
