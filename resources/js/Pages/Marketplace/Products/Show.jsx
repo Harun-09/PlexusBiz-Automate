@@ -1,5 +1,6 @@
-import { Head, Link, router } from '@inertiajs/react';
-import { useMemo, useState } from 'react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
+import { useMemo, useState, Fragment } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
 import FrontendLayout from '@/Layouts/FrontendLayout';
 import FlashBanner from '@/Components/FlashBanner';
 
@@ -127,8 +128,30 @@ export default function Show({ auth, flash, errors, cartCount, currency, default
 
     const validationMessage = Object.values(errors || {}).find(Boolean);
 
+    const isB2B = !!auth?.user;
+    
+    const [isRfqModalOpen, setIsRfqModalOpen] = useState(false);
+    const rfqForm = useForm({
+        contact_name: auth?.user?.name || '',
+        company_name: auth?.user?.company_name || auth?.user?.name || '',
+        email: auth?.user?.email || '',
+        product_id: product.id,
+        product_name: product.name,
+        quantity: quantity,
+        target_price: '',
+        message: `I would like to request a quote for this product.`,
+    });
+
+    const submitRfq = (e) => {
+        e.preventDefault();
+        rfqForm.post(route('rfq.store'), {
+            preserveScroll: true,
+            onSuccess: () => setIsRfqModalOpen(false),
+        });
+    };
+
     const availableStock = Number(product.available_stock ?? 0);
-    const minimumOrder = Number(product.moq ?? 1);
+    const minimumOrder = isB2B ? Number(product.moq ?? 1) : 1;
     const canPurchase = Boolean(isPurchasable) && availableStock >= minimumOrder;
     const safeQuantity = useMemo(() => {
         if (!canPurchase) return Math.max(1, minimumOrder);
@@ -136,11 +159,11 @@ export default function Show({ auth, flash, errors, cartCount, currency, default
     }, [availableStock, canPurchase, minimumOrder, quantity]);
 
     const pricing = useMemo(
-        () => resolveTierPrice(safeQuantity, product.pricing_tiers || [], Number(product.base_price ?? 0)),
-        [product.pricing_tiers, product.base_price, safeQuantity],
+        () => resolveTierPrice(safeQuantity, isB2B ? (product.pricing_tiers || []) : [], Number(product.base_price ?? 0)),
+        [product.pricing_tiers, product.base_price, safeQuantity, isB2B],
     );
     
-    const maxTierQuantity = Array.isArray(product.pricing_tiers) && product.pricing_tiers.length > 0 
+    const maxTierQuantity = isB2B && Array.isArray(product.pricing_tiers) && product.pricing_tiers.length > 0 
         ? Math.max(...product.pricing_tiers.map(t => Number(t.min_quantity)))
         : minimumOrder;
     
@@ -520,45 +543,33 @@ export default function Show({ auth, flash, errors, cartCount, currency, default
                                     </div>
 
                                     <div className="flex flex-col gap-3 pb-6">
-                                        {auth?.user ? (
-                                            <>
+                                        <button
+                                            onClick={addToCart}
+                                            disabled={!canPurchase}
+                                            className="w-full rounded-lg bg-blue-50 py-3 text-sm font-bold text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50"
+                                        >
+                                            Add to Cart
+                                        </button>
+                                        <div className="flex gap-3">
+                                            <button
+                                                onClick={buyNow}
+                                                disabled={!canPurchase}
+                                                className="flex-1 rounded-lg bg-blue-600 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                                            >
+                                                Buy Now
+                                            </button>
+                                            {isB2B && safeQuantity >= minimumOrder && (
                                                 <button
-                                                    onClick={addToCart}
-                                                    disabled={!canPurchase}
-                                                    className="w-full rounded-lg bg-blue-50 py-3 text-sm font-bold text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50"
+                                                    onClick={() => {
+                                                        rfqForm.setData('quantity', safeQuantity);
+                                                        setIsRfqModalOpen(true);
+                                                    }}
+                                                    className="flex-1 rounded-lg border border-slate-200 bg-white py-3 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50"
                                                 >
-                                                    Add to Cart
+                                                    Request a Quote
                                                 </button>
-                                                <button
-                                                    onClick={buyNow}
-                                                    disabled={!canPurchase}
-                                                    className="w-full rounded-lg bg-blue-600 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-                                                >
-                                                    Buy Now
-                                                </button>
-                                                <Link
-                                                    href={route('rfq.product', product.slug || 'slug')}
-                                                    className="w-full text-center rounded-lg border border-slate-200 bg-white py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-                                                >
-                                                    Request Custom Quote
-                                                </Link>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Link
-                                                    href={route('login')}
-                                                    className="w-full text-center rounded-lg bg-blue-600 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700"
-                                                >
-                                                    Sign in to Purchase
-                                                </Link>
-                                                <Link
-                                                    href={route('rfq.product', product.slug || 'slug')}
-                                                    className="w-full text-center rounded-lg border border-slate-200 bg-white py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-                                                >
-                                                    Request Custom Quote
-                                                </Link>
-                                            </>
-                                        )}
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                                 
@@ -614,13 +625,15 @@ export default function Show({ auth, flash, errors, cartCount, currency, default
                                 <button className="text-slate-400 hover:text-red-600 transition"><svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.372 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.401.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.923 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146 1.124.347 2.317.535 3.55.535 6.627 0 12-5.373 12-12 0-6.628-5.373-12-12-12z"/></svg></button>
                             </div>
                             
-                            <TierTable
-                                tiers={product.pricing_tiers || []}
-                                quantity={safeQuantity}
-                                currency={currency}
-                                basePrice={product.base_price}
-                                onSelectTier={(qty) => setQuantity(Math.min(Math.max(minimumOrder, qty), Math.max(minimumOrder, availableStock)))}
-                            />
+                            {isB2B && Array.isArray(product.pricing_tiers) && product.pricing_tiers.length > 0 && (
+                                <TierTable
+                                    tiers={product.pricing_tiers || []}
+                                    quantity={safeQuantity}
+                                    currency={currency}
+                                    basePrice={product.base_price}
+                                    onSelectTier={(qty) => setQuantity(Math.min(Math.max(minimumOrder, qty), Math.max(minimumOrder, availableStock)))}
+                                />
+                            )}
                         </div>
                     </div>
 
@@ -810,6 +823,90 @@ export default function Show({ auth, flash, errors, cartCount, currency, default
                     </div>
                 </main>
             </div>
+            
+            <Transition appear show={isRfqModalOpen} as={Fragment}>
+                <Dialog as="div" className="relative z-50" onClose={() => setIsRfqModalOpen(false)}>
+                    <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                    >
+                        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" />
+                    </Transition.Child>
+
+                    <div className="fixed inset-0 overflow-y-auto">
+                        <div className="flex min-h-full items-center justify-center p-4 text-center">
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0 scale-95"
+                                enterTo="opacity-100 scale-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100 scale-100"
+                                leaveTo="opacity-0 scale-95"
+                            >
+                                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-slate-900">
+                                        Request a Custom Quote
+                                    </Dialog.Title>
+                                    <form onSubmit={submitRfq} className="mt-4 space-y-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700">Target Price / Unit</label>
+                                            <input
+                                                type="number"
+                                                min="0.01"
+                                                step="0.01"
+                                                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                                value={rfqForm.data.target_price}
+                                                onChange={e => rfqForm.setData('target_price', e.target.value)}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700">Quantity</label>
+                                            <input
+                                                type="number"
+                                                min={minimumOrder}
+                                                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                                value={rfqForm.data.quantity}
+                                                onChange={e => rfqForm.setData('quantity', e.target.value)}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700">Message</label>
+                                            <textarea
+                                                rows={4}
+                                                className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                                value={rfqForm.data.message}
+                                                onChange={e => rfqForm.setData('message', e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="mt-6 flex justify-end gap-3">
+                                            <button
+                                                type="button"
+                                                onClick={() => setIsRfqModalOpen(false)}
+                                                className="inline-flex justify-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                disabled={rfqForm.processing}
+                                                className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                                            >
+                                                {rfqForm.processing ? 'Submitting...' : 'Submit Request'}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition>
         </FrontendLayout>
     );
 }

@@ -100,6 +100,7 @@ class HandleInertiaRequests extends Middleware
     {
         $user = $request->user();
         $supplier = $user?->supplier;
+        $b2cCustomer = auth()->guard('b2c')->user();
 
         return [
             ...parent::share($request),
@@ -116,6 +117,11 @@ class HandleInertiaRequests extends Middleware
                         'company_name' => $supplier->company_name,
                         'status' => $supplier->status->value,
                     ] : null,
+                ] : null,
+                'b2c_customer' => $b2cCustomer ? [
+                    'id' => $b2cCustomer->id,
+                    'name' => $b2cCustomer->name,
+                    'email' => $b2cCustomer->email,
                 ] : null,
             ],
             'flash' => [

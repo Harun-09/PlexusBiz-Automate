@@ -11,7 +11,13 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Auth\B2cAuthController;
+
 Route::middleware('guest')->group(function () {
+    // B2C Customer Routes
+    Route::get('b2c/login', [B2cAuthController::class, 'create'])->name('b2c.login');
+    Route::post('b2c/login', [B2cAuthController::class, 'login']);
+    Route::post('b2c/register', [B2cAuthController::class, 'store'])->name('b2c.register');
     Route::get('register', [RegisteredUserController::class, 'create'])
                 ->name('register');
 
@@ -59,4 +65,8 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
                 ->name('logout');
+});
+
+Route::middleware('auth:b2c')->group(function () {
+    Route::post('b2c/logout', [B2cAuthController::class, 'destroy'])->name('b2c.logout');
 });
