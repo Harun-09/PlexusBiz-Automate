@@ -398,6 +398,23 @@
             <li>Verified frontend production build with <code>npm run build</code>: Vite build completed successfully.</li>
         </ul>
     </section>
+    <section>
+        <h2>2026-07-03 Bug Fixes & UI Enhancements</h2>
+        <p>The project was reviewed for test stability, 500 errors, and UI improvements based on user requests.</p>
+        <ul>
+            <li>Fixed a PHP 8 <code>TypeError</code> in <code>AuditLogger.php</code> when arrays were incorrectly passed as <code>null</code> during model creation (e.g., RFQ submission).</li>
+            <li>Resolved test suite failures in <code>ExampleTest.php</code> (missing <code>RefreshDatabase</code> trait) and <code>RfqIntakeTest.php</code> (incorrect assertion redirect path).</li>
+            <li>Implemented a <strong>Dynamic Tiered Pricing</strong> feature in <code>Show.jsx</code> for the Marketplace Product View:
+                <ul>
+                    <li>Added an interactive Quantity Range Slider that dynamically recalculates prices on the frontend before checkout.</li>
+                    <li>Made the Tier Pricing table clickable, allowing users to instantly select a tier's minimum quantity.</li>
+                    <li>Ensured seamless data synchronization between the frontend calculation and the backend <code>CartService</code>.</li>
+                </ul>
+            </li>
+            <li>Verified backend with <code>php artisan test</code>: All test suites and assertions now pass successfully.</li>
+            <li>Verified frontend production build with <code>npm run build</code>: Completed successfully with the updated React components.</li>
+        </ul>
+    </section>
 </main>
 </body>
 </html>
