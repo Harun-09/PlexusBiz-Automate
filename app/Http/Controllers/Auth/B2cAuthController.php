@@ -35,7 +35,7 @@ class B2cAuthController extends Controller
 
         Auth::guard('b2c')->login($customer);
 
-        return redirect()->intended(route('home', absolute: false));
+        return redirect()->intended(route('b2c.dashboard', absolute: false));
     }
 
     public function login(Request $request): RedirectResponse
@@ -48,7 +48,7 @@ class B2cAuthController extends Controller
         if (Auth::guard('b2c')->attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            return redirect()->intended(route('home', absolute: false));
+            return redirect()->intended(route('b2c.dashboard', absolute: false));
         }
 
         return back()->withErrors([

@@ -129,6 +129,10 @@ Route::prefix('payments')->name('payment.')->group(function (): void {
 
 Route::get('/dashboard', DashboardController::class)->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::middleware('auth:b2c')->group(function () {
+    Route::get('/b2c/dashboard', [\App\Http\Controllers\B2CDashboardController::class, 'index'])->name('b2c.dashboard');
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::redirect('/customer/profile', '/profile')->name('customer.profile.alias');

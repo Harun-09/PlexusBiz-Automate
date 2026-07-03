@@ -440,9 +440,10 @@ class DashboardController extends Controller
                 ['label' => 'Customers', 'href' => '/crm/customers'],
                 ['label' => 'Suppliers', 'href' => '/admin/suppliers'],
                 ['label' => 'Supplier Orders', 'href' => '/commerce/supplier-orders'],
-                ['label' => 'Module Settings', 'href' => '/settings/modules'],
+                ['label' => 'Module Settings', 'href' => '/admin/modules'],
                 ['label' => 'Audit Logs', 'href' => '/admin/audit-logs'],
                 ['label' => 'Workflow Logs', 'href' => '/workflow/logs'],
+                ['label' => 'Trash (Recycle Bin)', 'href' => '/admin/trash'],
             ],
             RoleName::Supplier => [
                 ['label' => 'Products', 'href' => '/commerce/products'],

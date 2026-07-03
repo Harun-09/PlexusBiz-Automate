@@ -32,6 +32,12 @@ Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function
     Route::put('/bulk-pricing/{product}/tiers/{tier}', [AdminBulkPricingController::class, 'updateTier'])->name('bulk-pricing.tiers.update');
     Route::delete('/bulk-pricing/{product}/tiers/{tier}', [AdminBulkPricingController::class, 'destroyTier'])->name('bulk-pricing.tiers.destroy');
 
+    Route::get('/trash', [\App\Http\Controllers\Admin\AdminTrashController::class, 'index'])->name('trash.index');
+    Route::post('/trash/products/{id}/restore', [\App\Http\Controllers\Admin\AdminTrashController::class, 'restoreProduct'])->name('trash.products.restore');
+    Route::post('/trash/orders/{id}/restore', [\App\Http\Controllers\Admin\AdminTrashController::class, 'restoreOrder'])->name('trash.orders.restore');
+    Route::post('/trash/users/{id}/restore', [\App\Http\Controllers\Admin\AdminTrashController::class, 'restoreUser'])->name('trash.users.restore');
+    Route::post('/trash/suppliers/{id}/restore', [\App\Http\Controllers\Admin\AdminTrashController::class, 'restoreSupplier'])->name('trash.suppliers.restore');
+
     Route::resource('users', AdminUserController::class)->except('show');
     Route::patch('/users/{user}/approve', [AdminUserController::class, 'approve'])->name('users.approve');
     Route::patch('/users/{user}/reject', [AdminUserController::class, 'reject'])->name('users.reject');

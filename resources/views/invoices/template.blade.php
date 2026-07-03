@@ -298,7 +298,7 @@
                     </td>
                     <td class="invoice-meta">
                         <div class="header-card">
-                            <h2>INVOICE</h2>
+                            <h2>B2B WHOLESALE TAX INVOICE</h2>
                             <p class="meta-line"><strong>Invoice Number:</strong> {{ $invoice->invoice_number }}</p>
                             <p class="meta-line"><strong>Order Number:</strong> {{ $invoice->order->order_number }}</p>
                             <p class="meta-line"><strong>Date:</strong> {{ $invoice->issued_at->format('M d, Y') }}</p>
@@ -376,7 +376,7 @@
                         <td class="text-right">{{ number_format($invoice->subtotal, 2) }} {{ $invoice->order->currency }}</td>
                     </tr>
                     <tr>
-                        <td>Tax</td>
+                        <td>Tax / VAT</td>
                         <td class="text-right">{{ number_format($invoice->tax_total, 2) }} {{ $invoice->order->currency }}</td>
                     </tr>
                     @if($invoice->order->discount_total > 0)
@@ -388,6 +388,9 @@
                     <tr class="total">
                         <td>Total Amount</td>
                         <td class="text-right">{{ number_format($invoice->total, 2) }} {{ $invoice->order->currency }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="text-right" style="font-size: 8px; color: #64748b; border: none; padding-top: 4px;">* Total amount includes applicable Tax/VAT</td>
                     </tr>
                 </table>
             </div>
