@@ -415,6 +415,19 @@
             <li>Verified frontend production build with <code>npm run build</code>: Completed successfully with the updated React components.</li>
         </ul>
     </section>
+    <section>
+        <h2>2026-07-03 B2B/B2C Checkout, Recurring Orders, Inventory & UI Refinements</h2>
+        <p>The codebase has been updated to reflect the new requirements regarding B2C retail customers vs B2B wholesale buyers, advanced inventory, and monthly subscriptions.</p>
+        <ul>
+            <li><strong>Process Monthly Subscriptions:</strong> Created <code>ProcessMonthlySubscriptions</code> artisan command (<code>orders:process-subscriptions</code>) to generate new <code>Pending</code> orders for active subscriptions. It sends a <code>SubscriptionInvoiceGenerated</code> email notification to the buyer, requesting them to manually complete payment for the invoice, rather than auto-charging.</li>
+            <li><strong>Advanced Inventory & Stock Alerts:</strong> Used <code>lockForUpdate()</code> during checkout in <code>CheckoutService</code> to implement pessimistic locking. Updated <code>InventoryService</code> to dispatch a <code>LowStockAlert</code> to the product supplier when the stock drops below the configurable threshold. Added frontend validation in the Cart to prevent users from checking out with items exceeding stock limits.</li>
+            <li><strong>Admin Soft Delete Trash & Retrieval:</strong> Implemented <code>AdminTrashController</code> to handle viewing, restoring, and permanently deleting users, products, and orders using Laravel's SoftDeletes. Created a unified React view for the Trash list.</li>
+            <li><strong>Retailer / B2C Dedicated View:</strong> Ensured B2C authentication routes to a dedicated <code>B2CDashboardController</code>. Added a "Become a Wholesaler" banner in the Retail Dashboard linking to <code>/b2b/register</code> to encourage B2C users to upgrade to B2B.</li>
+            <li><strong>Configurable Pricing:</strong> Updated <code>CheckoutService</code> to read the shipping rate dynamically from <code>config('commerce.shipping_rate_per_kg')</code>.</li>
+            <li>Verified backend with <code>php artisan test</code>: All test suites and assertions pass successfully.</li>
+            <li>Verified frontend production build with <code>npm run build</code>: Completed successfully with the updated React components.</li>
+        </ul>
+    </section>
 </main>
 </body>
 </html>
