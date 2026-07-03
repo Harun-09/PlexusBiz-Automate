@@ -107,6 +107,11 @@ function LineItem({ item, currency }) {
                                     +
                                 </button>
                             </div>
+                            {currentQuantity > availableStock && (
+                                <p className="mt-2 text-xs font-bold text-rose-600">
+                                    Only {availableStock} units left in stock.
+                                </p>
+                            )}
                         </div>
 
                         <div className="flex items-end gap-3">
@@ -206,6 +211,7 @@ export default function Index({ auth, flash, errors, cart, suggestions, currency
     const summary = cart?.summary || {};
     const items = Array.isArray(cart?.items) ? cart.items : [];
     const validationMessage = Object.values(errors || {}).find(Boolean);
+    const hasInsufficientStock = items.some(item => Number(item.quantity || 1) > Number(item.product?.available_stock || 0));
 
     return (
         <FrontendLayout auth={auth} canLogin={true} cartCount={cart?.summary?.items_count || 0}>
@@ -352,17 +358,33 @@ export default function Index({ auth, flash, errors, cart, suggestions, currency
                                         <p className="mt-2 text-4xl font-black tracking-[-0.06em]">
                                             {formatMoney(summary.grand_total || 0, currency)}
                                         </p>
-                                        <p className="mt-2 text-sm leading-6 text-blue-100">
-                                            The checkout step will hand off to the payment gateway selected on the next screen.
-                                        </p>
+                                        {hasInsufficientStock ? (
+                                            <p className="mt-2 text-sm leading-6 text-rose-200 font-bold">
+                                                Please adjust quantities. Some items exceed available stock.
+                                            </p>
+                                        ) : (
+                                            <p className="mt-2 text-sm leading-6 text-blue-100">
+                                                The checkout step will hand off to the payment gateway selected on the next screen.
+                                            </p>
+                                        )}
                                     </div>
 
-                                    <Link
-                                        href={route('checkout.index')}
-                                        className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-[#ff8a00] px-5 py-3 text-sm font-black uppercase tracking-[0.14em] text-white transition hover:bg-[#ef7400]"
-                                    >
-                                        Proceed to checkout
-                                    </Link>
+                                    {hasInsufficientStock ? (
+                                        <button
+                                            type="button"
+                                            disabled
+                                            className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-slate-300 px-5 py-3 text-sm font-black uppercase tracking-[0.14em] text-white cursor-not-allowed"
+                                        >
+                                            Adjust stock before checkout
+                                        </button>
+                                    ) : (
+                                        <Link
+                                            href={route('checkout.index')}
+                                            className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-[#ff8a00] px-5 py-3 text-sm font-black uppercase tracking-[0.14em] text-white transition hover:bg-[#ef7400]"
+                                        >
+                                            Proceed to checkout
+                                        </Link>
+                                    )}
                                 </div>
                             </aside>
                         </section>

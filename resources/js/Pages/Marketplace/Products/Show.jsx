@@ -467,14 +467,40 @@ export default function Show({ auth, flash, errors, cartCount, currency, default
                             <div className="sticky top-24 rounded-2xl border border-slate-200 bg-white shadow-lg shadow-slate-200/50 flex flex-col">
                                 <div className="p-6 pb-0">
                                     <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide">Order Summary</h3>
-                                    <div className="mt-4 flex items-end gap-3">
-                                        <span className="text-3xl font-bold text-slate-900">{formatMoney(unitPrice, currency)}</span>
-                                        <span className="text-sm font-medium text-slate-500 mb-1">/ unit</span>
-                                    </div>
-                                    
-                                    {savings > 0 && (
-                                        <div className="mt-2 inline-block rounded bg-green-50 px-2 py-1 text-xs font-semibold text-green-700">
-                                            You save {formatMoney(savings, currency)} per unit
+                                    {isB2B ? (
+                                        <div className="mt-4 flex flex-col">
+                                            {savings > 0 ? (
+                                                <>
+                                                    <span className="text-sm font-medium text-slate-500 line-through">Normal Price: {formatMoney(product.base_price, currency)}</span>
+                                                    <div className="flex items-end gap-3 mt-1">
+                                                        <span className="text-3xl font-bold text-blue-700">{formatMoney(unitPrice, currency)}</span>
+                                                        <span className="text-sm font-medium text-blue-500 mb-1">/ unit (Your Bulk Price)</span>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <div className="flex items-end gap-3 mt-1">
+                                                    <span className="text-3xl font-bold text-slate-900">{formatMoney(unitPrice, currency)}</span>
+                                                    <span className="text-sm font-medium text-slate-500 mb-1">/ unit</span>
+                                                </div>
+                                            )}
+                                            {savings > 0 && (
+                                                <div className="mt-2 self-start rounded bg-green-50 px-2 py-1 text-xs font-semibold text-green-700">
+                                                    You save {formatMoney(savings, currency)} per unit
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <div className="mt-4 flex flex-col">
+                                            <div className="flex items-end gap-3">
+                                                <span className="text-3xl font-bold text-slate-900">{formatMoney(unitPrice, currency)}</span>
+                                                <span className="text-sm font-medium text-slate-500 mb-1">/ unit</span>
+                                            </div>
+                                            <div className="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-3 text-center">
+                                                <p className="text-xs text-amber-800 font-medium">
+                                                    Want lower prices? <br/>
+                                                    <a href="/b2b/register" className="text-amber-900 font-bold underline hover:text-amber-700 transition">Click here to open a Wholesaler account</a>
+                                                </p>
+                                            </div>
                                         </div>
                                     )}
 

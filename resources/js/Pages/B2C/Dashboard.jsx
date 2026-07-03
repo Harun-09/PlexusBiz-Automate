@@ -15,6 +15,18 @@ export default function Dashboard({ auth, customer, recentOrders }) {
                         </div>
                     </div>
 
+                    <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-lg shadow-lg mb-6 p-6 flex flex-col md:flex-row items-center justify-between text-white">
+                        <div>
+                            <h3 className="text-xl font-bold mb-2">Want to buy in bulk and unlock lower prices?</h3>
+                            <p className="text-blue-100">Upgrade your account to a B2B Wholesaler to access MOQ discounts, net terms, and more.</p>
+                        </div>
+                        <div className="mt-4 md:mt-0 flex-shrink-0">
+                            <Link href={route('b2b.register')} className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 transition-colors">
+                                Become a Wholesaler
+                            </Link>
+                        </div>
+                    </div>
+
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 bg-white border-b border-gray-200">
                             <h3 className="text-lg font-semibold text-gray-800 mb-4">Recent Orders</h3>

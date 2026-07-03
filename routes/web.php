@@ -85,6 +85,10 @@ Route::middleware('guest')->group(function (): void {
 
     Route::post('/register-supplier', [SupplierOnboardingController::class, 'store'])
         ->name('supplier.register.store');
+        
+    Route::get('/b2b/register', function () {
+        return Inertia\Inertia::render('Auth/B2BRegisterPlaceholder');
+    })->name('b2b.register');
 });
 
 Route::get('/checkout/success/{orderNumber}', [PaymentController::class, 'checkoutSuccess'])
@@ -159,6 +163,10 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('commerce.orders.index', ['search' => $order->order_number]);
     })->middleware('role:buyer|supplier|admin')->name('orders.show.alias');
 
+    // Subscription & Repeat Orders
+    Route::post('/orders/{order}/repeat', [\App\Http\Controllers\OrderSubscriptionController::class, 'repeat'])->name('orders.repeat');
+    Route::post('/orders/{order}/toggle-subscription', [\App\Http\Controllers\OrderSubscriptionController::class, 'toggle'])->name('orders.toggle-subscription');
+
     // Invoice Routes
     Route::prefix('invoices')->name('invoices.')->group(function (): void {
         Route::get('/', [InvoiceController::class, 'index'])->name('index');
@@ -169,6 +177,12 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::post('/feedback', [\App\Http\Controllers\FeedbackController::class, 'store'])->name('feedback.store');
+
+    Route::middleware('role:admin')->prefix('admin/trash')->name('admin.trash.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\AdminTrashController::class, 'index'])->name('index');
+        Route::post('/{type}/{id}/restore', [\App\Http\Controllers\AdminTrashController::class, 'restore'])->name('restore');
+        Route::delete('/{type}/{id}/force-delete', [\App\Http\Controllers\AdminTrashController::class, 'forceDelete'])->name('force-delete');
+    });
 });
 
 require __DIR__.'/auth.php';

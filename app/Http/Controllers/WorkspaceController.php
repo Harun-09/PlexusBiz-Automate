@@ -1775,24 +1775,37 @@ class WorkspaceController extends Controller
                     'status' => PaymentStatus::Completed->value,
                 ];
             }
-            return $actions;
-        }
-
-        if (! $canInitiatePayment) {
+        } else if (! $canInitiatePayment) {
             $actions[] = [
                 'kind' => 'status',
                 'label' => ucfirst($order->payment_status ?: PaymentStatus::Pending->value),
                 'status' => $order->payment_status ?: PaymentStatus::Pending->value,
             ];
-            return $actions;
+        } else {
+            $actions[] = [
+                'kind' => 'payment-action',
+                'label' => $order->payment_method ? 'Continue payment' : 'Pay now',
+                'href' => route('payment.process', $order->order_number),
+                'gateway' => $this->formatPaymentGateway($order->payment_method ?: config('commerce.default_payment_gateway', 'stripe')),
+            ];
         }
 
-        $actions[] = [
-            'kind' => 'payment-action',
-            'label' => $order->payment_method ? 'Continue payment' : 'Pay now',
-            'href' => route('payment.process', $order->order_number),
-            'gateway' => $this->formatPaymentGateway($order->payment_method ?: config('commerce.default_payment_gateway', 'stripe')),
-        ];
+        if (auth()->user()?->hasRole('buyer')) {
+            $actions[] = [
+                'kind' => 'post-action',
+                'label' => 'Repeat Order',
+                'href' => route('orders.repeat', $order),
+                'variant' => 'secondary',
+            ];
+
+            $actions[] = [
+                'kind' => 'post-action',
+                'label' => $order->subscription_active ? 'Cancel Subscription' : 'Subscribe Monthly',
+                'href' => route('orders.toggle-subscription', $order),
+                'variant' => $order->subscription_active ? 'danger' : 'primary',
+                'note' => $order->subscription_active ? 'Active' : '',
+            ];
+        }
 
         return $actions;
     }

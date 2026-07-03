@@ -63,6 +63,18 @@ class InventoryService
 
         $product->forceFill(['stock_quantity' => $after])->save();
 
+        if ($type === InventoryMovementType::StockOut) {
+            $threshold = config('commerce.low_stock_threshold', 20);
+            if ($after <= $threshold) {
+                $supplierUser = User::where('id', $product->supplier?->user_id ?? 0)->first() 
+                             ?? User::role('admin')->first(); // Fallback to admin if supplier user not found
+
+                if ($supplierUser) {
+                    $supplierUser->notify(new \App\Notifications\LowStockAlert($product, $after));
+                }
+            }
+        }
+
         return InventoryMovement::create([
             'product_id' => $product->id,
             'supplier_id' => $product->supplier_id,

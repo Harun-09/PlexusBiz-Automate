@@ -110,7 +110,8 @@ class CheckoutService
                 $shippingMethod = 'standard';
             } else {
                 if ($shippingMethod === 'weight_based') {
-                    $shippingCost = $totalWeight * 2.00; // $2/kg placeholder
+                    $rate = config('commerce.shipping_rate_per_kg', 2.00);
+                    $shippingCost = $totalWeight * $rate; // configurable rate
                 } else {
                     $shippingCost = 0.00; // own_logistics
                 }

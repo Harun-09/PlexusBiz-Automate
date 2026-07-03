@@ -38,6 +38,8 @@ class Order extends Model
         'delivery_status',
         'commission_amount',
         'late_fee_amount',
+        'is_subscription',
+        'subscription_active',
     ];
 
     protected $casts = [
@@ -51,6 +53,9 @@ class Order extends Model
         'placed_at' => 'datetime',
         'due_date' => 'datetime',
         'status' => OrderStatus::class,
+        'payment_status' => PaymentStatus::class,
+        'is_subscription' => 'boolean',
+        'subscription_active' => 'boolean',
         'payment_term' => \App\Domains\ECommerce\Enums\PaymentTerm::class,
         'escrow_status' => \App\Domains\ECommerce\Enums\EscrowStatus::class,
         'delivery_status' => \App\Domains\ECommerce\Enums\DeliveryStatus::class,

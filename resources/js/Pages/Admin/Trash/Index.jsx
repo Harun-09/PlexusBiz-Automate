@@ -7,7 +7,7 @@ export default function TrashIndex({ auth, items, type }) {
     const handleRestore = (id, e) => {
         e.preventDefault();
         if (confirm('Are you sure you want to restore this item?')) {
-            post(route(`admin.trash.${type}.restore`, id));
+            post(route('admin.trash.restore', { type, id }));
         }
     };
 
@@ -25,7 +25,6 @@ export default function TrashIndex({ auth, items, type }) {
                             <Link href={route('admin.trash.index', { type: 'products' })} className={`px-4 py-2 rounded-md ${type === 'products' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}>Products</Link>
                             <Link href={route('admin.trash.index', { type: 'orders' })} className={`px-4 py-2 rounded-md ${type === 'orders' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}>Orders</Link>
                             <Link href={route('admin.trash.index', { type: 'users' })} className={`px-4 py-2 rounded-md ${type === 'users' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}>Users</Link>
-                            <Link href={route('admin.trash.index', { type: 'suppliers' })} className={`px-4 py-2 rounded-md ${type === 'suppliers' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}>Suppliers</Link>
                         </div>
 
                         <div className="overflow-x-auto">
@@ -47,7 +46,6 @@ export default function TrashIndex({ auth, items, type }) {
                                                     {type === 'products' && (item.name)}
                                                     {type === 'orders' && (item.order_number)}
                                                     {type === 'users' && (item.name + ' (' + item.email + ')')}
-                                                    {type === 'suppliers' && (item.company_name)}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {new Date(item.deleted_at).toLocaleString()}
@@ -56,9 +54,21 @@ export default function TrashIndex({ auth, items, type }) {
                                                     <button 
                                                         onClick={(e) => handleRestore(item.id, e)}
                                                         disabled={processing}
-                                                        className="text-blue-600 hover:text-blue-900 font-semibold"
+                                                        className="text-blue-600 hover:text-blue-900 font-semibold mr-3"
                                                     >
                                                         Restore
+                                                    </button>
+                                                    <button 
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            if (confirm('Are you sure you want to PERMANENTLY delete this item?')) {
+                                                                post(route(`admin.trash.force-delete`, { type, id: item.id }));
+                                                            }
+                                                        }}
+                                                        disabled={processing}
+                                                        className="text-red-600 hover:text-red-900 font-semibold"
+                                                    >
+                                                        Delete Permanently
                                                     </button>
                                                 </td>
                                             </tr>
