@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlexusBiz Automate - Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); padding: 24px; margin-bottom: 24px; border: 1px solid #e2e8f0; transition: transform 0.2s; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        h1 { color: #0f172a; font-weight: 800; font-size: 2.5rem; margin-bottom: 0.5rem; }
+        h2 { color: #1e293b; font-weight: 700; font-size: 1.5rem; margin-bottom: 1rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+        p { color: #475569; line-height: 1.6; margin-bottom: 1rem; }
+        ul { list-style-type: none; padding: 0; }
+        li { position: relative; padding-left: 1.5rem; margin-bottom: 0.5rem; color: #334155; }
+        li::before { content: '✓'; position: absolute; left: 0; color: #10b981; font-weight: bold; }
+        .badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 600; margin-right: 0.5rem; margin-bottom: 0.5rem; }
+        .bg-blue { background-color: #dbeafe; color: #1e40af; }
+        .bg-green { background-color: #d1fae5; color: #065f46; }
+        .bg-purple { background-color: #f3e8ff; color: #6b21a8; }
+        code { background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 4px; font-family: monospace; color: #e11d48; }
+    </style>
+</head>
+<body class="p-8 max-w-5xl mx-auto">
+
+    <div class="text-center mb-12">
+        <h1>PlexusBiz Automate</h1>
+        <p class="text-lg text-slate-500 max-w-2xl mx-auto">A modern, scalable B2B E-Commerce & Business Automation Platform built with Laravel 13, React, and TailwindCSS.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Core Features -->
+        <div class="card">
+            <h2>🚀 Core Features</h2>
+            <ul>
+                <li><strong>Multi-vendor B2B Marketplace:</strong> Connect suppliers with corporate buyers.</li>
+                <li><strong>Smart CRM:</strong> Track customers, score leads, and view full interaction history.</li>
+                <li><strong>Automated Marketing:</strong> Visual workflows, Email/SMS campaigns, and Social Media auto-posting.</li>
+                <li><strong>Order & Fulfillment:</strong> RFQ (Quotation) engine, Inventory tracking, and Courier integration (Pathao/RedX).</li>
+                <li><strong>Advanced Support:</strong> Ticketing system with an AI Chatbot API.</li>
+            </ul>
+        </div>
+
+        <!-- Tech Stack -->
+        <div class="card">
+            <h2>💻 Technology Stack</h2>
+            <div class="mt-4">
+                <span class="badge bg-blue">Laravel 13</span>
+                <span class="badge bg-blue">MySQL</span>
+                <span class="badge bg-blue">Redis Cache</span>
+                <span class="badge bg-green">React + Inertia.js</span>
+                <span class="badge bg-green">TailwindCSS</span>
+                <span class="badge bg-purple">Spatie Roles & Permissions</span>
+                <span class="badge bg-purple">Stripe / SSLCommerz</span>
+            </div>
+            <p class="mt-4">Built using a modular <strong>Domain-Driven Design (DDD)</strong> architecture, ensuring that the E-Commerce, CRM, and Marketing domains are fully isolated and easily scalable.</p>
+        </div>
+
+        <!-- Getting Started -->
+        <div class="card">
+            <h2>⚙️ Getting Started (Local Dev)</h2>
+            <p>Run the following commands to set up the project locally:</p>
+            <div class="bg-slate-800 text-slate-50 p-4 rounded-lg overflow-x-auto text-sm font-mono">
+                composer install<br>
+                npm install<br>
+                cp .env.example .env<br>
+                php artisan key:generate<br>
+                php artisan migrate --seed<br>
+                npm run dev<br>
+                php artisan serve
+            </div>
+        </div>
+
+        <!-- Security & Performance -->
+        <div class="card">
+            <h2>🔒 Security & Architecture</h2>
+            <ul>
+                <li><strong>Zero-Trust Security:</strong> Strict CSP headers, XSS payload sanitization, and clickjacking protection globally applied.</li>
+                <li><strong>DDoS Protection:</strong> Strict rate limiting (60/min API, 5/min Auth) via Laravel's throttle middleware.</li>
+                <li><strong>Headless API Ready:</strong> `/api/v1` routes with standardized JSON responses for Mobile/Desktop apps.</li>
+                <li><strong>Enterprise Caching:</strong> `ProductCacheService` uses Redis to eliminate heavy database queries.</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <footer class="mt-12 text-center text-slate-400 text-sm">
+        <p>Generated automatically to provide a simple, clean overview of the entire PlexusBiz Automate infrastructure.</p>
+    </footer>
+
+</body>
+</html>
