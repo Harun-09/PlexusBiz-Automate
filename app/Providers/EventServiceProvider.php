@@ -42,6 +42,9 @@ class EventServiceProvider extends ServiceProvider
         SupportTicketCreated::class => [
             RunWorkflowForTicketCreated::class,
         ],
+        \App\Domains\HCM\Events\EmployeePaid::class => [
+            \App\Domains\Finance\Listeners\RecordPayrollLedger::class,
+        ],
     ];
 
     /**
