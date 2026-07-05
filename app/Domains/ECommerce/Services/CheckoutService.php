@@ -204,6 +204,20 @@ class CheckoutService
                     'callbackURL' => route('api.payment.bkash.callback', ['order' => $order->id]),
                 ]);
                 $order->payment_url = $bkashResponse['bkashURL'] ?? null;
+            } elseif ($paymentTermEnum === PaymentTerm::Nagad) {
+                $nagadService = new \App\Domains\ECommerce\Services\Payment\NagadPaymentService();
+                $nagadResponse = $nagadService->createPayment([
+                    'amount' => $order->grand_total,
+                    'merchantInvoiceNumber' => $order->order_number,
+                ]);
+                $order->payment_url = $nagadResponse['nagadURL'] ?? null;
+            } elseif ($paymentTermEnum === PaymentTerm::Rocket) {
+                $rocketService = new \App\Domains\ECommerce\Services\Payment\RocketPaymentService();
+                $rocketResponse = $rocketService->createPayment([
+                    'amount' => $order->grand_total,
+                    'merchantInvoiceNumber' => $order->order_number,
+                ]);
+                $order->payment_url = $rocketResponse['rocketURL'] ?? null;
             }
 
             return $order;
