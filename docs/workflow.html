@@ -428,6 +428,16 @@
             <li>Verified frontend production build with <code>npm run build</code>: Completed successfully with the updated React components.</li>
         </ul>
     </section>
+    <section>
+        <h2>2026-07-05 Payment Gateways & Final Implementations</h2>
+        <p>A deep audit of the repository was conducted to ensure all recently developed features and endpoints are fully documented in the workflow.</p>
+        <ul>
+            <li><strong>Stripe & SSLCOMMERZ Payment Gateways:</strong> Fully integrated <code>PaymentController</code> supporting Stripe (Checkout Sessions & Webhooks) and SSLCOMMERZ (IPN, Success/Fail/Cancel validation). Payments update order status and transaction IDs automatically.</li>
+            <li><strong>Invoice Generation & PDF Export:</strong> Implemented <code>InvoiceController</code> with dedicated routes (<code>/invoices</code>) for viewing, streaming (previewing), and downloading order invoices in PDF format.</li>
+            <li><strong>User Account Soft Deletion:</strong> Updated the profile management flow so that users can securely soft-delete their own accounts (requiring password confirmation) to preserve historical order/CRM data.</li>
+            <li><strong>B2B vs B2C Hybrid Shipping & RFQ:</strong> Enhanced checkout flow to conditionally route B2B wholesale buyers versus B2C retail customers, applying hybrid shipping rates and specific RFQ logic accordingly.</li>
+        </ul>
+    </section>
 </main>
 </body>
 </html>
