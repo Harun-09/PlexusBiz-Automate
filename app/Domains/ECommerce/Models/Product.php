@@ -62,6 +62,11 @@ class Product extends Model
         return $this->hasMany(InventoryMovement::class);
     }
 
+    public function skus(): HasMany
+    {
+        return $this->hasMany(Sku::class);
+    }
+
     public function availableStock(): int
     {
         return max(0, $this->stock_quantity - $this->reserved_quantity);
