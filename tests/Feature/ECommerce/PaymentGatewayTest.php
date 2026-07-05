@@ -104,7 +104,7 @@ class PaymentGatewayTest extends TestCase
             ->where('flash.success', 'Stripe payment completed successfully.'));
 
         $this->assertTrue($payment->fresh()->isCompleted());
-        $this->assertSame(PaymentStatus::Completed->value, $order->fresh()->payment_status);
+        $this->assertSame(PaymentStatus::Completed, $order->fresh()->payment_status);
         $this->assertSame('pi_test_success', $order->fresh()->transaction_id);
     }
 
@@ -157,7 +157,7 @@ class PaymentGatewayTest extends TestCase
             ->where('flash.success', 'SSLCOMMERZ payment completed successfully.'));
 
         $this->assertTrue($payment->fresh()->isCompleted());
-        $this->assertSame(PaymentStatus::Completed->value, $order->fresh()->payment_status);
+        $this->assertSame(PaymentStatus::Completed, $order->fresh()->payment_status);
         $this->assertSame('ssl-tran-001', $order->fresh()->transaction_id);
     }
 
@@ -210,7 +210,7 @@ class PaymentGatewayTest extends TestCase
         ]);
 
         $this->assertTrue($payment->fresh()->isCompleted());
-        $this->assertSame(PaymentStatus::Completed->value, $order->fresh()->payment_status);
+        $this->assertSame(PaymentStatus::Completed, $order->fresh()->payment_status);
         $this->assertSame('pi_webhook_001', $order->fresh()->transaction_id);
     }
 
@@ -262,7 +262,7 @@ class PaymentGatewayTest extends TestCase
         ]);
 
         $this->assertTrue($payment->fresh()->isCompleted());
-        $this->assertSame(PaymentStatus::Completed->value, $order->fresh()->payment_status);
+        $this->assertSame(PaymentStatus::Completed, $order->fresh()->payment_status);
         $this->assertSame('ssl-ipn-001', $order->fresh()->transaction_id);
     }
 
