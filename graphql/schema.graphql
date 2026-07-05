@@ -1,0 +1,73 @@
+"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+"Indicates what fields are available at the top level of a query operation."
+type Query {
+    "Find a single user by an identifying attribute."
+    user(
+      "Search by primary key."
+      id: ID @eq @rules(apply: ["prohibits:email", "required_without:email"])
+
+      "Search by email address."
+      email: String @eq @rules(apply: ["prohibits:id", "required_without:id", "email"])
+    ): User @find
+
+    "List multiple users."
+    users: [User!]! @paginate(defaultCount: 10)
+
+    "Find a single product by ID."
+    product(id: ID @eq): Product @find
+
+    "List multiple products."
+    products: [Product!]! @paginate(defaultCount: 15)
+
+    "Find a single order by ID."
+    order(id: ID @eq): Order @find
+
+    "List multiple orders."
+    orders: [Order!]! @paginate(defaultCount: 10)
+}
+
+"Account of a person who utilizes this application."
+type User {
+    "Unique primary key."
+    id: ID!
+
+    "Non-unique name."
+    name: String!
+
+    "Unique email address."
+    email: String!
+
+    "When the email was verified."
+    email_verified_at: DateTime
+
+    "When the account was created."
+    created_at: DateTime!
+
+    "When the account was last updated."
+    updated_at: DateTime!
+}
+
+"A product available for purchase."
+type Product {
+    id: ID!
+    name: String!
+    sku: String
+    base_price: Float!
+    status: String!
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+"An order placed by a customer."
+type Order {
+    id: ID!
+    order_number: String!
+    status: String!
+    grand_total: Float!
+    currency: String!
+    placed_at: DateTime!
+    created_at: DateTime!
+    updated_at: DateTime!
+}
