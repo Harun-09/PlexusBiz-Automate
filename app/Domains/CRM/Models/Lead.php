@@ -22,6 +22,7 @@ class Lead extends Model
         'email',
         'phone',
         'value',
+        'score',
         'notes',
         'next_follow_up_at',
         'converted_at',
