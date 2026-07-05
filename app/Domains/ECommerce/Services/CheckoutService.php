@@ -23,6 +23,8 @@ use App\Models\B2CCustomer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
+use App\Domains\ECommerce\Services\Payment\BkashTokenizedService;
+
 class CheckoutService
 {
     public function __construct(
@@ -32,6 +34,7 @@ class CheckoutService
         private readonly CustomerProfileService $customers,
         private readonly InteractionLogger $interactions,
         private readonly InvoicePdfService $invoicePdf,
+        private readonly BkashTokenizedService $bkash,
     ) {
     }
 
@@ -192,7 +195,18 @@ class CheckoutService
 
             DB::afterCommit(fn () => event(new OrderPlaced($order->fresh(['items', 'invoice', 'buyer']))));
 
-            return $order->fresh(['items', 'invoice']);
+            $order = $order->fresh(['items', 'invoice']);
+
+            if ($paymentTermEnum === PaymentTerm::Bkash) {
+                $bkashResponse = $this->bkash->createPayment([
+                    'amount' => $order->grand_total,
+                    'merchantInvoiceNumber' => $order->order_number,
+                    'callbackURL' => route('api.payment.bkash.callback', ['order' => $order->id]),
+                ]);
+                $order->payment_url = $bkashResponse['bkashURL'] ?? null;
+            }
+
+            return $order;
         });
     }
 
