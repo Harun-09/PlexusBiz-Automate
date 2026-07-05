@@ -9,4 +9,5 @@ enum RfqStatus: string
     case Accepted = 'accepted';
     case Rejected = 'rejected';
     case Cancelled = 'cancelled';
+    case Converted = 'converted';
 }
