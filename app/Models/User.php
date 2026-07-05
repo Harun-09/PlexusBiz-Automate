@@ -68,6 +68,16 @@ class User extends Authenticatable
         'status' => UserStatus::class,
     ];
 
+    public function supplierProfile()
+    {
+        return $this->hasOne(Supplier::class, 'user_id');
+    }
+
+    public function buyerOrganization()
+    {
+        return $this->belongsTo(\App\Domains\CRM\Models\BuyerOrganization::class);
+    }
+
     public function supplier(): HasOne
     {
         return $this->hasOne(Supplier::class);
