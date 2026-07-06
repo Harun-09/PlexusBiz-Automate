@@ -35,6 +35,12 @@ use App\Domains\Support\Enums\TicketStatus;
 use App\Domains\Support\Enums\TicketPriority;
 use App\Domains\Support\Models\SupportTicket;
 use App\Domains\Support\Services\SupportTicketService;
+use App\Domains\Support\Services\SupportChatbotService;
+use App\Domains\Support\Mail\SupportEscalationMail;
+use App\Domains\CRM\Services\InteractionLogger;
+use App\Domains\CRM\Enums\InteractionType;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\JsonResponse;
 use App\Domains\Workflow\Enums\WorkflowLogStatus;
 use App\Domains\Workflow\Models\AutomationRule;
 use App\Domains\Workflow\Models\WorkflowLog;
@@ -1924,5 +1930,114 @@ class WorkspaceController extends Controller
                 return Str::limit($summary, 60);
             })
             ->implode(' | ');
+    }
+
+    public function supportHelpCenter(Request $request): Response
+    {
+        $faqs = SupportFaq::query()
+            ->where('status', SupportFaqStatus::Active->value)
+            ->orderBy('priority')
+            ->get(['id', 'question', 'answer', 'keywords_json', 'priority']);
+
+        $recentTickets = SupportTicket::query()
+            ->where('requester_id', $request->user()->id)
+            ->latest()
+            ->limit(5)
+            ->get()
+            ->map(fn($ticket) => [
+                'id' => $ticket->id,
+                'ticket_number' => $ticket->ticket_number,
+                'subject' => $ticket->subject,
+                'priority' => $ticket->priority->value,
+                'status' => $ticket->status->value,
+                'created_at' => $ticket->created_at->format('Y-m-d H:i'),
+            ]);
+
+        $recentOrders = Order::query()
+            ->where('buyer_id', $request->user()->id)
+            ->latest()
+            ->limit(10)
+            ->get(['id', 'order_number', 'status', 'total_amount', 'created_at'])
+            ->map(fn($order) => [
+                'id' => $order->id,
+                'order_number' => $order->order_number,
+                'status' => $order->status->value,
+                'total_amount' => $order->total_amount,
+                'created_at' => $order->created_at->format('Y-m-d H:i'),
+            ]);
+
+        return Inertia::render('Support/HelpCenter', [
+            'faqs' => $faqs,
+            'recentTickets' => $recentTickets,
+            'recentOrders' => $recentOrders,
+            'user' => $request->user(),
+        ]);
+    }
+
+    public function supportChatbotMessage(Request $request, SupportChatbotService $chatbot): JsonResponse
+    {
+        $validated = $request->validate([
+            'message' => ['required', 'string'],
+            'create_ticket' => ['nullable', 'boolean'],
+            'subject' => ['nullable', 'string', 'max:255'],
+            'supplier_id' => ['nullable', 'integer', 'exists:suppliers,id'],
+            'order_id' => ['nullable', 'integer', 'exists:orders,id'],
+        ]);
+
+        return response()->json(
+            $chatbot->respond($request->user(), $validated)
+        );
+    }
+
+    public function supportEmailEscalate(Request $request, InteractionLogger $interactions): JsonResponse
+    {
+        $validated = $request->validate([
+            'subject' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string', 'max:5000'],
+            'order_id' => ['nullable', 'integer', 'exists:orders,id'],
+        ]);
+
+        $user = $request->user();
+        $order = null;
+        $orderNumber = null;
+        $orderId = $validated['order_id'] ?? null;
+
+        if (!empty($orderId)) {
+            $order = Order::find($orderId);
+            $orderNumber = $order?->order_number;
+        }
+
+        // Send Email
+        $adminEmail = config('mail.from.address', 'admin@plexusbiz.com');
+        Mail::to($adminEmail)->send(new SupportEscalationMail(
+            $user,
+            $validated['subject'],
+            $validated['description'],
+            $orderNumber
+        ));
+
+        // Log Interaction in CRM
+        $customer = Customer::buyerAccounts()->where('user_id', $user->id)->first();
+        if ($customer) {
+            $interactions->record(
+                customer: $customer,
+                type: InteractionType::Email,
+                summary: sprintf('AI Support Escalation Email: %s', Str::limit($validated['subject'], 100)),
+                related: $order,
+                payload: [
+                    'subject' => $validated['subject'],
+                    'body_excerpt' => Str::limit($validated['description'], 200),
+                    'order_id' => $orderId,
+                    'source' => 'help_center_email_escalation',
+                ],
+                actor: $user,
+                direction: 'inbound'
+            );
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Your email has been sent to our support team.',
+        ]);
     }
 }

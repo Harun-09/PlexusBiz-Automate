@@ -14,6 +14,11 @@ Route::prefix('support')->name('support.')->group(function (): void {
         Route::post('/tickets/{supportTicket}/reply', [WorkspaceController::class, 'supportTicketReply'])->name('tickets.reply');
         Route::put('/tickets/{supportTicket}/status', [WorkspaceController::class, 'supportTicketStatus'])->name('tickets.status');
         Route::put('/tickets/{supportTicket}/assign', [WorkspaceController::class, 'supportTicketAssign'])->name('tickets.assign');
+
+        // Help Center Routes
+        Route::get('/help-center', [WorkspaceController::class, 'supportHelpCenter'])->name('help-center');
+        Route::post('/help-center/message', [WorkspaceController::class, 'supportChatbotMessage'])->name('help-center.message');
+        Route::post('/help-center/email-escalate', [WorkspaceController::class, 'supportEmailEscalate'])->name('help-center.email-escalate');
     });
 
     Route::get('/faq', [WorkspaceController::class, 'supportFaqs'])

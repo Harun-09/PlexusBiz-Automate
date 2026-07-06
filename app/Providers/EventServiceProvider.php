@@ -32,6 +32,7 @@ class EventServiceProvider extends ServiceProvider
         OrderPlaced::class => [
             RunWorkflowForOrderPlaced::class,
             SendOrderConfirmationEmail::class,
+            \App\Domains\Tax\Listeners\GenerateTaxInvoice::class,
         ],
         OrderStatusChanged::class => [
             RunWorkflowForOrderStatusChanged::class,
@@ -44,6 +45,12 @@ class EventServiceProvider extends ServiceProvider
         ],
         \App\Domains\HCM\Events\EmployeePaid::class => [
             \App\Domains\Finance\Listeners\RecordPayrollLedger::class,
+        ],
+        \App\Domains\Tax\Events\VatRecorded::class => [
+            \App\Domains\Finance\Listeners\RecordVatLedger::class,
+        ],
+        \App\Domains\Tax\Events\PurchaseRecorded::class => [
+            \App\Domains\Tax\Listeners\RecordPurchaseVat::class,
         ],
     ];
 

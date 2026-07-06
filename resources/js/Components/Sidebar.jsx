@@ -117,6 +117,7 @@ const SIDEBAR_MODULES = [
         roles: ['buyer', 'supplier', 'admin', 'marketing_manager'],
         icon: LifeBuoyIcon,
         items: [
+            { label: 'AI Help Center', href: '/support/help-center', icon: SparklesIcon, roles: ['buyer', 'supplier', 'admin'] },
             { label: 'Support Tickets', href: '/support/tickets', icon: LifeBuoyIcon, roles: ['buyer', 'supplier', 'admin'], permissions: ['manage_own_tickets', 'manage_tickets'] },
             { label: 'Support FAQ', href: '/support/faq', icon: QuestionMarkCircleIcon, roles: ['buyer', 'supplier', 'admin', 'marketing_manager'] },
         ],

@@ -29,6 +29,7 @@ class SupportChatbotService
         $confidence = 0.0;
         $source = 'ticket';
         $matchedKeywords = [];
+        $escalate = false;
         
         $shouldCreateTicket = $payload['create_ticket'] ?? false;
 
@@ -39,7 +40,13 @@ class SupportChatbotService
             $confidence = 0.95;
             $source = 'faq';
         } elseif ($geminiResponse && $geminiResponse['action'] === 'create_ticket') {
-            $shouldCreateTicket = true;
+            if ($shouldCreateTicket) {
+                $source = 'ticket';
+            } else {
+                $escalate = true;
+                $answer = "I'm sorry, I couldn't find an answer to your question in our system. How would you like to proceed?";
+                $source = 'escalation';
+            }
         } else {
             // Fallback to legacy FaqMatcher if Gemini fails or is not configured
             $match = $this->faqs->match($message);
@@ -49,7 +56,13 @@ class SupportChatbotService
                 $source = 'faq';
                 $matchedKeywords = $match->matchedKeywords;
             } else {
-                $shouldCreateTicket = true;
+                if ($shouldCreateTicket) {
+                    $source = 'ticket';
+                } else {
+                    $escalate = true;
+                    $answer = "I'm sorry, I couldn't find an answer to your question in our system. How would you like to proceed?";
+                    $source = 'escalation';
+                }
             }
         }
 
@@ -78,6 +91,7 @@ class SupportChatbotService
                 'number' => $ticket->ticket_number,
                 'status' => $ticket->status->value,
             ] : null,
+            'escalate' => $escalate,
         ];
     }
 }
